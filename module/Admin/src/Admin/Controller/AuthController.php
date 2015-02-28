@@ -37,6 +37,24 @@ class AuthController extends AbstractActionController
         if ($cnt->offsetExists('is_admin'))
             return $this->redirect()->toRoute('admin');
 
+        // Handle validate request
+        if ($this->params()->fromQuery('query') == 'validate') {
+            $field = $this->params()->fromQuery('field');
+            $data = $this->params()->fromQuery('form');
+
+            $form = new LoginForm();
+            $form->setData($data);
+            $form->isValid();
+
+            $control = $form->get($field);
+            $messages = $control->getMessages();
+
+            return new JsonModel([
+                'valid'     => (count($messages) == 0),
+                'messages'  => array_values($messages),
+            ]);
+        }
+
         $request = $this->getRequest();
         $form = new LoginForm();
         $messages = [];
