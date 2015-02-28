@@ -1,9 +1,9 @@
 <?php
 /**
- * zf2-skeleton
+ * CorpNews
  *
- * @link        https://github.com/basarevych/zf2-skeleton
- * @copyright   Copyright (c) 2014-2015 basarevych@gmail.com
+ * @link        https://github.com/basarevych/corpnews
+ * @copyright   Copyright (c) 2015 basarevych@gmail.com
  * @license     http://choosealicense.com/licenses/mit/ MIT
  */
 
