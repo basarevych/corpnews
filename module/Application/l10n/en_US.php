@@ -2,7 +2,7 @@
 
 return [
     // Layouts
-    'APP_TITLE' => 'ZF2 Skeleton',
+    'APP_TITLE' => 'CorpNews',
     'en_US' => 'English (en_US)',
     'Autodetect' => 'Autodetect',
 
@@ -21,13 +21,6 @@ return [
     'File' => 'File',
     'Line' => 'Line',
     'Stack trace' => 'Stack trace',
-
-    // Forms
-    'REQUIRED FIELD' => 'REQUIRED FIELD',
-    'Cancel' => 'Cancel',
-    'Create' => 'Create',
-    'Save changes' => 'Save changes',
-    'Delete' => 'Delete',
 
     // Csrf validator
     'The form submitted did not originate from the expected site' => 'The form submitted did not originate from the expected site',
