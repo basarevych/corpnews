@@ -6,6 +6,7 @@ return [
             'Session'       => 'Application\Service\Session',
             'Mail'          => 'Application\Service\Mail',
             'ErrorStrategy' => 'Application\Service\ErrorStrategy',
+            'ImapClient'    => 'Application\Service\ImapClient',
         ],
 
         'abstract_factories' => [

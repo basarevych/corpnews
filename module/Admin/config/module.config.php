@@ -5,6 +5,7 @@ return [
         'invokables' => [
             'Admin\Controller\Index' => 'Admin\Controller\IndexController',
             'Admin\Controller\Auth' => 'Admin\Controller\AuthController',
+            'Admin\Controller\Mailbox' => 'Admin\Controller\MailboxController',
         ],
     ],
 

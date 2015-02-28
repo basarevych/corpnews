@@ -1,0 +1,256 @@
+<?php
+
+    $this->layout()->activePage = 'mailbox';
+
+?>
+<div class="container">
+    <div class="row">
+        <div class="col-sm-offset-3 col-sm-9">
+            <h1><?= $this->translate('Mailbox') ?></h1>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-sm-3">
+            <div id="sidebar" class="list-group" data-spy="affix">
+                <div id="actions-panel" class="panel panel-default">
+                    <div class="panel-heading">
+                        <h3 class="panel-title"><?= $this->translate('Letter Actions') ?></h3>
+                    </div>
+                    <div class="panel-body button-panel">
+                        <p class="help"><?= $this->translate('HELP_LETTER_ACTIONS_DESELECTED') ?></p>
+                        <button id="template-button" class="btn btn-primary disabled" disabled="disabled">
+                            <?= $this->translate('Use as template') ?>
+                        </button>
+                        <hr>
+                        <button id="delete-button" class="btn btn-default disabled" disabled="disabled">
+                            <?= $this->translate('Delete') ?>
+                        </button>
+                        <hr>
+                        <button id="reanalyze-button" class="btn btn-default" disabled="disabled">
+                            <?= $this->translate('Re-analyze') ?>
+                        </button>
+                        <script>
+                            function updateActions(id) {
+                                var table = $('#table-' + id).data('dynamicTable');
+                                var selected = table.getSelected();
+                                if (selected.length) {
+                                    $('#actions-panel').find('p.help')
+                                        .text("<?= $this->escapeHtml($this->translate('HELP_LETTER_ACTIONS_SELECTED')) ?>");
+                                    $('#actions-panel').find('button')
+                                        .removeAttr('disabled')
+                                        .removeClass('disabled');
+                                } else {
+                                    $('#actions-panel').find('p.help')
+                                        .text("<?= $this->escapeHtml($this->translate('HELP_LETTER_ACTIONS_DESELECTED')) ?>");
+                                    $('#actions-panel').find('button')
+                                        .attr('disabled', 'disabled')
+                                        .addClass('disabled');
+                                }
+                            }
+                        </script>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-sm-9">
+            <div role="tabpanel">
+                <ul id="tablist" class="nav nav-tabs" role="tablist">
+                    <?php $first = true; ?>
+                    <?php foreach ($this->mailboxes as $box): ?>
+                        <li role="presentation" class="<?= $first ? 'active' : '' ?>">
+                            <a href="#tab-<?= $box['id'] ?>" aria-controls="<?= $box['id'] ?>" role="tab" data-toggle="tab">
+                                    <?= $this->translate($box['name']) ?>
+                                &nbsp;
+                                <span class="badge"><?= $box['count'] ?></span>
+                            </a>
+                            <script>
+                                $('a[href=#tab-<?= $box['id'] ?>]').on('show.bs.tab', function () {
+                                    updateActions('<?= $box['id'] ?>');
+                                });
+                            </script>
+                        </li>
+                        <?php $first = false; ?>
+                    <?php endforeach ?>
+                </ul>
+                <div class="tab-content">
+                    <?php $first = true; ?>
+                    <?php foreach ($this->mailboxes as $box): ?>
+                        <div id="tab-<?= $box['id'] ?>" role="tabpanel" class="tab-pane <?= $first ? 'active' : '' ?>">
+                            <div id="table-<?= $box['id'] ?>" class="table-frame"></div>
+                            <script>
+                                $('#table-<?= $box['id'] ?>').dynamicTable({
+                                    url: '<?= $this->basePath('/admin/mailbox/letter-table') ?>'
+                                        + '?box=<?= urlencode($box['id']) ?>',
+                                    row_id_column: 'uid',
+                                    sort_column: 'date',
+                                    sort_dir: 'desc',
+                                    loader_image: '<?= $this->basePath('/img/loader.gif') ?>',
+                                    mapper: function (row) {
+                                        if (row['subject'].trim().length == 0)
+                                            row['subject'] = '<?= $this->translate('(No subject)') ?>';
+
+                                        var box = "<?= str_replace("'", '\\\'', $this->escapeHtml($box['name'])) ?>";
+                                        row['subject'] = '<a href="javascript:void(0)" onclick="openLetter(\'' + box + '\', ' + row['uid'] + ')">' + row['subject'] + '</a>';
+
+
+                                        if (row['date'] != null) {
+                                            var m = moment(row['date'] * 1000);
+                                            row['date'] = m.format('YYYY-MM-DD HH:mm:ss');
+                                        }
+
+                                        return row;
+                                    },
+                                });
+                                $('#table-<?= $box['id'] ?>').on('dt.selected', function () {
+                                    updateActions('<?= $box['id'] ?>');
+                                });
+                                $('#table-<?= $box['id'] ?>').on('dt.deselected', function () {
+                                    updateActions('<?= $box['id'] ?>');
+                                });
+                            </script>
+                        </div>
+                        <?php $first = false; ?>
+                    <?php endforeach ?>
+                </div>
+            </div>
+        <div>
+    </div>
+</div>
+
+<div id="letter-modal" class="modal">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">
+                    <span aria-hidden="true">&times;</span>
+                    <span class="sr-only"><?= $this->translate('Close') ?></span>
+                </button>
+                <h4 class="modal-title"></h4>
+            </div>
+            <div class="modal-body">
+                <div role="tabpanel">
+                    <ul class="nav nav-tabs" role="tablist">
+                        <li role="presentation" class="active">
+                            <a href="#html" aria-controls="html" role="tab" data-toggle="tab">
+                                <?= $this->translate('HTML') ?>
+                            </a>
+                        </li>
+                        <li role="presentation">
+                            <a href="#text" aria-controls="text" role="tab" data-toggle="tab">
+                                <?= $this->translate('Text') ?>
+                            </a>
+                        </li>
+                        <li role="presentation">
+                            <a href="#attachments" aria-controls="attachments" role="tab" data-toggle="tab">
+                                <?= $this->translate('Attachments') ?>
+                            </a>
+                        </li>
+                        <li role="presentation">
+                            <a href="#log" aria-controls="log" role="tab" data-toggle="tab">
+                                <?= $this->translate('Analysis log') ?>
+                            </a>
+                        </li>
+                        <li role="presentation">
+                            <a href="#source" aria-controls="source" role="tab" data-toggle="tab">
+                                <?= $this->translate('Source') ?>
+                            </a>
+                        </li>
+                    </ul>
+                    <div class="tab-content">
+                        <div id="html" role="tabpanel" class="tab-pane active">
+                            <div class="tab-pane-loader"></div>
+                            <iframe class="letter-frame"></iframe>
+                        </div>
+                        <div id="text" role="tabpanel" class="tab-pane">
+                            <div class="tab-pane-loader"></div>
+                            <div class="letter-frame"></div>
+                        </div>
+                        <div id="attachments" role="tabpanel" class="tab-pane">
+                            <div class="tab-pane-loader"></div>
+                            <div class="letter-frame"></div>
+                        </div>
+                        <div id="log" role="tabpanel" class="tab-pane">
+                            <div class="tab-pane-loader"></div>
+                            <div class="letter-frame"></div>
+                        </div>
+                        <div id="source" role="tabpanel" class="tab-pane">
+                            <div class="tab-pane-loader"></div>
+                            <div class="letter-frame"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" data-dismiss="modal">
+                    <?= $this->translate('Close') ?>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function openLetter(box, uid) {
+        $('#letter-modal .modal-title').text('<?= $this->translate('Loading...') ?>');
+        $('#letter-modal .letter-frame').hide();
+        $('#letter-modal .tab-pane-loader').show();
+
+        $('#letter-modal').modal('show');
+
+        $.getJSON(
+            '<?= $this->basePath('/admin/mailbox/letter') ?>',
+            {
+                box: box,
+                uid: uid,
+            },
+            function (data) {
+                var iframeContext = $('#html iframe')[0].contentWindow.document;
+                $('html', iframeContext).html(data.html);
+                $('#text .letter-frame').html(data.text);
+                $('#attachments .letter-frame').html(data.attachments);
+                $('#log .letter-frame').html(data.log);
+                $('#source .letter-frame').html(data.source);
+
+                $('#letter-modal .modal-title').text(data.subject);
+                $('#letter-modal .tab-pane-loader').hide();
+                $('#letter-modal .letter-frame').show();
+            }
+        );
+    }
+
+    $(document).ready(function () {
+        var tour = new Tour({
+            name: 'mailbox',
+            template: '<div class="popover help-tour">'
+                      + '<div class="arrow"></div>'
+                      + '<h3 class="popover-title"></h3>'
+                      + '<div class="popover-content"></div>'
+                      + '<div class="popover-navigation">'
+                      + '<button class="btn btn-default" data-role="prev"><?= $this->translate('TOUR_PREVIOUS_STEP') ?></button>'
+                      + '<button class="btn btn-default" data-role="next"><?= $this->translate('TOUR_NEXT_STEP') ?></button>'
+                      + '<button class="btn btn-default" data-role="end"><?= $this->translate('TOUR_END_TOUR') ?></button>'
+                      + '</div>'
+                      + '</div>',
+            steps: [
+                {
+                    element: "#tablist",
+                    placement: "left",
+                    title: "Mailbox",
+                    content: "<?= $this->translate('TOUR_MAILBOX_TABLIST') ?>"
+                },
+                {
+                    element: "#template-button",
+                    placement: "right",
+                    title: "Mailbox",
+                    content: "<?= $this->translate('TOUR_MAILBOX_TEMPLATE') ?>"
+                },
+            ],
+        });
+        tour.init();
+
+        $('#tour-button').on('click', function () { tour.restart(); })
+            .parent().show();
+    });
+</script>

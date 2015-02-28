@@ -4,8 +4,55 @@
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "4c68774ce86f7d6d07ea10c90230ef04",
+    "hash": "9eb8f6a9448ce63f6cc10117b4747d6d",
     "packages": [
+        {
+            "name": "basarevych/dynamic-table",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/basarevych/dynamic-table.git",
+                "reference": "4191d1dbe68fc2e5d22ac96642d45def803a744c"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/basarevych/dynamic-table/zipball/4191d1dbe68fc2e5d22ac96642d45def803a744c",
+                "reference": "4191d1dbe68fc2e5d22ac96642d45def803a744c",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.4.8"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "@stable",
+                "webfactory/doctrine-orm-test-infrastructure": "@stable"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "DynamicTable": "php"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Ross Basarevych",
+                    "email": "basarevych@gmail.com"
+                }
+            ],
+            "description": "Dynamic HTML grid",
+            "homepage": "https://github.com/basarevych/dynamic-table",
+            "keywords": [
+                "doctrine",
+                "grid",
+                "jquery",
+                "php"
+            ],
+            "time": "2015-02-26 16:38:08"
+        },
         {
             "name": "doctrine/annotations",
             "version": "v1.2.3",
@@ -721,6 +768,50 @@
                 "orm"
             ],
             "time": "2014-12-16 13:45:01"
+        },
+        {
+            "name": "ezyang/htmlpurifier",
+            "version": "v4.6.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/ezyang/htmlpurifier.git",
+                "reference": "6f389f0f25b90d0b495308efcfa073981177f0fd"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/ezyang/htmlpurifier/zipball/6f389f0f25b90d0b495308efcfa073981177f0fd",
+                "reference": "6f389f0f25b90d0b495308efcfa073981177f0fd",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.2"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "HTMLPurifier": "library/"
+                },
+                "files": [
+                    "library/HTMLPurifier.composer.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "LGPL"
+            ],
+            "authors": [
+                {
+                    "name": "Edward Z. Yang",
+                    "email": "admin@htmlpurifier.org",
+                    "homepage": "http://ezyang.com"
+                }
+            ],
+            "description": "Standards compliant HTML filter written in PHP",
+            "homepage": "http://htmlpurifier.org/",
+            "keywords": [
+                "html"
+            ],
+            "time": "2013-11-30 08:25:19"
         },
         {
             "name": "symfony/console",
@@ -1953,6 +2044,7 @@
     "aliases": [],
     "minimum-stability": "stable",
     "stability-flags": {
+        "basarevych/dynamic-table": 20,
         "phpunit/phpunit": 0,
         "webfactory/doctrine-orm-test-infrastructure": 0
     },
