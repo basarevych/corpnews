@@ -28,6 +28,11 @@ class AuthController extends AbstractActionController
      */
     public function indexAction()
     {
+        $sl = $this->getServiceLocator();
+        $config = $sl->get('Config');
+        $session = $sl->get('Session');
+        $translate = $sl->get('viewhelpermanager')->get('translate');
+
         // Handle validate request
         if ($this->params()->fromQuery('query') == 'validate') {
             $field = $this->params()->fromQuery('field');
@@ -38,17 +43,15 @@ class AuthController extends AbstractActionController
             $form->isValid();
 
             $control = $form->get($field);
-            $messages = $control->getMessages();
+            $messages = [];
+            foreach ($control->getMessages() as $msg)
+                $messages[] = $translate($msg);
 
             return new JsonModel([
                 'valid'     => (count($messages) == 0),
-                'messages'  => array_values($messages),
+                'messages'  => $messages,
             ]);
         }
-
-        $sl = $this->getServiceLocator();
-        $config = $sl->get('Config');
-        $session = $sl->get('Session');
 
         $cnt = $session->getContainer();
         if ($cnt->offsetExists('is_admin'))
