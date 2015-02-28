@@ -56,8 +56,8 @@ body.with-navbar {
 #tour-button {
     font-size: 22px;
     line-height: 20px;
-    margin: 6px 0 0 6px;
-    padding: 8px 10px 6px 12px;
+    margin: 8px 0 0 6px;
+    padding: 6px 10px 4px 12px;
 }
 .help-tour {
     background: #ffffdd;
@@ -76,6 +76,9 @@ body.with-navbar {
 }
 .help-tour .popover-title {
     background: #ffff99;
+}
+.help-tour .popover-navigation {
+    padding: 4px;
 }
 
 @media(max-width: 991px) {
