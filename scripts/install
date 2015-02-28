@@ -60,6 +60,7 @@ run_command perl -pi -e "s/(\s*'server'\s*=>\s*')(127.0.0.1)('.*)/\${1}$imap_ser
 
 read -p "  IMAP server account name? []: " imap_username
 
+imap_username=`echo "$imap_username" | sed 's/@/\\\\@/'`
 run_command perl -pi -e "s/(\s*'account'\s*=>\s*')(imap_username)('.*)/\${1}$imap_username\${3}/" "corpnews.local.php"
 
 read -p "  IMAP server account password? []: " imap_password
