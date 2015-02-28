@@ -60,22 +60,22 @@ body.with-navbar {
     padding: 6px 10px 4px 12px;
 }
 .help-tour {
-    background: #ffffdd;
+    background: #ffffee;
 }
 .help-tour.top > .arrow:after {
-    border-top-color: #ffffdd;
+    border-top-color: #ffffee;
 }
 .help-tour.right > .arrow:after {
-    border-right-color: #ffffdd;
+    border-right-color: #ffffee;
 }
 .help-tour.bottom > .arrow:after {
-    border-bottom-color: #ffffdd;
+    border-bottom-color: #ffffee;
 }
 .help-tour.left > .arrow:after {
-    border-left-color: #ffffdd;
+    border-left-color: #ffffee;
 }
 .help-tour .popover-title {
-    background: #ffff99;
+    background: #ffffbb;
 }
 .help-tour .popover-navigation {
     padding: 4px;
