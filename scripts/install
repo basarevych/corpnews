@@ -32,9 +32,48 @@ echo
 run_command cd config/autoload
 rm -f *local.php
 
+run_command cp corpnews.local.php.dist corpnews.local.php
+
+read -p "* What is the site administrator username? [admin]: " input
+if [ "$input" = "" ]; then
+    admin_username="admin"
+else
+    admin_username="$input"
+fi
+
+run_command perl -pi -e "s/(\s*'account'\s*=>\s*')(admin_username)('.*)/\${1}$admin_username\${3}/" "corpnews.local.php"
+
+read -p "  And the password? []: " admin_password 
+
+run_command perl -pi -e "s/(\s*'password'\s*=>\s*')(admin_password)('.*)/\${1}$admin_password\${3}/" "corpnews.local.php"
+
+echo
+read -p "* IMAP server address? [127.0.0.1]: " input
+
+if [ "$input" = "" ]; then
+    imap_server="127.0.0.1"
+else
+    imap_server="$input"
+fi
+
+run_command perl -pi -e "s/(\s*'server'\s*=>\s*')(127.0.0.1)('.*)/\${1}$imap_server\${3}/" "corpnews.local.php"
+
+read -p "  IMAP server account name? []: " imap_username
+
+run_command perl -pi -e "s/(\s*'account'\s*=>\s*')(imap_username)('.*)/\${1}$imap_username\${3}/" "corpnews.local.php"
+
+read -p "  IMAP server account password? []: " imap_password
+
+run_command perl -pi -e "s/(\s*'password'\s*=>\s*')(imap_password)('.*)/\${1}$imap_password\${3}/" "corpnews.local.php"
+
+echo
+echo "  File config/autoload/corpnews.local.php created"
+echo "  You can set other IMAP parameters in the file"
+
 run_command cp exception.local.php.dist exception.local.php
 
 input="none"
+echo
 while [ "$input" != "y" -a "$input" != "n" -a "$input" != "" ]; do
     read -p "* Do you want to display PHP exceptions to the user? y/[n]: " input
 done

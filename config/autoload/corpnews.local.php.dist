@@ -1,0 +1,18 @@
+<?php
+
+return [
+    'corpnews' => [
+        'admin' => [
+            'account'   => 'admin_username',
+            'password'  => 'admin_password',
+        ],
+
+        'imap' => [
+            'server'    => '127.0.0.1',
+            'port'      => 993,
+            'ssl'       => true,
+            'account'   => 'imap_username',
+            'password'  => 'imap_password',
+        ],
+    ],
+];
