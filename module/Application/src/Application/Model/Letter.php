@@ -3,7 +3,7 @@
  * CorpNews
  *
  * @link        https://github.com/basarevych/corpnews
- * @copyright   Copyright (c) 2014 basarevych@gmail.com
+ * @copyright   Copyright (c) 2015 basarevych@gmail.com
  * @license     http://choosealicense.com/licenses/mit/ MIT
  */
 
