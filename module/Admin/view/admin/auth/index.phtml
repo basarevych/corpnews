@@ -64,7 +64,7 @@
                             <input class="form-control" type="password"
                                    name="<?= $password->getName() ?>"
                                    data-on-blur="validateFormField($('input[name=<?= $password->getName() ?>]'))"
-                                   data-on-enter="$(this).closest('form').submit()">
+                                   data-on-enter="$('form').submit()">
                             <div class="help-block">
                                 <?php if (!$valid): ?>
                                     <ul class="list-unstyled icon-list error-list">
