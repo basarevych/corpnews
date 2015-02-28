@@ -28,15 +28,6 @@ class AuthController extends AbstractActionController
      */
     public function indexAction()
     {
-        $sl = $this->getServiceLocator();
-        $config = $sl->get('Config');
-        $session = $sl->get('Session');
-        $translate = $sl->get('viewhelpermanager')->get('translate');
-
-        $cnt = $session->getContainer();
-        if ($cnt->offsetExists('is_admin'))
-            return $this->redirect()->toRoute('admin');
-
         // Handle validate request
         if ($this->params()->fromQuery('query') == 'validate') {
             $field = $this->params()->fromQuery('field');
@@ -54,6 +45,14 @@ class AuthController extends AbstractActionController
                 'messages'  => array_values($messages),
             ]);
         }
+
+        $sl = $this->getServiceLocator();
+        $config = $sl->get('Config');
+        $session = $sl->get('Session');
+
+        $cnt = $session->getContainer();
+        if ($cnt->offsetExists('is_admin'))
+            return $this->redirect()->toRoute('admin');
 
         $request = $this->getRequest();
         $form = new LoginForm();
@@ -76,7 +75,7 @@ class AuthController extends AbstractActionController
                     return $this->redirect()->refresh();
                 }
 
-                $messages[] = $translate('Invalid login or password');
+                $messages[] = 'Invalid login or password';
             }
         }
 
