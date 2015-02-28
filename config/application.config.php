@@ -3,7 +3,6 @@
 return [
     'modules' => [
         'Application',
-        'Example',
         // Your modules here
         'DoctrineModule',
         'DoctrineORMModule'
