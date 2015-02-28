@@ -1,9 +1,30 @@
-body {
-    padding-top: 60px;
-}
-
 .invisible {
     visibility: hidden;
+}
+
+.centered-wrapper {
+    width: 100%;
+    height: 100%;
+    display: table;
+    position: absolute;
+}
+.centered {
+    display: table-cell;
+    text-align: center;
+    vertical-align: middle;
+}
+
+.login-popover {
+    display: inline-block !important;
+    position: static !important;
+    width: 350px;
+    max-width: 350px;
+}
+.login-popover .popover-content {
+    padding-bottom: 0;
+}
+.login-popover .alert {
+    text-align: center;
 }
 
 .required-marker {
@@ -27,3 +48,5 @@ body {
 .error-list li:before {
     content: '\e090';
 }
+
+

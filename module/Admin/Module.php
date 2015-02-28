@@ -31,6 +31,72 @@ class Module
         $eventManager        = $e->getApplication()->getEventManager();
         $moduleRouteListener = new ModuleRouteListener();
         $moduleRouteListener->attach($eventManager);
+
+        $eventManager->attach(
+            MvcEvent::EVENT_ROUTE,
+            [ $this, 'checkAuthorized' ]
+        );
+
+        $sharedEventManager = $eventManager->getSharedManager();
+        $sharedEventManager->attach(
+            "Zend\\Mvc\\Controller\\AbstractActionController",
+            MvcEvent::EVENT_DISPATCH,
+            [ $this, 'setLayout' ]
+        );
+    }
+
+    /**
+     * Forward to auth controller if not admin
+     *
+     * @param MvcEvent $e
+     */
+    public function checkAuthorized(MvcEvent $e)
+    {
+        $rm = $e->getRouteMatch();
+        $controller = $rm->getParam('controller');
+        $module = substr($controller, 0, strpos($controller, "\\"));
+
+        if ($module != 'Admin' || $controller == 'Admin\Controller\Auth')
+            return;
+
+        if (!$this->isAdmin($e)) {
+            $rm->setParam('controller', 'Admin\Controller\Auth')
+               ->setParam('action', 'index');
+        }
+    }
+
+    /**
+     * Set this module default layout
+     *
+     * @param MvcEvent $e
+     */
+    public function setLayout(MvcEvent $e)
+    {
+        $controller = $e->getTarget();      
+        $class = get_class($controller);
+        $module = substr($class, 0, strpos($class, "\\"));
+
+        if ($module == 'Admin')
+            $controller->layout('layout/admin');
+    }
+
+    /**
+     * Is the user allowed to use the module?
+     *
+     * @param MvcEvent $e
+     * @return boolean
+     */
+    public function isAdmin(MvcEvent $e)
+    {
+        $sm = $e->getApplication()->getServiceManager();
+        $config = $sm->get('Config');
+        $session = $sm->get('Session');
+
+        $cnt = $session->getContainer();
+        if ($cnt->offsetExists('admin_password'))
+            return ($cnt->admin_password == $config['corpnews']['admin']['password']);
+
+        return false;
     }
 
     /**

@@ -4,6 +4,7 @@ return [
     'controllers' => [
         'invokables' => [
             'Admin\Controller\Index' => 'Admin\Controller\IndexController',
+            'Admin\Controller\Auth' => 'Admin\Controller\AuthController',
         ],
     ],
 
