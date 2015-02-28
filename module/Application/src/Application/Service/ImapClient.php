@@ -265,38 +265,6 @@ class ImapClient implements ServiceLocatorAwareInterface
     }
 
     /**
-     * Is this message a reply?
-     *
-     * @param Letter $letter
-     * @return boolean
-     */
-    public function isReply($letter)
-    {
-        return false;
-    }
-
-    /**
-     * Is this a bounce?
-     *
-     * @param Letter $letter
-     * @return boolean
-     */
-    public function isBounce($letter)
-    {
-        return false;
-    }
-
-    /**
-     * Register bounced message
-     *
-     * @param Letter $letter
-     * @return ImapClient
-     */
-    public function processBounce($letter)
-    {
-    }
-
-    /**
      * Builds connection string
      *
      * @return string
