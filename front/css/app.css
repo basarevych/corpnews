@@ -17,8 +17,8 @@
 .login-popover {
     display: inline-block !important;
     position: static !important;
-    width: 350px;
-    max-width: 350px;
+    width: 450px;
+    max-width: 450px;
 }
 .login-popover .popover-content {
     padding-bottom: 0;

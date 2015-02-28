@@ -37,7 +37,8 @@
                         <div class="col-sm-8">
                             <input class="form-control" type="text"
                                    name="<?= $login->getName() ?>"
-                                   value="<?= $this->escapeHtml($login->getValue()) ?>">
+                                   value="<?= $this->escapeHtml($login->getValue()) ?>"
+                                   data-on-enter="$('input[name=<?= $password->getName() ?>]').focus()">
                             <?php foreach ($login->getMessages() as $msg): ?>
                                 <p class="help-block">
                                     <?= $this->escapeHtml($this->translate($msg)) ?>
@@ -52,7 +53,8 @@
                         </label>
                         <div class="col-sm-8">
                             <input class="form-control" type="password"
-                                   name="<?= $password->getName() ?>">
+                                   name="<?= $password->getName() ?>"
+                                   data-on-enter="$(this).closest('form').submit()">
                             <?php foreach ($password->getMessages() as $msg): ?>
                                 <p class="help-block">
                                     <?= $this->escapeHtml($this->translate($msg)) ?>
