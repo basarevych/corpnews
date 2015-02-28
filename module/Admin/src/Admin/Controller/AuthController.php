@@ -34,7 +34,7 @@ class AuthController extends AbstractActionController
         $translate = $sl->get('viewhelpermanager')->get('translate');
 
         $cnt = $session->getContainer();
-        if ($cnt->offsetExists('admin_password') && $cnt->admin_password == $config['corpnews']['admin']['password'])
+        if ($cnt->offsetExists('is_admin'))
             return $this->redirect()->toRoute('admin');
 
         $request = $this->getRequest();
@@ -54,7 +54,7 @@ class AuthController extends AbstractActionController
 
                 if ($data['login'] == @$config['corpnews']['admin']['account']
                         && $data['password'] == @$config['corpnews']['admin']['password']) {
-                    $cnt->admin_password = $data['password'];
+                    $cnt->is_admin = true;
                     return $this->redirect()->refresh();
                 }
 

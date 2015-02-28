@@ -13,8 +13,24 @@ class IndexControllerTest extends AbstractHttpControllerTestCase
         parent::setUp();
     }
 
+    public function testIndexActionIsProtected()
+    {
+        $this->dispatch('/admin');
+        $this->assertResponseStatusCode(401);
+
+        $this->assertModuleName('admin');
+        $this->assertControllerName('admin\controller\auth');
+        $this->assertControllerClass('AuthController');
+        $this->assertMatchedRouteName('admin');
+    }
+
     public function testIndexActionCanBeAccessed()
     {
+        $sl = $this->getApplicationServiceLocator();
+        $session = $sl->get('Session');
+        $cnt = $session->getContainer();
+        $cnt->is_admin = true;
+
         $this->dispatch('/admin');
         $this->assertResponseStatusCode(200);
 

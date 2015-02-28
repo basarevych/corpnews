@@ -93,8 +93,8 @@ class Module
         $session = $sm->get('Session');
 
         $cnt = $session->getContainer();
-        if ($cnt->offsetExists('admin_password'))
-            return ($cnt->admin_password == $config['corpnews']['admin']['password']);
+        if ($cnt->offsetExists('is_admin'))
+            return $cnt->is_admin;
 
         return false;
     }
