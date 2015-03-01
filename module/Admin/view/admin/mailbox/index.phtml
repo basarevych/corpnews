@@ -6,7 +6,7 @@
 <div class="container">
     <div class="row">
         <div class="col-sm-offset-3 col-sm-9">
-            <h1><?= $this->translate('Mailbox') ?></h1>
+            <h1><span id="page-title"><?= $this->translate('Mailbox') ?></span></h1>
         </div>
     </div>
 
@@ -41,14 +41,13 @@
 
         <div class="col-sm-9">
             <div role="tabpanel">
-                <ul id="tablist" class="nav nav-tabs" role="tablist">
+                <ul class="nav nav-tabs" role="tablist">
                     <?php $first = true; ?>
                     <?php foreach ($this->mailboxes as $box): ?>
                         <li role="presentation" class="<?= $first ? 'active' : '' ?>">
-                            <a href="#tab-<?= $box['id'] ?>" aria-controls="<?= $box['id'] ?>" role="tab" data-toggle="tab">
+                            <a id="<?= strtolower($box['id']) ?>-tab" href="#tab-<?= $box['id'] ?>" aria-controls="<?= $box['id'] ?>" role="tab" data-toggle="tab">
                                     <?= $this->translate($box['name']) ?>
                                 &nbsp;
-                                <span class="badge"><?= $box['count'] ?></span>
                             </a>
                             <script>
                                 $('a[href=#tab-<?= $box['id'] ?>]').on('show.bs.tab', function () {
@@ -306,37 +305,47 @@
         });
     }
 
-    $(document).ready(function () {
-        var tour = new Tour({
-            name: 'mailbox',
-            template: '<div class="popover help-tour">'
-                      + '<div class="arrow"></div>'
-                      + '<h3 class="popover-title"></h3>'
-                      + '<div class="popover-content"></div>'
-                      + '<div class="popover-navigation">'
-                      + '<button class="btn btn-default btn-sm" data-role="prev"><?= $this->translate('TOUR_PREVIOUS_STEP') ?></button>'
-                      + '<button class="btn btn-default btn-sm" data-role="next"><?= $this->translate('TOUR_NEXT_STEP') ?></button>'
-                      + '<button class="pull-right btn btn-default btn-sm" data-role="end"><?= $this->translate('TOUR_END_TOUR') ?></button>'
-                      + '</div>'
-                      + '</div>',
-            steps: [
-                {
-                    element: "#tablist",
-                    placement: "left",
-                    title: "Mailbox",
-                    content: "<?= str_replace('"', "'", $this->translate('TOUR_MAILBOX_TABLIST')) ?>"
-                },
-                {
-                    element: "#template-button",
-                    placement: "right",
-                    title: "Mailbox",
-                    content: "<?= str_replace('"', '"', $this->translate('TOUR_MAILBOX_TEMPLATE')) ?>"
-                },
-            ],
-        });
-        tour.init();
+    var tour = new Tour({
+        name: 'mailbox',
+        template: '<?= $this->translate('TOUR_TEMPLATE') ?>',
+        steps: [
+            {
+                element: "#mailbox-navbar",
+                placement: "bottom",
+                title: "Mailbox",
+                content: "<?= str_replace('"', "'", $this->translate('TOUR_MAILBOX_INTRO')) ?>"
+            },
+            {
+                element: "#incoming-tab",
+                placement: "bottom",
+                title: "Mailbox",
+                content: "<?= str_replace('"', "'", $this->translate('TOUR_MAILBOX_INCOMING')) ?>"
+            },
+            {
+                element: "#replies-tab",
+                placement: "bottom",
+                title: "Mailbox",
+                content: "<?= str_replace('"', "'", $this->translate('TOUR_MAILBOX_REPLIES')) ?>"
+            },
+            {
+                element: "#bounces-tab",
+                placement: "bottom",
+                title: "Mailbox",
+                content: "<?= str_replace('"', "'", $this->translate('TOUR_MAILBOX_BOUNCES')) ?>"
+            },
+            {
+                element: "#template-button",
+                placement: "right",
+                title: "Mailbox",
+                content: "<?= str_replace('"', '"', $this->translate('TOUR_MAILBOX_TEMPLATE')) ?>"
+            },
+        ]
+    });
 
-        $('#tour-button').on('click', function () { tour.restart(); })
+    $(document).ready(function () {
+        tour.init();
+        $('#tour-button')
+            .on('click', function () { tour.restart(); })
             .parent().show();
     });
 </script>

@@ -65,14 +65,16 @@
             <div class="collapse navbar-collapse" id="layout-navbar-collapse">
                 <ul class="nav navbar-nav">
                     <li <?= $activePage == 'mailbox' ? 'class="active"' : '' ?>>
-                        <a href="<?= $this->basePath('/admin/mailbox') ?>">
+                        <a id="mailbox-navbar" href="<?= $this->basePath('/admin/mailbox') ?>">
                             <?= $this->translate('Mailbox') ?>
                         </a>
                     </li>
                 </ul>
 
                 <div class="nav navbar-nav navbar-right" style="display: none">
-                    <button id="tour-button" class="navbar-btn btn btn-default">?</button>
+                    <button id="tour-button" class="navbar-btn btn btn-default">
+                        <?= $this->translate('Tutorial') ?>
+                    </button>
                 </div>
 
                 <ul class="nav navbar-nav navbar-right">

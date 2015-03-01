@@ -36,24 +36,18 @@ class MailboxController extends AbstractActionController
      */
     public function indexAction()
     {
-        $sl = $this->getServiceLocator();
-        $imap = $sl->get('ImapClient');
-
         $boxes = [
             [
                 'name'  => Mailbox::NAME_INCOMING,
                 'id'    => preg_replace('/[^A-Za-z0-9]/', '', Mailbox::NAME_INCOMING),
-                'count' => $imap->getLetterCount(Mailbox::NAME_INCOMING),
             ],
             [
                 'name'  => Mailbox::NAME_REPLIES,
                 'id'    => preg_replace('/[^A-Za-z0-9]/', '', Mailbox::NAME_REPLIES),
-                'count' => $imap->getLetterCount(Mailbox::NAME_REPLIES),
             ],
             [
                 'name'  => Mailbox::NAME_BOUNCES,
                 'id'    => preg_replace('/[^A-Za-z0-9]/', '', Mailbox::NAME_BOUNCES),
-                'count' => $imap->getLetterCount(Mailbox::NAME_BOUNCES),
             ],
         ];
 
