@@ -75,22 +75,6 @@ body.with-navbar {
     padding: 4px;
 }
 
-@media(max-width: 991px) {
-    .col-sm-3 #sidebar {
-        position: static !important;
-    }
-}
-@media(min-width: 992px) {
-    .col-sm-3 #sidebar {
-        width: 183px;
-    }
-}
-@media(min-width: 1200px) {
-    .col-sm-3 #sidebar {
-        width: 231px;
-    }
-}
-
 .tab-pane-loader {
     width: 100%;
     height: 300px;
