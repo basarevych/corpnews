@@ -3,6 +3,7 @@
         <tr>
             <th><?= $this->translate('Preview') ?></th>
             <th><?= $this->translate('Name') ?></th>
+            <th><?= $this->translate('Type') ?></th>
             <th><?= $this->translate('Size') ?></th>
         </tr>
     </thead>
@@ -22,6 +23,7 @@
                     <td><em><?= $this->translate('No preview available') ?></em></td>
                 <?php endif ?>
                 <td><?= $this->escapeHtml($item['name']) ?>
+                <td><?= $this->escapeHtml($item['type']) ?>
                 <td><?= $this->escapeHtml($item['size']) ?>
             </tr>
         <?php endforeach ?>

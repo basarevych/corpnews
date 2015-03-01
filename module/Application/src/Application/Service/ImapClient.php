@@ -200,17 +200,18 @@ class ImapClient implements ServiceLocatorAwareInterface
     /**
      * Load the letter
      *
-     * @param string $boxName
      * @param Letter $letter
+     * @param string $boxName
+     * @param integer $uid
      * @return boolean          True on successful parsing
      */
-    public function loadLetter($boxName, $letter)
+    public function loadLetter(Letter $letter, $boxName, $uid)
     {
         $box = mb_convert_encoding($boxName, "UTF7-IMAP", "UTF-8");
         $resource = $this->connect($this->getConnString() . $box);
 
-        $rawHeaders = @imap_fetchheader($resource, $letter->getUid(), FT_UID);
-        $rawBody = @imap_body($resource, $letter->getUid(), FT_UID);
+        $rawHeaders = @imap_fetchheader($resource, $uid, FT_UID);
+        $rawBody = @imap_body($resource, $uid, FT_UID);
 
         return $letter->load($rawHeaders, $rawBody);
     }
@@ -218,21 +219,40 @@ class ImapClient implements ServiceLocatorAwareInterface
     /**
      * Move letter to another mailbox
      *
-     * @param Letter $letter
-     * @param string $boxName
+     * @param integer $uid
+     * @param string $fromBoxName
+     * @param string $toBoxName
      * @return ImapClient
      */
-    public function moveLetter($letter, $fromBoxName, $toBoxName)
+    public function moveLetter($uid, $fromBoxName, $toBoxName)
     {
         $from = mb_convert_encoding($fromBoxName, "UTF7-IMAP", "UTF-8");
         $to = mb_convert_encoding($toBoxName, "UTF7-IMAP", "UTF-8");
 
         $resource = $this->connect($this->getConnString() . $from);
-        $result = @imap_mail_move($resource, $letter->getUid(), $to, CP_UID);
+        $result = @imap_mail_move($resource, $uid, $to, CP_UID);
         $this->disconnect($resource);
 
         if (!$result)
             throw new Exception("imap_mail_move failed: " . imap_last_error());
+
+        return $this;
+    }
+
+    /**
+     * Delete letter
+     *
+     * @param string $boxName
+     * @param integer $uid
+     * @return ImapClient
+     */
+    public function deleteLetter($boxName, $uid)
+    {
+        $box = mb_convert_encoding($boxName, "UTF7-IMAP", "UTF-8");
+
+        $resource = $this->connect($this->getConnString() . $box);
+        @imap_delete($resource, $uid, FT_UID);
+        $this->disconnect($resource);
 
         return $this;
     }

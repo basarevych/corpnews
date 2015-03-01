@@ -18,7 +18,7 @@
                         <h3 class="panel-title"><?= $this->translate('Letter Actions') ?></h3>
                     </div>
                     <div class="panel-body button-panel">
-                        <p class="help"><?= $this->translate('HELP_LETTER_ACTIONS_DESELECTED') ?></p>
+                        <p class="help"><?= $this->translate('HELP_LETTER_ACTIONS') ?></p>
                         <button id="template-button" class="btn btn-primary disabled" disabled="disabled">
                             <?= $this->translate('Use as template') ?>
                         </button>
@@ -31,23 +31,7 @@
                             <?= $this->translate('Re-analyze') ?>
                         </button>
                         <script>
-                            function updateActions(id) {
-                                var table = $('#table-' + id).data('dynamicTable');
-                                var selected = table.getSelected();
-                                if (selected.length) {
-                                    $('#actions-panel').find('p.help')
-                                        .text("<?= $this->escapeHtml($this->translate('HELP_LETTER_ACTIONS_SELECTED')) ?>");
-                                    $('#actions-panel').find('button')
-                                        .removeAttr('disabled')
-                                        .removeClass('disabled');
-                                } else {
-                                    $('#actions-panel').find('p.help')
-                                        .text("<?= $this->escapeHtml($this->translate('HELP_LETTER_ACTIONS_DESELECTED')) ?>");
-                                    $('#actions-panel').find('button')
-                                        .attr('disabled', 'disabled')
-                                        .addClass('disabled');
-                                }
-                            }
+                            $('#delete-button').on('click', function () { deleteLetter(); });
                         </script>
                     </div>
                 </div>
@@ -67,6 +51,7 @@
                             </a>
                             <script>
                                 $('a[href=#tab-<?= $box['id'] ?>]').on('show.bs.tab', function () {
+                                    selectedBox = '<?= $box['id'] ?>';
                                     updateActions('<?= $box['id'] ?>');
                                 });
                             </script>
@@ -96,7 +81,7 @@
 
 
                                         if (row['date'] != null) {
-                                            var m = moment(row['date'] * 1000);
+                                            var m = moment.unix(row['date']).local();
                                             row['date'] = m.format('YYYY-MM-DD HH:mm:ss');
                                         }
 
@@ -183,6 +168,12 @@
                 </div>
             </div>
             <div class="modal-footer">
+                <div class="pull-left">
+                    <strong>
+                        <?= $this->translate('Letter parse status') ?>:
+                        <span id="parse-status"><?= $this->translate('Loading...') ?></span>
+                    </strong>
+                </div>
                 <button class="btn btn-primary" data-dismiss="modal">
                     <?= $this->translate('Close') ?>
                 </button>
@@ -191,7 +182,54 @@
     </div>
 </div>
 
+<div id="modal-form" class="modal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title"></h4>
+            </div>
+            <div class="modal-body">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">
+                    <?= $this->translate('Cancel') ?>
+                </button>
+                <button type="submit" class="btn btn-primary">
+                    <?= $this->translate('Submit') ?>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script>
+    var selectedBox = '<?= $this->mailboxes[0]['id'] ?>';
+
+    function updateActions(id) {
+        var table = $('#table-' + id).data('dynamicTable');
+        var selected = table.getSelected();
+
+        if (selected.length) {
+            $('#actions-panel').find('p.help').hide();
+            $('#actions-panel').find('button')
+                .removeAttr('disabled')
+                .removeClass('disabled');
+        } else {
+            $('#actions-panel').find('p.help').show();
+            $('#actions-panel').find('button')
+                .attr('disabled', 'disabled')
+                .addClass('disabled');
+        }
+    }
+
+    function reloadTables() {
+        <?php foreach ($this->mailboxes as $box): ?>
+            var table = $('#table-<?= $box['id'] ?>').data('dynamicTable');
+            table.refresh();
+        <?php endforeach ?>
+    }
+
     function openLetter(box, uid) {
         $('#letter-modal .modal-title').text('<?= $this->translate('Loading...') ?>');
         $('#letter-modal .letter-frame').hide();
@@ -214,10 +252,36 @@
                 $('#source .letter-frame').html(data.source);
 
                 $('#letter-modal .modal-title').text(data.subject);
+                $('#parse-status').html(
+                    data.success
+                        ? '<span class="text-success"><?= $this->translate('Success') ?></span>'
+                        : '<span class="text-danger"><?= $this->translate('Failure') ?></span>'
+                );
                 $('#letter-modal .tab-pane-loader').hide();
                 $('#letter-modal .letter-frame').show();
             }
         );
+    }
+
+    function deleteLetter() {
+        var table = $('#table-' + selectedBox).data('dynamicTable');
+        var selected = table.getSelected();
+        if (selected.length == 0)
+            return;
+
+        $.ajax({
+            url: '<?= $this->basePath('/admin/mailbox/delete-letter') ?>',
+            data: {
+                box: selectedBox,
+                uid: selected.join(','),
+            },
+            success: function (html) {
+                var modal = $('#modal-form');
+                modal.find('.modal-title').text('<?= $this->translate('Delete letter') ?>');
+                modal.find('button[type=submit]').text('<?= $this->translate('Delete') ?>');
+                modal.find('.modal-body').html(html);
+            }
+        });
     }
 
     $(document).ready(function () {
@@ -228,9 +292,9 @@
                       + '<h3 class="popover-title"></h3>'
                       + '<div class="popover-content"></div>'
                       + '<div class="popover-navigation">'
-                      + '<button class="btn btn-default" data-role="prev"><?= $this->translate('TOUR_PREVIOUS_STEP') ?></button>'
-                      + '<button class="btn btn-default" data-role="next"><?= $this->translate('TOUR_NEXT_STEP') ?></button>'
-                      + '<button class="pull-right btn btn-default" data-role="end"><?= $this->translate('TOUR_END_TOUR') ?></button>'
+                      + '<button class="btn btn-default btn-sm" data-role="prev"><?= $this->translate('TOUR_PREVIOUS_STEP') ?></button>'
+                      + '<button class="btn btn-default btn-sm" data-role="next"><?= $this->translate('TOUR_NEXT_STEP') ?></button>'
+                      + '<button class="pull-right btn btn-default btn-sm" data-role="end"><?= $this->translate('TOUR_END_TOUR') ?></button>'
                       + '</div>'
                       + '</div>',
             steps: [
@@ -238,13 +302,13 @@
                     element: "#tablist",
                     placement: "left",
                     title: "Mailbox",
-                    content: "<?= $this->translate('TOUR_MAILBOX_TABLIST') ?>"
+                    content: "<?= str_replace('"', "'", $this->translate('TOUR_MAILBOX_TABLIST')) ?>"
                 },
                 {
                     element: "#template-button",
                     placement: "right",
                     title: "Mailbox",
-                    content: "<?= $this->translate('TOUR_MAILBOX_TEMPLATE') ?>"
+                    content: "<?= str_replace('"', '"', $this->translate('TOUR_MAILBOX_TEMPLATE')) ?>"
                 },
             ],
         });

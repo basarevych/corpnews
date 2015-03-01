@@ -19,8 +19,7 @@ return [
     'Replies' => 'Replies',
     'Bounces' => 'Bounces',
     'Letter Actions' => 'Letter Actions',
-    'HELP_LETTER_ACTIONS_DESELECTED' => 'Please select letter(s) in the list',
-    'HELP_LETTER_ACTIONS_SELECTED' => 'With selected letters:',
+    'HELP_LETTER_ACTIONS' => 'Please select letter(s) in the list',
     'Use as template' => 'Use as template',
     'Delete' => 'Delete',
     'Re-analyze' => 'Re-analyze',
@@ -40,8 +39,12 @@ return [
     'Name' => 'Name',
     'Size' => 'Size',
     'No preview available' => 'No preview available',
+    'Letter parse status' => 'Letter parse status',
+    'Success' => 'Success',
+    'Failure' => 'Failure',
     'TOUR_MAILBOX_TABLIST' => '<p>Start working with CorpNews by sending newsletter template as an email to the application mailbox</p>',
     'TOUR_MAILBOX_TEMPLATE' => '<p>When template is received select it in the table and click this button in order to create new mail campaign</p>',
+    'CONFIRM_LETTER_DELETE' => 'Delete selected letter(s)?',
 
     // Csrf validator
     'The form submitted did not originate from the expected site',

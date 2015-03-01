@@ -21,6 +21,7 @@ use Application\Exception\NotFoundException;
 use Application\Exception\BadRequestException;
 use Application\Model\Mailbox;
 use Admin\DynamicTable\MailboxAdapter;
+use Admin\Form\ConfirmForm;
 
 /**
  * Mailbox controller
@@ -43,19 +44,16 @@ class MailboxController extends AbstractActionController
                 'name'  => Mailbox::NAME_INCOMING,
                 'id'    => preg_replace('/[^A-Za-z0-9]/', '', Mailbox::NAME_INCOMING),
                 'count' => $imap->getLetterCount(Mailbox::NAME_INCOMING),
-                'help'  => 'OVERLAY_MBOX_INCOMING',
             ],
             [
                 'name'  => Mailbox::NAME_REPLIES,
                 'id'    => preg_replace('/[^A-Za-z0-9]/', '', Mailbox::NAME_REPLIES),
                 'count' => $imap->getLetterCount(Mailbox::NAME_REPLIES),
-                'help'  => 'OVERLAY_MBOX_REPLIES',
             ],
             [
                 'name'  => Mailbox::NAME_BOUNCES,
                 'id'    => preg_replace('/[^A-Za-z0-9]/', '', Mailbox::NAME_BOUNCES),
                 'count' => $imap->getLetterCount(Mailbox::NAME_BOUNCES),
-                'help'  => 'OVERLAY_MBOX_BOUNCES',
             ],
         ];
 
@@ -112,7 +110,7 @@ class MailboxController extends AbstractActionController
         if (!$letter)
             throw new NotFoundException('Letter not found');
 
-        $success = $imap->loadLetter($box, $letter);
+        $success = $imap->loadLetter($letter, $box, $uid);
 
         return new JsonModel([
             'success'       => $success,
@@ -152,15 +150,18 @@ class MailboxController extends AbstractActionController
             throw new NotFoundException('Letter not found');
 
         $success = $imap->loadLetter($box, $letter);
+        if (!$success)
+            throw new NotFoundException('Attachment not found');
 
         $att = null;
+        $type = 'application/octet-stream';
         foreach ($letter->getAttachments() as $item) {
             if ($item['cid'] == "<$cid>") {
                 $att = $item['data'];
+                $type = $item['type'];
                 break;
             }
         }
-
         if (!$att)
             throw new NotFoundException('Attachment not found');
 
@@ -210,11 +211,64 @@ class MailboxController extends AbstractActionController
 
         $response = $this->getResponse();
         $response->getHeaders()->addHeaders([
-            'Content-Type' => 'application/octet-strem',
+            'Content-Type' => $type,
             'Content-Transfer-Encoding' => 'binary'
         ]);
         $response->setContent($result);
         return $response;
+    }
+
+    /**
+     * Delete letter form action
+     */
+    public function deleteLetterAction()
+    {
+        $box = $this->params()->fromQuery('box');
+        if (!$box)
+            $box = $this->params()->fromPost('box');
+        if (!$box)
+            throw new \Exception('No "box" parameter');
+
+        $uid = $this->params()->fromQuery('uid');
+        if (!$uid)
+            $uid = $this->params()->fromPost('uid');
+        if (!$uid)
+            throw new \Exception('No "uid" parameter');
+
+        $sl = $this->getServiceLocator();
+        $imap = $sl->get('ImapClient');
+
+        $script = null;
+        $form = new ConfirmForm();
+        $messages = [];
+
+        $request = $this->getRequest();
+        if ($request->isPost()) {
+            $form->setData($request->getPost());
+
+            if ($form->isValid()) {
+                foreach (explode(',', $uid) as $item) {
+                    $letter = $imap->getLetter($box, $item);
+                    if ($letter)
+                        $imap->deleteLetter($box, $item);
+                }
+
+                $script = "$('#modal-form').modal('hide'); reloadTables()";
+            }
+        } else {
+            $form->setData([
+                'box' => $box,
+                'uid' => $uid
+            ]);
+        }
+
+        $model = new ViewModel([
+            'script'    => $script,
+            'form'      => $form,
+            'messages'  => $messages,
+        ]);
+        $model->setTerminal(true);
+        return $model;
     }
 
     /**
@@ -378,6 +432,7 @@ class MailboxController extends AbstractActionController
             $attachments[] = [
                 'is_image'  => ($resource !== false),
                 'name'      => $item['name'],
+                'type'      => $item['type'],
                 'cid'       => $cid,
                 'size'      => \Application\Tool\Text::sizeToStr(strlen($item['data'])),
             ];

@@ -613,14 +613,22 @@ class Letter
                     }
     
                     $cid = null;
+                    $attType = null;
                     foreach ($section['headers'] as $headerKey => $headerValue) {
                         if (strtolower($headerKey) == 'content-id')
                             $cid = join(' ', $headerValue);
+                        if (strtolower($headerKey) == 'content-type') {
+                            $attType = join(' ', $headerValue);
+                            $pos = strpos($attType, ';');
+                            if ($pos != false)
+                                $attType = substr($attType, 0, $pos);
+                        }
                     }
     
                     $this->attachments[] = array(
                         'cid'   => $cid,
                         'name'  => $matches[1],
+                        'type'  => $attType ? $attType : 'application/octet-stream',
                         'data'  => $body
                     );
                 }
