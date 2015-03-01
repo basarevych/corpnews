@@ -16,7 +16,7 @@ $uid = $form->get('uid');
 
 <form class="form-horizontal" name="<?= $form->getName() ?>" onsubmit="return false"
       method="<?= $form->getAttribute('method') ?>"
-      action="<?= $this->basePath('/admin/mailbox/delete-letter') ?>">
+      action="<?= $this->basePath('/admin/mailbox/reanalyze-letter') ?>">
 
     <input type="hidden"
            name="<?= $security->getName() ?>"
@@ -36,7 +36,7 @@ $uid = $form->get('uid');
         </div>
     <?php endforeach ?>
 
-    <p><?= $this->translate('CONFIRM_DELETE_LETTER') ?></p>
+    <p><?= $this->translate('CONFIRM_REANALYZE_LETTER') ?></p>
 </form>
 
 <script>

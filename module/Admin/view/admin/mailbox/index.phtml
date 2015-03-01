@@ -32,6 +32,7 @@
                         </button>
                         <script>
                             $('#delete-button').on('click', function () { deleteLetter(); });
+                            $('#reanalyze-button').on('click', function () { reanalyzeLetter(); });
                         </script>
                     </div>
                 </div>
@@ -279,6 +280,27 @@
                 var modal = $('#modal-form');
                 modal.find('.modal-title').text('<?= $this->translate('Delete letter') ?>');
                 modal.find('button[type=submit]').text('<?= $this->translate('Delete') ?>');
+                modal.find('.modal-body').html(html);
+            }
+        });
+    }
+
+    function reanalyzeLetter() {
+        var table = $('#table-' + selectedBox).data('dynamicTable');
+        var selected = table.getSelected();
+        if (selected.length == 0)
+            return;
+
+        $.ajax({
+            url: '<?= $this->basePath('/admin/mailbox/reanalyze-letter') ?>',
+            data: {
+                box: selectedBox,
+                uid: selected.join(','),
+            },
+            success: function (html) {
+                var modal = $('#modal-form');
+                modal.find('.modal-title').text('<?= $this->translate('Reanalyze letter') ?>');
+                modal.find('button[type=submit]').text('<?= $this->translate('Process') ?>');
                 modal.find('.modal-body').html(html);
             }
         });

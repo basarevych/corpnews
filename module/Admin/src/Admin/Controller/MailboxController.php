@@ -272,6 +272,59 @@ class MailboxController extends AbstractActionController
     }
 
     /**
+     * Reanalyze letter form action
+     */
+    public function reanalyzeLetterAction()
+    {
+        $box = $this->params()->fromQuery('box');
+        if (!$box)
+            $box = $this->params()->fromPost('box');
+        if (!$box)
+            throw new \Exception('No "box" parameter');
+
+        $uid = $this->params()->fromQuery('uid');
+        if (!$uid)
+            $uid = $this->params()->fromPost('uid');
+        if (!$uid)
+            throw new \Exception('No "uid" parameter');
+
+        $sl = $this->getServiceLocator();
+        $imap = $sl->get('ImapClient');
+
+        $script = null;
+        $form = new ConfirmForm();
+        $messages = [];
+
+        $request = $this->getRequest();
+        if ($request->isPost()) {
+            $form->setData($request->getPost());
+
+            if ($form->isValid()) {
+                foreach (explode(',', $uid) as $item) {
+                    $letter = $imap->getLetter($box, $item);
+                    if ($letter)
+                        $imap->moveLetter($item, $box, Mailbox::NAME_INBOX);
+                }
+
+                $script = "$('#modal-form').modal('hide'); reloadTables()";
+            }
+        } else {
+            $form->setData([
+                'box' => $box,
+                'uid' => $uid
+            ]);
+        }
+
+        $model = new ViewModel([
+            'script'    => $script,
+            'form'      => $form,
+            'messages'  => $messages,
+        ]);
+        $model->setTerminal(true);
+        return $model;
+    }
+
+    /**
      * This action is called when requested action is not found
      */
     public function notFoundAction()

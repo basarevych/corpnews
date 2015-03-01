@@ -44,7 +44,8 @@ return [
     'Failure' => 'Failure',
     'TOUR_MAILBOX_TABLIST' => '<p>Start working with CorpNews by sending newsletter template as an email to the application mailbox</p>',
     'TOUR_MAILBOX_TEMPLATE' => '<p>When template is received select it in the table and click this button in order to create new mail campaign</p>',
-    'CONFIRM_LETTER_DELETE' => 'Delete selected letter(s)?',
+    'CONFIRM_DELETE_LETTER' => 'Delete selected letter(s)?',
+    'CONFIRM_REANALYZE_LETTER' => 'Reset status of selected letter(s)?<br><br>The letter will soon reappear in one of the mailboxes again',
 
     // Csrf validator
     'The form submitted did not originate from the expected site',
