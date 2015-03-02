@@ -55,6 +55,7 @@ return [
     'Previous Exception information' => 'Информация предыдущего исключения',
     'Class' => 'Класс',
     'Code' => 'Код',
+    'Message' => 'Сообщение',
     'File' => 'Файл',
     'Line' => 'Строка',
     'Stack trace' => 'Трассировка стека',
