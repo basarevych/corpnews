@@ -1,11 +1,10 @@
 <?php
 /**
- * ZF2 Skeleton
+ * CorpNews
  *
- * @link        http://mycode.daemon-notes.com/projects/zf2-skeleton
- * @copyright   Copyright (c) 2012-2014 Ross at daemon-notes.com
- * @license     http://daemon-notes.com/license/software FreeBSD License
- * @version     $Id: Text.php 118 2014-04-03 07:07:29Z ross $
+ * @link        https://github.com/basarevych/corpnews
+ * @copyright   Copyright (c) 2015 basarevych@gmail.com
+ * @license     http://choosealicense.com/licenses/mit/ MIT
  */
 
 namespace Application\Tool;
@@ -13,7 +12,7 @@ namespace Application\Tool;
 /**
  * Text helper class
  * 
- * @category    Skeleton
+ * @category    Application
  * @package     Tool
  */
 class Text

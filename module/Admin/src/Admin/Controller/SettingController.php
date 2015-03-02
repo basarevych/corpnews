@@ -76,7 +76,7 @@ class SettingController extends AbstractActionController
             }
         } else {
             $form->setData([
-                'autodelete' => $setting->getValueInteger(),
+                'autodelete' => \Application\Tool\Number::localeFormat($setting->getValueInteger()),
             ]);
         }
 
