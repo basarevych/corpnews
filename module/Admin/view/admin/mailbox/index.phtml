@@ -343,7 +343,7 @@
     });
 
     $(document).ready(function () {
-        tour.init();
+        tour.init().start();
         $('#tour-button')
             .on('click', function () { tour.restart(); })
             .parent().show();
