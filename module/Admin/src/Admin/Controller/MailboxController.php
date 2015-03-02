@@ -143,7 +143,7 @@ class MailboxController extends AbstractActionController
         if (!$letter)
             throw new NotFoundException('Letter not found');
 
-        $success = $imap->loadLetter($box, $letter);
+        $success = $imap->loadLetter($letter, $box, $uid);
         if (!$success)
             throw new NotFoundException('Attachment not found');
 

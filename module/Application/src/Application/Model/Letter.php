@@ -624,7 +624,7 @@ class Letter
                                 $attType = substr($attType, 0, $pos);
                         }
                     }
-    
+
                     $this->attachments[] = array(
                         'cid'   => $cid,
                         'name'  => $matches[1],
