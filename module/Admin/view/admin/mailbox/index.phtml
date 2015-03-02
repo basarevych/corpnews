@@ -211,7 +211,18 @@
         var table = $('#table-' + id).data('dynamicTable');
         var selected = table.getSelected();
 
-        if (selected.length) {
+        if (selected == 'all' || selected.length > 1) {
+            $('#actions-panel').find('p.help').hide();
+            $('#template-button')
+                .attr('disabled', 'disabled')
+                .addClass('disabled');
+            $('#delete-button')
+                .removeAttr('disabled')
+                .removeClass('disabled');
+            $('#reanalyze-button')
+                .removeAttr('disabled')
+                .removeClass('disabled');
+        } else if (selected.length) {
             $('#actions-panel').find('p.help').hide();
             $('#actions-panel').find('button')
                 .removeAttr('disabled')
