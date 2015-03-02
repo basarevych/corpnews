@@ -72,6 +72,7 @@
                                     sort_column: 'date',
                                     sort_dir: 'desc',
                                     loader_image: '<?= $this->basePath('/img/loader.gif') ?>',
+                                    strings: dynamicTableStrings,
                                     mapper: function (row) {
                                         if (row['subject'].trim().length == 0)
                                             row['subject'] = '<?= $this->translate('(No subject)') ?>';
@@ -312,31 +313,31 @@
             {
                 element: "#mailbox-navbar",
                 placement: "bottom",
-                title: "Mailbox",
+                title: "<?= str_replace('"', "'", $this->translate('Mailbox')) ?>",
                 content: "<?= str_replace('"', "'", $this->translate('TOUR_MAILBOX_INTRO')) ?>"
             },
             {
                 element: "#incoming-tab",
                 placement: "bottom",
-                title: "Mailbox",
+                title: "<?= str_replace('"', "'", $this->translate('Mailbox')) ?>",
                 content: "<?= str_replace('"', "'", $this->translate('TOUR_MAILBOX_INCOMING')) ?>"
             },
             {
                 element: "#replies-tab",
                 placement: "bottom",
-                title: "Mailbox",
+                title: "<?= str_replace('"', "'", $this->translate('Mailbox')) ?>",
                 content: "<?= str_replace('"', "'", $this->translate('TOUR_MAILBOX_REPLIES')) ?>"
             },
             {
                 element: "#bounces-tab",
                 placement: "bottom",
-                title: "Mailbox",
+                title: "<?= str_replace('"', "'", $this->translate('Mailbox')) ?>",
                 content: "<?= str_replace('"', "'", $this->translate('TOUR_MAILBOX_BOUNCES')) ?>"
             },
             {
                 element: "#template-button",
                 placement: "right",
-                title: "Mailbox",
+                title: "<?= str_replace('"', "'", $this->translate('Mailbox')) ?>",
                 content: "<?= str_replace('"', '"', $this->translate('TOUR_MAILBOX_TEMPLATE')) ?>"
             },
         ]
