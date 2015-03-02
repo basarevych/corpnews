@@ -1,12 +1,13 @@
 {
-    "name": "basarevych/zf2-skeleton",
-    "description": "ZF2 Skeleton",
+    "name": "basarevych/corpnews",
+    "description": "CorpNews",
     "license": "MIT",
     "keywords": [
         "zf",
-        "doctrine"
+        "doctrine",
+        "mail"
     ],
-    "homepage": "https://github.com/basarevych/zf2-skeleton",
+    "homepage": "https://github.com/basarevych/corpnews",
     "require": {
         "php": ">=5.4.8",
         "zendframework/zendframework": "2.3.*",

@@ -41,6 +41,12 @@ return [
     'CONFIRM_DELETE_LETTER' => 'Delete selected letter(s)?',
     'CONFIRM_REANALYZE_LETTER' => 'Reset status of selected letter(s)?<br><br>The letter will soon reappear in one of the mailbox\'es folder again',
 
+    // SettingController
+    'Settings' => 'Settings',
+    'Mailbox settings' => 'Mailbox settings',
+    'Autodelete' => 'Autodelete',
+    'Days' => 'Days',
+
     // Tours
     'TOUR_MAILBOX_INTRO' => '<p>Start working with CorpNews by sending newsletter template as an email to the application mailbox</p>',
     'TOUR_MAILBOX_INCOMING' => '<p><strong>Incoming</strong> is the folder new mail will go to.</p>',

@@ -10,7 +10,7 @@
 namespace Application\Controller;
 
 use Zend\Mvc\Controller\AbstractConsoleController;
-use Application\Entity\Sample as SampleEntity;
+use Application\Entity\Setting as SettingEntity;
 
 /**
  * Console controller
@@ -40,5 +40,19 @@ class ConsoleController extends AbstractConsoleController
      */
     public function populateDbAction()
     {
+        $sl = $this->getServiceLocator();
+        $em = $sl->get('Doctrine\ORM\EntityManager');
+
+        $autodelete = $em->getRepository('Application\Entity\Setting')
+                         ->findOneByName('MailboxAutodelete');
+        if (!$autodelete) {
+            $autodelete = new SettingEntity();
+            $autodelete->setName('MailboxAutodelete');
+            $autodelete->setType(SettingEntity::TYPE_INTEGER);
+            $autodelete->setValueInteger(30);
+
+            $em->persist($autodelete);
+            $em->flush();
+        }
     }
 } 

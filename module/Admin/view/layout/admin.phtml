@@ -74,68 +74,124 @@
     </head>
     <body class="with-navbar">
 
-    <nav class="navbar navbar-default navbar-fixed-top">
-        <div class="container">
-            <div class="navbar-header">
-                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#layout-navbar-collapse">
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </button>
-                <a class="navbar-brand" href="<?= $this->basePath('/admin') ?>">
-                    <?= $this->translate('APP_TITLE') ?>
-                </a>
-            </div>
-
-            <div class="collapse navbar-collapse" id="layout-navbar-collapse">
-                <ul class="nav navbar-nav">
-                    <li <?= $activePage == 'mailbox' ? 'class="active"' : '' ?>>
-                        <a id="mailbox-navbar" href="<?= $this->basePath('/admin/mailbox') ?>">
-                            <?= $this->translate('Mailbox') ?>
-                        </a>
-                    </li>
-                </ul>
-
-                <div class="nav navbar-nav navbar-right" style="display: none">
-                    <button id="tour-button" class="navbar-btn btn btn-default">
-                        <?= $this->translate('Tutorial') ?>
+        <nav class="navbar navbar-default navbar-fixed-top">
+            <div class="container">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#layout-navbar-collapse">
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
                     </button>
+                    <a class="navbar-brand" href="<?= $this->basePath('/admin') ?>">
+                        <?= $this->translate('APP_TITLE') ?>
+                    </a>
                 </div>
 
-                <ul class="nav navbar-nav navbar-right">
-                    <li class="dropdown">
-                        <a href="javascript:void(0)" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
-                            <?php $short = substr($this->locale['current'], 0, 2); ?>
-                            <img src="<?= $this->basePath('/img/flags/' . $short . '.gif') ?>">
-                            <?= $short ?>
-                            <span class="caret"></span>
-                        </a>
-                        <ul class="dropdown-menu" role="menu">
-                            <?php foreach ($this->locale['available'] as $locale): ?>
+                <div class="collapse navbar-collapse" id="layout-navbar-collapse">
+                    <ul class="nav navbar-nav">
+                        <li <?= $activePage == 'mailbox' ? 'class="active"' : '' ?>>
+                            <a id="mailbox-navbar" href="<?= $this->basePath('/admin/mailbox') ?>">
+                                <?= $this->translate('Mailbox') ?>
+                            </a>
+                        </li>
+
+                        <li class="dropdown">
+                            <a href="javascript:void(0)" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+                                <?= $this->translate('Settings') ?>
+                                <span class="caret"></span>
+                            </a>
+                            <ul class="dropdown-menu" role="menu">
                                 <li>
-                                    <a href="javascript:void(0)" onclick="$.cookie('locale', '<?= $locale ?>'); window.location.reload()">
-                                        <span class="glyphicon glyphicon-ok <?= $this->locale['cookie'] == $locale ?: 'invisible' ?>"></span>
-                                        <?= $this->translate($locale) ?>
+                                    <a href="javascript:void(0)" onclick="settingsForm('mailbox')">
+                                        <?= $this->translate('Mailbox') ?>
                                     </a>
                                 </li>
-                            <?php endforeach ?>
-                            <li class="divider"></li>
-                            <li>
-                                <a href="javascript:void(0)" onclick="$.removeCookie('locale'); window.location.reload()">
-                                    <span class="glyphicon glyphicon-ok <?= $this->locale['cookie'] == '' ?: 'invisible' ?>"></span>
-                                    <?= $this->translate('Autodetect') ?>
-                                </a>
-                            </li>
-                        </ul>
-                    </li>
-                </ul>
+                            </ul>
+                        </li>
+                    </ul>
+
+                    <div class="nav navbar-nav navbar-right" style="display: none">
+                        <button id="tour-button" class="navbar-btn btn btn-default">
+                            <?= $this->translate('Tutorial') ?>
+                        </button>
+                    </div>
+
+                    <ul class="nav navbar-nav navbar-right">
+                        <li class="dropdown">
+                            <a href="javascript:void(0)" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+                                <?php $short = substr($this->locale['current'], 0, 2); ?>
+                                <img src="<?= $this->basePath('/img/flags/' . $short . '.gif') ?>">
+                                <?= $short ?>
+                                <span class="caret"></span>
+                            </a>
+                            <ul class="dropdown-menu" role="menu">
+                                <?php foreach ($this->locale['available'] as $locale): ?>
+                                    <li>
+                                        <a href="javascript:void(0)" onclick="$.cookie('locale', '<?= $locale ?>'); window.location.reload()">
+                                            <span class="glyphicon glyphicon-ok <?= $this->locale['cookie'] == $locale ?: 'invisible' ?>"></span>
+                                            <?= $this->translate($locale) ?>
+                                        </a>
+                                    </li>
+                                <?php endforeach ?>
+                                <li class="divider"></li>
+                                <li>
+                                    <a href="javascript:void(0)" onclick="$.removeCookie('locale'); window.location.reload()">
+                                        <span class="glyphicon glyphicon-ok <?= $this->locale['cookie'] == '' ?: 'invisible' ?>"></span>
+                                        <?= $this->translate('Autodetect') ?>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
             </div>
-        </div>
-    </nav>
+        </nav>
 
 <?= $this->content; ?>
 
 <?= $this->inlineScript() ?>
 
+        <div id="modal-form" class="modal">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title"></h4>
+                    </div>
+                    <div class="modal-body">
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">
+                            <?= $this->translate('Cancel') ?>
+                        </button>
+                        <button type="submit" class="btn btn-primary">
+                            <?= $this->translate('Submit') ?>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            function settingsForm(page) {
+                var title = null, submit = null;
+                switch (page) {
+                    case 'mailbox':
+                        title = '<?= $this->translate('Mailbox settings') ?>';
+                        submit = '<?= $this->translate('Save') ?>';
+                        break;
+                }
+
+                $.ajax({
+                    url: '<?= $this->basePath('/admin/setting/') ?>' + page + '-form',
+                    success: function (html) {
+                        var modal = $('#modal-form');
+                        modal.find('.modal-title').text(title);
+                        modal.find('button[type=submit]').text(submit);
+                        modal.find('.modal-body').html(html);
+                    }
+                });
+            }
+        </script>
     </body>
 </html>
