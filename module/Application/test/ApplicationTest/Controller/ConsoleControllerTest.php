@@ -13,8 +13,6 @@ class ConsoleControllerTest extends AbstractConsoleControllerTestCase
 
         parent::setUp();
 
-        $sl = $this->getApplicationServiceLocator();
-
         $this->em = $this->getMockBuilder('Doctrine\ORM\EntityManager')
                          ->disableOriginalConstructor()
                          ->setMethods([ 'getRepository', 'persist', 'flush' ])
@@ -31,6 +29,7 @@ class ConsoleControllerTest extends AbstractConsoleControllerTestCase
                     [ 'Application\Entity\Setting', $this->repoSetting ],
                 ]));
 
+        $sl = $this->getApplicationServiceLocator();
         $sl->setAllowOverride(true);
         $sl->setService('Doctrine\ORM\EntityManager', $this->em);
     }
