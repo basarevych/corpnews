@@ -57,7 +57,7 @@ class MailboxControllerTest extends AbstractHttpControllerTestCase
                 'cid'   => '<cid>',
                 'name'  => 'att1',
                 'type'  => 'application/octet-stream',
-                'data'  => 'baz'
+                'data'  => file_get_contents(__DIR__ . '/../../../../../public.prod/img/loader.gif')
             ]
         ]);
 
@@ -190,8 +190,8 @@ class MailboxControllerTest extends AbstractHttpControllerTestCase
 
         $subPage = $data['attachments'];
         $this->assertQueryContentRegexAtLeastOnce(
-            'table tbody tr td',
-            '/^.*No preview available.*$/m',
+            'table tbody tr td img[src="/admin/mailbox/attachment?box=box&uid=42&cid=cid&preview=1"]',
+            '/^$/m',
             false,
             $subPage
         );
