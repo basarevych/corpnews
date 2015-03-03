@@ -24,7 +24,7 @@ class MailboxControllerTest extends AbstractHttpControllerTestCase
         $cnt->is_admin = true;
 
         $this->imap = $this->getMockBuilder('Application\Service\ImapClient')
-                           ->setMethods([ 'search', 'getLetter' ])
+                           ->setMethods([ 'search', 'getLetter', 'loadLetter' ])
                            ->getMock();
 
         $this->imap->expects($this->any())
@@ -35,17 +35,60 @@ class MailboxControllerTest extends AbstractHttpControllerTestCase
         $letter2 = new Letter(2);
         $letter3 = new Letter(3);
 
-        $letterCallback = function ($boxName, $uid) use ($letter1, $letter2, $letter3) {
+        $letterMock = new Letter(42);
+        $class = new \ReflectionClass(get_class($letterMock));
+
+        $property = $class->getProperty('subject');
+        $property->setAccessible(true);
+        $property->setValue($letterMock, 'subject');
+
+        $property = $class->getProperty('htmlMessage');
+        $property->setAccessible(true);
+        $property->setValue($letterMock, 'foo');
+
+        $property = $class->getProperty('textMessage');
+        $property->setAccessible(true);
+        $property->setValue($letterMock, 'bar');
+
+        $property = $class->getProperty('attachments');
+        $property->setAccessible(true);
+        $property->setValue($letterMock, [
+            [
+                'cid'   => '<cid>',
+                'name'  => 'att1',
+                'type'  => 'application/octet-stream',
+                'data'  => 'baz'
+            ]
+        ]);
+
+        $property = $class->getProperty('log');
+        $property->setAccessible(true);
+        $property->setValue($letterMock, 'log');
+
+        $property = $class->getProperty('rawHeaders');
+        $property->setAccessible(true);
+        $property->setValue($letterMock, 'headers');
+
+        $property = $class->getProperty('rawBody');
+        $property->setAccessible(true);
+        $property->setValue($letterMock, 'body');
+
+        $letterCallback = function ($boxName, $uid) use ($letter1, $letter2, $letter3, $letterMock) {
             switch ($uid) {
                 case 1: return $letter1;
                 case 2: return $letter2;
                 case 3: return $letter3;
+                case 42: return $letterMock;
             }
         };
 
         $this->imap->expects($this->any())
                    ->method('getLetter')
                    ->will($this->returnCallback($letterCallback));
+
+        $this->imap->expects($this->any())
+                   ->method('loadLetter')
+                   ->will($this->returnValue(true));
 
         $sl->setAllowOverride(true);
         $sl->setService('ImapClient', $this->imap);
@@ -105,7 +148,7 @@ class MailboxControllerTest extends AbstractHttpControllerTestCase
     public function testLetterTableActionSendsData()
     {
         $this->dispatch('/admin/mailbox/letter-table', HttpRequest::METHOD_GET, [ 'query' => 'data' ]);
-        //$this->assertResponseStatusCode(200);
+        $this->assertResponseStatusCode(200);
 
         $response = $this->getResponse()->getContent();
         $data = Json::decode($response, Json::TYPE_ARRAY);
@@ -115,6 +158,57 @@ class MailboxControllerTest extends AbstractHttpControllerTestCase
         $this->assertEquals(2, $data['rows'][1]['uid'], "Invalid UID");
         $this->assertEquals(3, $data['rows'][2]['uid'], "Invalid UID");
     }
+
+    public function testLetterActionCanBeAccessed()
+    {
+        $this->dispatch('/admin/mailbox/letter');
+
+        $this->assertModuleName('admin');
+        $this->assertControllerName('admin\controller\mailbox');
+        $this->assertControllerClass('MailboxController');
+        $this->assertMatchedRouteName('admin');
+    }
+
+    public function testLetterActionWorks()
+    {
+        $params = [
+            'box' => 'box',
+            'uid' => 42
+        ];
+        $this->dispatch('/admin/mailbox/letter', HttpRequest::METHOD_GET, $params);
+        $this->assertResponseStatusCode(200);
+
+        $response = $this->getResponse()->getContent();
+        $data = Json::decode($response, Json::TYPE_ARRAY);
+
+        $this->assertEquals(true, isset($data['success']) && $data['success'], "Result is not a success");
+        $this->assertEquals('subject', $data['subject'], "Subject item is wrong");
+        $this->assertEquals('foo', $data['html'], "HTML item is wrong");
+        $this->assertEquals('<p>bar</p>', $data['text'], "Text item is wrong");
+        $this->assertEquals('<div class="pre">log</div>', $data['log'], "Log item is wrong");
+        $this->assertEquals('<div class="pre">headers' . "\n\n" . 'body</div>', $data['source'], "Source item is wrong");
+
+        $subPage = $data['attachments'];
+        $this->assertQueryContentRegexAtLeastOnce(
+            'table tbody tr td',
+            '/^.*No preview available.*$/m',
+            false,
+            $subPage
+        );
+        $this->assertQueryContentRegexAtLeastOnce(
+            'table tbody tr td',
+            '/^.*att1.*$/m',
+            false,
+            $subPage
+        );
+        $this->assertQueryContentRegexAtLeastOnce(
+            'table tbody tr td',
+            '/^.*application\\/octet-stream.*$/m',
+            false,
+            $subPage
+        );
+    }
+
 /*
     public function testMailboxFormActionCreatesEntity()
     {
