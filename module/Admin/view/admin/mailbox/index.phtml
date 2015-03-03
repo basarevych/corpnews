@@ -19,21 +19,17 @@
                     </div>
                     <div class="panel-body button-panel">
                         <p class="help"><?= $this->translate('HELP_LETTER_ACTIONS') ?></p>
-                        <button id="template-button" class="btn btn-primary disabled" disabled="disabled">
+                        <button id="template-button" class="btn btn-primary disabled" disabled="disabled" onclick="createCampaign()">
                             <?= $this->translate('Use as template') ?>
                         </button>
                         <hr>
-                        <button id="delete-button" class="btn btn-default disabled" disabled="disabled">
+                        <button id="delete-button" class="btn btn-default disabled" disabled="disabled" onclick="deleteLetter()">
                             <?= $this->translate('Delete') ?>
                         </button>
                         <hr>
-                        <button id="reanalyze-button" class="btn btn-default" disabled="disabled">
+                        <button id="reanalyze-button" class="btn btn-default" disabled="disabled" onclick="reanalyzeLetter()">
                             <?= $this->translate('Re-analyze') ?>
                         </button>
-                        <script>
-                            $('#delete-button').on('click', function () { deleteLetter(); });
-                            $('#reanalyze-button').on('click', function () { reanalyzeLetter(); });
-                        </script>
                     </div>
                 </div>
             </div>
