@@ -3,6 +3,7 @@
 namespace ApplicationTest\Controller;
 
 use Zend\Test\PHPUnit\Controller\AbstractConsoleControllerTestCase;
+use Application\Entity\Setting as SettingEntity;
 
 class ConsoleControllerTest extends AbstractConsoleControllerTestCase
 {
@@ -54,5 +55,36 @@ class ConsoleControllerTest extends AbstractConsoleControllerTestCase
         $this->assertControllerName('application\controller\console');
         $this->assertControllerClass('ConsoleController');
         $this->assertMatchedRouteName('populate-db');
+    }
+
+    public function testPopulateDbActionWorks()
+    {
+        $this->repoSetting->expects($this->any())
+                          ->method('findOneByName')
+                          ->will($this->returnValue(null));
+
+        $persistedSettings = [];
+        $callback = function ($entity) use (&$persistedSettings) {
+            if ($entity instanceof SettingEntity)
+                $persistedSettings[] = $entity;
+        };
+
+        $this->em->expects($this->any())
+                 ->method('persist')
+                 ->will($this->returnCallback($callback));
+
+        $this->dispatch('populate-db');
+
+        $this->assertEquals(1, count($persistedSettings), "One Setting should have been saved");
+
+        $autodelete = false;
+        foreach ($persistedSettings as $setting) {
+            if ($setting->getName() == 'MailboxAutodelete'
+                    && $setting->getType() == SettingEntity::TYPE_INTEGER) {
+                $autodelete = true;
+            }
+        }
+
+        $this->assertEquals(true, $autodelete, "MailboxAutodelete was not created");
     }
 }
