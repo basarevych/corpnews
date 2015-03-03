@@ -7,6 +7,7 @@ use Zend\Dom\Query;
 use Zend\Json\Json;
 use Zend\Test\PHPUnit\Controller\AbstractHttpControllerTestCase;
 use Application\Model\Letter;
+use Application\Model\Mailbox;
 
 class MailboxControllerTest extends AbstractHttpControllerTestCase
 {
@@ -24,7 +25,7 @@ class MailboxControllerTest extends AbstractHttpControllerTestCase
         $cnt->is_admin = true;
 
         $this->imap = $this->getMockBuilder('Application\Service\ImapClient')
-                           ->setMethods([ 'search', 'getLetter', 'loadLetter' ])
+                           ->setMethods([ 'search', 'getLetter', 'loadLetter', 'deleteLetter', 'moveLetter' ])
                            ->getMock();
 
         $this->imap->expects($this->any())
@@ -50,6 +51,7 @@ class MailboxControllerTest extends AbstractHttpControllerTestCase
         $property->setAccessible(true);
         $property->setValue($letterMock, 'bar');
 
+        $this->attBody = file_get_contents(__DIR__ . '/../../../../../public.prod/img/loader.gif');
         $property = $class->getProperty('attachments');
         $property->setAccessible(true);
         $property->setValue($letterMock, [
@@ -57,7 +59,7 @@ class MailboxControllerTest extends AbstractHttpControllerTestCase
                 'cid'   => '<cid>',
                 'name'  => 'att1',
                 'type'  => 'application/octet-stream',
-                'data'  => file_get_contents(__DIR__ . '/../../../../../public.prod/img/loader.gif')
+                'data'  => $this->attBody
             ]
         ]);
 
@@ -209,19 +211,47 @@ class MailboxControllerTest extends AbstractHttpControllerTestCase
         );
     }
 
-/*
-    public function testMailboxFormActionCreatesEntity()
+    public function testAttachmentActionCanBeAccessed()
     {
-        $setting = new SettingEntity();
-        $setting->setName('MailboxAutodelete');
-        $setting->setType(SettingEntity::TYPE_INTEGER);
-        $setting->setValueInteger(1);
+        $this->dispatch('/admin/mailbox/attachment');
 
-        $this->repoSetting->expects($this->any())
-                          ->method('findOneByName')
-                          ->will($this->returnValue($setting));
+        $this->assertModuleName('admin');
+        $this->assertControllerName('admin\controller\mailbox');
+        $this->assertControllerClass('MailboxController');
+        $this->assertMatchedRouteName('admin');
+    }
 
-        $this->dispatch('/admin/setting/mailbox-form');
+    public function testAttachmentActionWorks()
+    {
+        $params = [
+            'box' => 'box',
+            'uid' => 42,
+            'cid' => 'cid'
+        ];
+        $this->dispatch('/admin/mailbox/attachment', HttpRequest::METHOD_GET, $params);
+        $this->assertResponseStatusCode(200);
+
+        $response = $this->getResponse()->getContent();
+        $this->assertEquals($this->attBody, $response);
+    }
+
+    public function testDeleteLetterActionCanBeAccessed()
+    {
+        $this->dispatch('/admin/mailbox/delete-letter');
+
+        $this->assertModuleName('admin');
+        $this->assertControllerName('admin\controller\mailbox');
+        $this->assertControllerClass('MailboxController');
+        $this->assertMatchedRouteName('admin');
+    }
+
+    public function testDeleteLetterActionWorks()
+    {
+        $getParams = [
+            'box' => 'box',
+            'uid' => 42
+        ];
+        $this->dispatch('/admin/mailbox/delete-letter', HttpRequest::METHOD_GET, $getParams);
         $this->assertResponseStatusCode(200);
 
         $response = $this->getResponse();
@@ -229,25 +259,74 @@ class MailboxControllerTest extends AbstractHttpControllerTestCase
         $result = $dom->execute('input[name="security"]');
         $security = count($result) ? $result[0]->getAttribute('value') : null;
 
-        $dt = new \DateTime();
         $postParams = [
             'security' => $security,
-            'autodelete' => 123,
+            'box' => 'box',
+            'uid' => 42
         ];
 
-        $persisted = null;
-        $this->em->expects($this->any())
-                 ->method('persist')
-                 ->will($this->returnCallback(function ($entity) use (&$persisted) {
-                    $persisted = $entity;
-                 }));
+        $deletedBox = null;
+        $deletedUid = null;
+        $this->imap->expects($this->any())
+                   ->method('deleteLetter')
+                   ->will($this->returnCallback(function ($box, $uid) use (&$deletedBox, &$deletedUid) {
+                        $deletedBox = $box;
+                        $deletedUid = $uid;
+                    }));
 
-        $this->dispatch('/admin/setting/mailbox-form', HttpRequest::METHOD_POST, $postParams);
+        $this->dispatch('/admin/mailbox/delete-letter', HttpRequest::METHOD_POST, $postParams);
         $this->assertResponseStatusCode(200);
 
-        $this->assertEquals(true, $persisted instanceof SettingEntity, "Setting entity was not created");
-        $this->assertEquals('MailboxAutodelete', $persisted->getName(), "MailboxAutodelete was not created");
-        $this->assertEquals(123, $persisted->getValueInteger(), "MailboxAutodelete has incorrect value");
+        $this->assertEquals('box', $deletedBox, "Box name is incorrect");
+        $this->assertEquals(42, $deletedUid, "UID is incorrect");
     }
-*/
+
+    public function testReanalyzeLetterActionCanBeAccessed()
+    {
+        $this->dispatch('/admin/mailbox/reanalyze-letter');
+
+        $this->assertModuleName('admin');
+        $this->assertControllerName('admin\controller\mailbox');
+        $this->assertControllerClass('MailboxController');
+        $this->assertMatchedRouteName('admin');
+    }
+
+    public function testReanalyzeLetterActionWorks()
+    {
+        $getParams = [
+            'box' => 'box',
+            'uid' => 42
+        ];
+        $this->dispatch('/admin/mailbox/reanalyze-letter', HttpRequest::METHOD_GET, $getParams);
+        $this->assertResponseStatusCode(200);
+
+        $response = $this->getResponse();
+        $dom = new Query($response->getContent());
+        $result = $dom->execute('input[name="security"]');
+        $security = count($result) ? $result[0]->getAttribute('value') : null;
+
+        $postParams = [
+            'security' => $security,
+            'box' => 'box',
+            'uid' => 42
+        ];
+
+        $movedUid = null;
+        $movedFrom = null;
+        $movedTo = null;
+        $this->imap->expects($this->any())
+                   ->method('moveLetter')
+                   ->will($this->returnCallback(function ($uid, $from, $to) use (&$movedUid, &$movedFrom, &$movedTo) {
+                        $movedUid = $uid;
+                        $movedFrom = $from;
+                        $movedTo = $to;
+                    }));
+
+        $this->dispatch('/admin/mailbox/reanalyze-letter', HttpRequest::METHOD_POST, $postParams);
+        $this->assertResponseStatusCode(200);
+
+        $this->assertEquals(42, $movedUid, "UID is incorrect");
+        $this->assertEquals('box', $movedFrom, "From box name is incorrect");
+        $this->assertEquals(Mailbox::NAME_INBOX, $movedTo, "To box name is incorrect");
+    }
 }
