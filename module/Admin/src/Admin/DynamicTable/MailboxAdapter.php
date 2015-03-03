@@ -116,11 +116,13 @@ class MailboxAdapter extends ArrayAdapter
         if (isset($filters['date']['between'])) {
             $value = $filters['date']['between'];
             if ($value[0] != null) {
-                $date = $this->getSearchDate($value[0]);
+                $date = new \DateTime('@' . $value[0]);
+                $date = \Application\Tool\Date::toImapString($date);
                 $this->searchCriteria .= ' SINCE "' . $date . '"';
             }
             if ($value[1] != null) {
-                $date = $this->getSearchDate($value[0]);
+                $date = new \DateTime('@' . $value[1]);
+                $date = \Application\Tool\Date::toImapString($date);
                 $this->searchCriteria .= ' BEFORE "' . $date . '"';
             }
         }
@@ -180,17 +182,5 @@ class MailboxAdapter extends ArrayAdapter
 
         $result = parent::paginate($table);
         return $result;
-    }
-
-    /**
-     * Convert timestamp to string
-     *
-     * @param integer $data
-     * @return string
-     */
-    protected function getSearchDate($date)
-    {
-        $date = new \DateTime('@' . $date);
-        return $date->format('d-M-Y H:i:s O');
     }
 }

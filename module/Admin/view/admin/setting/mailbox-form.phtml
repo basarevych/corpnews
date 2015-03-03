@@ -40,7 +40,7 @@ $autodelete = $form->get('autodelete');
                        name="<?= $autodelete->getName() ?>"
                        value="<?= $this->escapeHtml($autodelete->getValue()) ?>"
                        data-on-blur="validateFormField($('input[name=<?= $autodelete->getName() ?>]'))"
-                       data-on-enter="$('#modal-form form').submit()"
+                       data-on-enter="$('#modal-form button[type=submit]').click()">
             </div>
             <div class="help-block">
                 <?php if (!$valid): ?>

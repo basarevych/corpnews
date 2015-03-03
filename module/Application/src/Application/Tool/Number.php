@@ -10,7 +10,7 @@
 namespace Application\Tool;
 
 /**
- * Text helper class
+ * Number helper class
  * 
  * @category    Application
  * @package     Tool

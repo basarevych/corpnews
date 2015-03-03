@@ -131,7 +131,8 @@ class ImapClient implements ServiceLocatorAwareInterface
         if (!$result)
             throw new Exception("imap_createmailbox failed: " . imap_last_error());
 
-        return $this;
+        $boxes = $this->getMailboxes();
+        return $boxes[$boxName];
     }
 
     /**

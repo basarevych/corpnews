@@ -31,6 +31,7 @@ class SettingController extends AbstractActionController
     {
         $sl = $this->getServiceLocator();
         $em = $sl->get('Doctrine\ORM\EntityManager');
+        $translate = $sl->get('viewhelpermanager')->get('translate');
 
         // Handle validate request
         if ($this->params()->fromQuery('query') == 'validate') {

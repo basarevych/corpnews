@@ -40,7 +40,7 @@ return [
             'routes' => [
                 'cron' => [
                     'options' => [
-                        'route'    => 'cron',
+                        'route'    => 'cron [--verbose] [--dry-run]',
                         'defaults' => [
                             'controller' => 'Application\Controller\Console',
                             'action'     => 'cron'
