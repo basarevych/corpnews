@@ -19,14 +19,16 @@ class ConsoleControllerTest extends AbstractConsoleControllerTestCase
                          ->setMethods([ 'getRepository', 'persist', 'flush' ])
                          ->getMock();
 
-        $this->repository = $this->getMockBuilder('Application\Repository\Sample')
-                                 ->disableOriginalConstructor()
-                                 ->setMethods([ 'removeAll' ])
-                                 ->getMock();
+        $this->repoSetting = $this->getMockBuilder('Application\Repository\Setting')
+                                  ->disableOriginalConstructor()
+                                  ->setMethods([ 'findOneByName' ])
+                                  ->getMock();
 
         $this->em->expects($this->any())
                  ->method('getRepository')
-                 ->will($this->returnValue($this->repository));
+                 ->will($this->returnValueMap([
+                    [ 'Application\Entity\Setting', $this->repoSetting ],
+                ]));
 
         $sl->setAllowOverride(true);
         $sl->setService('Doctrine\ORM\EntityManager', $this->em);
