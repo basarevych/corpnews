@@ -4,8 +4,9 @@ namespace AdminTest\Controller;
 
 use Zend\Http\Request as HttpRequest;
 use Zend\Dom\Query;
+use Zend\Json\Json;
 use Zend\Test\PHPUnit\Controller\AbstractHttpControllerTestCase;
-use Application\Entity\Setting as SettingEntity;
+use Application\Model\Letter;
 
 class MailboxControllerTest extends AbstractHttpControllerTestCase
 {
@@ -22,24 +23,32 @@ class MailboxControllerTest extends AbstractHttpControllerTestCase
         $cnt = $session->getContainer();
         $cnt->is_admin = true;
 
-        $this->em = $this->getMockBuilder('Doctrine\ORM\EntityManager')
-                         ->disableOriginalConstructor()
-                         ->setMethods([ 'getRepository', 'persist', 'flush' ])
-                         ->getMock();
+        $this->imap = $this->getMockBuilder('Application\Service\ImapClient')
+                           ->setMethods([ 'search', 'getLetter' ])
+                           ->getMock();
 
-        $this->repoSetting = $this->getMockBuilder('Application\Repository\Setting')
-                                  ->disableOriginalConstructor()
-                                  ->setMethods([ 'findOneByName' ])
-                                  ->getMock();
+        $this->imap->expects($this->any())
+                   ->method('search')
+                   ->will($this->returnValue([ 1, 2, 3 ]));
 
-        $this->em->expects($this->any())
-                 ->method('getRepository')
-                 ->will($this->returnValueMap([
-                    [ 'Application\Entity\Setting', $this->repoSetting ],
-                ]));
+        $letter1 = new Letter(1);
+        $letter2 = new Letter(2);
+        $letter3 = new Letter(3);
+
+        $letterCallback = function ($boxName, $uid) use ($letter1, $letter2, $letter3) {
+            switch ($uid) {
+                case 1: return $letter1;
+                case 2: return $letter2;
+                case 3: return $letter3;
+            }
+        };
+
+        $this->imap->expects($this->any())
+                   ->method('getLetter')
+                   ->will($this->returnCallback($letterCallback));
 
         $sl->setAllowOverride(true);
-        $sl->setService('Doctrine\ORM\EntityManager', $this->em);
+        $sl->setService('ImapClient', $this->imap);
     }
 
 
@@ -62,17 +71,50 @@ class MailboxControllerTest extends AbstractHttpControllerTestCase
         $this->assertQueryContentRegexAtLeastOnce('.nav-tabs li a', '/^.*\s+Replies\s+.*$/m');
         $this->assertQueryContentRegexAtLeastOnce('.nav-tabs li a', '/^.*\s+Bounces\s+.*$/m');
 
-        $this->assertQuery('.tab-pane div#table-Incoming');
-        $this->assertQueryContentRegexAtLeastOnce('.tab-pane script', '/^.*\$\(\'#table-Incoming\'\)\.dynamicTable\(.*$/m');
+        $this->assertQuery('div#tab-Incoming  div#table-Incoming');
+        $this->assertQueryContentRegexAtLeastOnce('div#tab-Incoming script', '/^.*\$\(\'#table-Incoming\'\)\.dynamicTable\(.*$/m');
 
-        $this->assertQuery('.tab-pane div#table-Replies');
-        $this->assertQueryContentRegexAtLeastOnce('.tab-pane script', '/^.*\$\(\'#table-Replies\'\)\.dynamicTable\(.*$/m');
+        $this->assertQuery('div#tab-Replies div#table-Replies');
+        $this->assertQueryContentRegexAtLeastOnce('div#tab-Replies script', '/^.*\$\(\'#table-Replies\'\)\.dynamicTable\(.*$/m');
 
-        $this->assertQuery('.tab-pane div#table-Bounces');
-        $this->assertQueryContentRegexAtLeastOnce('.tab-pane script', '/^.*\$\(\'#table-Bounces\'\)\.dynamicTable\(.*$/m');
+        $this->assertQuery('div#tab-Bounces div#table-Bounces');
+        $this->assertQueryContentRegexAtLeastOnce('div#tab-Bounces script', '/^.*\$\(\'#table-Bounces\'\)\.dynamicTable\(.*$/m');
     }
 
+    public function testLetterTableActionCanBeAccessed()
+    {
+        $this->dispatch('/admin/mailbox/letter-table');
 
+        $this->assertModuleName('admin');
+        $this->assertControllerName('admin\controller\mailbox');
+        $this->assertControllerClass('MailboxController');
+        $this->assertMatchedRouteName('admin');
+    }
+
+    public function testLetterTableActionSendsDescription()
+    {  
+        $this->dispatch('/admin/mailbox/letter-table', HttpRequest::METHOD_GET, [ 'query' => 'describe' ]);
+        $this->assertResponseStatusCode(200);
+
+        $response = $this->getResponse()->getContent();
+        $data = Json::decode($response, Json::TYPE_ARRAY);
+
+        $this->assertEquals(true, isset($data['columns']) && count($data['columns']), "No columns described");
+    }
+
+    public function testLetterTableActionSendsData()
+    {
+        $this->dispatch('/admin/mailbox/letter-table', HttpRequest::METHOD_GET, [ 'query' => 'data' ]);
+        //$this->assertResponseStatusCode(200);
+
+        $response = $this->getResponse()->getContent();
+        $data = Json::decode($response, Json::TYPE_ARRAY);
+
+        $this->assertEquals(true, isset($data['rows']) && count($data['rows']) == 3, "Invalid data returned");
+        $this->assertEquals(1, $data['rows'][0]['uid'], "Invalid UID");
+        $this->assertEquals(2, $data['rows'][1]['uid'], "Invalid UID");
+        $this->assertEquals(3, $data['rows'][2]['uid'], "Invalid UID");
+    }
 /*
     public function testMailboxFormActionCreatesEntity()
     {
