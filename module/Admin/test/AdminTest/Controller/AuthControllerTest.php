@@ -8,6 +8,8 @@ use Zend\Test\PHPUnit\Controller\AbstractHttpControllerTestCase;
 
 class AuthControllerTest extends AbstractHttpControllerTestCase
 {
+    use \ApplicationTest\Controller\PostRedirectGetTrait;
+
     public function setUp()
     {
         $this->setApplicationConfig(require 'config/application.config.php');
@@ -55,19 +57,4 @@ class AuthControllerTest extends AbstractHttpControllerTestCase
             "Admin flag is not set for correct credentials"
         );
     }
-
-    protected function prg($url, $postParams)
-    {
-        $this->dispatch($url, HttpRequest::METHOD_POST, $postParams);
-        $this->assertResponseStatusCode(303);
-
-        $redirectUri = $this->getResponseHeader('Location')->getUri();
-        $session = $_SESSION;
-        $cookie = $_COOKIE;
-        $this->reset();
-        $_COOKIE = $cookie;
-        $_SESSION = $session;
-
-        $this->dispatch($redirectUri, HttpRequest::METHOD_GET);
-    } 
 }
