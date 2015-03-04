@@ -529,9 +529,12 @@ class Letter
             }
             $subsectionAlternative = preg_match('/^multipart\/alternative/', $contentType);
             $subsectionRelated = preg_match('/^multipart\/related/', $contentType);
+            $subsectionMixed = preg_match('/^multipart\/mixed/', $contentType);
             $subsectionBoundary = $this->lookupKey('boundary', $contentType);
-            if (($subsectionAlternative || $subsectionRelated) && $subsectionBoundary)
+            if (($subsectionAlternative || $subsectionRelated || $subsectionMixed)
+                     && $subsectionBoundary) {
                 $part['sections'] = $this->loadSections($body, $subsectionBoundary);
+            }
             $result[] = $part;
         }
 
@@ -599,7 +602,8 @@ class Letter
             else if (preg_match('/^text\/html/', $contentType))
                 $this->htmlMessage .= $body;
             else if (!preg_match('/^multipart\/alternative/', $contentType)
-                    && !preg_match('/^multipart\/related/', $contentType)) {
+                    && !preg_match('/^multipart\/related/', $contentType)
+                    && !preg_match('/^multipart\/mixed/', $contentType)) {
                 $disposition = null;
                 foreach ($section['headers'] as $headerKey => $headerValue) {
                     if (strtolower($headerKey) == 'content-disposition')
