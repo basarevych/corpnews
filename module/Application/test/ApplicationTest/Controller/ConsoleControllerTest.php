@@ -5,6 +5,7 @@ namespace ApplicationTest\Controller;
 use Zend\Test\PHPUnit\Controller\AbstractConsoleControllerTestCase;
 use Application\Entity\Setting as SettingEntity;
 use Application\Model\Mailbox;
+use Application\Model\Letter;
 
 class ConsoleControllerTest extends AbstractConsoleControllerTestCase
 {
@@ -36,7 +37,7 @@ class ConsoleControllerTest extends AbstractConsoleControllerTestCase
                 ]));
 
         $this->imap = $this->getMockBuilder('Application\Service\ImapClient')
-                           ->setMethods([ 'getMailboxes', 'createMailbox', 'search', 'deleteLetter', 'moveLetter' ])
+                           ->setMethods([ 'getMailboxes', 'createMailbox', 'search', 'getLetter', 'deleteLetter', 'moveLetter' ])
                            ->getMock();
 
         $info = new \StdClass();
@@ -46,6 +47,17 @@ class ConsoleControllerTest extends AbstractConsoleControllerTestCase
         $this->imap->expects($this->any())
                    ->method('getMailboxes')
                    ->will($this->returnValue([ $box ]));
+
+        $letterMock = new Letter(42);
+        $class = new \ReflectionClass(get_class($letterMock));
+
+        $property = $class->getProperty('subject');
+        $property->setAccessible(true);
+        $property->setValue($letterMock, 'subject');
+
+        $this->imap->expects($this->any())
+                   ->method('getLetter')
+                   ->will($this->returnValue($letterMock));
 
         $sl = $this->getApplicationServiceLocator();
         $sl->setAllowOverride(true);
