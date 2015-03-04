@@ -133,8 +133,9 @@ class MailboxController extends AbstractActionController
             throw new \Exception('No "uid" parameter given');
 
         $cid = $this->params()->fromQuery('cid');
-        if (!$cid)
-            throw new \Exception('No "cid" parameter given');
+        $filename = $this->params()->fromQuery('filename');
+        if (!$cid && !$filename)
+            throw new \Exception('No "cid" or "filename" parameter given');
 
         $sl = $this->getServiceLocator();
         $imap = $sl->get('ImapClient');
@@ -150,7 +151,7 @@ class MailboxController extends AbstractActionController
         $att = null;
         $type = 'application/octet-stream';
         foreach ($letter->getAttachments() as $item) {
-            if ($item['cid'] == "<$cid>") {
+            if (($cid && $item['cid'] == "<$cid>") || ($filename && $item['name'] == $filename)) {
                 $att = $item['data'];
                 $type = $item['type'];
                 break;

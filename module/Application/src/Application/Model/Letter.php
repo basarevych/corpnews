@@ -373,6 +373,9 @@ class Letter
             } else if (preg_match('/^multipart\/related/', $typeValue, $matches)) {
                 $this->log .= "Content-Type: multipart/related\n";
                 $type = "related";
+            } else if (preg_match('/^multipart\/mixed/', $typeValue, $matches)) {
+                $this->log .= "Content-Type: multipart/mixed\n";
+                $type = "related";
             } else if (preg_match('/^multipart\/alternative/', $typeValue, $matches)) {
                 $this->log .= "Content-Type: multipart/alternative\n";
                 $type = "alternative";
@@ -601,7 +604,7 @@ class Letter
                         $disposition = join(' ', $headerValue);
                 }
                 if ($disposition) {
-                    if (!preg_match('/^inline/', $disposition)) {
+                    if (!preg_match('/^inline/', $disposition) && !preg_match('/^attachment/', $disposition)) {
                         $this->log .= "Unknown content disposition: " . $disposition;
                         $this->error = true;
                         return false;

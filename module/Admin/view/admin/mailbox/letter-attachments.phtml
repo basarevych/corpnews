@@ -16,6 +16,7 @@
         . '?box=' . urlencode($this->box)
         . '&uid=' . urlencode($this->letter->getUid())
         . '&cid=' . urlencode($item['cid'])
+        . '&filename=' . urlencode($item['name'])
         . '&preview=1';
 ?>
                     <td><img src="<?= $path ?>"></td>

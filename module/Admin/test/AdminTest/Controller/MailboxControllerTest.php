@@ -192,7 +192,7 @@ class MailboxControllerTest extends AbstractHttpControllerTestCase
 
         $subPage = $data['attachments'];
         $this->assertQueryContentRegexAtLeastOnce(
-            'table tbody tr td img[src="/admin/mailbox/attachment?box=box&uid=42&cid=cid&preview=1"]',
+            'table tbody tr td img[src="/admin/mailbox/attachment?box=box&uid=42&cid=cid&filename=att1&preview=1"]',
             '/^$/m',
             false,
             $subPage
