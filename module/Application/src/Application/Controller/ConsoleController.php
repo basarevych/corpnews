@@ -85,7 +85,7 @@ class ConsoleController extends AbstractConsoleController
                 $console->writeLine('=> "Incoming" mailbox does not exist. Creating...');
                 $console->writeLine();
             }
-            if (!$dryRun)    
+            if (!$dryRun)
                 $incoming = $imap->createMailbox(Mailbox::NAME_INCOMING);
         }
         if (!$replies) {
@@ -93,7 +93,7 @@ class ConsoleController extends AbstractConsoleController
                 $console->writeLine('=> "Replies" mailbox does not exist. Creating...');
                 $console->writeLine();
             }
-            if (!$dryRun)    
+            if (!$dryRun)
                 $replies = $imap->createMailbox(Mailbox::NAME_REPLIES);
         }
         if (!$bounces) {
@@ -101,7 +101,7 @@ class ConsoleController extends AbstractConsoleController
                 $console->writeLine('=> "Bounces" mailbox does not exist. Creating...');
                 $console->writeLine();
             }
-            if (!$dryRun)    
+            if (!$dryRun)
                 $bounces = $imap->createMailbox(Mailbox::NAME_BOUNCES);
         }
 
@@ -111,7 +111,9 @@ class ConsoleController extends AbstractConsoleController
             throw new \Exception('MailboxAutodelete setting does not exist');
 
         $oldDate = new \DateTime();
+        $oldDate->setTimezone(new \DateTimeZone('GMT'));
         $oldDate->sub(new \DateInterval('P' . $autodelete . 'D'));
+        $oldDate->setTime(0, 0, 0);
         $oldDate = \Application\Tool\Date::toImapString($oldDate);
 
         if ($verbose) {
