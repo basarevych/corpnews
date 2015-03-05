@@ -8,10 +8,14 @@
         "mail"
     ],
     "homepage": "https://github.com/basarevych/corpnews",
+    "minimum-stability": "alpha",
     "require": {
         "php": ">=5.4.8",
+        "ext-pdo": "*",
+        "ext-mongo": "*",
         "zendframework/zendframework": "2.3.*",
-        "doctrine/doctrine-orm-module": "0.*",
+        "doctrine/doctrine-orm-module": "0.8.*",
+        "doctrine/doctrine-mongo-odm-module": "0.8.*",
         "ezyang/htmlpurifier": "4.6.*",
         "basarevych/dynamic-table": "dev-master"
     },

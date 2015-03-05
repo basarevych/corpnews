@@ -17,7 +17,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @category    Application
  * @package     Entity
  * 
- * @ORM\Entity(repositoryClass="Application\Repository\Setting")
+ * @ORM\Entity(repositoryClass="Application\Entity\SettingRepository")
  * @ORM\Table(name="settings")
  */
 class Setting

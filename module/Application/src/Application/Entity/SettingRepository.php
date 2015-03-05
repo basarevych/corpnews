@@ -7,7 +7,7 @@
  * @license     http://choosealicense.com/licenses/mit/ MIT
  */
 
-namespace Application\Repository;
+namespace Application\Entity;
 
 use Exception;
 use Doctrine\ORM\EntityRepository;
@@ -19,7 +19,7 @@ use Application\Entity\Setting as SettingEntity;
  * @category    Application
  * @package     Repository
  */
-class Setting extends EntityRepository
+class SettingRepository extends EntityRepository
 {
     /**
      * Get the value of setting

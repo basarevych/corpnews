@@ -200,7 +200,7 @@ class ConsoleController extends AbstractConsoleController
     public function populateDbAction()
     {
         $sl = $this->getServiceLocator();
-        $em = $sl->get('Doctrine\ORM\EntityManager');
+        $mm = $sl->get('ModuleManager');
 
         $autodelete = $em->getRepository('Application\Entity\Setting')
                          ->findOneByName('MailboxAutodelete');
