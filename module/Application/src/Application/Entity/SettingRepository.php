@@ -17,7 +17,7 @@ use Application\Entity\Setting as SettingEntity;
  * Repository for Setting entity
  *
  * @category    Application
- * @package     Repository
+ * @package     Entity
  */
 class SettingRepository extends EntityRepository
 {

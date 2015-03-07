@@ -1,3 +1,4 @@
+DROP TABLE IF EXISTS `clients`;
 DROP TABLE IF EXISTS `settings`;
 
 CREATE TABLE `settings` (
@@ -11,4 +12,12 @@ CREATE TABLE `settings` (
     `value_datetime` datetime NULL,
     CONSTRAINT `settings_pk` PRIMARY KEY (`id`),
     CONSTRAINT `settings_name_unique` UNIQUE (`name`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1;
+
+CREATE TABLE `clients` (
+    `id` int unsigned NOT NULL AUTO_INCREMENT,
+    `email` varchar(255) NOT NULL,
+    `when_bounced` datetime NULL,
+    CONSTRAINT `clients_pk` PRIMARY KEY (`id`),
+    CONSTRAINT `clients_email_unique` UNIQUE (`email`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1;
