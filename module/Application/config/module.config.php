@@ -94,4 +94,12 @@ return [
             ]
         ]
     ],
+
+    'corpnews' => [
+        'data_forms' => [
+            'Profile' => [
+                'document' => 'Application\Document\Profile'
+            ],
+        ],
+    ],
 ];
