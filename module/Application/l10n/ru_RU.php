@@ -41,7 +41,7 @@ return [
     'DT_LABEL_FILTER_NULL' => 'Включить строки с пустым значением в этой колонке',
     'DT_LABEL_TRUE' => 'Истина',
     'DT_LABEL_FALSE' => 'Ложь',
-    'DT_DATE_TIME_FORMAT' => 'YYYY-MM-DD HH:mm:ss',
+    'DT_DATE_TIME_FORMAT' => 'YYYY-MM-DD HH:mm:ss Z',
 
     // Errors
     'Please try again later' => 'Пожалуйста, повторите позднее',

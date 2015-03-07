@@ -41,7 +41,7 @@ return [
     'DT_LABEL_FILTER_NULL' => 'Include rows with empty value in this column',
     'DT_LABEL_TRUE' => 'True',
     'DT_LABEL_FALSE' => 'False',
-    'DT_DATE_TIME_FORMAT' => 'YYYY-MM-DD HH:mm:ss',
+    'DT_DATE_TIME_FORMAT' => 'YYYY-MM-DD HH:mm:ss Z',
 
     // Errors
     'Please try again later' => 'Please try again later',

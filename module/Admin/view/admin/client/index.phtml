@@ -41,9 +41,15 @@
                     loader_image: '<?= $this->basePath('/img/loader.gif') ?>',
                     strings: dynamicTableStrings,
                     mapper: function (row) {
+                        var span = $('<span></span>');
+                        span.text(row['email']);
+                        row['email'] = '<a href="javascript:void(0)" onclick="editClient('
+                            + row['id']
+                            + ')">' + span.html() + '</a>';
+
                         if (row['when_bounced'] != null) {
                             var m = moment.unix(row['when_bounced']).local();
-                            row['when_bounced'] = m.format('YYYY-MM-DD HH:mm:ss');
+                            row['when_bounced'] = m.format('YYYY-MM-DD HH:mm:ss Z');
                         }
 
                         return row;
@@ -81,6 +87,33 @@
         table.refresh();
     }
 
+    function createClient() {
+        $.ajax({
+            url: '<?= $this->basePath('/admin/client/edit-form') ?>',
+            success: function (html) {
+                var modal = $('#modal-form');
+                modal.find('.modal-title').text('<?= $this->translate('Create client') ?>');
+                modal.find('button[type=submit]').text('<?= $this->translate('Create') ?>');
+                modal.find('.modal-body').html(html);
+            }
+        });
+    }
+
+    function editClient(id) {
+        $.ajax({
+            url: '<?= $this->basePath('/admin/client/edit-form') ?>',
+            data: {
+                id: id
+            },
+            success: function (html) {
+                var modal = $('#modal-form');
+                modal.find('.modal-title').text('<?= $this->translate('Edit client') ?>');
+                modal.find('button[type=submit]').text('<?= $this->translate('Save changes') ?>');
+                modal.find('.modal-body').html(html);
+            }
+        });
+    }
+
     function deleteClient() {
         var table = $('#table-clients').data('dynamicTable');
         var selected = table.getSelected();
@@ -88,7 +121,7 @@
             return;
 
         $.ajax({
-            url: '<?= $this->basePath('/admin/client/delete-client') ?>',
+            url: '<?= $this->basePath('/admin/client/delete-form') ?>',
             data: {
                 id: selected == 'all' ? '_all' : selected.join(',')
             },

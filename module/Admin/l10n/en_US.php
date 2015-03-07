@@ -21,6 +21,7 @@ return [
     'Delete client' => 'Delete client',
     'Email address' => 'Email address',
     'Email bounced' => 'Email bounced',
+    'Save changes' => 'Save changes',
 
     // MailboxController
     'Incoming' => 'Incoming',
@@ -70,4 +71,7 @@ return [
 
     // NotEmpty validator
     'Value is required and can\'t be empty' => 'Value is required and can\'t be empty',
+
+    // EntityNotExists/DocumentNotExists validators
+    'Value is already in the database' => 'Value is already in the database',
 ];

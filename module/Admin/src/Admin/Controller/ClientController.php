@@ -15,6 +15,8 @@ use Zend\View\Model\JsonModel;
 use DynamicTable\Table;
 use DynamicTable\Adapter\DoctrineORMAdapter;
 use Application\Exception\NotFoundException;
+use Application\Entity\Client as ClientEntity;
+use Admin\Form\EditClientForm;
 
 /**
  * Clients controller
@@ -54,6 +56,97 @@ class ClientController extends AbstractActionController
 
         $data['success'] = true;
         return new JsonModel($data);
+    }
+
+    /**
+     * Create/edit entity form action
+     */
+    public function editFormAction()
+    {
+        $sl = $this->getServiceLocator();
+        $em = $sl->get('Doctrine\ORM\EntityManager');
+        $translate = $sl->get('viewhelpermanager')->get('translate');
+
+        // Handle validate request
+        if ($this->params()->fromQuery('query') == 'validate') {
+            $field = $this->params()->fromQuery('field');
+            $data = $this->params()->fromQuery('form');
+
+            $form = new EditClientForm($em, @$data['id']);
+            $form->setData($data);
+            $form->isValid();
+
+            $control = $form->get($field);
+            $messages = [];
+            foreach ($control->getMessages() as $msg)
+                $messages[] = $translate($msg);
+
+            return new JsonModel([
+                'valid'     => (count($messages) == 0),
+                'messages'  => $messages,
+            ]);
+        }
+
+        $entity = null;
+        $id = $this->params()->fromQuery('id');
+        if (!$id)
+            $id = $this->params()->fromPost('id');
+        if ($id) {
+            $entity = $em->getRepository('Application\Entity\Client')
+                         ->find($id);
+            if (!$entity)
+                throw new NotFoundException('Wrong ID');
+        }
+
+        $script = null;
+        $form = new EditClientForm($em, $id);
+        $messages = [];
+
+        $request = $this->getRequest();
+        if ($request->isPost()) {  // Handle form submission
+            $form->setData($request->getPost());
+
+            if ($form->isValid()) {
+                $data = $form->getData();
+
+                $date = null;
+                if (!empty($data['when_bounced'])) {
+                    $format = $form->get('when_bounced')->getFormat();
+                    $date = \DateTime::createFromFormat($format, $data['when_bounced']);
+                }
+
+                if (!$entity)
+                    $entity = new ClientEntity();
+
+                $entity->setEmail($data['email']);
+                $entity->setWhenBounced($date);
+
+                $em->persist($entity);
+                $em->flush();
+
+                $script = "$('#modal-form').modal('hide'); reloadTable()";
+            }
+        } else if ($entity) {       // Load initial form values
+            $date = "";
+            if (($dt = $entity->getWhenBounced()) !== null) {
+                $format = $form->get('when_bounced')->getFormat();
+                $date = $dt->format($format);
+            }
+
+            $form->setData([
+                'id'            => $entity->getId(),
+                'email'         => $entity->getEmail(),
+                'when_bounced'  => $date
+            ]);
+        }
+
+        $model = new ViewModel([
+            'script'    => $script,
+            'form'      => $form,
+            'messages'  => $messages,
+        ]);
+        $model->setTerminal(true);
+        return $model;
     }
 
     /**

@@ -21,6 +21,7 @@ return [
     'Delete client' => 'Удалить клиента',
     'Email address' => 'Электронная почта',
     'Email bounced' => 'Письмо возвратилось',
+    'Save changes' => 'Сохранить изменения',
 
     // MailboxController
     'Incoming' => 'Входящие',
@@ -70,4 +71,7 @@ return [
 
     // NotEmpty validator
     'Value is required and can\'t be empty' => 'Значение обязательно и не может быть пустым',
+
+    // EntityNotExists/DocumentNotExists validators
+    'Value is already in the database' => 'Значение уже существует в базе данных',
 ];
