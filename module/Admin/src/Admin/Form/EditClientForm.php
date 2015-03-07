@@ -106,13 +106,16 @@ class EditClientForm extends Form
             $filter->add($id);
         }
 
-        $params = [
+        $emailParams = [
+            'allow' => Validator\Hostname::ALLOW_DNS | Validator\Hostname::ALLOW_LOCAL
+        ];
+        $entityParams = [
             'entityManager' => $this->em,
             'entity'        => 'Application\Entity\Client',
             'property'      => 'email',
         ];
         if ($this->id)
-            $params['ignoreId'] = $this->id;
+            $entityParams['ignoreId'] = $this->id;
 
         $email = new Input('email');
         $email->setRequired(true)
@@ -120,7 +123,8 @@ class EditClientForm extends Form
               ->getFilterChain()
               ->attach(new Filter\StringTrim());
         $email->getValidatorChain()
-              ->attach(new EntityNotExists($params));
+              ->attach(new Validator\EmailAddress($emailParams))
+              ->attach(new EntityNotExists($entityParams));
         $filter->add($email);
 
         $params = [

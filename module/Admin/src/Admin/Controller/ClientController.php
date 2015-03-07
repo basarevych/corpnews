@@ -65,6 +65,7 @@ class ClientController extends AbstractActionController
     public function editClientAction()
     {
         $sl = $this->getServiceLocator();
+        $dfm = $sl->get('DataFormManager');
         $em = $sl->get('Doctrine\ORM\EntityManager');
         $translate = $sl->get('viewhelpermanager')->get('translate');
 
@@ -119,11 +120,20 @@ class ClientController extends AbstractActionController
                 if (!$entity)
                     $entity = new ClientEntity();
 
-                $entity->setEmail($data['email']);
-                $entity->setWhenBounced($date);
+                try {
+                    $entity->setEmail($data['email']);
+                    $entity->setWhenBounced($date);
 
-                $em->persist($entity);
-                $em->flush();
+                    $em->persist($entity);
+                    $em->flush();
+
+                    if (!$id)
+                        $dfm->createClientDocuments($entity->getEmail());
+                } catch (\Exception $e) {
+                    if (!$id)
+                        $dfm->deleteClientDocuments($entity->getEmail());
+                    throw $e;
+                }
 
                 $script = "$('#modal-form').modal('hide'); reloadTable()";
             }
@@ -162,6 +172,7 @@ class ClientController extends AbstractActionController
             throw new \Exception('No "id" parameter');
 
         $sl = $this->getServiceLocator();
+        $dfm = $sl->get('DataFormManager');
         $em = $sl->get('Doctrine\ORM\EntityManager');
         $repo = $em->getRepository('Application\Entity\Client');
 
@@ -183,6 +194,7 @@ class ClientController extends AbstractActionController
                             $em->remove($entity);
                     }
                     $em->flush();
+                    $dfm->deleteClientDocuments($entity->getEmail());
                 }
 
                 $script = "$('#modal-form').modal('hide'); reloadTable()";

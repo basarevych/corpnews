@@ -66,13 +66,4 @@ return [
     'TOUR_MAILBOX_REPLIES' => '<p><strong>Replies</strong> contains client replies to the campaign letters</p>',
     'TOUR_MAILBOX_BOUNCES' => '<p><strong>Bounces</strong> is the delivery failure notifications folder</p>',
     'TOUR_MAILBOX_TEMPLATE' => '<p>When template is received select it in the table and click this button in order to create new mail campaign</p>',
-
-    // Csrf validator
-    'The form submitted did not originate from the expected site' => 'The form submitted did not originate from the expected site',
-
-    // NotEmpty validator
-    'Value is required and can\'t be empty' => 'Value is required and can\'t be empty',
-
-    // EntityNotExists/DocumentNotExists validators
-    'Value is already in the database' => 'Value is already in the database',
 ];

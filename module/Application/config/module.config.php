@@ -97,8 +97,9 @@ return [
 
     'corpnews' => [
         'data_forms' => [
-            'Profile' => [
-                'document' => 'Application\Document\Profile'
+            'profile' => [
+                'title'     => 'Profile',
+                'document'  => 'Application\Document\Profile'
             ],
         ],
     ],

@@ -3,10 +3,11 @@
 return [
     'service_manager' => [
         'invokables' => [
-            'Session'       => 'Application\Service\Session',
-            'Mail'          => 'Application\Service\Mail',
-            'ErrorStrategy' => 'Application\Service\ErrorStrategy',
-            'ImapClient'    => 'Application\Service\ImapClient',
+            'Session'           => 'Application\Service\Session',
+            'Mail'              => 'Application\Service\Mail',
+            'ErrorStrategy'     => 'Application\Service\ErrorStrategy',
+            'ImapClient'        => 'Application\Service\ImapClient',
+            'DataFormManager'   => 'Application\Service\DataFormManager',
         ],
 
         'abstract_factories' => [
