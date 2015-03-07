@@ -242,10 +242,15 @@ class MailboxController extends AbstractActionController
             $form->setData($request->getPost());
 
             if ($form->isValid()) {
-                foreach (explode(',', $uid) as $item) {
-                    $letter = $imap->getLetter($box, $item);
-                    if ($letter)
-                        $imap->deleteLetter($box, $item);
+                if ($uid == '_all') {
+                    foreach ($imap->getLetters($box) as $letter)
+                        $imap->deleteLetter($box, $letter->getUid());
+                } else {
+                    foreach (explode(',', $uid) as $item) {
+                        $letter = $imap->getLetter($box, $item);
+                        if ($letter)
+                            $imap->deleteLetter($box, $item);
+                    }
                 }
 
                 $script = "$('#modal-form').modal('hide'); reloadTables()";
@@ -295,10 +300,15 @@ class MailboxController extends AbstractActionController
             $form->setData($request->getPost());
 
             if ($form->isValid()) {
-                foreach (explode(',', $uid) as $item) {
-                    $letter = $imap->getLetter($box, $item);
-                    if ($letter)
-                        $imap->moveLetter($item, $box, Mailbox::NAME_INBOX);
+                if ($uid == '_all') {
+                    foreach ($imap->getLetters($box) as $letter)
+                        $imap->moveLetter($letter->getUid(), $box, Mailbox::NAME_INBOX);
+                } else {
+                    foreach (explode(',', $uid) as $item) {
+                        $letter = $imap->getLetter($box, $item);
+                        if ($letter)
+                            $imap->moveLetter($item, $box, Mailbox::NAME_INBOX);
+                    }
                 }
 
                 $script = "$('#modal-form').modal('hide'); reloadTables()";

@@ -23,6 +23,7 @@ return [
     'From' => 'From',
     'Subject' => 'Subject',
     'Close' => 'Close',
+    'Cancel' => 'Cancel',
     '(No subject)' => '(No subject)',
     'Loading...' => 'Loading...',
     'HTML' => 'HTML',
@@ -39,7 +40,8 @@ return [
     'Success' => 'Success',
     'Failure' => 'Failure',
     'CONFIRM_DELETE_LETTER' => 'Delete selected letter(s)?',
-    'CONFIRM_REANALYZE_LETTER' => 'Reset status of selected letter(s)?<br><br>The letter will soon reappear in one of the mailbox\'es folder again',
+    'CONFIRM_REANALYZE_LETTER' => 'Reset status of selected letter(s)?<br><br>Reset letters will soon reappear in one of the mailbox\'es folder again',
+    'Execute' => 'Execute',
 
     // SettingController
     'Settings' => 'Settings',
