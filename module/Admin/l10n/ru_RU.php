@@ -18,18 +18,20 @@ return [
     // ClientController
     'Table actions' => 'Действия над таблицей',
     'Create client' => 'Создать клиента',
+    'Edit client' => 'Редактировать клиента',
     'Delete client' => 'Удалить клиента',
     'Email address' => 'Электронная почта',
     'Email bounced' => 'Письмо возвратилось',
     'Save changes' => 'Сохранить изменения',
+    'Delete' => 'Удалить',
 
     // MailboxController
     'Incoming' => 'Входящие',
     'Replies' => 'Ответы',
     'Bounces' => 'Возвращенные письма',
     'Use as template' => 'Использовать как шаблон',
-    'Delete' => 'Удалить',
-    'Re-analyze' => 'Повторно анализировать',
+    'Delete letter' => 'Удалить письмо',
+    'Reanalyze letter' => 'Повторно анализировать',
     'UID' => 'UID',
     'Date' => 'Дата',
     'From' => 'От',

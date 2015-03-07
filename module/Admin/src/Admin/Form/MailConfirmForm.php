@@ -17,12 +17,12 @@ use Zend\Filter;
 use Zend\Validator;
 
 /**
- * Confirmation dialog form
+ * Confirmation dialog for mail action forms
  *
  * @category    Admin
  * @package     Form
  */
-class ConfirmForm extends Form
+class MailConfirmForm extends Form
 {
     /**
      * The input filter

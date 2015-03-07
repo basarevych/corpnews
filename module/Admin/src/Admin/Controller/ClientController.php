@@ -150,6 +150,57 @@ class ClientController extends AbstractActionController
     }
 
     /**
+     * Delete client form action
+     */
+    public function deleteFormAction()
+    {
+        $id = $this->params()->fromQuery('id');
+        if (!$id)
+            $id = $this->params()->fromPost('id');
+        if (!$id)
+            throw new \Exception('No "id" parameter');
+
+        $sl = $this->getServiceLocator();
+
+        $script = null;
+        $form = new ConfirmForm();
+        $messages = [];
+
+        $request = $this->getRequest();
+        if ($request->isPost()) {
+            $form->setData($request->getPost());
+
+            if ($form->isValid()) {
+                if ($uid == '_all') {
+                    foreach ($imap->getLetters($box) as $letter)
+                        $imap->deleteLetter($box, $letter->getUid());
+                } else {
+                    foreach (explode(',', $uid) as $item) {
+                        $letter = $imap->getLetter($box, $item);
+                        if ($letter)
+                            $imap->deleteLetter($box, $item);
+                    }
+                }
+
+                $script = "$('#modal-form').modal('hide'); reloadTables()";
+            }
+        } else {
+            $form->setData([
+                'box' => $box,
+                'uid' => $uid
+            ]);
+        }
+
+        $model = new ViewModel([
+            'script'    => $script,
+            'form'      => $form,
+            'messages'  => $messages,
+        ]);
+        $model->setTerminal(true);
+        return $model;
+    }
+
+    /**
      * This action is called when requested action is not found
      */
     public function notFoundAction()

@@ -15,20 +15,19 @@
             <div data-sidebar="sm" class="list-group">
                 <div id="actions-panel" class="panel panel-default">
                     <div class="panel-heading">
-                        <h3 class="panel-title"><?= $this->translate('Letter Actions') ?></h3>
+                        <h3 class="panel-title"><?= $this->translate('Table actions') ?></h3>
                     </div>
                     <div class="panel-body button-panel">
-                        <p class="help"><?= $this->translate('HELP_LETTER_ACTIONS') ?></p>
                         <button id="template-button" class="btn btn-primary disabled" disabled="disabled" onclick="createCampaign()">
                             <?= $this->translate('Use as template') ?>
                         </button>
                         <hr>
                         <button id="delete-button" class="btn btn-default disabled" disabled="disabled" onclick="deleteLetter()">
-                            <?= $this->translate('Delete') ?>
+                            <?= $this->translate('Delete letter') ?>
                         </button>
                         <hr>
                         <button id="reanalyze-button" class="btn btn-default" disabled="disabled" onclick="reanalyzeLetter()">
-                            <?= $this->translate('Re-analyze') ?>
+                            <?= $this->translate('Reanalyze letter') ?>
                         </button>
                     </div>
                 </div>
@@ -187,7 +186,6 @@
         var selected = table.getSelected();
 
         if (selected == 'all' || selected.length > 1) {
-            $('#actions-panel').find('p.help').hide();
             $('#template-button')
                 .attr('disabled', 'disabled')
                 .addClass('disabled');
@@ -198,12 +196,10 @@
                 .removeAttr('disabled')
                 .removeClass('disabled');
         } else if (selected.length) {
-            $('#actions-panel').find('p.help').hide();
             $('#actions-panel').find('button')
                 .removeAttr('disabled')
                 .removeClass('disabled');
         } else {
-            $('#actions-panel').find('p.help').show();
             $('#actions-panel').find('button')
                 .attr('disabled', 'disabled')
                 .addClass('disabled');

@@ -21,7 +21,7 @@ use Application\Exception\NotFoundException;
 use Application\Exception\BadRequestException;
 use Application\Model\Mailbox;
 use Admin\DynamicTable\MailboxAdapter;
-use Admin\Form\ConfirmForm;
+use Admin\Form\MailConfirmForm;
 
 /**
  * Mailbox controller
@@ -234,7 +234,7 @@ class MailboxController extends AbstractActionController
         $imap = $sl->get('ImapClient');
 
         $script = null;
-        $form = new ConfirmForm();
+        $form = new MailConfirmForm();
         $messages = [];
 
         $request = $this->getRequest();
@@ -292,7 +292,7 @@ class MailboxController extends AbstractActionController
         $imap = $sl->get('ImapClient');
 
         $script = null;
-        $form = new ConfirmForm();
+        $form = new MailConfirmForm();
         $messages = [];
 
         $request = $this->getRequest();

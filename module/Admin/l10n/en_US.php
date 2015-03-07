@@ -18,18 +18,20 @@ return [
     // ClientController
     'Table actions' => 'Table actions',
     'Create client' => 'Create client',
+    'Edit client' => 'Edit client',
     'Delete client' => 'Delete client',
     'Email address' => 'Email address',
     'Email bounced' => 'Email bounced',
     'Save changes' => 'Save changes',
+    'Delete' => 'Delete',
 
     // MailboxController
     'Incoming' => 'Incoming',
     'Replies' => 'Replies',
     'Bounces' => 'Bounces',
     'Use as template' => 'Use as template',
-    'Delete' => 'Delete',
-    'Re-analyze' => 'Re-analyze',
+    'Delete letter' => 'Delete letter',
+    'Reanalyze letter' => 'Reanalyze letter',
     'UID' => 'UID',
     'Date' => 'Date',
     'From' => 'From',
