@@ -1,6 +1,13 @@
 <?php
 
 return [
+    // Admin layout
+    'Campaign' => 'Campaign',
+    'Clients' => 'Clients',
+    'Mailbox' => 'Mailbox',
+    'Settings' => 'Settings',
+    'Mailbox settings' => 'Mailbox settings',
+
     // AuthController
     'Restricted area' => 'Restricted area',
     'Login' => 'Login',
@@ -8,13 +15,17 @@ return [
     'Sign in' => 'Sign in',
     'Invalid login or password' => 'Invalid login or password',
 
+    // ClientController
+    'Table actions' => 'Table actions',
+    'Create client' => 'Create client',
+    'Delete client' => 'Delete client',
+    'Email address' => 'Email address',
+    'Email bounced' => 'Email bounced',
+
     // MailboxController
-    'Mailbox' => 'Mailbox',
     'Incoming' => 'Incoming',
     'Replies' => 'Replies',
     'Bounces' => 'Bounces',
-    'Letter Actions' => 'Letter Actions',
-    'HELP_LETTER_ACTIONS' => 'Please select letter(s) in the table',
     'Use as template' => 'Use as template',
     'Delete' => 'Delete',
     'Re-analyze' => 'Re-analyze',
@@ -44,8 +55,6 @@ return [
     'Execute' => 'Execute',
 
     // SettingController
-    'Settings' => 'Settings',
-    'Mailbox settings' => 'Mailbox settings',
     'Autodelete' => 'Autodelete',
     'Days' => 'Days',
 

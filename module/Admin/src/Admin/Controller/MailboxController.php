@@ -334,7 +334,7 @@ class MailboxController extends AbstractActionController
      */
     public function notFoundAction()
     {
-        throw new \Application\Exception\NotFoundException('Action is not found');
+        throw new NotFoundException('Action is not found');
     }
 
     /**

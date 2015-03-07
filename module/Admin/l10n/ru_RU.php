@@ -1,6 +1,13 @@
 <?php
 
 return [
+    // Admin layout
+    'Campaign' => 'Кампания',
+    'Clients' => 'Клиенты',
+    'Mailbox' => 'Почтовый ящик',
+    'Settings' => 'Настройки',
+    'Mailbox settings' => 'Настройки почтового ящика',
+
     // AuthController
     'Restricted area' => 'Запретная зона',
     'Login' => 'Логин',
@@ -8,13 +15,17 @@ return [
     'Sign in' => 'Войти',
     'Invalid login or password' => 'Неправильный логин или пароль',
 
+    // ClientController
+    'Table actions' => 'Действия над таблицей',
+    'Create client' => 'Создать клиента',
+    'Delete client' => 'Удалить клиента',
+    'Email address' => 'Электронная почта',
+    'Email bounced' => 'Письмо возвратилось',
+
     // MailboxController
-    'Mailbox' => 'Почтовый ящик',
     'Incoming' => 'Входящие',
     'Replies' => 'Ответы',
     'Bounces' => 'Возвращенные письма',
-    'Letter Actions' => 'Действия над письмами',
-    'HELP_LETTER_ACTIONS' => 'Пожалуйста, выберите письмо (письма) в таблице',
     'Use as template' => 'Использовать как шаблон',
     'Delete' => 'Удалить',
     'Re-analyze' => 'Повторно анализировать',
@@ -44,8 +55,6 @@ return [
     'Execute' => 'Выполнить',
 
     // SettingController
-    'Settings' => 'Настройки',
-    'Mailbox settings' => 'Настройки почтового ящика',
     'Autodelete' => 'Автоудаление',
     'Days' => 'Дни',
 
