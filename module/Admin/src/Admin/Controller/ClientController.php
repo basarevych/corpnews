@@ -16,6 +16,7 @@ use DynamicTable\Table;
 use DynamicTable\Adapter\DoctrineORMAdapter;
 use Application\Exception\NotFoundException;
 use Application\Entity\Client as ClientEntity;
+use Application\Form\ConfirmForm;
 use Admin\Form\EditClientForm;
 
 /**
@@ -59,9 +60,9 @@ class ClientController extends AbstractActionController
     }
 
     /**
-     * Create/edit entity form action
+     * Create/edit client entity form action
      */
-    public function editFormAction()
+    public function editClientAction()
     {
         $sl = $this->getServiceLocator();
         $em = $sl->get('Doctrine\ORM\EntityManager');
@@ -152,7 +153,7 @@ class ClientController extends AbstractActionController
     /**
      * Delete client form action
      */
-    public function deleteFormAction()
+    public function deleteClientAction()
     {
         $id = $this->params()->fromQuery('id');
         if (!$id)
@@ -161,6 +162,8 @@ class ClientController extends AbstractActionController
             throw new \Exception('No "id" parameter');
 
         $sl = $this->getServiceLocator();
+        $em = $sl->get('Doctrine\ORM\EntityManager');
+        $repo = $em->getRepository('Application\Entity\Client');
 
         $script = null;
         $form = new ConfirmForm();
@@ -171,23 +174,22 @@ class ClientController extends AbstractActionController
             $form->setData($request->getPost());
 
             if ($form->isValid()) {
-                if ($uid == '_all') {
-                    foreach ($imap->getLetters($box) as $letter)
-                        $imap->deleteLetter($box, $letter->getUid());
+                if ($id == '_all') {
+                    $repo->removeAll();
                 } else {
-                    foreach (explode(',', $uid) as $item) {
-                        $letter = $imap->getLetter($box, $item);
-                        if ($letter)
-                            $imap->deleteLetter($box, $item);
+                    foreach (explode(',', $id) as $item) {
+                        $entity = $repo->find($item);
+                        if ($entity)
+                            $em->remove($entity);
                     }
+                    $em->flush();
                 }
 
-                $script = "$('#modal-form').modal('hide'); reloadTables()";
+                $script = "$('#modal-form').modal('hide'); reloadTable()";
             }
         } else {
             $form->setData([
-                'box' => $box,
-                'uid' => $uid
+                'id' => $id
             ]);
         }
 
@@ -269,13 +271,16 @@ class ClientController extends AbstractActionController
         $adapter->setQueryBuilder($qb);
 
         $mapper = function ($row) use ($escapeHtml) {
+            $email = '<a href="javascript:void(0)" onclick="editClient('
+                . $row->getId() . ')">' . $escapeHtml($row->getEmail()) . '</a>';
+
             $whenBounced = $row->getWhenBounced();
             if ($whenBounced !== null)
                 $whenBounced = $whenBounced->getTimestamp();
 
             return [
                 'id'            => $row->getId(),
-                'email'         => $escapeHtml($row->getEmail()),
+                'email'         => $email,
                 'when_bounced'  => $whenBounced,
             ];
         };

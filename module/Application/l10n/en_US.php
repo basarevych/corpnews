@@ -8,6 +8,12 @@ return [
     'Autodetect' => 'Autodetect',
     'Tutorial' => 'Tutorial',
 
+    // Generic forms
+    'REQUIRED FIELD' => 'REQUIRED FIELD',
+    'Create' => 'Create',
+    'Save changes' => 'Save changes',
+    'Delete' => 'Delete',
+
     // Help tours
     'TOUR_TEMPLATE' => '<div class="popover help-tour">'
         . '<div class="arrow"></div>'

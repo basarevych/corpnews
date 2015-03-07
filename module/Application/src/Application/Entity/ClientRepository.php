@@ -11,7 +11,7 @@ namespace Application\Entity;
 
 use Exception;
 use Doctrine\ORM\EntityRepository;
-use Application\Entity\Setting as SettingEntity;
+use Application\Entity\Client as ClientEntity;
 
 /**
  * Repository for Client entity
@@ -21,4 +21,16 @@ use Application\Entity\Setting as SettingEntity;
  */
 class ClientRepository extends EntityRepository
 {
+    /**
+     * Remove all the table content
+     */
+    public function removeAll()
+    {
+        $em = $this->getEntityManager();
+
+        $query = $em->createQuery(
+            'DELETE Application\Entity\Client c'
+        );
+        $query->getResult();
+    }
 }

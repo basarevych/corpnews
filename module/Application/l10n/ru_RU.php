@@ -8,6 +8,12 @@ return [
     'Autodetect' => 'Автоопределение',
     'Tutorial' => 'Обучение',
 
+    // Generic forms
+    'REQUIRED FIELD' => 'ОБЯЗАТЕЛЬНОЕ ПОЛЕ',
+    'Create' => 'Создать',
+    'Save changes' => 'Сохранить изменения',
+    'Delete' => 'Удалить',
+
     // Help tours
     'TOUR_TEMPLATE' => '<div class="popover help-tour">'
         . '<div class="arrow"></div>'

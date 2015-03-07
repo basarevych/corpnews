@@ -22,8 +22,7 @@ return [
     'Delete client' => 'Delete client',
     'Email address' => 'Email address',
     'Email bounced' => 'Email bounced',
-    'Save changes' => 'Save changes',
-    'Delete' => 'Delete',
+    'CONFIRM_DELETE_CLIENT' => 'Delete selected client(s)?',
 
     // MailboxController
     'Incoming' => 'Incoming',

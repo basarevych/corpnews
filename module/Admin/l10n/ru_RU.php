@@ -22,8 +22,7 @@ return [
     'Delete client' => 'Удалить клиента',
     'Email address' => 'Электронная почта',
     'Email bounced' => 'Письмо возвратилось',
-    'Save changes' => 'Сохранить изменения',
-    'Delete' => 'Удалить',
+    'CONFIRM_DELETE_CLIENT' => 'Удалить выбранного клиента (клиентов)?',
 
     // MailboxController
     'Incoming' => 'Входящие',

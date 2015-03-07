@@ -41,12 +41,6 @@
                     loader_image: '<?= $this->basePath('/img/loader.gif') ?>',
                     strings: dynamicTableStrings,
                     mapper: function (row) {
-                        var span = $('<span></span>');
-                        span.text(row['email']);
-                        row['email'] = '<a href="javascript:void(0)" onclick="editClient('
-                            + row['id']
-                            + ')">' + span.html() + '</a>';
-
                         if (row['when_bounced'] != null) {
                             var m = moment.unix(row['when_bounced']).local();
                             row['when_bounced'] = m.format('YYYY-MM-DD HH:mm:ss Z');
@@ -89,7 +83,7 @@
 
     function createClient() {
         $.ajax({
-            url: '<?= $this->basePath('/admin/client/edit-form') ?>',
+            url: '<?= $this->basePath('/admin/client/edit-client') ?>',
             success: function (html) {
                 var modal = $('#modal-form');
                 modal.find('.modal-title').text('<?= $this->translate('Create client') ?>');
@@ -101,7 +95,7 @@
 
     function editClient(id) {
         $.ajax({
-            url: '<?= $this->basePath('/admin/client/edit-form') ?>',
+            url: '<?= $this->basePath('/admin/client/edit-client') ?>',
             data: {
                 id: id
             },
@@ -121,7 +115,7 @@
             return;
 
         $.ajax({
-            url: '<?= $this->basePath('/admin/client/delete-form') ?>',
+            url: '<?= $this->basePath('/admin/client/delete-client') ?>',
             data: {
                 id: selected == 'all' ? '_all' : selected.join(',')
             },
