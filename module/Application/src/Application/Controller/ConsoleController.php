@@ -214,4 +214,79 @@ class ConsoleController extends AbstractConsoleController
             $em->flush();
         }
     }
+
+    /**
+     * Check and repair database action
+     */
+    public function checkDbAction()
+    {
+        $console = $this->getConsole();
+        $request = $this->getRequest();
+        $repair = $request->getParam('repair') != null;
+
+        $sl = $this->getServiceLocator();
+        $dfm = $sl->get('DataFormManager');
+        $em = $sl->get('Doctrine\ORM\EntityManager');
+        $dm = $this->getServiceLocator()->get('doctrine.documentmanager.odm_default');
+
+        $clients = $em->getRepository('Application\Entity\Client')
+                      ->findAll();
+        foreach ($clients as $client) {
+            foreach ($dfm->getNames() as $name) {
+                $class = $dfm->getDocumentClass($name);
+                $doc = $dm->getRepository($class)
+                          ->find($client->getId());
+                if (!$doc) {
+                    $console->writeLine();
+                    $console->writeLine('===> Error: missing document');
+                    $console->writeLine('* Class: ' . $class);
+                    $console->writeLine('* ID: ' . $client->getId());
+                    $console->writeLine('* Email: ' . $client->getEmail());
+                    if ($repair) {
+                        $console->writeLine('=> Creating...');
+                        $doc = new $class();
+                        $doc->setId($client->getId());
+                        $doc->setClientEmail($client->getEmail());
+                        $dm->persist($doc);
+                        $dm->flush();
+                    }
+                } else if ($client->getEmail() != $doc->getClientEmail()) {
+                    $console->writeLine();
+                    $console->writeLine('===> Error: document email does not match client email');
+                    $console->writeLine('* Class: ' . $class);
+                    $console->writeLine('* ID: ' . $client->getId());
+                    $console->writeLine('* Client Email: ' . $client->getEmail());
+                    $console->writeLine('* Document Email: ' . $doc->getClientEmail());
+                    if ($repair) {
+                        $console->writeLine('=> Fixing...');
+                        $doc->setClientEmail($client->getEmail());
+                        $dm->persist($doc);
+                        $dm->flush();
+                    }
+                }
+            }
+        }
+
+        foreach ($dfm->getNames() as $name) {
+            $class = $dfm->getDocumentClass($name);
+            $docs = $dm->getRepository($class)
+                       ->findAll();
+            foreach ($docs as $doc) {
+                $client = $em->getRepository('Application\Entity\Client')
+                             ->find($doc->getId());
+                if (!$client) {
+                    $console->writeLine();
+                    $console->writeLine('===> Error: orphan document');
+                    $console->writeLine('* Class: ' . $class);
+                    $console->writeLine('* ID: ' . $doc->getId());
+                    $console->writeLine('* Email: ' . $doc->getClientEmail());
+                    if ($repair) {
+                        $console->writeLine('=> Deleting...');
+                        $dm->remove($doc);
+                        $dm->flush();
+                    }
+                }
+            }
+        }
+    }
 } 

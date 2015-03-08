@@ -114,6 +114,11 @@ class Module
 
             'populate-db' => '',
             [ PHP_EOL, 'Populate the database' ],
+
+            'check-db [--repair]' => '',
+            [ PHP_EOL, 'Check the database' ],
+            [ '--repair',  'Repair the database' ],
+
         ];
     }
 

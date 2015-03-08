@@ -56,6 +56,15 @@ return [
                         ]
                     ]
                 ],
+                'check-db' => [
+                    'options' => [
+                        'route'    => 'check-db [--repair]',
+                        'defaults' => [
+                            'controller' => 'Application\Controller\Console',
+                            'action'     => 'check-db'
+                        ]
+                    ]
+                ],
             ],
         ],
     ],
