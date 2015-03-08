@@ -7,7 +7,7 @@
  * @license     http://choosealicense.com/licenses/mit/ MIT
  */
 
-namespace Form;
+namespace DataForm;
 
 use Zend\ServiceManager\ServiceLocatorInterface;
 use Zend\Mvc\ModuleRouteListener;
@@ -16,7 +16,7 @@ use Zend\Mvc\MvcEvent;
 /**
  * Admin module boostrap class
  * 
- * @category    Form
+ * @category    DataForm
  * @package     Bootstrap
  */
 class Module
@@ -51,7 +51,7 @@ class Module
         $class = get_class($controller);
         $module = substr($class, 0, strpos($class, "\\"));
 
-        if ($module == 'Form')
+        if ($module == 'DataForm')
             $controller->layout('layout/form');
     }
 

@@ -7,7 +7,7 @@
  * @license     http://choosealicense.com/licenses/mit/ MIT
  */
 
-namespace Form\Controller;
+namespace DataForm\Controller;
 
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;

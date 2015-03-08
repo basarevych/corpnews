@@ -48,8 +48,9 @@ return [
         'data_forms' => [
             'profile' => [
                 'title'     => 'Profile',
-                'url'       => '/form/profile',
-                'document'  => 'Form\Document\Profile'
+                'url'       => '/data-form/profile',
+                'document'  => 'DataForm\Document\Profile',
+                'form'      => 'DataForm\Form\Profile',
             ],
         ],
     ],

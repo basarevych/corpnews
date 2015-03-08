@@ -3,7 +3,7 @@
 return [
     'modules' => [
         'Application',
-        'Form',
+        'DataForm',
         'Admin',
         // Your modules here
         'DoctrineModule',

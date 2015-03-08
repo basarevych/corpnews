@@ -3,7 +3,7 @@
 return [
     'controllers' => [
         'invokables' => [
-            'Form\Controller\Profile' => 'Form\Controller\ProfileController',
+            'DataForm\Controller\Profile' => 'DataForm\Controller\ProfileController',
         ],
     ],
 
@@ -16,16 +16,16 @@ return [
 
     'router' => [
         'routes' => [
-            'form' => [
+            'data-form' => [
                 'type' => 'Zend\Mvc\Router\Http\Segment',
                 'options' => [
-                    'route'    => '/form[/:controller[/:action]]',
+                    'route'    => '/data-form[/:controller[/:action]]',
                     'constraints' => [
                         'controller' => '[a-zA-Z][a-zA-Z0-9_-]*',
                         'action'     => '[a-zA-Z][a-zA-Z0-9_-]*',
                     ],
                     'defaults' => [
-                        '__NAMESPACE__' => 'Form\Controller',
+                        '__NAMESPACE__' => 'DataForm\Controller',
                         'controller'    => 'Index',
                         'action'        => 'index',
                     ],
@@ -48,22 +48,22 @@ return [
 
     'doctrine' => [
         'driver' => [
-            'form_entity' => [
+            'data_form_entity' => [
                 'class' => 'Doctrine\ORM\Mapping\Driver\AnnotationDriver',
-                'paths' => [ __DIR__ . '/../src/Form/Entity' ],
+                'paths' => [ __DIR__ . '/../src/DataForm/Entity' ],
             ],
             'orm_default' => [
                 'drivers' => [
-                   'Form\Entity' => 'form_entity'
+                   'DataForm\Entity' => 'data_form_entity'
                 ]
             ],
-            'form_document' => [
+            'data_form_document' => [
                 'class' => 'Doctrine\ODM\MongoDB\Mapping\Driver\AnnotationDriver',
-                'paths' => [ __DIR__ . '/../src/Form/Document' ],
+                'paths' => [ __DIR__ . '/../src/DataForm/Document' ],
             ],
             'odm_default' => [
                 'drivers' => [
-                    'Form\Document' => 'form_document'
+                    'DataForm\Document' => 'data_form_document'
                 ]
             ]
         ]
