@@ -14,6 +14,7 @@ use Zend\View\Model\ViewModel;
 use Zend\View\Model\JsonModel;
 use Application\Exception\NotFoundException;
 use Application\Exception\AccessDeniedException;
+use DataForm\Form\Profile as ProfileForm;
 
 /**
  * Profile form controller
@@ -38,6 +39,7 @@ class ProfileController extends AbstractActionController
         $dfm = $sl->get('DataFormManager');
         $dm = $sl->get('doctrine.documentmanager.odm_default');
         $em = $sl->get('Doctrine\ORM\EntityManager');
+        $translate = $sl->get('viewhelpermanager')->get('translate');
 
         $cnt = $session->getContainer();
         $admin = $cnt->offsetExists('is_admin') && $cnt->is_admin;
@@ -62,8 +64,68 @@ class ProfileController extends AbstractActionController
                 throw new \Exception("[" . self::DATA_FORM_NAME . "] Documents for client '$email' could not be created");
         }
 
+        $form = new ProfileForm();
+        $messages = [];
+        $success = false;
+
+        // Handle validate request
+        if ($this->params()->fromQuery('query') == 'validate') {
+            $field = $this->params()->fromQuery('field');
+            $data = $this->params()->fromQuery('form');
+
+            $form->setData($data);
+            $form->isValid();
+
+            $control = $form->get($field);
+            foreach ($control->getMessages() as $msg)
+                $messages[] = $translate($msg);
+
+            return new JsonModel([
+                'valid'     => (count($messages) == 0),
+                'messages'  => $messages,
+            ]);
+        }
+
+        $request = $this->getRequest();
+        $prg = $this->prg($request->getRequestUri(), true);
+        if ($prg instanceof \Zend\Http\PhpEnvironment\Response)
+            return $prg;
+
+        if ($prg !== false) {
+            $form->setData($prg);
+
+            if ($form->isValid()) {
+                $data = $form->getData();
+
+                $doc->setWhenUpdated(new \DateTime());
+                $doc->setFirstName(empty($data['first_name']) ? null : $data['first_name']);
+                $doc->setMiddleName(empty($data['middle_name']) ? null : $data['middle_name']);
+                $doc->setLastName(empty($data['last_name']) ? null : $data['last_name']);
+                $doc->setGender(empty($data['gender']) ? null : $data['gender']);
+                $doc->setCompany(empty($data['company']) ? null : $data['company']);
+                $doc->setPosition(empty($data['position']) ? null : $data['position']);
+                $dm->persist($doc);
+                $dm->flush();
+
+                $success = true;
+            }
+        } else {
+            $form->setData([
+                'first_name'    => $doc->getFirstName(),
+                'middle_name'   => $doc->getMiddleName(),
+                'last_name'     => $doc->getLastName(),
+                'gender'        => $doc->getGender(),
+                'company'       => $doc->getCompany(),
+                'position'      => $doc->getPosition(),
+            ]);
+        }
+
         return new ViewModel([
-            'title' => $dfm->getTitle(self::DATA_FORM_NAME),
+            'title'     => $dfm->getTitle(self::DATA_FORM_NAME),
+            'email'     => $email,
+            'form'      => $form,
+            'messages'  => $messages,
+            'success'   => $success,
         ]);
     }
 

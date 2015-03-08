@@ -54,7 +54,7 @@ class Profile extends AbstractDataFormDocument
      *
      * @var string
      *
-     * @ODM\Boolean
+     * @ODM\String
      */
     protected $gender;
 
@@ -85,7 +85,9 @@ class Profile extends AbstractDataFormDocument
     {
         $dt = $this->getValueDatetime();
         return array(
+            'id'                => $this->getId(),
             'client_email'      => $this->getClientEmail(),
+            'when_updated'      => $this->getWhenUpdated(),
             'first_name'        => $this->getFisrtName(),
             'middle_name'       => $this->getMiddleName(),
             'last_name'         => $this->getLastName(),

@@ -1,7 +1,225 @@
+<?php
+
+    $form = $this->form;
+    $form->prepare();
+
+    $security = $form->get('security');
+    $firstName = $form->get('first_name');
+    $middleName = $form->get('middle_name');
+    $lastName = $form->get('last_name');
+    $gender = $form->get('gender');
+    $company = $form->get('company');
+    $position = $form->get('position');
+    $submit = $form->get('submit');
+
+?>
+
 <div class="container">
     <div class="row">
         <div class="col-md-offset-1 col-md-10 col-lg-offset-2 col-lg-8 form-page">
-            <h3><?= $this->escapeHtml($this->title) ?></h3>
-        </div>
+            <form role="form" class="form-horizontal"
+                  method="<?= $form->getAttribute('method') ?>">
+
+                <input type="hidden"
+                       name="<?= $security->getName() ?>"
+                       value="<?= $security->getValue() ?>">
+
+                <div class="form-group page-header">
+                    <div class="col-sm-4">
+                        <h3>Your Logo</h3>
+                    </div>
+                    <div class="col-sm-8">
+                        <h3><?= $this->translate($this->title) ?></h3>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="col-sm-8 col-sm-offset-4">
+                        <em><?= $this->escapeHtml($this->email) ?></em>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <?php foreach (array_merge($this->messages, $security->getMessages()) as $msg): ?>
+                        <div class="alert alert-danger">
+                            <?= $this->escapeHtml($this->translate($msg)) ?>
+                        </div>
+                    <?php endforeach ?>
+                    <?php if ($this->success): ?>
+                        <div class="alert alert-success">
+                            <?= $this->escapeHtml($this->translate('Data saved')) ?>
+                        </div>
+                    <?php endif ?>
+                </div>
+
+                <?php $valid = count($firstName->getMessages()) == 0 ?>
+                <div class="form-group <?= $valid ?: 'has-error' ?>">
+                        <label class="col-sm-4 control-label"
+                               for="<?= $firstName->getName() ?>">
+                        <?= $this->escapeHtml($this->translate($firstName->getLabel())) ?>:
+                    </label>
+                    <div class="col-sm-8">
+                        <input class="form-control" type="text"
+                               name="<?= $firstName->getName() ?>"
+                               value="<?= $this->escapeHtml($firstName->getValue()) ?>"
+                               data-on-blur="validateFormField($('input[name=<?= $firstName->getName() ?>]'))"
+                               data-on-enter="$('input[name=<?= $middleName->getName() ?>]').focus()">
+                        <div class="help-block">
+                            <?php if (!$valid): ?>
+                                <ul class="list-unstyled icon-list error-list">
+                                <?php foreach ($firstName->getMessages() as $msg): ?>
+                                    <li><?= $this->escapeHtml($this->translate($msg)) ?></li>
+                                <?php endforeach ?>
+                                </ul>
+                            <?php endif ?>
+                        </div>
+                    </div>
+                </div>
+
+                <?php $valid = count($middleName->getMessages()) == 0 ?>
+                <div class="form-group <?= $valid ?: 'has-error' ?>">
+                        <label class="col-sm-4 control-label"
+                               for="<?= $middleName->getName() ?>">
+                        <?= $this->escapeHtml($this->translate($middleName->getLabel())) ?>:
+                    </label>
+                    <div class="col-sm-8">
+                        <input class="form-control" type="text"
+                               name="<?= $middleName->getName() ?>"
+                               value="<?= $this->escapeHtml($middleName->getValue()) ?>"
+                               data-on-blur="validateFormField($('input[name=<?= $middleName->getName() ?>]'))"
+                               data-on-enter="$('input[name=<?= $lastName->getName() ?>]').focus()">
+                        <div class="help-block">
+                            <?php if (!$valid): ?>
+                                <ul class="list-unstyled icon-list error-list">
+                                <?php foreach ($middleName->getMessages() as $msg): ?>
+                                    <li><?= $this->escapeHtml($this->translate($msg)) ?></li>
+                                <?php endforeach ?>
+                                </ul>
+                            <?php endif ?>
+                        </div>
+                    </div>
+                </div>
+
+                <?php $valid = count($lastName->getMessages()) == 0 ?>
+                <div class="form-group <?= $valid ?: 'has-error' ?>">
+                        <label class="col-sm-4 control-label"
+                               for="<?= $lastName->getName() ?>">
+                        <?= $this->escapeHtml($this->translate($lastName->getLabel())) ?>:
+                    </label>
+                    <div class="col-sm-8">
+                        <input class="form-control" type="text"
+                               name="<?= $lastName->getName() ?>"
+                               value="<?= $this->escapeHtml($lastName->getValue()) ?>"
+                               data-on-blur="validateFormField($('input[name=<?= $lastName->getName() ?>]'))"
+                               data-on-enter="$('input[name=<?= $gender->getName() ?>]').focus()">
+                        <div class="help-block">
+                            <?php if (!$valid): ?>
+                                <ul class="list-unstyled icon-list error-list">
+                                <?php foreach ($lastName->getMessages() as $msg): ?>
+                                    <li><?= $this->escapeHtml($this->translate($msg)) ?></li>
+                                <?php endforeach ?>
+                                </ul>
+                            <?php endif ?>
+                        </div>
+                    </div>
+                </div>
+
+                <?php $valid = count($gender->getMessages()) == 0 ?>
+                <div class="form-group <?= $valid ?: 'has-error' ?>">
+                        <label class="col-sm-4 control-label"
+                               for="<?= $gender->getName() ?>">
+                        <?= $this->escapeHtml($this->translate($gender->getLabel())) ?>:
+                    </label>
+                    <div class="col-sm-8">
+                        <?php foreach ($gender->getValueOptions() as $value => $label): ?>
+                            <div class="radio">
+                                <label>
+                                    <input type="radio"
+                                           name="<?= $gender->getName() ?>"
+                                           value="<?= $this->escapeHtml($value) ?>"
+                                           <?= $gender->getValue() == $value ? 'checked="checked"' : '' ?>
+                                           data-on-enter="$('input[name=<?= $company->getName() ?>]').focus()">
+                                    <?= $this->translate($label) ?>
+                                </label>
+                            </div>
+                        <?php endforeach ?>
+                        <div class="help-block">
+                            <?php if (!$valid): ?>
+                                <ul class="list-unstyled icon-list error-list">
+                                <?php foreach ($gender->getMessages() as $msg): ?>
+                                    <li><?= $this->escapeHtml($this->translate($msg)) ?></li>
+                                <?php endforeach ?>
+                                </ul>
+                            <?php endif ?>
+                        </div>
+                    </div>
+                </div>
+
+                <?php $valid = count($company->getMessages()) == 0 ?>
+                <div class="form-group <?= $valid ?: 'has-error' ?>">
+                        <label class="col-sm-4 control-label"
+                               for="<?= $company->getName() ?>">
+                        <?= $this->escapeHtml($this->translate($company->getLabel())) ?>:
+                    </label>
+                    <div class="col-sm-8">
+                        <input class="form-control" type="text"
+                               name="<?= $company->getName() ?>"
+                               value="<?= $this->escapeHtml($company->getValue()) ?>"
+                               data-on-blur="validateFormField($('input[name=<?= $company->getName() ?>]'))"
+                               data-on-enter="$('input[name=<?= $position->getName() ?>]').focus()">
+                        <div class="help-block">
+                            <?php if (!$valid): ?>
+                                <ul class="list-unstyled icon-list error-list">
+                                <?php foreach ($company->getMessages() as $msg): ?>
+                                    <li><?= $this->escapeHtml($this->translate($msg)) ?></li>
+                                <?php endforeach ?>
+                                </ul>
+                            <?php endif ?>
+                        </div>
+                    </div>
+                </div>
+
+                <?php $valid = count($position->getMessages()) == 0 ?>
+                <div class="form-group <?= $valid ?: 'has-error' ?>">
+                    <label class="col-sm-4 control-label"
+                           for="<?= $position->getName() ?>">
+                        <?= $this->escapeHtml($this->translate($position->getLabel())) ?>:
+                    </label>
+                    <div class="col-sm-8">
+                        <input class="form-control" type="text"
+                               name="<?= $position->getName() ?>"
+                               data-on-blur="validateFormField($('input[name=<?= $position->getName() ?>]'))"
+                               data-on-enter="$('form').submit()">
+                        <div class="help-block">
+                            <?php if (!$valid): ?>
+                                <ul class="list-unstyled icon-list error-list">
+                                <?php foreach ($position->getMessages() as $msg): ?>
+                                    <li><?= $this->escapeHtml($this->translate($msg)) ?></li>
+                                <?php endforeach ?>
+                                </ul>
+                            <?php endif ?>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-sm-offset-4 col-sm-8">
+                        <button class="btn btn-default" type="submit">
+                            <?= $this->escapeHtml($this->translate($submit->getLabel())) ?>
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </form>
     </div>
 </div>
+
+<script>
+    $(document).ready(function () {
+        var errors = $('form .form-group.has-error input');
+        var all = $('form .form-group input:not(.disabled)');
+        if (errors.length > 0)
+            errors[0].focus();
+        else if (all.length > 0)
+            all[0].focus();
+    });
+</script>
