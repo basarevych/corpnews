@@ -17,7 +17,7 @@ use Application\Exception\NotFoundException;
 /**
  * Index controller
  *
- * @category    Example
+ * @category    Admin
  * @package     Controller
  */
 class IndexController extends AbstractActionController

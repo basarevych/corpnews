@@ -3,12 +3,7 @@
 return [
     'controllers' => [
         'invokables' => [
-            'Admin\Controller\Index' => 'Admin\Controller\IndexController',
-            'Admin\Controller\Auth' => 'Admin\Controller\AuthController',
-            'Admin\Controller\Client' => 'Admin\Controller\ClientController',
-            'Admin\Controller\Document' => 'Admin\Controller\DocumentController',
-            'Admin\Controller\Mailbox' => 'Admin\Controller\MailboxController',
-            'Admin\Controller\Setting' => 'Admin\Controller\SettingController',
+            'Form\Controller\Profile' => 'Form\Controller\ProfileController',
         ],
     ],
 
@@ -21,16 +16,16 @@ return [
 
     'router' => [
         'routes' => [
-            'admin' => [
+            'form' => [
                 'type' => 'Zend\Mvc\Router\Http\Segment',
                 'options' => [
-                    'route'    => '/admin[/:controller[/:action]]',
+                    'route'    => '/form[/:controller[/:action]]',
                     'constraints' => [
                         'controller' => '[a-zA-Z][a-zA-Z0-9_-]*',
                         'action'     => '[a-zA-Z][a-zA-Z0-9_-]*',
                     ],
                     'defaults' => [
-                        '__NAMESPACE__' => 'Admin\Controller',
+                        '__NAMESPACE__' => 'Form\Controller',
                         'controller'    => 'Index',
                         'action'        => 'index',
                     ],
@@ -53,22 +48,22 @@ return [
 
     'doctrine' => [
         'driver' => [
-            'admin_entity' => [
+            'form_entity' => [
                 'class' => 'Doctrine\ORM\Mapping\Driver\AnnotationDriver',
-                'paths' => [ __DIR__ . '/../src/Admin/Entity' ],
+                'paths' => [ __DIR__ . '/../src/Form/Entity' ],
             ],
             'orm_default' => [
                 'drivers' => [
-                   'Admin\Entity' => 'admin_entity'
+                   'Form\Entity' => 'form_entity'
                 ]
             ],
-            'admin_document' => [
+            'form_document' => [
                 'class' => 'Doctrine\ODM\MongoDB\Mapping\Driver\AnnotationDriver',
-                'paths' => [ __DIR__ . '/../src/Admin/Document' ],
+                'paths' => [ __DIR__ . '/../src/Form/Document' ],
             ],
             'odm_default' => [
                 'drivers' => [
-                    'Admin\Document' => 'admin_document'
+                    'Form\Document' => 'form_document'
                 ]
             ]
         ]

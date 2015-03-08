@@ -7,7 +7,7 @@
  * @license     http://choosealicense.com/licenses/mit/ MIT
  */
 
-namespace Application\Document;
+namespace Form\Document;
 
 use Doctrine\ODM\MongoDB\DocumentRepository;
 use Application\Document\Sample as SampleDocument;

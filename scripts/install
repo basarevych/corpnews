@@ -211,11 +211,11 @@ fi
 input="none"
 echo
 while [ "$input" != "y" -a "$input" != "n" -a "$input" != "" ]; do
-    read -p "* Do you need Doctrine Mongo ODM? y/[n]: " input
+    read -p "* Do you need Doctrine Mongo ODM? [y]/n: " input
 done
 
 using_odm=0
-if [ "$input" = "y" ]; then
+if [ "$input" != "n" ]; then
     using_odm=1
 
     mongodefaultport=27017
@@ -382,6 +382,11 @@ if [ $using_odm -eq 1 ]; then
 
         dbscript="/tmp/$project.install.js"
         echo "db = db.getSiblingDB('$mongoname')" > $dbscript
+        echo "db.getCollectionNames().forEach(" >> $dbscript
+        echo "  function(collection_name) {" >> $dbscript
+        echo "    db[collection_name].remove({})" >> $dbscript
+        echo "  }" >> $dbscript
+        echo ")" >> $dbscript
         echo "db.runCommand({ dropAllUsersFromDatabase: 1 })" >> $dbscript
         echo "db.runCommand({ dropDatabase: 1 })" >> $dbscript
         echo "db = db.getSiblingDB('$mongoname')" >> $dbscript

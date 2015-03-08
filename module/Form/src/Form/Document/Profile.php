@@ -7,9 +7,10 @@
  * @license     http://choosealicense.com/licenses/mit/ MIT
  */
 
-namespace Application\Document;
+namespace Form\Document;
 
 use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM;
+use Application\Document\AbstractDataFormDocument;
 
 /**
  * User profile document
@@ -17,7 +18,7 @@ use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM;
  * @category    Application
  * @package     Document
  * 
- * @ODM\Document(repositoryClass="Application\Document\ProfileRepository")
+ * @ODM\Document(repositoryClass="Form\Document\ProfileRepository")
  */
 class Profile extends AbstractDataFormDocument
 {

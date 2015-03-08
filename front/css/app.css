@@ -1,5 +1,8 @@
-body.with-navbar {
+body.extra-padding {
     padding-top: 60px;
+}
+body.form {
+    background-color: #aaaaaa;
 }
 
 .invisible {
@@ -51,6 +54,13 @@ body.with-navbar {
 }
 .error-list li:before {
     content: '\e090';
+}
+
+.form-page {
+    margin-top: 100px;
+    background-color: #ffffff;
+    border: 1px solid #999999;
+    box-shadow: 0 0 8px #333333;
 }
 
 .help-tour {

@@ -22,11 +22,20 @@ use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM;
 abstract class AbstractDataFormDocument
 {
     /**
-     * Client email
+     * Client ID
+     *
+     * @var integer 
+     *
+     * @ODM\Id(strategy="NONE")
+     */
+    private $id;
+
+    /**
+     * Client email (duplicate of Client entity email)
      *
      * @var string
      *
-     * @ODM\Id(strategy="NONE")
+     * @ODM\String
      */
     private $client_email;
 
@@ -40,9 +49,31 @@ abstract class AbstractDataFormDocument
     private $when_updated;
 
     /**
+     * Set id
+     *
+     * @param custom_id $id
+     * @return self
+     */
+    public function setId($id)
+    {
+        $this->id = $id;
+        return $this;
+    }
+
+    /**
+     * Get id
+     *
+     * @return custom_id $id
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    /**
      * Set clientEmail
      *
-     * @param custom_id $clientEmail
+     * @param string $clientEmail
      * @return self
      */
     public function setClientEmail($clientEmail)
@@ -54,7 +85,7 @@ abstract class AbstractDataFormDocument
     /**
      * Get clientEmail
      *
-     * @return custom_id $clientEmail
+     * @return string $clientEmail
      */
     public function getClientEmail()
     {

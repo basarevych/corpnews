@@ -124,9 +124,9 @@ class DataFormManager implements ServiceLocatorAwareInterface
     /**
      * Create all documents for a client
      *
-     * @param string $email     Client's email
+     * @param string $id
      */
-    public function createClientDocuments($email)
+    public function createClientDocuments($id, $email)
     {
         $dm = $this->getServiceLocator()->get('doctrine.documentmanager.odm_default');
 
@@ -136,10 +136,36 @@ class DataFormManager implements ServiceLocatorAwareInterface
                 continue;
 
             $doc = $dm->getRepository($class)
-                      ->find($email);
+                      ->find($id);
             if (!$doc) {
                 $doc = new $class();
+                $doc->setId($id);
                 $doc->setClientEmail($email);
+                $dm->persist($doc);
+            }
+        }
+        $dm->flush();
+    }
+
+    /**
+     * Update all documents of a client
+     *
+     * @param string $id
+     * @param string $newEmail
+     */
+    public function updateClientDocuments($id, $newEmail)
+    {
+        $dm = $this->getServiceLocator()->get('doctrine.documentmanager.odm_default');
+
+        foreach ($this->dataForms as $name => $config) {
+            $class = $this->getDocumentClass($name);
+            if (!$class)
+                continue;
+
+            $doc = $dm->getRepository($class)
+                      ->find($id);
+            if ($doc) {
+                $doc->setClientEmail($newEmail);
                 $dm->persist($doc);
             }
         }
@@ -149,9 +175,9 @@ class DataFormManager implements ServiceLocatorAwareInterface
     /**
      * Delete all documents of a client
      *
-     * @param string $email     Client's email
+     * @param string $id
      */
-    public function deleteClientDocuments($email)
+    public function deleteClientDocuments($id)
     {
         $dm = $this->getServiceLocator()->get('doctrine.documentmanager.odm_default');
 
@@ -161,7 +187,7 @@ class DataFormManager implements ServiceLocatorAwareInterface
                 continue;
 
             $doc = $dm->getRepository($class)
-                      ->find($email);
+                      ->find($id);
             if ($doc)
                 $dm->remove($doc);
         }

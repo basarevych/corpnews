@@ -121,6 +121,7 @@ class ClientController extends AbstractActionController
                     $entity = new ClientEntity();
 
                 try {
+                    $oldEmail = $entity->getEmail();
                     $entity->setEmail($data['email']);
                     $entity->setWhenBounced($date);
 
@@ -128,10 +129,12 @@ class ClientController extends AbstractActionController
                     $em->flush();
 
                     if (!$id)
-                        $dfm->createClientDocuments($entity->getEmail());
+                        $dfm->createClientDocuments($entity->getId(), $entity->getEmail());
+                    else if ($oldEmail != $entity->getEmail())
+                        $dfm->updateClientDocuments($entity->getId(), $entity->getEmail());
                 } catch (\Exception $e) {
                     if (!$id)
-                        $dfm->deleteClientDocuments($entity->getEmail());
+                        $dfm->deleteClientDocuments($entity->getId());
                     throw $e;
                 }
 
@@ -190,11 +193,13 @@ class ClientController extends AbstractActionController
                 } else {
                     foreach (explode(',', $id) as $item) {
                         $entity = $repo->find($item);
-                        if ($entity)
-                            $em->remove($entity);
+                        if (!$entity)
+                            continue;
+
+                        $em->remove($entity);
+                        $em->flush();
+                        $dfm->deleteClientDocuments($entity->getId());
                     }
-                    $em->flush();
-                    $dfm->deleteClientDocuments($entity->getEmail());
                 }
 
                 $script = "$('#modal-form').modal('hide'); reloadTable()";

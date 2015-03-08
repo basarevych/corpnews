@@ -43,4 +43,14 @@ return [
             ],
         ]
     ],
+
+    'corpnews' => [
+        'data_forms' => [
+            'profile' => [
+                'title'     => 'Profile',
+                'url'       => '/form/profile',
+                'document'  => 'Form\Document\Profile'
+            ],
+        ],
+    ],
 ];
