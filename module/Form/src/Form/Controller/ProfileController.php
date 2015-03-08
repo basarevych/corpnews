@@ -46,19 +46,16 @@ class ProfileController extends AbstractActionController
         if ($email && !$admin)
             throw new AccessDeniedException('Admin access for not an admin denied');
 
-        $class = $dfm->getDocumentClass(self::DATA_FORM_NAME);
-
-        $doc = $dm->getRepository($class)
-                  ->find($email);
         $client = $em->getRepository('Application\Entity\Client')
                      ->findOneByEmail($email);
+        if (!$client)
+            throw new NotFoundException("[" . self::DATA_FORM_NAME . "] Client '$email' not found");
 
-        if (!$client && !$doc)
-            throw new NotFoundException('No data found');
-        if ($client && !$doc)
-            throw new \Exception("Data form '" . self::DATA_FORM_NAME . "' requested for '$email', but the document does not exist");
-        if (!$client && $doc)
-            throw new \Exception("Data form '" . self::DATA_FORM_NAME . "' requested for '$email', but the client does not exist");
+        $class = $dfm->getDocumentClass(self::DATA_FORM_NAME);
+        $doc = $dm->getRepository($class)
+                  ->find($client->getId());
+        if (!$doc)
+            throw new NotFoundException("[" . self::DATA_FORM_NAME . "] Document '" . $client->getId() . "' not found");
 
         return new ViewModel([
             'title' => $dfm->getTitle(self::DATA_FORM_NAME),
