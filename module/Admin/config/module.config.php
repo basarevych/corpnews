@@ -6,6 +6,7 @@ return [
             'Admin\Controller\Index' => 'Admin\Controller\IndexController',
             'Admin\Controller\Auth' => 'Admin\Controller\AuthController',
             'Admin\Controller\Client' => 'Admin\Controller\ClientController',
+            'Admin\Controller\Document' => 'Admin\Controller\DocumentController',
             'Admin\Controller\Mailbox' => 'Admin\Controller\MailboxController',
             'Admin\Controller\Setting' => 'Admin\Controller\SettingController',
         ],

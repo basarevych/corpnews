@@ -4,6 +4,8 @@ return [
     // Admin layout
     'Campaign' => 'Кампания',
     'Clients' => 'Клиенты',
+    'Data' => 'Данные',
+    'Data forms' => 'Формы данных',
     'Mailbox' => 'Почтовый ящик',
     'Settings' => 'Настройки',
     'Mailbox settings' => 'Настройки почтового ящика',
@@ -23,6 +25,18 @@ return [
     'Email address' => 'Электронная почта',
     'Email bounced' => 'Письмо возвратилось',
     'CONFIRM_DELETE_CLIENT' => 'Удалить выбранного клиента (клиентов)?',
+
+    // DocumentController
+    'Available data forms' => 'Доступные формы данных',
+    'When updated' => 'Когда обновлено',
+    'First name' => 'Имя',
+    'Middle name' => 'Отчество',
+    'Last name' => 'Фамилия',
+    'Gender' => 'Пол',
+    'male' => 'Мужской',
+    'female' => 'Женский',
+    'Company' => 'Компания',
+    'Position' => 'Должность',
 
     // MailboxController
     'Incoming' => 'Входящие',

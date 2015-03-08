@@ -4,6 +4,8 @@ return [
     // Admin layout
     'Campaign' => 'Campaign',
     'Clients' => 'Clients',
+    'Data' => 'Data',
+    'Data forms' => 'Data forms',
     'Mailbox' => 'Mailbox',
     'Settings' => 'Settings',
     'Mailbox settings' => 'Mailbox settings',
@@ -23,6 +25,18 @@ return [
     'Email address' => 'Email address',
     'Email bounced' => 'Email bounced',
     'CONFIRM_DELETE_CLIENT' => 'Delete selected client(s)?',
+
+    // DocumentController
+    'Available data forms' => 'Available data forms',
+    'When updated' => 'When updated',
+    'First name' => 'First name',
+    'Middle name' => 'Middle name',
+    'Last name' => 'Last name',
+    'Gender' => 'Gender',
+    'male' => 'Male',
+    'female' => 'Female',
+    'Company' => 'Company',
+    'Position' => 'Position',
 
     // MailboxController
     'Incoming' => 'Incoming',

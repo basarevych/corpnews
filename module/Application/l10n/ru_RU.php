@@ -14,6 +14,9 @@ return [
     'Save changes' => 'Сохранить изменения',
     'Delete' => 'Удалить',
 
+    // Data forms
+    'Profile' => 'Профиль',
+
     // Help tours
     'TOUR_TEMPLATE' => '<div class="popover help-tour">'
         . '<div class="arrow"></div>'

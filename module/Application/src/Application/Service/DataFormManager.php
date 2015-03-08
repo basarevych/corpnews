@@ -80,6 +80,20 @@ class DataFormManager implements ServiceLocatorAwareInterface
     }
 
     /**
+     * Get title
+     *
+     * @param string $name
+     * @return string
+     */
+    public function getTitle($name)
+    {
+        if (!isset($this->dataForms[$name]) || !isset($this->dataForms[$name]['title']))
+            return $name;
+
+        return $this->dataForms[$name]['title'];
+    }
+
+    /**
      * Get class of data form document
      *
      * @param string $name
@@ -87,9 +101,7 @@ class DataFormManager implements ServiceLocatorAwareInterface
      */
     public function getDocumentClass($name)
     {
-        if (!isset($this->dataForms[$name]))
-            return null;
-        if (!isset($this->dataForms[$name]['document']))
+        if (!isset($this->dataForms[$name]) || !isset($this->dataForms[$name]['document']))
             return null;
 
         return $this->dataForms[$name]['document'];
