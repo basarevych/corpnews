@@ -13,7 +13,7 @@ use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
 use Zend\View\Model\JsonModel;
 use Application\Exception\NotFoundException;
-use Admin\Form\LoginForm;
+use Admin\Form\Login as LoginForm;
 
 /**
  * Auth controller

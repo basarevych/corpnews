@@ -16,8 +16,8 @@ use DynamicTable\Table;
 use DynamicTable\Adapter\DoctrineORMAdapter;
 use Application\Exception\NotFoundException;
 use Application\Entity\Client as ClientEntity;
-use Application\Form\ConfirmForm;
-use Admin\Form\EditClientForm;
+use Application\Form\Confirm as ConfirmForm;
+use Admin\Form\EditClient as EditClientForm;
 
 /**
  * Clients controller

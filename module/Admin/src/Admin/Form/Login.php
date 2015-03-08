@@ -14,17 +14,14 @@ use Zend\Form\Element;
 use Zend\InputFilter\Input;
 use Zend\InputFilter\InputFilter;
 use Zend\Filter;
-use Zend\Validator;
-use Application\Validator\Integer;
-use Application\Filter\LocaleFormattedNumber;
 
 /**
- * Edit Mailbox settings form
+ * Login form
  *
  * @category    Admin
  * @package     Form
  */
-class MailboxSettingsForm extends Form
+class Login extends Form
 {
     /**
      * The input filter
@@ -36,20 +33,28 @@ class MailboxSettingsForm extends Form
     /**
      * Constructor
      *
-     * @param null|int|string  $name        Optional name
-     * @param array            $options     Optional options
+     * @param  null|int|string  $name    Optional name
+     * @param  array            $options Optional options
      */
-    public function __construct($name = 'mailbox-settings', $options = array())
+    public function __construct($name = null, $options = array())
     {
-        parent::__construct($name, $options);
+        parent::__construct($name ? $name : 'login', $options);
         $this->setAttribute('method', 'post');
 
         $csrf = new Element\Csrf('security');
         $this->add($csrf);
 
-        $autodelete = new Element\Text('autodelete');
-        $autodelete->setLabel('Autodelete');
-        $this->add($autodelete);
+        $login = new Element\Text('login');
+        $login->setLabel('Login');
+        $this->add($login);
+
+        $password = new Element\Password('password');
+        $password->setLabel('Password');
+        $this->add($password);
+
+        $submit = new Element\Submit('submit');
+        $submit->setLabel('Sign in');
+        $this->add($submit);
     }
 
     /**
@@ -65,19 +70,20 @@ class MailboxSettingsForm extends Form
         $filter = new InputFilter();
 
         $csrf = new Input('security');
-        $csrf->setRequired(true)
-             ->setBreakOnFailure(false);
+        $csrf->setRequired(true);
         $filter->add($csrf);
 
-        $autodelete = new Input('autodelete');
-        $autodelete->setRequired(true)
-                   ->setBreakOnFailure(false)
-                   ->getFilterChain()
-                   ->attach(new Filter\StringTrim())
-                   ->attach(new LocaleFormattedNumber());
-        $autodelete->getValidatorChain()
-                   ->attach(new Integer());
-        $filter->add($autodelete);
+        $login = new Input('login');
+        $login->setRequired(true)
+              ->getFilterChain()
+              ->attach(new Filter\StringTrim());
+        $filter->add($login);
+
+        $password = new Input('password');
+        $password->setRequired(true)
+                 ->getFilterChain()
+                 ->attach(new Filter\StringTrim());
+        $filter->add($password);
 
         $this->inputFilter = $filter;
         return $filter;

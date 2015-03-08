@@ -21,7 +21,7 @@ use Application\Exception\NotFoundException;
 use Application\Exception\BadRequestException;
 use Application\Model\Mailbox;
 use Admin\DynamicTable\MailboxAdapter;
-use Admin\Form\MailConfirmForm;
+use Admin\Form\MailConfirm as MailConfirmForm;
 
 /**
  * Mailbox controller

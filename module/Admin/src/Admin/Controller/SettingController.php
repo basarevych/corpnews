@@ -14,7 +14,7 @@ use Zend\View\Model\ViewModel;
 use Zend\View\Model\JsonModel;
 use Application\Exception\NotFoundException;
 use Application\Entity\Setting as SettingEntity;
-use Admin\Form\MailboxSettingsForm;
+use Admin\Form\MailboxSettings as MailboxSettingsForm;
 
 /**
  * Settings controller

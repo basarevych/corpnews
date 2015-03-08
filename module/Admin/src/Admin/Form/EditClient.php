@@ -24,7 +24,7 @@ use Application\Validator\EntityNotExists;
  * @category    Admin
  * @package     Form
  */
-class EditClientForm extends Form
+class EditClient extends Form
 {
     /**
      * The input filter
