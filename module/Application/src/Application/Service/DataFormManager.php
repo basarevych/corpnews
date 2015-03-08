@@ -94,6 +94,20 @@ class DataFormManager implements ServiceLocatorAwareInterface
     }
 
     /**
+     * Get URL
+     *
+     * @param string $name
+     * @return string
+     */
+    public function getUrl($name)
+    {
+        if (!isset($this->dataForms[$name]) || !isset($this->dataForms[$name]['url']))
+            return null;
+
+        return $this->dataForms[$name]['url'];
+    }
+
+    /**
      * Get class of data form document
      *
      * @param string $name

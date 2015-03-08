@@ -63,12 +63,8 @@ class DocumentController extends AbstractActionController
         if (!$name)
             throw new \Exception("No data form 'name' parameter");
 
-        $class = $dfm->getDocumentClass($name);
-        if (!$class)
-            throw new NotFoundException("Document for $name not found");
-
         $table = $this->createTable();
-        $this->connectTableData($table, $class);
+        $this->connectTableData($table, $name);
 
         $query = $this->params()->fromQuery('query');
         switch ($query) {
@@ -180,14 +176,20 @@ class DocumentController extends AbstractActionController
      * Create adapter and mapper
      *
      * @param Table $table
-     * @param string $class     Document class
+     * @param string $name      Data form name
      */
-    protected function connectTableData($table, $class)
+    protected function connectTableData($table, $name)
     {
         $sl = $this->getServiceLocator();
+        $dfm = $sl->get('DataFormManager');
         $dm = $sl->get('doctrine.documentmanager.odm_default');
         $escapeHtml = $sl->get('viewhelpermanager')->get('escapeHtml');
         $translate = $sl->get('viewhelpermanager')->get('translate');
+
+        $url = $dfm->getUrl($name);
+        $class = $dfm->getDocumentClass($name);
+        if (!$class)
+            throw new NotFoundException("Document for $name not found");
 
         $qb = $dm->createQueryBuilder();
         $qb->find($class);
@@ -195,9 +197,9 @@ class DocumentController extends AbstractActionController
         $adapter = new DoctrineMongoODMAdapter();
         $adapter->setQueryBuilder($qb);
 
-        $mapper = function ($row) use ($escapeHtml, $translate) {
+        $mapper = function ($row) use ($url, $escapeHtml, $translate) {
             $email = $escapeHtml($row->getClientEmail());
-            $email = '<a href="javascript:void(0)" onclick="editClient(' . $email . ')">' . $email . '</a>';
+            $email = '<a href="' . $url . '?email=' . urlencode($email) . '" target="_blank">' . $email . '</a>';
 
             $whenUpdated = $row->getWhenUpdated();
             if ($whenUpdated !== null)
