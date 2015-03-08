@@ -54,8 +54,13 @@ class ProfileController extends AbstractActionController
         $class = $dfm->getDocumentClass(self::DATA_FORM_NAME);
         $doc = $dm->getRepository($class)
                   ->find($client->getId());
-        if (!$doc)
-            throw new NotFoundException("[" . self::DATA_FORM_NAME . "] Document '" . $client->getId() . "' not found");
+        if (!$doc) {
+            $dfm->getClientDocuments($client);
+            $doc = $dm->getRepository($class)
+                      ->find($client->getId());
+            if (!$doc)
+                throw new \Exception("[" . self::DATA_FORM_NAME . "] Documents for client '$email' could not be created");
+        }
 
         return new ViewModel([
             'title' => $dfm->getTitle(self::DATA_FORM_NAME),

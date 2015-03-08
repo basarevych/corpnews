@@ -34,8 +34,8 @@
             <script>
                 $('#table-documents').dynamicTable({
                     url: '<?= $this->basePath('/admin/document/document-table?name=' . $this->current) ?>',
-                    row_id_column: 'email',
-                    sort_column: 'email',
+                    row_id_column: 'id',
+                    sort_column: 'client_email',
                     sort_dir: 'asc',
                     loader_image: '<?= $this->basePath('/img/loader.gif') ?>',
                     strings: dynamicTableStrings,

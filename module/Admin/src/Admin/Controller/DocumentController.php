@@ -103,6 +103,14 @@ class DocumentController extends AbstractActionController
         $table = new Table();
 
         $table->setColumns([
+            'id' => [
+                'title'         => $translate('ID'),
+                'field_name'    => 'id',
+                'type'          => Table::TYPE_INTEGER,
+                'filters'       => [ Table::FILTER_EQUAL ],
+                'sortable'      => true,
+                'visible'       => false,
+            ],
             'client_email' => [
                 'title'         => $translate('Email address'),
                 'field_name'    => 'client_email',
@@ -206,6 +214,7 @@ class DocumentController extends AbstractActionController
                 $whenUpdated = $whenUpdated->getTimestamp();
 
             return [
+                'id'            => $row->getId(),
                 'client_email'  => $email,
                 'when_updated'  => $whenUpdated,
                 'first_name'    => $escapeHtml($row->getFirstName()),

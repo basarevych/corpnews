@@ -129,12 +129,12 @@ class ClientController extends AbstractActionController
                     $em->flush();
 
                     if (!$id)
-                        $dfm->createClientDocuments($entity->getId(), $entity->getEmail());
+                        $dfm->createClientDocuments($entity);
                     else if ($oldEmail != $entity->getEmail())
-                        $dfm->updateClientDocuments($entity->getId(), $entity->getEmail());
+                        $dfm->updateClientDocuments($entity);
                 } catch (\Exception $e) {
                     if (!$id)
-                        $dfm->deleteClientDocuments($entity->getId());
+                        $dfm->deleteClientDocuments($entity);
                     throw $e;
                 }
 
@@ -196,9 +196,9 @@ class ClientController extends AbstractActionController
                         if (!$entity)
                             continue;
 
+                        $dfm->deleteClientDocuments($entity);
                         $em->remove($entity);
                         $em->flush();
-                        $dfm->deleteClientDocuments($entity->getId());
                     }
                 }
 

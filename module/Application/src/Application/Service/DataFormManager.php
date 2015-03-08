@@ -12,6 +12,7 @@ namespace Application\Service;
 use Exception;
 use Zend\ServiceManager\ServiceLocatorAwareInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
+use Application\Entity\Client as ClientEntity;
 
 /**
  * DataFormManager service
@@ -124,9 +125,9 @@ class DataFormManager implements ServiceLocatorAwareInterface
     /**
      * Create all documents for a client
      *
-     * @param string $id
+     * @param ClientEntity $client
      */
-    public function createClientDocuments($id, $email)
+    public function createClientDocuments($client)
     {
         $dm = $this->getServiceLocator()->get('doctrine.documentmanager.odm_default');
 
@@ -136,11 +137,11 @@ class DataFormManager implements ServiceLocatorAwareInterface
                 continue;
 
             $doc = $dm->getRepository($class)
-                      ->find($id);
+                      ->find($client->getId());
             if (!$doc) {
                 $doc = new $class();
-                $doc->setId($id);
-                $doc->setClientEmail($email);
+                $doc->setId($client->getId());
+                $doc->setClientEmail($client->getEmail());
                 $dm->persist($doc);
             }
         }
@@ -150,10 +151,9 @@ class DataFormManager implements ServiceLocatorAwareInterface
     /**
      * Update all documents of a client
      *
-     * @param string $id
-     * @param string $newEmail
+     * @param ClientEntity $client
      */
-    public function updateClientDocuments($id, $newEmail)
+    public function updateClientDocuments($client)
     {
         $dm = $this->getServiceLocator()->get('doctrine.documentmanager.odm_default');
 
@@ -163,9 +163,9 @@ class DataFormManager implements ServiceLocatorAwareInterface
                 continue;
 
             $doc = $dm->getRepository($class)
-                      ->find($id);
+                      ->find($client->getId());
             if ($doc) {
-                $doc->setClientEmail($newEmail);
+                $doc->setClientEmail($client->getEmail());
                 $dm->persist($doc);
             }
         }
@@ -175,9 +175,9 @@ class DataFormManager implements ServiceLocatorAwareInterface
     /**
      * Delete all documents of a client
      *
-     * @param string $id
+     * @param ClientEntity $client
      */
-    public function deleteClientDocuments($id)
+    public function deleteClientDocuments($client)
     {
         $dm = $this->getServiceLocator()->get('doctrine.documentmanager.odm_default');
 
@@ -187,7 +187,7 @@ class DataFormManager implements ServiceLocatorAwareInterface
                 continue;
 
             $doc = $dm->getRepository($class)
-                      ->find($id);
+                      ->find($client->getId());
             if ($doc)
                 $dm->remove($doc);
         }
