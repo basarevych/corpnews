@@ -52,7 +52,7 @@ class Module
         $module = substr($class, 0, strpos($class, "\\"));
 
         if ($module == 'DataForm')
-            $controller->layout('layout/form');
+            $controller->layout('layout/clean');
     }
 
     /**
