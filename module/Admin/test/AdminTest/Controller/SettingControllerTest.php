@@ -25,7 +25,7 @@ class SettingControllerTest extends AbstractHttpControllerTestCase
                          ->setMethods([ 'getRepository', 'persist', 'flush' ])
                          ->getMock();
 
-        $this->repoSetting = $this->getMockBuilder('Application\Repository\Setting')
+        $this->repoSetting = $this->getMockBuilder('Application\Entity\SettingRepository')
                                   ->disableOriginalConstructor()
                                   ->setMethods([ 'findOneByName' ])
                                   ->getMock();
