@@ -18,6 +18,7 @@ return [
     'Invalid login or password' => 'Invalid login or password',
 
     // ClientController
+    'Filled forms' => 'Filled forms',
     'Table actions' => 'Table actions',
     'Create client' => 'Create client',
     'Edit client' => 'Edit client',

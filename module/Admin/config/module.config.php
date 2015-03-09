@@ -50,27 +50,4 @@ return [
             ],
         ],
     ],
-
-    'doctrine' => [
-        'driver' => [
-            'admin_entity' => [
-                'class' => 'Doctrine\ORM\Mapping\Driver\AnnotationDriver',
-                'paths' => [ __DIR__ . '/../src/Admin/Entity' ],
-            ],
-            'orm_default' => [
-                'drivers' => [
-                   'Admin\Entity' => 'admin_entity'
-                ]
-            ],
-            'admin_document' => [
-                'class' => 'Doctrine\ODM\MongoDB\Mapping\Driver\AnnotationDriver',
-                'paths' => [ __DIR__ . '/../src/Admin/Document' ],
-            ],
-            'odm_default' => [
-                'drivers' => [
-                    'Admin\Document' => 'admin_document'
-                ]
-            ]
-        ]
-    ],
 ];

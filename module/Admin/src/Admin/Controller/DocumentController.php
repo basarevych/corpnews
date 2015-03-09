@@ -193,8 +193,9 @@ class DocumentController extends AbstractActionController
         $dm = $sl->get('doctrine.documentmanager.odm_default');
         $escapeHtml = $sl->get('viewhelpermanager')->get('escapeHtml');
         $translate = $sl->get('viewhelpermanager')->get('translate');
+        $basePath = $sl->get('viewhelpermanager')->get('basePath');
 
-        $url = $dfm->getUrl($name);
+        $url = $basePath($dfm->getUrl($name));
         $class = $dfm->getDocumentClass($name);
         if (!$class)
             throw new NotFoundException("Document for $name not found");

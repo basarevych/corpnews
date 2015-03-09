@@ -264,6 +264,14 @@ class ClientController extends AbstractActionController
                 'sortable'  => true,
                 'visible'   => true,
             ],
+            'forms' => [
+                'title'     => $translate('Filled forms'),
+                'sql_id'    => 'none',
+                'type'      => Table::TYPE_STRING,
+                'filters'   => [],
+                'sortable'  => false,
+                'visible'   => true,
+            ],
         ]);
 
         return $table;
@@ -277,8 +285,12 @@ class ClientController extends AbstractActionController
     protected function connectTableData($table)
     {
         $sl = $this->getServiceLocator();
+        $dfm = $sl->get('DataFormManager');
         $em = $sl->get('Doctrine\ORM\EntityManager');
+        $dm = $sl->get('doctrine.documentmanager.odm_default');
         $escapeHtml = $sl->get('viewhelpermanager')->get('escapeHtml');
+        $translate = $sl->get('viewhelpermanager')->get('translate');
+        $basePath = $sl->get('viewhelpermanager')->get('basePath');
 
         $qb = $em->createQueryBuilder();
         $qb->select('c')
@@ -287,7 +299,7 @@ class ClientController extends AbstractActionController
         $adapter = new DoctrineORMAdapter();
         $adapter->setQueryBuilder($qb);
 
-        $mapper = function ($row) use ($escapeHtml) {
+        $mapper = function ($row) use ($dfm, $dm, $escapeHtml, $basePath, $translate) {
             $email = '<a href="javascript:void(0)" onclick="editClient('
                 . $row->getId() . ')">' . $escapeHtml($row->getEmail()) . '</a>';
 
@@ -295,10 +307,23 @@ class ClientController extends AbstractActionController
             if ($whenBounced !== null)
                 $whenBounced = $whenBounced->getTimestamp();
 
+            $filledForms = [];
+            foreach ($dfm->getNames() as $name) {
+                $class = $dfm->getDocumentClass($name);
+                $repo = $dm->getRepository($class);
+                $doc = $repo->find($row->getId());
+                if ($doc && $doc->getWhenUpdated()) {
+                    $url = $basePath($dfm->getUrl($name));
+                    $title = $escapeHtml($translate($dfm->getTitle($name)));
+                    $filledForms[] = '<a href="' . $url . '?email=' . urlencode($row->getEmail()) . '" target="_blank">' . $title . '</a>';
+                } 
+            }
+
             return [
                 'id'            => $row->getId(),
                 'email'         => $email,
                 'when_bounced'  => $whenBounced,
+                'forms'         => join(', ', $filledForms),
             ];
         };
 

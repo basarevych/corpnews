@@ -18,6 +18,7 @@ return [
     'Invalid login or password' => 'Неправильный логин или пароль',
 
     // ClientController
+    'Filled forms' => 'Заполненные формы',
     'Table actions' => 'Действия над таблицей',
     'Create client' => 'Создать клиента',
     'Edit client' => 'Редактировать клиента',
