@@ -3,7 +3,7 @@
 namespace AdminTest\Form;
 
 use Zend\Test\PHPUnit\Controller\AbstractControllerTestCase;
-use Admin\Form\LoginForm;
+use Admin\Form\Login as LoginForm;
 
 class LoginFormTest extends AbstractControllerTestCase
 {
