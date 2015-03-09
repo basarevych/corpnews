@@ -4,8 +4,10 @@ namespace ApplicationTest\Controller;
 
 use Zend\Test\PHPUnit\Controller\AbstractConsoleControllerTestCase;
 use Application\Entity\Setting as SettingEntity;
+use Application\Entity\Client as ClientEntity;
 use Application\Model\Mailbox;
 use Application\Model\Letter;
+use DataForm\Document\Profile as ProfileDocument;
 
 class ConsoleControllerTest extends AbstractConsoleControllerTestCase
 {
@@ -20,10 +22,15 @@ class ConsoleControllerTest extends AbstractConsoleControllerTestCase
                          ->setMethods([ 'getRepository', 'persist', 'flush' ])
                          ->getMock();
 
-        $this->repoSetting = $this->getMockBuilder('Application\Repository\Setting')
+        $this->repoSetting = $this->getMockBuilder('Application\Entity\SettingRepository')
                                   ->disableOriginalConstructor()
                                   ->setMethods([ 'findOneByName', 'getValue' ])
                                   ->getMock();
+
+        $this->repoClient = $this->getMockBuilder('Application\Client\ClientRepository')
+                                 ->disableOriginalConstructor()
+                                 ->setMethods([ 'find', 'findAll' ])
+                                 ->getMock();
 
         $this->autodelete = 30;
         $this->repoSetting->expects($this->any())
@@ -34,6 +41,23 @@ class ConsoleControllerTest extends AbstractConsoleControllerTestCase
                  ->method('getRepository')
                  ->will($this->returnValueMap([
                     [ 'Application\Entity\Setting', $this->repoSetting ],
+                    [ 'Application\Entity\Client', $this->repoClient ],
+                ]));
+
+        $this->dm = $this->getMockBuilder('Doctrine\ODM\MongoDB\DocumentManager')
+                         ->disableOriginalConstructor()
+                         ->setMethods([ 'getRepository', 'persist', 'flush', 'remove' ])
+                         ->getMock();
+
+        $this->repoProfile = $this->getMockBuilder('DataForm\Document\ProfileRepository')
+                                  ->disableOriginalConstructor()
+                                  ->setMethods([ 'find', 'findAll' ])
+                                  ->getMock();
+
+        $this->dm->expects($this->any())
+                 ->method('getRepository')
+                 ->will($this->returnValueMap([
+                    [ 'DataForm\Document\Profile', $this->repoProfile ],
                 ]));
 
         $this->imap = $this->getMockBuilder('Application\Service\ImapClient')
@@ -62,6 +86,7 @@ class ConsoleControllerTest extends AbstractConsoleControllerTestCase
         $sl = $this->getApplicationServiceLocator();
         $sl->setAllowOverride(true);
         $sl->setService('Doctrine\ORM\EntityManager', $this->em);
+        $sl->setService('doctrine.documentmanager.odm_default', $this->dm);
         $sl->setService('ImapClient', $this->imap);
     }
 
@@ -225,5 +250,95 @@ class ConsoleControllerTest extends AbstractConsoleControllerTestCase
         }
 
         $this->assertEquals(true, $autodelete, "MailboxAutodelete was not created");
+    }
+
+    public function testCheckDbActionCanBeAccessed()
+    {
+        $this->dispatch('check-db');
+
+        $this->assertModuleName('application');
+        $this->assertControllerName('application\controller\console');
+        $this->assertControllerClass('ConsoleController');
+        $this->assertMatchedRouteName('check-db');
+    }
+
+    public function testCheckDbActionCreatesDeletesDocuments()
+    {
+        $client = new ClientEntity();
+
+        $reflection = new \ReflectionClass(get_class($client));
+        $property = $reflection->getProperty('id');
+        $property->setAccessible(true);
+        $property->setValue($client, 42);
+
+        $this->repoClient->expects($this->any())
+                         ->method('findAll')
+                         ->will($this->returnValue([ $client ]));
+
+        $doc = new ProfileDocument();
+        $doc->setId(9000);
+
+        $this->repoProfile->expects($this->any())
+                          ->method('findAll')
+                          ->will($this->returnValue([ $doc ]));
+
+        $createdDocs = [];
+        $this->dm->expects($this->any())
+                 ->method('persist')
+                 ->will($this->returnCallback(function ($doc) use (&$createdDocs) {
+                    $createdDocs[] = $doc;
+                 }));
+
+        $removedDocs = [];
+        $this->dm->expects($this->any())
+                 ->method('remove')
+                 ->will($this->returnCallback(function ($doc) use (&$removedDocs) {
+                    $removedDocs[] = $doc;
+                 }));
+
+        ob_start();
+        $this->dispatch('check-db --repair');
+        ob_end_clean();
+        $this->assertResponseStatusCode(0);
+
+        $this->assertEquals(1, count($createdDocs), "One document should have been created");
+        $this->assertEquals(42, $createdDocs[0]->getId(), "Incorrect created doc id");
+
+        $this->assertEquals(1, count($removedDocs), "One document should have been created");
+        $this->assertEquals(9000, $removedDocs[0]->getId(), "Incorrect removed doc id");
+    }
+
+    public function testCheckDbActionCorrectsEmail()
+    {
+        $client = new ClientEntity();
+        $client->setEmail('foo');
+
+        $reflection = new \ReflectionClass(get_class($client));
+        $property = $reflection->getProperty('id');
+        $property->setAccessible(true);
+        $property->setValue($client, 42);
+
+        $this->repoClient->expects($this->any())
+                         ->method('findAll')
+                         ->will($this->returnValue([ $client ]));
+
+        $doc = new ProfileDocument();
+        $doc->setId(42);
+        $doc->setClientEmail('bar');
+
+        $this->repoProfile->expects($this->any())
+                          ->method('find')
+                          ->will($this->returnValue($doc));
+
+        $this->repoProfile->expects($this->any())
+                          ->method('findAll')
+                          ->will($this->returnValue([]));
+
+        ob_start();
+        $this->dispatch('check-db --repair');
+        ob_end_clean();
+        $this->assertResponseStatusCode(0);
+
+        $this->assertEquals('foo', $doc->getClientEmail(), "Incorrect email was set");
     }
 }
