@@ -1,12 +1,12 @@
 <?php
 
-namespace ApplicationTest\Repository;
+namespace ApplicationTest\Entity;
 
 use Zend\Test\PHPUnit\Controller\AbstractControllerTestCase;
 use Webfactory\Doctrine\ORMTestInfrastructure\ORMInfrastructure;
 use Application\Entity\Setting as SettingEntity;
 
-class SettingTest extends AbstractControllerTestCase
+class SettingRepositoryTest extends AbstractControllerTestCase
 {
     public function setUp()
     {
