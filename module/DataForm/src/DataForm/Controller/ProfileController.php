@@ -53,18 +53,20 @@ class ProfileController extends AbstractActionController
         if (!$client)
             throw new NotFoundException("[" . self::DATA_FORM_NAME . "] Client '$email' not found");
 
-        $class = $dfm->getDocumentClass(self::DATA_FORM_NAME);
-        $doc = $dm->getRepository($class)
+        $docClass = $dfm->getDocumentClass(self::DATA_FORM_NAME);
+        $formClass = $dfm->getFormClass(self::DATA_FORM_NAME);
+
+        $doc = $dm->getRepository($docClass)
                   ->find($client->getId());
         if (!$doc) {
             $dfm->getClientDocuments($client);
-            $doc = $dm->getRepository($class)
+            $doc = $dm->getRepository($docClass)
                       ->find($client->getId());
             if (!$doc)
                 throw new \Exception("[" . self::DATA_FORM_NAME . "] Documents for client '$email' could not be created");
         }
 
-        $form = new ProfileForm();
+        $form = new $formClass();
         $messages = [];
         $success = false;
 

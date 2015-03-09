@@ -123,6 +123,20 @@ class DataFormManager implements ServiceLocatorAwareInterface
     }
 
     /**
+     * Get class of data form form 
+     *
+     * @param string $name
+     * @return string
+     */
+    public function getFormClass($name)
+    {
+        if (!isset($this->dataForms[$name]) || !isset($this->dataForms[$name]['form']))
+            return null;
+
+        return $this->dataForms[$name]['form'];
+    }
+
+    /**
      * Create all documents for a client
      *
      * @param ClientEntity $client
