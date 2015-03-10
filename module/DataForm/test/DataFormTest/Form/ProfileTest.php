@@ -1,6 +1,6 @@
 <?php
 
-namespace ApplicationTest\Form;
+namespace AdminTest\Form;
 
 use Zend\Test\PHPUnit\Controller\AbstractControllerTestCase;
 use Application\Form\Confirm as ConfirmForm;
