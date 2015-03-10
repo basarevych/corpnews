@@ -59,7 +59,7 @@ class ProfileController extends AbstractActionController
         $doc = $dm->getRepository($docClass)
                   ->find($client->getId());
         if (!$doc) {
-            $dfm->getClientDocuments($client);
+            $dfm->createClientDocuments($client);
             $doc = $dm->getRepository($docClass)
                       ->find($client->getId());
             if (!$doc)
