@@ -24,7 +24,7 @@ class DataFormManagerTest extends AbstractControllerTestCase
 
         $this->repoProfile = $this->getMockBuilder('DataForm\Document\ProfileRepository')
                                   ->disableOriginalConstructor()
-                                  ->setMethods([ 'find' ])
+                                  ->setMethods([ 'find', 'removeAll' ])
                                   ->getMock();
 
         $this->dm->expects($this->any())
@@ -170,5 +170,23 @@ class DataFormManagerTest extends AbstractControllerTestCase
         $this->assertEquals(42, $checkedId, "Searched for wrong ID");
         $this->assertEquals(1, count($removed), "One doc should have been removed");
         $this->assertEquals($doc, $removed[0], "Wrong doc removed");
+    }
+
+    public function testDeleteAllDocuments()
+    {
+        $removed = false;
+        $this->repoProfile->expects($this->any())
+                          ->method('removeAll')
+                          ->will($this->returnCallback(function () use (&$removed) {
+                            $removed = true;
+                          }));
+
+        $service = new DataFormManager();
+        $sl = $this->getApplicationServiceLocator();
+        $service->setServiceLocator($sl);
+
+        $service->deleteAllDocuments();
+
+        $this->assertEquals(true, $removed, "All documents were not removed");
     }
 }
