@@ -190,6 +190,7 @@ class ClientController extends AbstractActionController
             if ($form->isValid()) {
                 if ($id == '_all') {
                     $repo->removeAll();
+                    $dfm->deleteAllDocuments();
                 } else {
                     foreach (explode(',', $id) as $item) {
                         $entity = $repo->find($item);

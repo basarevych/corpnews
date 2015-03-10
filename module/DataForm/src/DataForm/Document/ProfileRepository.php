@@ -10,7 +10,7 @@
 namespace DataForm\Document;
 
 use Doctrine\ODM\MongoDB\DocumentRepository;
-use Application\Document\Sample as SampleDocument;
+use DataForm\Document\Profile as ProfileDocument;
 
 /**
  * Profile document repository
@@ -20,4 +20,16 @@ use Application\Document\Sample as SampleDocument;
  */
 class ProfileRepository extends DocumentRepository
 {
+    /**
+     * Remove all documents
+     */
+    public function removeAll()
+    {
+        $dm = $this->getDocumentManager();
+
+        $qb = $dm->createQueryBuilder();
+        $qb->remove('DataForm\Document\Profile')
+           ->getQuery()
+           ->execute();
+    }
 }

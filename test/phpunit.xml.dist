@@ -5,6 +5,7 @@
         <testsuite name="zf2-skeleton">
             <directory>../module/Application/test/ApplicationTest</directory>
             <directory>../module/Admin/test/AdminTest</directory>
+            <directory>../module/DataForm/test/DataFormTest</directory>
         </testsuite>
     </testsuites>
 </phpunit>

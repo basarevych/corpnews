@@ -207,4 +207,23 @@ class DataFormManager implements ServiceLocatorAwareInterface
         }
         $dm->flush();
     }
+
+    /**
+     * Delete all documents of all clients
+     *
+     * @param ClientEntity $client
+     */
+    public function deleteAllDocuments()
+    {
+        $dm = $this->getServiceLocator()->get('doctrine.documentmanager.odm_default');
+
+        foreach ($this->dataForms as $name => $config) {
+            $class = $this->getDocumentClass($name);
+            if (!$class)
+                continue;
+
+            $dm->getRepository($class)
+               ->removeAll();
+        }
+    }
 }
