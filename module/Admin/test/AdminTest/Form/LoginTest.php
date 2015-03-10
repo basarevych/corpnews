@@ -5,7 +5,7 @@ namespace AdminTest\Form;
 use Zend\Test\PHPUnit\Controller\AbstractControllerTestCase;
 use Admin\Form\Login as LoginForm;
 
-class LoginFormTest extends AbstractControllerTestCase
+class LoginTest extends AbstractControllerTestCase
 {
     public function setUp()
     {
