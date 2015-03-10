@@ -99,11 +99,15 @@ class ProfileController extends AbstractActionController
             if ($form->isValid()) {
                 $data = $form->getData();
 
+                $gender = null;
+                if (in_array($data['gender'], [ 'male', 'female' ]))
+                    $gender = $data['gender'];
+
                 $doc->setWhenUpdated(new \DateTime());
                 $doc->setFirstName(empty($data['first_name']) ? null : $data['first_name']);
                 $doc->setMiddleName(empty($data['middle_name']) ? null : $data['middle_name']);
                 $doc->setLastName(empty($data['last_name']) ? null : $data['last_name']);
-                $doc->setGender(empty($data['gender']) ? null : $data['gender']);
+                $doc->setGender($gender);
                 $doc->setCompany(empty($data['company']) ? null : $data['company']);
                 $doc->setPosition(empty($data['position']) ? null : $data['position']);
                 $dm->persist($doc);

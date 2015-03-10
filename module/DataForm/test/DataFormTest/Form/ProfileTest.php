@@ -1,11 +1,11 @@
 <?php
 
-namespace AdminTest\Form;
+namespace DataFormTest\Form;
 
 use Zend\Test\PHPUnit\Controller\AbstractControllerTestCase;
-use Application\Form\Confirm as ConfirmForm;
+use DataForm\Form\Profile as ProfileForm;
 
-class ConfirmTest extends AbstractControllerTestCase
+class ProfileTest extends AbstractControllerTestCase
 {
     public function setUp()
     {
@@ -16,7 +16,7 @@ class ConfirmTest extends AbstractControllerTestCase
 
     public function testInvalidConfirmForm()
     {
-        $form = new ConfirmForm();
+        $form = new ProfileForm();
 
         $input = [
         ];
@@ -26,16 +26,20 @@ class ConfirmTest extends AbstractControllerTestCase
 
         $this->assertEquals(false, $valid, "Form should not be reported as valid");
         $this->assertGreaterThan(0, count($form->get('security')->getMessages()), "Security should have errors");
-        $this->assertGreaterThan(0, count($form->get('id')->getMessages()), "ID should have errors");
     }
 
     public function testValidConfirmForm()
     {
-        $form = new ConfirmForm();
+        $form = new ProfileForm();
 
         $input = [
             'security' => $form->get('security')->getValue(),
-            'id' => 42,
+            'first_name' => ' first ',
+            'middle_name' => ' middle ',
+            'last_name' => ' last ',
+            'gender' => 'female',
+            'company' => ' company ',
+            'position' => ' position ',
         ];
 
         $form->setData($input);
@@ -43,5 +47,11 @@ class ConfirmTest extends AbstractControllerTestCase
         $output = $form->getData();
 
         $this->assertEquals(true, $valid, "Form should be reported as valid");
+        $this->assertEquals('first', $output['first_name'], "First name is wrong");
+        $this->assertEquals('middle', $output['middle_name'], "Middle name is wrong");
+        $this->assertEquals('last', $output['last_name'], "Last name is wrong");
+        $this->assertEquals('female', $output['gender'], "Gender is wrong");
+        $this->assertEquals('company', $output['company'], "Company is wrong");
+        $this->assertEquals('position', $output['position'], "Position is wrong");
     }
 }
