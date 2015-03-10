@@ -52,6 +52,17 @@ class DataFormManager implements ServiceLocatorAwareInterface
                 throw new \Exception("No 'data_forms' section in the config");
 
             $this->dataForms = $options['corpnews']['data_forms'];
+
+            $dm = $this->getServiceLocator()->get('doctrine.documentmanager.odm_default');
+            foreach ($this->dataForms as $name => $props) {
+                $class = $props['document'];
+                $doc = new $class();
+                if (! $doc instanceOf \DataForm\Document\AbstractDataFormDocument)
+                    throw new \Exception('All the documents must inherit from AbstractDataFormDocument');
+                $repo = $dm->getRepository($class);
+                if (! $repo instanceOf \DataForm\Document\DataFormRepositoryInterface)
+                    throw new \Exception('All the document repositories must implement DataFormRepositoryInterface');
+            }
         }
 
         return $this;

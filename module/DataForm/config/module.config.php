@@ -48,15 +48,6 @@ return [
 
     'doctrine' => [
         'driver' => [
-            'data_form_entity' => [
-                'class' => 'Doctrine\ORM\Mapping\Driver\AnnotationDriver',
-                'paths' => [ __DIR__ . '/../src/DataForm/Entity' ],
-            ],
-            'orm_default' => [
-                'drivers' => [
-                   'DataForm\Entity' => 'data_form_entity'
-                ]
-            ],
             'data_form_document' => [
                 'class' => 'Doctrine\ODM\MongoDB\Mapping\Driver\AnnotationDriver',
                 'paths' => [ __DIR__ . '/../src/DataForm/Document' ],

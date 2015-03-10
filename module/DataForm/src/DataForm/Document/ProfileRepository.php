@@ -19,6 +19,7 @@ use DataForm\Document\Profile as ProfileDocument;
  * @package     Document
  */
 class ProfileRepository extends DocumentRepository
+                        implements DataFormRepositoryInterface
 {
     /**
      * Remove all documents

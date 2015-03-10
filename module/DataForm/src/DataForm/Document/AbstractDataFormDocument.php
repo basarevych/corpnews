@@ -7,14 +7,14 @@
  * @license     http://choosealicense.com/licenses/mit/ MIT
  */
 
-namespace Application\Document;
+namespace DataForm\Document;
 
 use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM;
 
 /**
  * Base class for all data form documents
  * 
- * @category    Application
+ * @category    DataForm
  * @package     Document
  * 
  * @ODM\MappedSuperclass

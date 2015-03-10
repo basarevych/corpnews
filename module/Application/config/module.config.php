@@ -92,15 +92,6 @@ return [
                    'Application\Entity' => 'application_entity'
                 ]
             ],
-            'application_document' => [
-                'class' => 'Doctrine\ODM\MongoDB\Mapping\Driver\AnnotationDriver',
-                'paths' => [ __DIR__ . '/../src/Application/Document' ],
-            ],
-            'odm_default' => [
-                'drivers' => [
-                    'Application\Document' => 'application_document'
-                ]
-            ]
         ]
     ],
 ];

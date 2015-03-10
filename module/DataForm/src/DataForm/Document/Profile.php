@@ -10,7 +10,7 @@
 namespace DataForm\Document;
 
 use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM;
-use Application\Document\AbstractDataFormDocument;
+use DataForm\Document\AbstractDataFormDocument;
 
 /**
  * User profile document
