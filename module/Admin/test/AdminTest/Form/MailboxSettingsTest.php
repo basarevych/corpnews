@@ -3,9 +3,9 @@
 namespace AdminTest\Form;
 
 use Zend\Test\PHPUnit\Controller\AbstractControllerTestCase;
-use Admin\Form\Login as LoginForm;
+use Admin\Form\MailboxSettings as MailboxSettingsForm;
 
-class LoginTest extends AbstractControllerTestCase
+class MailboxSettingsTest extends AbstractControllerTestCase
 {
     public function setUp()
     {
@@ -16,7 +16,7 @@ class LoginTest extends AbstractControllerTestCase
 
     public function testInvalidForm()
     {
-        $form = new LoginForm();
+        $form = new MailboxSettingsForm();
 
         $input = [
         ];
@@ -26,18 +26,16 @@ class LoginTest extends AbstractControllerTestCase
 
         $this->assertEquals(false, $valid, "Form should not be reported as valid");
         $this->assertGreaterThan(0, count($form->get('security')->getMessages()), "Security should have errors");
-        $this->assertGreaterThan(0, count($form->get('login')->getMessages()), "Login should have errors");
-        $this->assertGreaterThan(0, count($form->get('password')->getMessages()), "Password should have errors");
+        $this->assertGreaterThan(0, count($form->get('autodelete')->getMessages()), "Autodelete should have errors");
     }
 
     public function testValidForm()
     {
-        $form = new LoginForm();
+        $form = new MailboxSettingsForm();
 
         $input = [
             'security' => $form->get('security')->getValue(),
-            'login' => ' login ',
-            'password' => ' password '
+            'autodelete' => ' 9000 '
         ];
 
         $form->setData($input);
@@ -45,7 +43,6 @@ class LoginTest extends AbstractControllerTestCase
         $output = $form->getData();
 
         $this->assertEquals(true, $valid, "Form should be reported as valid");
-        $this->assertEquals('login', $output['login'], "Login should be trimmed");
-        $this->assertEquals('password', $output['password'], "Password should be trimmed");
+        $this->assertEquals('9000', $output['autodelete'], "Autodelete should be trimmed");
     }
 }

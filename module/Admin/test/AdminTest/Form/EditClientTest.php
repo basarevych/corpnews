@@ -42,7 +42,7 @@ class EditClientTest extends AbstractControllerTestCase
         $sl->setService('Doctrine\ORM\EntityManager', $this->em);
     }
 
-    public function testInvalidEditClientForm()
+    public function testInvalidForm()
     {
         $form = new EditClientForm($this->em, 42);
 
@@ -58,7 +58,7 @@ class EditClientTest extends AbstractControllerTestCase
         $this->assertGreaterThan(0, count($form->get('email')->getMessages()), "Email should have errors");
     }
 
-    public function testValidEditClientForm()
+    public function testValidForm()
     {
         $form = new EditClientForm($this->em, 42);
 
