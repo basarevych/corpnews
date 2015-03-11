@@ -41,7 +41,7 @@ class DataFormManager implements ServiceLocatorAwareInterface
      * Set service locator
      *
      * @param ServiceLocatorInterface $serviceLocator
-     * @return Mail
+     * @return DataFormManager
      */
     public function setServiceLocator(ServiceLocatorInterface $serviceLocator)
     {
@@ -50,7 +50,7 @@ class DataFormManager implements ServiceLocatorAwareInterface
         if (!$this->dataForms) {
             $options = $serviceLocator->get('Config');
             if (!isset($options['corpnews']['data_forms']))
-                throw new \Exception("No 'data_forms' section in the config");
+                throw new Exception("No 'data_forms' section in the config");
 
             $this->dataForms = $options['corpnews']['data_forms'];
 
@@ -59,16 +59,16 @@ class DataFormManager implements ServiceLocatorAwareInterface
                 $class = $props['document'];
                 $reflection = new ReflectionClass($class);
                 if (!$reflection->isSubclassOf('DataForm\Document\AbstractDataFormDocument'))
-                    throw new \Exception('All the documents must inherit from AbstractDataFormDocument');
+                    throw new Exception('All the documents must inherit from AbstractDataFormDocument');
 
                 $repo = $dm->getRepository($class);
                 $reflection = new ReflectionClass(get_class($repo));
                 if (!$reflection->implementsInterface('DataForm\Document\DataFormRepositoryInterface'))
-                    throw new \Exception('All the document repositories must implement DataFormRepositoryInterface');
+                    throw new Exception('All the document repositories must implement DataFormRepositoryInterface');
 
                 $reflection = new ReflectionClass($props['table']);
                 if (!$reflection->isSubclassOf('DynamicTable\Table'))
-                    throw new \Exception('All the tables must inherit from DynamicTable\\Table');
+                    throw new Exception('All the tables must inherit from DynamicTable\\Table');
             }
         }
 
@@ -83,7 +83,7 @@ class DataFormManager implements ServiceLocatorAwareInterface
     public function getServiceLocator()
     {
         if (!$this->serviceLocator)
-            throw new \Exception('No Service Locator configured');
+            throw new Exception('No Service Locator configured');
         return $this->serviceLocator;
     }
 
