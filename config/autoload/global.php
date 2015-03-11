@@ -51,6 +51,7 @@ return [
                 'url'       => '/data-form/profile',
                 'document'  => 'DataForm\Document\Profile',
                 'form'      => 'DataForm\Form\Profile',
+                'table'     => 'DataForm\Table\Profile',
             ],
         ],
     ],

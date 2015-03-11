@@ -43,6 +43,7 @@ class DataFormManagerTest extends AbstractControllerTestCase
                 'url'       => '/data-form/profile',
                 'document'  => 'DataForm\Document\Profile',
                 'form'      => 'DataForm\Form\Profile',
+                'table'     => 'DataForm\Table\Profile',
             ],
         ];
         $sl->setService('doctrine.documentmanager.odm_default', $this->dm);
@@ -73,6 +74,7 @@ class DataFormManagerTest extends AbstractControllerTestCase
         $this->assertEquals('/data-form/profile', $service->getUrl('profile'), "Returned url is wrong");
         $this->assertEquals('DataForm\Document\Profile', $service->getDocumentClass('profile'), "Returned document class is wrong");
         $this->assertEquals('DataForm\Form\Profile', $service->getFormClass('profile'), "Returned form class is wrong");
+        $this->assertEquals('DataForm\Table\Profile', $service->getTableClass('profile'), "Returned table class is wrong");
     }
 
     public function testCreateClientDocuments()
