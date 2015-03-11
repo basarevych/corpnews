@@ -9,6 +9,7 @@ return [
             'Admin\Controller\Document' => 'Admin\Controller\DocumentController',
             'Admin\Controller\Mailbox' => 'Admin\Controller\MailboxController',
             'Admin\Controller\Setting' => 'Admin\Controller\SettingController',
+            'Admin\Controller\Parser' => 'Admin\Controller\ParserController',
         ],
     ],
 

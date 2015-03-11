@@ -1,0 +1,30 @@
+<?php
+
+    $this->layout()->activePage = 'parser';
+
+?>
+
+<div class="container">
+    <div class="row">
+        <div class="col-sm-12">
+            <h1><span id="page-title"><?= $this->translate('Mail parser comands') ?></span></h1>
+        </div>
+    </div>
+
+    <?php foreach ($this->commands as $command => $props): ?>
+        <div class="row">
+            <hr>
+        </div>
+        <div class="row">
+            <div class="col-sm-2">
+                <p class="parser-command"><?= $this->escapeHtml($command) ?></p>
+            </div>
+            <div class="col-sm-5">
+                <p><?= $this->translate($props['descr']) ?></p>
+            </div>
+            <div class="col-sm-5">
+                <p><?= $this->translate($props['usage']) ?></p>
+            </div>
+        </div>
+    <?php endforeach ?>
+</div>

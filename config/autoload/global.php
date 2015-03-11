@@ -8,6 +8,7 @@ return [
             'ErrorStrategy'     => 'Application\Service\ErrorStrategy',
             'ImapClient'        => 'Application\Service\ImapClient',
             'DataFormManager'   => 'Application\Service\DataFormManager',
+            'MailParser'        => 'Application\Service\MailParser',
         ],
 
         'abstract_factories' => [

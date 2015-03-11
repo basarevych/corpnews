@@ -136,3 +136,8 @@ div.letter-frame {
 .button-panel hr {
     margin: 3px 0;
 }
+
+.parser-command {
+    font-size: 140%;
+    text-align: right;
+}
