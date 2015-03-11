@@ -2,11 +2,11 @@
 
 return [
     // Admin layout
+    'Mail' => 'Почта',
+    'Mailbox' => 'Почтовый ящик',
     'Campaign' => 'Кампания',
     'Clients' => 'Клиенты',
-    'Data' => 'Данные',
     'Data forms' => 'Формы данных',
-    'Mailbox' => 'Почтовый ящик',
     'Settings' => 'Настройки',
     'Mailbox settings' => 'Настройки почтового ящика',
 

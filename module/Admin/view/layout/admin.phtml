@@ -89,6 +89,20 @@
 
                 <div class="collapse navbar-collapse" id="layout-navbar-collapse">
                     <ul class="nav navbar-nav">
+                        <li class="dropdown <?= in_array($activePage, [ 'mailbox' ]) ? 'active' : '' ?>">
+                            <a id="mailbox-navbar" href="javascript:void(0)" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+                                <?= $this->translate('Mail') ?>
+                                <span class="caret"></span>
+                            </a>
+                            <ul class="dropdown-menu" role="menu">
+                                <li>
+                                    <a id="mailbox-navbar" href="<?= $this->basePath('/admin/mailbox') ?>">
+                                        <?= $this->translate('Mailbox') ?>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+
                         <li class="dropdown <?= in_array($activePage, [ 'client' ]) ? 'active' : '' ?>">
                             <a href="javascript:void(0)" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
                                 <?= $this->translate('Campaign') ?>
@@ -103,23 +117,9 @@
                             </ul>
                         </li>
 
-                        <li class="dropdown <?= in_array($activePage, [ 'form' ]) ? 'active' : '' ?>">
-                            <a href="javascript:void(0)" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
-                                <?= $this->translate('Data') ?>
-                                <span class="caret"></span>
-                            </a>
-                            <ul class="dropdown-menu" role="menu">
-                                <li>
-                                    <a href="<?= $this->basePath('/admin/document') ?>">
-                                        <?= $this->translate('Data forms') ?>
-                                    </a>
-                                </li>
-                            </ul>
-                        </li>
-
-                        <li <?= $activePage == 'mailbox' ? 'class="active"' : '' ?>>
-                            <a id="mailbox-navbar" href="<?= $this->basePath('/admin/mailbox') ?>">
-                                <?= $this->translate('Mailbox') ?>
+                        <li <?= $activePage == 'document' ? 'class="active"' : '' ?>>
+                            <a href="<?= $this->basePath('/admin/document') ?>">
+                                <?= $this->translate('Data forms') ?>
                             </a>
                         </li>
 

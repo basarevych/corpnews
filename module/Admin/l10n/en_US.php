@@ -2,11 +2,11 @@
 
 return [
     // Admin layout
+    'Mail' => 'Mail',
+    'Mailbox' => 'Mailbox',
     'Campaign' => 'Campaign',
     'Clients' => 'Clients',
-    'Data' => 'Data',
     'Data forms' => 'Data forms',
-    'Mailbox' => 'Mailbox',
     'Settings' => 'Settings',
     'Mailbox settings' => 'Mailbox settings',
 
