@@ -89,14 +89,19 @@
 
                 <div class="collapse navbar-collapse" id="layout-navbar-collapse">
                     <ul class="nav navbar-nav">
-                        <li class="dropdown <?= in_array($activePage, [ 'mailbox' ]) ? 'active' : '' ?>">
+                        <li class="dropdown <?= in_array($activePage, [ 'parser', 'mailbox' ]) ? 'active' : '' ?>">
                             <a id="mailbox-navbar" href="javascript:void(0)" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
                                 <?= $this->translate('Mail') ?>
                                 <span class="caret"></span>
                             </a>
                             <ul class="dropdown-menu" role="menu">
                                 <li>
-                                    <a id="mailbox-navbar" href="<?= $this->basePath('/admin/mailbox') ?>">
+                                    <a href="<?= $this->basePath('/admin/parser') ?>">
+                                        <?= $this->translate('Parser commands') ?>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="<?= $this->basePath('/admin/mailbox') ?>">
                                         <?= $this->translate('Mailbox') ?>
                                     </a>
                                 </li>

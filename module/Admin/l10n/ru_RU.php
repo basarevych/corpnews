@@ -3,6 +3,7 @@
 return [
     // Admin layout
     'Mail' => 'Почта',
+    'Parser commands' => 'Команды парсера',
     'Mailbox' => 'Почтовый ящик',
     'Campaign' => 'Кампания',
     'Clients' => 'Клиенты',

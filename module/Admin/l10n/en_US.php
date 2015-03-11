@@ -3,6 +3,7 @@
 return [
     // Admin layout
     'Mail' => 'Mail',
+    'Parser commands' => 'Parser commands',
     'Mailbox' => 'Mailbox',
     'Campaign' => 'Campaign',
     'Clients' => 'Clients',
