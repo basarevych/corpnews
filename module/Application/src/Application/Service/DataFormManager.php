@@ -56,12 +56,16 @@ class DataFormManager implements ServiceLocatorAwareInterface
             $dm = $this->getServiceLocator()->get('doctrine.documentmanager.odm_default');
             foreach ($this->dataForms as $name => $props) {
                 $class = $props['document'];
-                $doc = new $class();
-                if (! $doc instanceOf \DataForm\Document\AbstractDataFormDocument)
+                $reflection = new \ReflectionClass($class);
+                if (!$reflection->isSubclassOf('DataForm\Document\AbstractDataFormDocument'))
                     throw new \Exception('All the documents must inherit from AbstractDataFormDocument');
                 $repo = $dm->getRepository($class);
                 if (! $repo instanceOf \DataForm\Document\DataFormRepositoryInterface)
                     throw new \Exception('All the document repositories must implement DataFormRepositoryInterface');
+
+                $reflection = new \ReflectionClass($props['table']);
+                if (!$reflection->isSubclassOf('DynamicTable\Table'))
+                    throw new \Exception('All the tables must inherit from DynamicTable\\Table');
             }
         }
 
