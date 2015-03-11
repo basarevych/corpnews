@@ -85,7 +85,7 @@ class MailParser implements ServiceLocatorAwareInterface
      * @param string $command
      * @return string
      */
-    public function getDescription($command)
+    public function getDescr($command)
     {
         if (!isset($this->commands[$command]) || !isset($this->commands[$command]['descr']))
             return null;
