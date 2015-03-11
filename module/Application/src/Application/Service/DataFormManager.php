@@ -10,6 +10,7 @@
 namespace Application\Service;
 
 use Exception;
+use ReflectionClass;
 use Zend\ServiceManager\ServiceLocatorAwareInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 use Application\Entity\Client as ClientEntity;
@@ -56,14 +57,16 @@ class DataFormManager implements ServiceLocatorAwareInterface
             $dm = $this->getServiceLocator()->get('doctrine.documentmanager.odm_default');
             foreach ($this->dataForms as $name => $props) {
                 $class = $props['document'];
-                $reflection = new \ReflectionClass($class);
+                $reflection = new ReflectionClass($class);
                 if (!$reflection->isSubclassOf('DataForm\Document\AbstractDataFormDocument'))
                     throw new \Exception('All the documents must inherit from AbstractDataFormDocument');
+
                 $repo = $dm->getRepository($class);
-                if (! $repo instanceOf \DataForm\Document\DataFormRepositoryInterface)
+                $reflection = new ReflectionClass(get_class($repo));
+                if (!$reflection->implementsInterface('DataForm\Document\DataFormRepositoryInterface'))
                     throw new \Exception('All the document repositories must implement DataFormRepositoryInterface');
 
-                $reflection = new \ReflectionClass($props['table']);
+                $reflection = new ReflectionClass($props['table']);
                 if (!$reflection->isSubclassOf('DynamicTable\Table'))
                     throw new \Exception('All the tables must inherit from DynamicTable\\Table');
             }
