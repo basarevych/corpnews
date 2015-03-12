@@ -125,23 +125,30 @@ class MailParser implements ServiceLocatorAwareInterface
         $success = true;
         $output = $msg;
         foreach ($scripts as $script) {
+            $error = false;
+
             $length = strlen($script);
-            if ($script[0] != '{' || $script[1] != '{'
-                    || $script[$length-1] != '}' || $script[$length-2] != '}') {
+            if ($script[0] != '{' || $script[1] != '{')
                 continue;
+            if ($script[$length-1] != '}' || $script[$length-2] != '}')
+                $error = true;
+
+            if (!$error) {
+                $code = substr($script, 2, $length-4) . ';';
+                if (!$this->testCode($code)) {
+                    $success = false;
+                    $error = true;
+                }
             }
 
-            $code = substr($script, 2, $length-4) . ';';
-            if (!$this->testCode($code)) {
-                $success = false;
-                if ($output) {
-                    $pos = strpos($output, $script);
-                    if ($pos !== false) {
-                        $error = '<span style="background: #a90000; color: #ffffff;">'
-                            . $script . '</span>';
-                        $output = substr_replace($output, $error, $pos, $length);
-                    }
-                }
+            if (!$error)
+                continue;
+
+            $pos = strpos($output, $script);
+            if ($pos !== false) {
+                $error = '<span style="background: #a90000; color: #ffffff;">'
+                    . $script . '</span>';
+                $output = substr_replace($output, $error, $pos, $length);
             }
         }
 
