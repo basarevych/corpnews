@@ -125,6 +125,20 @@ class ClientController extends AbstractActionController
                     $entity->setEmail($data['email']);
                     $entity->setWhenBounced($date);
 
+                    foreach ($entity->getGroups() as $group) {
+                        $entity->removeGroup($group);
+                        $group->removeClient($entity);
+                    }
+                    foreach ($data['groups'] as $id) {
+                        $group = $em->getRepository('Application\Entity\Group')
+                                    ->find($id);
+                        if (!$group)
+                            continue;
+                        $entity->addGroup($group);
+                        $group->addClient($entity);
+                        $em->persist($group);
+                    }
+
                     $em->persist($entity);
                     $em->flush();
 
@@ -147,10 +161,15 @@ class ClientController extends AbstractActionController
                 $date = $dt->format($format);
             }
 
+            $groups = [];
+            foreach ($entity->getGroups() as $group)
+                $groups[] = $group->getId();
+
             $form->setData([
                 'id'            => $entity->getId(),
                 'email'         => $entity->getEmail(),
-                'when_bounced'  => $date
+                'when_bounced'  => $date,
+                'groups'        => $groups,
             ]);
         }
 
@@ -265,6 +284,14 @@ class ClientController extends AbstractActionController
                 'sortable'  => true,
                 'visible'   => true,
             ],
+            'groups' => [
+                'title'     => $translate('Groups'),
+                'sql_id'    => 'none',
+                'type'      => Table::TYPE_INTEGER,
+                'filters'   => [],
+                'sortable'  => false,
+                'visible'   => true,
+            ],
             'forms' => [
                 'title'     => $translate('Filled forms'),
                 'sql_id'    => 'none',
@@ -295,7 +322,8 @@ class ClientController extends AbstractActionController
 
         $qb = $em->createQueryBuilder();
         $qb->select('c')
-           ->from('Application\Entity\Client', 'c');
+           ->from('Application\Entity\Client', 'c')
+           ->leftJoin('c.groups', 'g');
 
         $adapter = new DoctrineORMAdapter();
         $adapter->setQueryBuilder($qb);
@@ -307,6 +335,14 @@ class ClientController extends AbstractActionController
             $whenBounced = $row->getWhenBounced();
             if ($whenBounced !== null)
                 $whenBounced = $whenBounced->getTimestamp();
+
+            $groups = [];
+            foreach ($row->getGroups() as $group) {
+                if (in_array($group->getName(), $groups))
+                    continue;
+                $groups[] = $group->getName();
+            }
+            sort($groups);
 
             $filledForms = [];
             foreach ($dfm->getNames() as $name) {
@@ -324,6 +360,7 @@ class ClientController extends AbstractActionController
                 'id'            => $row->getId(),
                 'email'         => $email,
                 'when_bounced'  => $whenBounced,
+                'groups'        => join(', ', $groups),
                 'forms'         => join(', ', $filledForms),
             ];
         };

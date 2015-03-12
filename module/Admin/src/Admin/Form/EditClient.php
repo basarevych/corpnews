@@ -80,6 +80,17 @@ class EditClient extends Form
         $whenBounced->setFormat("Y-m-d H:i:s P");
         $whenBounced->setAttribute('step', 'any');
         $this->add($whenBounced);
+
+        $entities = $em->getRepository('Application\Entity\Group')
+                       ->findBy([], [ 'name' => 'ASC' ]);
+        $options = [];
+        foreach ($entities as $entity)
+            $options[$entity->getId()] = $entity->getName();
+
+        $groups = new Element\MultiCheckbox('groups');
+        $groups->setLabel('Groups');
+        $groups->setValueOptions($options);
+        $this->add($groups);
     }
 
     /**
@@ -137,6 +148,11 @@ class EditClient extends Form
                     ->getValidatorChain()
                     ->attach(new Validator\Date($params));
         $filter->add($whenBounced);
+
+        $groups = new Input('groups');
+        $groups->setRequired(false)
+               ->setBreakOnFailure(false);
+        $filter->add($groups);
 
         $this->inputFilter = $filter;
         return $filter;

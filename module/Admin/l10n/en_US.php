@@ -32,6 +32,7 @@ return [
     'Delete client' => 'Delete client',
     'Email address' => 'Email address',
     'Email bounced' => 'Email bounced',
+    'Groups' => 'Groups',
     'CONFIRM_DELETE_CLIENT' => 'Delete selected client(s)?',
     'TOUR_CLIENTS_EDIT_CLIENT' => '<p>Click any client\'s email to edit the client'
         . '<p><p>Or click a form in "Filled forms" to open the form of the client in admin mode</p>',

@@ -13,6 +13,7 @@ $security = $form->get('security');
 $id = $form->has('id') ? $form->get('id') : null;
 $email = $form->get('email');
 $whenBounced = $form->get('when_bounced');
+$groups = $form->get('groups');
 
 ?>
 
@@ -73,7 +74,7 @@ $whenBounced = $form->get('when_bounced');
                        name="<?= $whenBounced->getName() ?>"
                        value="<?= $this->escapeHtml($whenBounced->getValue()) ?>"
                        data-on-blur="validateFormField($('#modal-form [name=<?= $whenBounced->getName() ?>]'))"
-                       data-on-enter="$('#modal-form button[type=submit]').focus().click()">
+                       data-on-enter="$('#modal-form [name=<?= $groups->getName() ?>]').focus()">
                 <span class="input-group-addon">
                     <span class="glyphicon glyphicon-calendar"></span>
                 </span>
@@ -93,6 +94,36 @@ $whenBounced = $form->get('when_bounced');
                     locale: '<?= \Locale::getDefault() ?>'
                 });
             </script>
+        </div>
+    </div>
+
+    <?php $valid = count($groups->getMessages()) == 0 ?>
+    <div class="form-group <?= $valid ? '' : 'has-error' ?>">
+        <label class="col-sm-4 control-label" for="<?= $groups->getName() ?>">
+            <?= $this->escapeHtml($this->translate($groups->getLabel())) ?>:
+        </label>
+        <div class="col-sm-8">
+            <?php foreach ($groups->getValueOptions() as $value => $label): ?>
+                <div class="checkbox">
+                    <label>
+                        <input type="checkbox"
+                               name="<?= $groups->getName() ?>[]"
+                               value="<?= $this->escapeHtml($value) ?>"
+                               <?= in_array($value, $groups->getValue()) ? 'checked="checked"' : '' ?>
+                               data-on-enter="$('#modal-form button[type=submit]').focus().click()">
+                        <?= $this->translate($label) ?>
+                    </label>
+                </div>
+            <?php endforeach ?>
+            <div class="help-block">
+                <?php if (!$valid): ?>
+                    <ul class="list-unstyled icon-list error-list">
+                    <?php foreach ($groups->getMessages() as $msg): ?>
+                        <li><?= $this->escapeHtml($this->translate($msg)) ?></li>
+                    <?php endforeach ?>
+                    </ul>
+                <?php endif ?>
+            </div>
         </div>
     </div>
 </form>
