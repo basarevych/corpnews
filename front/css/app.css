@@ -62,10 +62,16 @@ body.form {
     background-color: #ffffff;
     border: 1px solid #999999;
     box-shadow: 0 0 8px #333333;
-    padding: 30px 50px;
+    padding: 20px 50px;
 }
 .form-page .alert {
     text-align: center;
+}
+
+.form-locale {
+    position: absolute;
+    top: 15px;
+    right: 25px;
 }
 
 .help-tour {

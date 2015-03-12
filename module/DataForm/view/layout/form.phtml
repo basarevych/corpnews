@@ -1,0 +1,75 @@
+<?= $this->doctype(); ?>
+
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <?= $this->headTitle($this->translate('APP_TITLE'))
+                 ->setSeparator(' - ')
+                 ->setAutoEscape(false) ?>
+
+<?= $this->headMeta()
+         ->appendName('viewport', 'width=device-width, initial-scale=1.0')
+         ->appendHttpEquiv('X-UA-Compatible', 'IE=edge')
+         ->toString(8) ?>
+
+<?php if (@$_ENV['ENVIRONMENT'] == 'development'): ?>
+
+    <?= $this->headLink([
+                    'rel' => 'shortcut icon',
+                    'type' => 'image/vnd.microsoft.icon',
+                    'href' => $this->basePath('/img/favicon.ico')
+               ])
+             ->prependStylesheet($this->basePath('/css/app.css'))
+             ->prependStylesheet($this->basePath('/css/vendor.css'))
+             ->toString(8) ?>
+     
+    <?= $this->headScript()
+             ->prependFile($this->basePath('/js/app.js'))
+             ->prependFile($this->basePath('/js/vendor.js'))
+             ->toString(8) ?>
+
+<?php else: // Production ?>
+
+    <?= $this->headLink([
+                    'rel' => 'shortcut icon',
+                    'type' => 'image/vnd.microsoft.icon',
+                    'href' => $this->basePath('/img/favicon.ico')
+               ])
+             ->prependStylesheet($this->basePath('/css/app.min.css'))
+             ->prependStylesheet($this->basePath('/css/vendor.min.css'))
+             ->toString(8) ?>
+     
+    <?= $this->headScript()
+             ->prependFile($this->basePath('/js/app.min.js'))
+             ->prependFile($this->basePath('/js/vendor.min.js'))
+             ->toString(8) ?>
+
+<?php endif ?>
+
+    </head>
+    <body class="form">
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-offset-1 col-md-10 col-lg-offset-2 col-lg-8 form-page">
+            <div class="form-locale">
+                <?php foreach ($this->locale['available'] as $locale): ?>
+                    <?php $short = substr($locale, 0, 2); ?>
+                    &nbsp;&nbsp;
+                    <a href="javascript:void(0)" onclick="$.cookie('locale', '<?= $locale ?>'); window.location.reload()">
+                        <img src="<?= $this->basePath('/img/flags/' . $short . '.gif') ?>">
+                        <?= $short ?>
+                    </a>
+                <?php endforeach ?>
+            </div>
+
+<?= $this->content; ?>
+
+        </form>
+    </div>
+</div>
+
+<?= $this->inlineScript() ?>
+
+    </body>
+</html>
