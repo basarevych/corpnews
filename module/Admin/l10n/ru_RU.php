@@ -22,6 +22,7 @@ return [
     // GroupController
     'Create group' => 'Создать группу',
     'Delete group' => 'Удалить группу',
+    'CONFIRM_DELETE_GROUP' => 'Удалить выбранную группу (группы)?',
 
     // ClientController
     'Filled forms' => 'Заполненные формы',

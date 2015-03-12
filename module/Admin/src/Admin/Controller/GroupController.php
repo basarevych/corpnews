@@ -111,7 +111,7 @@ class GroupController extends AbstractActionController
                 $data = $form->getData();
 
                 if (!$entity)
-                    $entity = new ClientEntity();
+                    $entity = new GroupEntity();
 
                 $entity->setName($data['name']);
 
@@ -255,8 +255,8 @@ class GroupController extends AbstractActionController
                 . $row->getId() . ')">' . $escapeHtml($row->getName()) . '</a>';
 
             return [
-                'id'            => $row->getId(),
-                'email'         => $name,
+                'id'    => $row->getId(),
+                'name'  => $name,
             ];
         };
 
