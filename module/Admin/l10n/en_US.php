@@ -39,6 +39,8 @@ return [
     'female' => 'Female',
     'Company' => 'Company',
     'Position' => 'Position',
+    'TOUR_DATA_FORMS_ADMIN_ACCESS' => 'Click any client\'s email to open their form in admin mode',
+    'TOUR_DATA_FORMS_SWITCH' => 'You can switch current data form here',
 
     // MailboxController
     'Incoming' => 'Incoming',

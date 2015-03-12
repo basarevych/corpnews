@@ -58,4 +58,30 @@
         var table = $('#table-documents').data('dynamicTable');
         table.refresh();
     }
+
+    var tour = new Tour({
+        name: 'documents',
+        template: '<?= $this->translate('TOUR_TEMPLATE') ?>',
+        steps: [
+            {
+                element: "#table-documents",
+                placement: "left",
+                title: "<?= str_replace('"', "'", $this->translate('Data forms')) ?>",
+                content: "<?= str_replace('"', "'", $this->translate('TOUR_DATA_FORMS_ADMIN_ACCESS')) ?>"
+            },
+            {
+                element: "#actions-panel",
+                placement: "right",
+                title: "<?= str_replace('"', "'", $this->translate('Data forms')) ?>",
+                content: "<?= str_replace('"', "'", $this->translate('TOUR_DATA_FORMS_SWITCH')) ?>"
+            },
+        ]
+    });
+
+    $('#table-documents').on('dt.loaded', function () {
+        tour.init().start();
+        $('#tour-button')
+            .on('click', function () { tour.restart(); })
+            .parent().show();
+    });
 </script>
