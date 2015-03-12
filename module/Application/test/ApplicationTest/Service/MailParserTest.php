@@ -46,4 +46,28 @@ class MailParserTest extends AbstractControllerTestCase
         $this->assertEquals([ 'first_name' ], $service->getVariables(), "Returned variables are wrong");
         $this->assertEquals('PARSER_FIRST_NAME_DESCR', $service->getVariableDescr('first_name'), "Returned description is wrong");
     }
+
+    public function testSyntaxValid()
+    {
+        $msg = 'Hello {{ echo "Sir" }}';
+
+        $service = new MailParser();
+        $sl = $this->getApplicationServiceLocator();
+        $service->setServiceLocator($sl);
+
+        $valid = $service->checkSyntax($msg);
+        $this->assertEquals(true, $valid, "Valid syntax reported as invalid");
+    }
+
+    public function testSyntaxInvalid()
+    {
+        $msg = 'Hello {{ echo %"Sir" }}';
+
+        $service = new MailParser();
+        $sl = $this->getApplicationServiceLocator();
+        $service->setServiceLocator($sl);
+
+        $valid = $service->checkSyntax($msg, $output);
+        $this->assertEquals(false, $valid, "Invalid syntax reported as valid");
+    }
 }

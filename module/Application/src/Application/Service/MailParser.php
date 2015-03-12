@@ -92,4 +92,67 @@ class MailParser implements ServiceLocatorAwareInterface
 
         return $this->variables[$variable]['descr'];
     }
+
+    /**
+     * Check syntax
+     *
+     * @param string $msg
+     * @param string &$output
+     * @return boolean
+     */
+    public function checkSyntax($msg, &$output = null)
+    {
+        $scripts = [];
+        $bracketCounter = 0;
+        $buffer = "";
+        for ($i = 0; $i < strlen($msg); $i++) {
+            if ($msg[$i] == '{')
+                $bracketCounter++;
+
+            if ($bracketCounter > 0) {
+                $buffer .= $msg[$i];
+            } else if (strlen($buffer) > 0) {
+                $scripts[] = $buffer;
+                $buffer = "";
+            }
+
+            if ($msg[$i] == '}')
+                $bracketCounter--;
+        }
+        if (strlen($buffer) > 0)
+            $scripts[] = $buffer;
+
+        $success = true;
+        $output = $msg;
+        foreach ($scripts as $script) {
+            $length = strlen($script);
+            if ($script[0] != '{' || $script[1] != '{'
+                    || $script[$length-1] != '}' || $script[$length-2] != '}') {
+                continue;
+            }
+
+            $code = substr($script, 2, $length-4) . ';';
+            if (!$this->testCode($code)) {
+                $success = false;
+                if ($output) {
+                    $pos = strpos($output, $script);
+                    if ($pos !== false) {
+                        $error = '<span style="background: #a90000; color: #ffffff;">'
+                            . $script . '</span>';
+                        $output = substr_replace($output, $error, $pos, $length);
+                    }
+                }
+            }
+        }
+
+        return $success;
+    }
+
+    protected function testCode($code)
+    {
+        $oldReporting = error_reporting(0);
+        $success = @eval('return true;' . $code . ';');
+        error_reporting($oldReporting);
+        return $success === true;
+    }
 }
