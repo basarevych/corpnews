@@ -55,10 +55,11 @@ return [
                 'table'     => 'DataForm\Table\Profile',
             ],
         ],
-        'parser_commands' => [
-            'FirstName' => [
-                'descr'     => 'PARSER_FIRST_NAME_DESCR',
-                'usage'     => 'PARSER_FIRST_NAME_USAGE',
+        'parser' => [
+            'variables' => [
+                'first_name' => [
+                    'descr'     => 'PARSER_FIRST_NAME_DESCR',
+                ],
             ],
         ],
     ],

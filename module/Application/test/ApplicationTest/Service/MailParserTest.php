@@ -17,10 +17,11 @@ class MailParserTest extends AbstractControllerTestCase
         $sl->setAllowOverride(true);
 
         $config = $sl->get('Config');
-        $config['corpnews']['parser_commands'] = [
-            'FirstName' => [
-                'descr'     => 'PARSER_FIRST_NAME_DESCR',
-                'usage'     => 'PARSER_FIRST_NAME_USAGE',
+        $config['corpnews']['parser'] = [
+            'variables' => [
+                'first_name' => [
+                    'descr'     => 'PARSER_FIRST_NAME_DESCR',
+                ],
             ],
         ];
 
@@ -42,8 +43,7 @@ class MailParserTest extends AbstractControllerTestCase
         $sl = $this->getApplicationServiceLocator();
         $service->setServiceLocator($sl);
 
-        $this->assertEquals([ 'FirstName' ], $service->getCommands(), "Returned commands are wrong");
-        $this->assertEquals('PARSER_FIRST_NAME_DESCR', $service->getDescr('FirstName'), "Returned description is wrong");
-        $this->assertEquals('PARSER_FIRST_NAME_USAGE', $service->getUsage('FirstName'), "Returned usage info is wrong");
+        $this->assertEquals([ 'first_name' ], $service->getVariables(), "Returned variables are wrong");
+        $this->assertEquals('PARSER_FIRST_NAME_DESCR', $service->getVariableDescr('first_name'), "Returned description is wrong");
     }
 }

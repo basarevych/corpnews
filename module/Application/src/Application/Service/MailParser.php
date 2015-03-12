@@ -29,11 +29,11 @@ class MailParser implements ServiceLocatorAwareInterface
     protected $serviceLocator = null;
 
     /**
-     * Commands
+     * Variables
      *
      * @var mixed
      */
-    protected $commands = null;
+    protected $variables = null;
 
     /**
      * Set service locator
@@ -45,12 +45,12 @@ class MailParser implements ServiceLocatorAwareInterface
     {
         $this->serviceLocator = $serviceLocator;
 
-        if (!$this->commands) {
+        if (!$this->variables) {
             $options = $serviceLocator->get('Config');
-            if (!isset($options['corpnews']['parser_commands']))
-                throw new \Exception("No 'parser_commands' section in the config");
+            if (!isset($options['corpnews']['parser']['variables']))
+                throw new \Exception("No 'parser/variables' section in the config");
 
-            $this->commands = $options['corpnews']['parser_commands'];
+            $this->variables = $options['corpnews']['parser']['variables'];
         }
 
         return $this;
@@ -70,40 +70,26 @@ class MailParser implements ServiceLocatorAwareInterface
 
 
     /**
-     * Get parser commands
+     * Get parser variables
      *
      * @return array
      */
-    public function getCommands()
+    public function getVariables()
     {
-        return array_keys($this->commands);
+        return array_keys($this->variables);
     }
 
     /**
-     * Get command description
+     * Get variable description
      *
-     * @param string $command
+     * @param string $variable
      * @return string
      */
-    public function getDescr($command)
+    public function getVariableDescr($variable)
     {
-        if (!isset($this->commands[$command]) || !isset($this->commands[$command]['descr']))
+        if (!isset($this->variables[$variable]) || !isset($this->variables[$variable]['descr']))
             return null;
 
-        return $this->commands[$command]['descr'];
-    }
-
-    /**
-     * Get command usage info 
-     *
-     * @param string $command
-     * @return string
-     */
-    public function getUsage($command)
-    {
-        if (!isset($this->commands[$command]) || !isset($this->commands[$command]['usage']))
-            return null;
-
-        return $this->commands[$command]['usage'];
+        return $this->variables[$variable]['descr'];
     }
 }

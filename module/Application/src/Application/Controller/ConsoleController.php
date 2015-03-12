@@ -199,6 +199,11 @@ class ConsoleController extends AbstractConsoleController
      */
     public function populateDbAction()
     {
+$code = 'echo "xxx\n"';
+$oldReporting = error_reporting(0);
+if (@eval('return true;' . $code . ';'))
+    eval($code . ';');
+error_reporting($oldReporting);
         $sl = $this->getServiceLocator();
         $em = $sl->get('Doctrine\ORM\EntityManager');
 
