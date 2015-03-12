@@ -98,15 +98,14 @@ class MailParser implements ServiceLocatorAwareInterface
      *
      * @param string $msg
      * @param string &$output
-     * @param boolean $ecapeHtml
+     * @param boolean $htmlInput
+     * @param boolean $escapeOutput
      * @return boolean
      */
-    public function checkSyntax($msg, &$output = null, $escapeHtml = false)
+    public function checkSyntax($msg, &$output, $htmlInput, $escapeOutput)
     {
-        if ($escapeHtml) {
-            $sl = $this->getServiceLocator();
-            $escapeHtml = $sl->get('viewhelpermanager')->get('escapeHtml');
-        }
+        $sl = $this->getServiceLocator();
+        $escapeHtml = $sl->get('viewhelpermanager')->get('escapeHtml');
 
         $scripts = [];
         $bracketCounter = 0;
@@ -142,6 +141,9 @@ class MailParser implements ServiceLocatorAwareInterface
 
             if (!$error) {
                 $code = substr($script, 2, $length-4) . ';';
+                if ($htmlInput)
+                    $code = html_entity_decode($code);
+
                 if (!$this->testCode($code))
                     $error = true;
             }
@@ -152,7 +154,7 @@ class MailParser implements ServiceLocatorAwareInterface
             $pos = strpos($msg, $script, $prevPos);
             if ($pos !== false) {
                 $originalChunk = substr($msg, $prevPos, $pos - $prevPos);
-                if ($escapeHtml) {
+                if ($escapeOutput) {
                     $escapedChunk = $escapeHtml($originalChunk);
                     $output .= $escapedChunk;
                 } else {
@@ -169,7 +171,7 @@ class MailParser implements ServiceLocatorAwareInterface
         }
 
         $originalChunk = substr($msg, $prevPos, strlen($msg) - $prevPos);
-        if ($escapeHtml) {
+        if ($escapeOutput) {
             $escapedChunk = $escapeHtml($originalChunk);
             $output .= $escapedChunk;
         } else {

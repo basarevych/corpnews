@@ -99,16 +99,30 @@ class MailboxController extends AbstractActionController
 
         $sl = $this->getServiceLocator();
         $imap = $sl->get('ImapClient');
+        $mp = $sl->get('MailParser');
 
         $letter = $imap->getLetter($box, $uid);
         if (!$letter)
             throw new NotFoundException('Letter not found');
 
-        $success = $imap->loadLetter($letter, $box, $uid);
+        $analysisSuccess = $imap->loadLetter($letter, $box, $uid);
+        $syntaxSuccess = $mp->checkSyntax($letter->getHtmlMessage(), $output, true, false);
+        if ($syntaxSuccess)
+            $syntaxSuccess = $mp->checkSyntax($letter->getTextMessage(), $output, false, false);
+
+        if (!$analysisSuccess)
+            $error = 'analysis';
+        else if (!$syntaxSuccess)
+            $error = 'syntax';
+        else
+            $error = false;
+
+        $mp->checkSyntax($letter->getSubject(), $output, true, true);
+        $subject = $output;
 
         return new JsonModel([
-            'success'       => $success,
-            'subject'       => $letter->getSubject(),
+            'error'         => $error,
+            'subject'       => $subject,
             'html'          => $this->prepareHtml($box, $letter),
             'text'          => $this->prepareText($box, $letter),
             'attachments'   => $this->prepareAttachments($box, $letter),
@@ -428,6 +442,7 @@ class MailboxController extends AbstractActionController
     protected function prepareHtml($box, $letter)
     {
         $sl = $this->getServiceLocator();
+        $mp = $sl->get('MailParser');
         $basePath = $sl->get('viewhelpermanager')->get('basePath');
 
         $config = HTMLPurifier_Config::createDefault();
@@ -448,6 +463,9 @@ class MailboxController extends AbstractActionController
             $message
         );
 
+        $mp->checkSyntax($message, $output, true, false);
+        $message = $output;
+
         $purifier = new HTMLPurifier($config);
         $result = $purifier->purify($message);
         return $result;
@@ -463,10 +481,12 @@ class MailboxController extends AbstractActionController
     protected function prepareText($box, $letter)
     {
         $sl = $this->getServiceLocator();
-        $escapeHtml = $sl->get('viewhelpermanager')->get('escapeHtml');
+        $mp = $sl->get('MailParser');
 
         $message = $letter->getTextMessage();
-        $result = '<p>' . str_replace("\n", "<br>", $escapeHtml($message)) . '</p>';
+        $mp->checkSyntax($message, $output, false, true);
+
+        $result = '<p>' . str_replace("\n", "<br>", $output) . '</p>';
 
         return $result;
     }

@@ -166,7 +166,7 @@
             <div class="modal-footer">
                 <div class="pull-left">
                     <strong>
-                        <?= $this->translate('Letter parse status') ?>:
+                        <?= $this->translate('Letter check status') ?>:
                         <span id="parse-status"><?= $this->translate('Loading...') ?></span>
                     </strong>
                 </div>
@@ -234,12 +234,13 @@
                 $('#log .letter-frame').html(data.log);
                 $('#source .letter-frame').html(data.source);
 
-                $('#letter-modal .modal-title').text(data.subject);
-                $('#parse-status').html(
-                    data.success
-                        ? '<span class="text-success"><?= $this->translate('Success') ?></span>'
-                        : '<span class="text-danger"><?= $this->translate('Failure') ?></span>'
-                );
+                $('#letter-modal .modal-title').html(data.subject);
+                if (data.error === false)
+                    $('#parse-status').html('<span class="text-success"><?= $this->translate('Success') ?></span>');
+                else if (data.error == 'analysis')
+                    $('#parse-status').html('<span class="text-danger"><?= $this->translate('Analysis error') ?></span>');
+                else if (data.error == 'syntax')
+                    $('#parse-status').html('<span class="text-danger"><?= $this->translate('Syntax error') ?></span>');
                 $('#letter-modal .tab-pane-loader').hide();
                 $('#letter-modal .letter-frame').show();
             }
