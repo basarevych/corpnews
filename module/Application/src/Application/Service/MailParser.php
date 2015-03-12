@@ -124,6 +124,7 @@ class MailParser implements ServiceLocatorAwareInterface
 
         $success = true;
         $output = $msg;
+        $prevPos = 0;
         foreach ($scripts as $script) {
             $error = false;
 
@@ -141,14 +142,14 @@ class MailParser implements ServiceLocatorAwareInterface
                 }
             }
 
-            if (!$error)
-                continue;
-
-            $pos = strpos($output, $script);
+            $pos = strpos($output, $script, $prevPos);
             if ($pos !== false) {
-                $error = '<span style="background: #a90000; color: #ffffff;">'
+                $error = '<span style="background: '
+                    . ($error ? '#a90000' : '#00a900')
+                    . '; color: #ffffff;">'
                     . $script . '</span>';
                 $output = substr_replace($output, $error, $pos, $length);
+                $prevPos = $pos + strlen($error);
             }
         }
 
