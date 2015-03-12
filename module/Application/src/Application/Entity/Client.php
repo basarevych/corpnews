@@ -10,6 +10,8 @@
 namespace Application\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\Common\Collections\ArrayCollection;
+use Application\Entity\Group;
 
 /**
  * Client entity
@@ -52,6 +54,24 @@ class Client
     protected $when_bounced;
 
     /**
+     * Group entities
+     *
+     * @var ArrayCollection
+     *
+     * @ORM\ManyToMany(targetEntity="Group", inversedBy="clients")
+     * @ORM\JoinTable(name="client_groups")
+     */
+    protected $groups;
+
+    /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        $this->groups = new ArrayCollection();
+    }
+
+    /**
      * Converts this object to array
      *
      * @return array
@@ -63,7 +83,8 @@ class Client
         return [
             'id'                => $this->getId(),
             'email'             => $this->getEmail(),
-            'when_bounced'      => $whenBounced ? $whenBounced->getTimestamp() : null
+            'when_bounced'      => $whenBounced ? $whenBounced->getTimestamp() : null,
+            'groups'            => $this->getGroups()->toArray(),
         ];
     }
 
@@ -121,5 +142,38 @@ class Client
     public function getWhenBounced()
     {
         return $this->when_bounced;
+    }
+
+    /**
+     * Add group
+     *
+     * @param Group $group
+     * @return Client
+     */
+    public function addGroup(Group $group)
+    {
+        $this->groups[] = $group;
+
+        return $this;
+    }
+
+    /**
+     * Remove group
+     *
+     * @param Group $group
+     */
+    public function removeGroup(Group $group)
+    {
+        $this->groups->removeElement($group);
+    }
+
+    /**
+     * Get groups
+     *
+     * @return ArrayCollection
+     */
+    public function getGroups()
+    {
+        return $this->groups;
     }
 }
