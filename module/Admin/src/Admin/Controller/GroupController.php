@@ -15,17 +15,17 @@ use Zend\View\Model\JsonModel;
 use DynamicTable\Table;
 use DynamicTable\Adapter\DoctrineORMAdapter;
 use Application\Exception\NotFoundException;
-use Application\Entity\Client as ClientEntity;
+use Application\Entity\Group as GroupEntity;
 use Application\Form\Confirm as ConfirmForm;
-use Admin\Form\EditClient as EditClientForm;
+use Admin\Form\EditGroup as EditGroupForm;
 
 /**
- * Clients controller
+ * Groups controller
  *
  * @category    Admin
  * @package     Controller
  */
-class ClientController extends AbstractActionController
+class GroupController extends AbstractActionController
 {
     /**
      * Index action
@@ -38,7 +38,7 @@ class ClientController extends AbstractActionController
     /**
      * Table data retrieving action
      */
-    public function clientTableAction()
+    public function groupTableAction()
     {
         $table = $this->createTable();
         $this->connectTableData($table);
@@ -60,12 +60,11 @@ class ClientController extends AbstractActionController
     }
 
     /**
-     * Create/edit client entity form action
+     * Create/edit group entity form action
      */
-    public function editClientAction()
+    public function editGroupAction()
     {
         $sl = $this->getServiceLocator();
-        $dfm = $sl->get('DataFormManager');
         $em = $sl->get('Doctrine\ORM\EntityManager');
         $translate = $sl->get('viewhelpermanager')->get('translate');
 
@@ -74,7 +73,7 @@ class ClientController extends AbstractActionController
             $field = $this->params()->fromQuery('field');
             $data = $this->params()->fromQuery('form');
 
-            $form = new EditClientForm($em, @$data['id']);
+            $form = new EditGroupForm($em, @$data['id']);
             $form->setData($data);
             $form->isValid();
 
@@ -94,14 +93,14 @@ class ClientController extends AbstractActionController
         if (!$id)
             $id = $this->params()->fromPost('id');
         if ($id) {
-            $entity = $em->getRepository('Application\Entity\Client')
+            $entity = $em->getRepository('Application\Entity\Group')
                          ->find($id);
             if (!$entity)
                 throw new NotFoundException('Wrong ID');
         }
 
         $script = null;
-        $form = new EditClientForm($em, $id);
+        $form = new EditGroupForm($em, $id);
         $messages = [];
 
         $request = $this->getRequest();
@@ -111,46 +110,20 @@ class ClientController extends AbstractActionController
             if ($form->isValid()) {
                 $data = $form->getData();
 
-                $date = null;
-                if (!empty($data['when_bounced'])) {
-                    $format = $form->get('when_bounced')->getFormat();
-                    $date = \DateTime::createFromFormat($format, $data['when_bounced']);
-                }
-
                 if (!$entity)
                     $entity = new ClientEntity();
 
-                try {
-                    $oldEmail = $entity->getEmail();
-                    $entity->setEmail($data['email']);
-                    $entity->setWhenBounced($date);
+                $entity->setName($data['name']);
 
-                    $em->persist($entity);
-                    $em->flush();
-
-                    if (!$id)
-                        $dfm->createClientDocuments($entity);
-                    else if ($oldEmail != $entity->getEmail())
-                        $dfm->updateClientDocuments($entity);
-                } catch (\Exception $e) {
-                    if (!$id)
-                        $dfm->deleteClientDocuments($entity);
-                    throw $e;
-                }
+                $em->persist($entity);
+                $em->flush();
 
                 $script = "$('#modal-form').modal('hide'); reloadTable()";
             }
         } else if ($entity) {       // Load initial form values
-            $date = "";
-            if (($dt = $entity->getWhenBounced()) !== null) {
-                $format = $form->get('when_bounced')->getFormat();
-                $date = $dt->format($format);
-            }
-
             $form->setData([
-                'id'            => $entity->getId(),
-                'email'         => $entity->getEmail(),
-                'when_bounced'  => $date
+                'id'    => $entity->getId(),
+                'name'  => $entity->getName(),
             ]);
         }
 
@@ -164,9 +137,9 @@ class ClientController extends AbstractActionController
     }
 
     /**
-     * Delete client form action
+     * Delete group form action
      */
-    public function deleteClientAction()
+    public function deleteGroupAction()
     {
         $id = $this->params()->fromQuery('id');
         if (!$id)
@@ -175,9 +148,8 @@ class ClientController extends AbstractActionController
             throw new \Exception('No "id" parameter');
 
         $sl = $this->getServiceLocator();
-        $dfm = $sl->get('DataFormManager');
         $em = $sl->get('Doctrine\ORM\EntityManager');
-        $repo = $em->getRepository('Application\Entity\Client');
+        $repo = $em->getRepository('Application\Entity\Group');
 
         $script = null;
         $form = new ConfirmForm();
@@ -190,14 +162,12 @@ class ClientController extends AbstractActionController
             if ($form->isValid()) {
                 if ($id == '_all') {
                     $repo->removeAll();
-                    $dfm->deleteAllDocuments();
                 } else {
                     foreach (explode(',', $id) as $item) {
                         $entity = $repo->find($item);
                         if (!$entity)
                             continue;
 
-                        $dfm->deleteClientDocuments($entity);
                         $em->remove($entity);
                         $em->flush();
                     }
@@ -243,34 +213,18 @@ class ClientController extends AbstractActionController
         $table->setColumns([
             'id' => [
                 'title'     => $translate('ID'),
-                'sql_id'    => 'c.id',
+                'sql_id'    => 'g.id',
                 'type'      => Table::TYPE_INTEGER,
                 'filters'   => [ Table::FILTER_BETWEEN ],
                 'sortable'  => true,
                 'visible'   => false,
             ],
-            'email' => [
-                'title'     => $translate('Email address'),
-                'sql_id'    => 'c.email',
+            'name' => [
+                'title'     => $translate('Name'),
+                'sql_id'    => 'g.name',
                 'type'      => Table::TYPE_STRING,
                 'filters'   => [ Table::FILTER_LIKE ],
                 'sortable'  => true,
-                'visible'   => true,
-            ],
-            'when_bounced' => [
-                'title'     => $translate('Email bounced'),
-                'sql_id'    => 'c.when_bounced',
-                'type'      => Table::TYPE_DATETIME,
-                'filters'   => [ Table::FILTER_BETWEEN, Table::FILTER_NULL ],
-                'sortable'  => true,
-                'visible'   => true,
-            ],
-            'forms' => [
-                'title'     => $translate('Filled forms'),
-                'sql_id'    => 'none',
-                'type'      => Table::TYPE_STRING,
-                'filters'   => [],
-                'sortable'  => false,
                 'visible'   => true,
             ],
         ]);
@@ -286,45 +240,23 @@ class ClientController extends AbstractActionController
     protected function connectTableData($table)
     {
         $sl = $this->getServiceLocator();
-        $dfm = $sl->get('DataFormManager');
         $em = $sl->get('Doctrine\ORM\EntityManager');
-        $dm = $sl->get('doctrine.documentmanager.odm_default');
         $escapeHtml = $sl->get('viewhelpermanager')->get('escapeHtml');
-        $translate = $sl->get('viewhelpermanager')->get('translate');
-        $basePath = $sl->get('viewhelpermanager')->get('basePath');
 
         $qb = $em->createQueryBuilder();
-        $qb->select('c')
-           ->from('Application\Entity\Client', 'c');
+        $qb->select('g')
+           ->from('Application\Entity\Group', 'g');
 
         $adapter = new DoctrineORMAdapter();
         $adapter->setQueryBuilder($qb);
 
-        $mapper = function ($row) use ($dfm, $dm, $escapeHtml, $basePath, $translate) {
-            $email = '<a href="javascript:void(0)" onclick="editClient('
-                . $row->getId() . ')">' . $escapeHtml($row->getEmail()) . '</a>';
-
-            $whenBounced = $row->getWhenBounced();
-            if ($whenBounced !== null)
-                $whenBounced = $whenBounced->getTimestamp();
-
-            $filledForms = [];
-            foreach ($dfm->getNames() as $name) {
-                $class = $dfm->getDocumentClass($name);
-                $repo = $dm->getRepository($class);
-                $doc = $repo->find($row->getId());
-                if ($doc && $doc->getWhenUpdated()) {
-                    $url = $basePath($dfm->getUrl($name));
-                    $title = $escapeHtml($translate($dfm->getTitle($name)));
-                    $filledForms[] = '<a href="' . $url . '?email=' . urlencode($row->getEmail()) . '" target="_blank">' . $title . '</a>';
-                } 
-            }
+        $mapper = function ($row) use ($escapeHtml) {
+            $name = '<a href="javascript:void(0)" onclick="editGroup('
+                . $row->getId() . ')">' . $escapeHtml($row->getName()) . '</a>';
 
             return [
                 'id'            => $row->getId(),
-                'email'         => $email,
-                'when_bounced'  => $whenBounced,
-                'forms'         => join(', ', $filledForms),
+                'email'         => $name,
             ];
         };
 
