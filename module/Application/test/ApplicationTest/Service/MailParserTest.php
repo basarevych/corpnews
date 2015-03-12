@@ -55,7 +55,7 @@ class MailParserTest extends AbstractControllerTestCase
         $sl = $this->getApplicationServiceLocator();
         $service->setServiceLocator($sl);
 
-        $valid = $service->checkSyntax($msg);
+        $valid = $service->checkSyntax($msg, $output, false);
         $this->assertEquals(true, $valid, "Valid syntax reported as invalid");
     }
 
@@ -67,7 +67,7 @@ class MailParserTest extends AbstractControllerTestCase
         $sl = $this->getApplicationServiceLocator();
         $service->setServiceLocator($sl);
 
-        $valid = $service->checkSyntax($msg, $output, true);
+        $valid = $service->checkSyntax($msg, $output, false);
         $this->assertEquals(false, $valid, "Invalid syntax reported as valid");
     }
 }

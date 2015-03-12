@@ -183,7 +183,7 @@ class MailboxControllerTest extends AbstractHttpControllerTestCase
         $response = $this->getResponse()->getContent();
         $data = Json::decode($response, Json::TYPE_ARRAY);
 
-        $this->assertEquals(true, isset($data['success']) && $data['success'], "Result is not a success");
+        $this->assertEquals(false, isset($data['error']) && $data['error'], "Result is not a success");
         $this->assertEquals('subject', $data['subject'], "Subject item is wrong");
         $this->assertEquals('foo', $data['html'], "HTML item is wrong");
         $this->assertEquals('<p>bar</p>', $data['text'], "Text item is wrong");

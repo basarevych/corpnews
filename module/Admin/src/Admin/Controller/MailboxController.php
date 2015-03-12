@@ -106,9 +106,9 @@ class MailboxController extends AbstractActionController
             throw new NotFoundException('Letter not found');
 
         $analysisSuccess = $imap->loadLetter($letter, $box, $uid);
-        $syntaxSuccess = $mp->checkSyntax($letter->getHtmlMessage(), $output, true, false);
+        $syntaxSuccess = $mp->checkSyntax($letter->getHtmlMessage(), $output, true);
         if ($syntaxSuccess)
-            $syntaxSuccess = $mp->checkSyntax($letter->getTextMessage(), $output, false, false);
+            $syntaxSuccess = $mp->checkSyntax($letter->getTextMessage(), $output, false);
 
         if (!$analysisSuccess)
             $error = 'analysis';
@@ -117,7 +117,7 @@ class MailboxController extends AbstractActionController
         else
             $error = false;
 
-        $mp->checkSyntax($letter->getSubject(), $output, true, true);
+        $mp->checkSyntax($letter->getSubject(), $output, true);
         $subject = $output;
 
         return new JsonModel([
@@ -463,7 +463,7 @@ class MailboxController extends AbstractActionController
             $message
         );
 
-        $mp->checkSyntax($message, $output, true, false);
+        $mp->checkSyntax($message, $output, true);
         $message = $output;
 
         $purifier = new HTMLPurifier($config);
@@ -484,7 +484,7 @@ class MailboxController extends AbstractActionController
         $mp = $sl->get('MailParser');
 
         $message = $letter->getTextMessage();
-        $mp->checkSyntax($message, $output, false, true);
+        $mp->checkSyntax($message, $output, false);
 
         $result = '<p>' . str_replace("\n", "<br>", $output) . '</p>';
 
