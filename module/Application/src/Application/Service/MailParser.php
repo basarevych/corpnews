@@ -98,10 +98,16 @@ class MailParser implements ServiceLocatorAwareInterface
      *
      * @param string $msg
      * @param string &$output
+     * @param boolean $ecapeHtml
      * @return boolean
      */
-    public function checkSyntax($msg, &$output = null)
+    public function checkSyntax($msg, &$output = null, $escapeHtml = false)
     {
+        if ($escapeHtml) {
+            $sl = $this->getServiceLocator();
+            $escapeHtml = $sl->get('viewhelpermanager')->get('escapeHtml');
+        }
+
         $scripts = [];
         $bracketCounter = 0;
         $buffer = "";
@@ -123,7 +129,7 @@ class MailParser implements ServiceLocatorAwareInterface
             $scripts[] = $buffer;
 
         $success = true;
-        $output = $msg;
+        $output = "";
         $prevPos = 0;
         foreach ($scripts as $script) {
             $error = false;
@@ -136,21 +142,38 @@ class MailParser implements ServiceLocatorAwareInterface
 
             if (!$error) {
                 $code = substr($script, 2, $length-4) . ';';
-                if (!$this->testCode($code)) {
-                    $success = false;
+                if (!$this->testCode($code))
                     $error = true;
-                }
             }
 
-            $pos = strpos($output, $script, $prevPos);
+            if ($error)
+                $success = false;
+
+            $pos = strpos($msg, $script, $prevPos);
             if ($pos !== false) {
-                $error = '<span style="background: '
+                $originalChunk = substr($msg, $prevPos, $pos - $prevPos);
+                if ($escapeHtml) {
+                    $escapedChunk = $escapeHtml($originalChunk);
+                    $output .= $escapedChunk;
+                } else {
+                    $output .= $originalChunk;
+                }
+
+                $highlight = '<span style="background: '
                     . ($error ? '#a90000' : '#00a900')
                     . '; color: #ffffff;">'
                     . $script . '</span>';
-                $output = substr_replace($output, $error, $pos, $length);
-                $prevPos = $pos + strlen($error);
+                $output .= $highlight;
+                $prevPos = $pos + $length;
             }
+        }
+
+        $originalChunk = substr($msg, $prevPos, strlen($msg) - $prevPos);
+        if ($escapeHtml) {
+            $escapedChunk = $escapeHtml($originalChunk);
+            $output .= $escapedChunk;
+        } else {
+            $output .= $originalChunk;
         }
 
         return $success;

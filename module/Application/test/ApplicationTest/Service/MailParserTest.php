@@ -61,13 +61,13 @@ class MailParserTest extends AbstractControllerTestCase
 
     public function testSyntaxInvalid()
     {
-        $msg = 'Hello  {{ echo %"Sir" }} {{ echo "Sir" }} {{ echo%';
+        $msg = '{{ echo 1; }} Hello  <<{{ echo %"Sir" }}>> {{ echo "Sir" }}  {{ xxx';
 
         $service = new MailParser();
         $sl = $this->getApplicationServiceLocator();
         $service->setServiceLocator($sl);
 
-        $valid = $service->checkSyntax($msg, $output);
+        $valid = $service->checkSyntax($msg, $output, true);
         $this->assertEquals(false, $valid, "Invalid syntax reported as valid");
     }
 }
