@@ -3,7 +3,7 @@
 return [
     // Admin layout
     'Mail' => 'Mail',
-    'Parser commands' => 'Parser commands',
+    'Message parser' => 'Message parser',
     'Mailbox' => 'Mailbox',
     'Campaign' => 'Campaign',
     'Clients' => 'Clients',
@@ -72,6 +72,20 @@ return [
     'CONFIRM_DELETE_LETTER' => 'Delete selected letter(s)?',
     'CONFIRM_REANALYZE_LETTER' => 'Reset status of selected letter(s)?<br><br>Reset letters will soon reappear in one of the mailbox\'es folder again',
     'Execute' => 'Execute',
+
+    // ParserController
+    'Message parser variables' => 'Message parser variables',
+    'PARSER_SYNTAX_TITLE' => 'Parser syntax',
+    'PARSER_SYNTAX_BODY' => '<p>General parser synatax is:'
+        . '<pre>{{ any_php_code }}</pre>'
+        . 'The parser will run <em>any_php_code</em> and replace it with the code output.'
+        . '</p><p>'
+        . 'Some examples:'
+        . '<pre>Hello, {{ echo $full_name }}</pre>'
+        . 'Will be replaced with <strong>"Hello, John Doe"</strong> if the first name is "John" and last name is "Doe".'
+        . 'If the variable is not set or does not exist nothing will be printed, for example, the above will produce just <strong>"Hello, "</strong>. But you can use something like this:'
+        . '<pre>Dear {{ echo $first_name ? $first_name : "friend" }}</pre>'
+        . 'It will be replaces with <strong>"Dear John"</strong> if the first name is "John" and <strong>"Dear friend"</strong> if the first name is not set.',
 
     // SettingController
     'Autodelete' => 'Autodelete',

@@ -30,16 +30,15 @@ class ParserController extends AbstractActionController
         $sl = $this->getServiceLocator();
         $mp = $sl->get('MailParser');
 
-        $commands = [];
-        foreach ($mp->getCommands() as $command) {
-            $commands[$command] = [
-                'descr'     => $mp->getDescr($command),
-                'usage'     => $mp->getUsage($command),
+        $variables = [];
+        foreach ($mp->getVariables() as $name) {
+            $variables[$name] = [
+                'descr'     => $mp->getVariableDescr($name),
             ];
         }
 
         return new ViewModel([
-            'commands'  => $commands,
+            'variables' => $variables,
         ]);
     }
 
