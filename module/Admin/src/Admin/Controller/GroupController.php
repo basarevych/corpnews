@@ -227,6 +227,14 @@ class GroupController extends AbstractActionController
                 'sortable'  => true,
                 'visible'   => true,
             ],
+            'clients' => [
+                'title'     => $translate('Number of clients'),
+                'sql_id'    => 'none',
+                'type'      => Table::TYPE_INTEGER,
+                'filters'   => [  ],
+                'sortable'  => false,
+                'visible'   => true,
+            ],
         ]);
 
         return $table;
@@ -245,7 +253,8 @@ class GroupController extends AbstractActionController
 
         $qb = $em->createQueryBuilder();
         $qb->select('g')
-           ->from('Application\Entity\Group', 'g');
+           ->from('Application\Entity\Group', 'g')
+           ->leftJoin('g.clients', 'c');
 
         $adapter = new DoctrineORMAdapter();
         $adapter->setQueryBuilder($qb);
@@ -255,8 +264,9 @@ class GroupController extends AbstractActionController
                 . $row->getId() . ')">' . $escapeHtml($row->getName()) . '</a>';
 
             return [
-                'id'    => $row->getId(),
-                'name'  => $name,
+                'id'        => $row->getId(),
+                'name'      => $name,
+                'clients'   => count($row->getClients()),
             ];
         };
 
