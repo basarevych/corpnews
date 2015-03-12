@@ -164,7 +164,8 @@ class MailParser implements ServiceLocatorAwareInterface
                 $highlight = '<span style="background: '
                     . ($error ? '#a90000' : '#00a900')
                     . '; color: #ffffff;">'
-                    . $script . '</span>';
+                    . ($escapeOutput ? $escapeHtml($script) : $script)
+                    . '</span>';
                 $output .= $highlight;
                 $prevPos = $pos + $length;
             }
