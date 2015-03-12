@@ -127,4 +127,24 @@
             }
         });
     }
+
+    var tour = new Tour({
+        name: 'clients',
+        template: '<?= $this->translate('TOUR_TEMPLATE') ?>',
+        steps: [
+            {
+                element: "#table-clients",
+                placement: "left",
+                title: "<?= str_replace('"', "'", $this->translate('Clients')) ?>",
+                content: "<?= str_replace('"', "'", $this->translate('TOUR_CLIENTS_EDIT_CLIENT')) ?>"
+            },
+        ]
+    });
+
+    $('#table-clients').on('dt.loaded', function () {
+        tour.init().start();
+        $('#tour-button')
+            .on('click', function () { tour.restart(); })
+            .parent().show();
+    });
 </script>

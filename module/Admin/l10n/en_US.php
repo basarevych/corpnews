@@ -27,6 +27,8 @@ return [
     'Email address' => 'Email address',
     'Email bounced' => 'Email bounced',
     'CONFIRM_DELETE_CLIENT' => 'Delete selected client(s)?',
+    'TOUR_CLIENTS_EDIT_CLIENT' => '<p>Click any client\'s email to edit the client'
+        . '<p><p>Or click a form in "Filled forms" to open the form of the client in admin mode</p>',
 
     // DocumentController
     'Available data forms' => 'Available data forms',
@@ -39,8 +41,8 @@ return [
     'female' => 'Female',
     'Company' => 'Company',
     'Position' => 'Position',
-    'TOUR_DATA_FORMS_ADMIN_ACCESS' => 'Click any client\'s email to open their form in admin mode',
-    'TOUR_DATA_FORMS_SWITCH' => 'You can switch current data form here',
+    'TOUR_DATA_FORMS_ADMIN_ACCESS' => '<p>Click any client\'s email to open their form in admin mode</p>',
+    'TOUR_DATA_FORMS_SWITCH' => '<p>You can switch current data form here</p>',
 
     // MailboxController
     'Incoming' => 'Incoming',
