@@ -1,0 +1,145 @@
+<?php
+
+    $this->layout()->activePage = 'group';
+
+?>
+<div class="container">
+    <div class="row">
+        <div class="col-sm-offset-3 col-sm-9">
+            <h1><span id="page-title"><?= $this->translate('Client groups') ?></span></h1>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-sm-3">
+            <div data-sidebar="sm">
+                <div id="actions-panel" class="panel panel-default">
+                    <div class="panel-heading">
+                        <h3 class="panel-title"><?= $this->translate('Table actions') ?></h3>
+                    </div>
+                    <div class="panel-body button-panel">
+                        <button id="create-button" class="btn btn-primary" onclick="createGroup()">
+                            <?= $this->translate('Create group') ?>
+                        </button>
+                        <hr>
+                        <button id="delete-button" class="btn btn-default disabled" disabled="disabled" onclick="deleteGroup()">
+                            <?= $this->translate('Delete group') ?>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-sm-9">
+            <div id="table-groups"></div>
+            <script>
+                $('#table-groups').dynamicTable({
+                    url: '<?= $this->basePath('/admin/group/group-table') ?>',
+                    row_id_column: 'id',
+                    sort_column: 'name',
+                    sort_dir: 'asc',
+                    loader_image: '<?= $this->basePath('/img/loader.gif') ?>',
+                    strings: dynamicTableStrings,
+                    mapper: function (row) {
+                        return row;
+                    },
+                });
+                $('#table-groups').on('dt.selected', function () {
+                    updateActions();
+                });
+                $('#table-groups').on('dt.deselected', function () {
+                    updateActions();
+                });
+            </script>
+        <div>
+    </div>
+</div>
+
+<script>
+    function updateActions() {
+        var table = $('#table-groups').data('dynamicTable');
+        var selected = table.getSelected();
+
+        if (selected == 'all' || selected.length) {
+            $('#delete-button')
+                .removeAttr('disabled')
+                .removeClass('disabled');
+        } else {
+            $('#delete-button')
+                .attr('disabled', 'disabled')
+                .addClass('disabled');
+        }
+    }
+
+    function reloadTable() {
+        var table = $('#table-groups').data('dynamicTable');
+        table.refresh();
+    }
+
+    function createGroup() {
+        $.ajax({
+            url: '<?= $this->basePath('/admin/group/edit-group') ?>',
+            success: function (html) {
+                var modal = $('#modal-form');
+                modal.find('.modal-title').text('<?= $this->translate('Create group') ?>');
+                modal.find('button[type=submit]').text('<?= $this->translate('Create') ?>');
+                modal.find('.modal-body').html(html);
+            }
+        });
+    }
+
+    function editGroup(id) {
+        $.ajax({
+            url: '<?= $this->basePath('/admin/group/edit-group') ?>',
+            data: {
+                id: id
+            },
+            success: function (html) {
+                var modal = $('#modal-form');
+                modal.find('.modal-title').text('<?= $this->translate('Edit group') ?>');
+                modal.find('button[type=submit]').text('<?= $this->translate('Save changes') ?>');
+                modal.find('.modal-body').html(html);
+            }
+        });
+    }
+
+    function deleteGroup() {
+        var table = $('#table-groups').data('dynamicTable');
+        var selected = table.getSelected();
+        if (selected.length == 0)
+            return;
+
+        $.ajax({
+            url: '<?= $this->basePath('/admin/group/delete-group') ?>',
+            data: {
+                id: selected == 'all' ? '_all' : selected.join(',')
+            },
+            success: function (html) {
+                var modal = $('#modal-form');
+                modal.find('.modal-title').text('<?= $this->translate('Delete group') ?>');
+                modal.find('button[type=submit]').text('<?= $this->translate('Delete') ?>');
+                modal.find('.modal-body').html(html);
+            }
+        });
+    }
+
+    var tour = new Tour({
+        name: 'clients',
+        template: '<?= $this->translate('TOUR_TEMPLATE') ?>',
+        steps: [
+            {
+                element: "#table-clients",
+                placement: "left",
+                title: "<?= str_replace('"', "'", $this->translate('Clients')) ?>",
+                content: "<?= str_replace('"', "'", $this->translate('TOUR_CLIENTS_EDIT_CLIENT')) ?>"
+            },
+        ]
+    });
+
+    $('#table-clients').on('dt.loaded', function () {
+        tour.init().start();
+        $('#tour-button')
+            .on('click', function () { tour.restart(); })
+            .parent().show();
+    });
+</script>

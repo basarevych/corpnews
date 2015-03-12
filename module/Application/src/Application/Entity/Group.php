@@ -113,7 +113,7 @@ class Group
      * @param Client $client
      * @return Group
      */
-    public function addClient(Client $client
+    public function addClient(Client $client)
     {
         $this->clients[] = $client;
 

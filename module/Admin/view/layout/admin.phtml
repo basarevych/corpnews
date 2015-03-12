@@ -108,12 +108,17 @@
                             </ul>
                         </li>
 
-                        <li class="dropdown <?= in_array($activePage, [ 'client' ]) ? 'active' : '' ?>">
+                        <li class="dropdown <?= in_array($activePage, [ 'client', 'group' ]) ? 'active' : '' ?>">
                             <a href="javascript:void(0)" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
                                 <?= $this->translate('Campaign') ?>
                                 <span class="caret"></span>
                             </a>
                             <ul class="dropdown-menu" role="menu">
+                                <li>
+                                    <a href="<?= $this->basePath('/admin/group') ?>">
+                                        <?= $this->translate('Client groups') ?>
+                                    </a>
+                                </li>
                                 <li>
                                     <a href="<?= $this->basePath('/admin/client') ?>">
                                         <?= $this->translate('Clients') ?>

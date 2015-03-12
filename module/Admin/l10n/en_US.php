@@ -6,6 +6,7 @@ return [
     'Message parser' => 'Message parser',
     'Mailbox' => 'Mailbox',
     'Campaign' => 'Campaign',
+    'Client groups' => 'Client groups',
     'Clients' => 'Clients',
     'Data forms' => 'Data forms',
     'Settings' => 'Settings',
@@ -17,6 +18,10 @@ return [
     'Password' => 'Password',
     'Sign in' => 'Sign in',
     'Invalid login or password' => 'Invalid login or password',
+
+    // GroupController
+    'Create group' => 'Create group',
+    'Delete group' => 'Create group',
 
     // ClientController
     'Filled forms' => 'Filled forms',

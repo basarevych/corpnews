@@ -6,6 +6,7 @@ return [
     'Message parser' => 'Парсер сообщений',
     'Mailbox' => 'Почтовый ящик',
     'Campaign' => 'Кампания',
+    'Client groups' => 'Группы клиентов',
     'Clients' => 'Клиенты',
     'Data forms' => 'Формы данных',
     'Settings' => 'Настройки',
@@ -17,6 +18,10 @@ return [
     'Password' => 'Пароль',
     'Sign in' => 'Войти',
     'Invalid login or password' => 'Неправильный логин или пароль',
+
+    // GroupController
+    'Create group' => 'Создать группу',
+    'Delete group' => 'Удалить группу',
 
     // ClientController
     'Filled forms' => 'Заполненные формы',
