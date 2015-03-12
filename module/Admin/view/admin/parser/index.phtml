@@ -18,11 +18,11 @@
                     <hr>
                 </div>
                 <div class="row">
-                    <div class="col-sm-2">
+                    <div class="col-sm-4">
                         <p class="parser-variable">$<?= $this->escapeHtml($name) ?></p>
                     </div>
-                    <div class="col-sm-5">
-                        <p><?= $this->translate($props['descr']) ?></p>
+                    <div class="col-sm-8">
+                        <p class="parser-descr"><?= $this->translate($props['descr']) ?></p>
                     </div>
                 </div>
             <?php endforeach ?>

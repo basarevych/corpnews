@@ -86,6 +86,14 @@ return [
         . 'If the variable is not set or does not exist nothing will be printed, for example, the above will produce just <strong>"Hello, "</strong>. But you can use something like this:'
         . '<pre>Dear {{ echo $first_name ? $first_name : "friend" }}</pre>'
         . 'It will be replaces with <strong>"Dear John"</strong> if the first name is "John" and <strong>"Dear friend"</strong> if the first name is not set.',
+    'PARSER_FIRST_NAME_DESCR' => 'Contains first name of the client or NULL if it is not known',
+    'PARSER_MIDDLE_NAME_DESCR' => 'Contains middle name of the client or NULL if it is not known',
+    'PARSER_LAST_NAME_DESCR' => 'Contains last name of the client or NULL if it is not known',
+    'PARSER_SHORT_NAME_DESCR' => 'First and middle name concatenated if they are known or NULL',
+    'PARSER_FULL_NAME_DESCR' => 'First, middle and last name concatenated if they are known or NULL',
+    'PARSER_GENDER_DESCR' => 'Variable is set to "male" if the gender of the client is male or "female" if it is female. NULL if gender is not set',
+    'PARSER_COMPANY_DESCR' => 'Contains company name or NULL if it is not known',
+    'PARSER_POSITION_DESCR' => 'Contains client\'s position or NULL if it is now known',
 
     // SettingController
     'Autodelete' => 'Autodelete',

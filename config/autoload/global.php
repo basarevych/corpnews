@@ -60,6 +60,27 @@ return [
                 'first_name' => [
                     'descr'     => 'PARSER_FIRST_NAME_DESCR',
                 ],
+                'middle_name' => [
+                    'descr'     => 'PARSER_MIDDLE_NAME_DESCR',
+                ],
+                'last_name' => [
+                    'descr'     => 'PARSER_LAST_NAME_DESCR',
+                ],
+                'short_name' => [
+                    'descr'     => 'PARSER_SHORT_NAME_DESCR',
+                ],
+                'full_name' => [
+                    'descr'     => 'PARSER_FULL_NAME_DESCR',
+                ],
+                'gender' => [
+                    'descr'     => 'PARSER_GENDER_DESCR',
+                ],
+                'company' => [
+                    'descr'     => 'PARSER_COMPANY_DESCR',
+                ],
+                'position' => [
+                    'descr'     => 'PARSER_POSITION_DESCR',
+                ],
             ],
         ],
     ],
