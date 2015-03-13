@@ -70,6 +70,15 @@ class Campaign
     protected $status;
 
     /**
+     * When created
+     *
+     * @var DateTime
+     * 
+     * @ORM\Column(type="utcdatetime", nullable=true)
+     */
+    protected $when_created;
+
+    /**
      * When started to send emails
      *
      * @var DateTime
@@ -77,6 +86,15 @@ class Campaign
      * @ORM\Column(type="utcdatetime", nullable=true)
      */
     protected $when_started;
+
+    /**
+     * When finished
+     *
+     * @var DateTime
+     * 
+     * @ORM\Column(type="utcdatetime", nullable=true)
+     */
+    protected $when_finished;
 
     /**
      * Templates entities
@@ -102,6 +120,7 @@ class Campaign
      */
     public function toArray()
     {
+        $whenCreated = $this->getWhenCreated();
         $whenStarted = $this->getWhenStarted();
         $whenFinished = $this->getWhenFinished();
 
@@ -109,6 +128,7 @@ class Campaign
             'id'            => $this->getId(),
             'name'          => $this->getName(),
             'status'        => $this->getStatus(),
+            'when_created'  => $whenCreated ? $whenCreated->getTimestamp() : null,
             'when_started'  => $whenStarted ? $whenStarted->getTimestamp() : null,
             'when_finished' => $whenFinished ? $whenFinished->getTimestamp() : null,
         ];
@@ -171,6 +191,29 @@ class Campaign
     }
 
     /**
+     * Set when_created
+     *
+     * @param DateTime $whenCreated
+     * @return Campaign
+     */
+    public function setWhenCreated($whenCreated)
+    {
+        $this->when_created = $whenCreated;
+
+        return $this;
+    }
+
+    /**
+     * Get when_created
+     *
+     * @return DateTime 
+     */
+    public function getWhenCreated()
+    {
+        return $this->when_created;
+    }
+
+    /**
      * Set when_started
      *
      * @param DateTime $whenStarted
@@ -191,6 +234,29 @@ class Campaign
     public function getWhenStarted()
     {
         return $this->when_started;
+    }
+
+    /**
+     * Set when_finished
+     *
+     * @param DateTime $whenFinished
+     * @return Campaign
+     */
+    public function setWhenFinished($whenFinished)
+    {
+        $this->when_finished = $whenFinished;
+
+        return $this;
+    }
+
+    /**
+     * Get when_finished
+     *
+     * @return DateTime 
+     */
+    public function getWhenFinished()
+    {
+        return $this->when_finished;
     }
 
     /**
