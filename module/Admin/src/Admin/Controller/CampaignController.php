@@ -31,7 +31,21 @@ class CampaignController extends AbstractActionController
      */
     public function indexAction()
     {
-        return new ViewModel();
+        $createdFilter = $this->params()->fromQuery('created', 1);
+        $testedFilter = $this->params()->fromQuery('tested', 1);
+        $queuedFilter = $this->params()->fromQuery('queued', 1);
+        $startedFilter = $this->params()->fromQuery('started', 1);
+        $pausedFilter = $this->params()->fromQuery('paused', 1);
+        $finishedFilter = $this->params()->fromQuery('finished', 1);
+
+        return new ViewModel([
+            'createdFilter' => $createdFilter,
+            'testedFilter' => $testedFilter,
+            'queuedFilter' => $queuedFilter,
+            'startedFilter' => $startedFilter,
+            'pausedFilter' => $pausedFilter,
+            'finishedFilter' => $finishedFilter,
+        ]);
     }
 
     /**
@@ -56,6 +70,14 @@ class CampaignController extends AbstractActionController
 
         $data['success'] = true;
         return new JsonModel($data);
+    }
+
+    /**
+     * Edit campaign action
+     */
+    public function editAction()
+    {
+        return new ViewModel();
     }
 
     /**

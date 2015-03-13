@@ -39,6 +39,13 @@ return [
         . '<p>Или кликните любую форму в "Запоненных формах" для того, чтобы открыть эту форму данного клиента в режиме администратора</p>',
 
     // CampaignController
+    'Status filter' => 'Фильтр статуса',
+    'STATUS_CREATED' => 'Создано',
+    'STATUS_TESTED' => 'Протестировано',
+    'STATUS_QUEUED' => 'Поставлено в очередь',
+    'STATUS_STARTED' => 'Рассылка начата',
+    'STATUS_PAUSED' => 'Поставлено на паузу',
+    'STATUS_FINISHED' => 'Завершено',
     'Delete campaign' => 'Удалить кампанию',
     'When created' => 'Когда создано',
     'When started' => 'Когда начато',

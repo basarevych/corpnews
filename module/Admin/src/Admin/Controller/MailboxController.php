@@ -254,6 +254,7 @@ class MailboxController extends AbstractActionController
         $mp = $sl->get('MailParser');
         $em = $sl->get('Doctrine\ORM\EntityManager');
         $basePath = $sl->get('viewhelpermanager')->get('basePath');
+        $translate = $sl->get('viewhelpermanager')->get('translate');
 
         $letters = [];
         if ($uid == '_all') {
@@ -295,8 +296,10 @@ class MailboxController extends AbstractActionController
 
             if ($form->isValid()) {
                 if (!$parseError) {
+                    $subject = $letters[0]->getSubject();
+
                     $campaign = new CampaignEntity();
-                    $campaign->setName($letters[0]->getSubject());
+                    $campaign->setName(strlen($subject) ? $subject : $translate("(No subject)"));
                     $campaign->setStatus(CampaignEntity::STATUS_CREATED);
                     $campaign->setWhenCreated(new \DateTime());
                     $em->persist($campaign);

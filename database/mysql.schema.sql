@@ -50,12 +50,11 @@ CREATE TABLE `client_groups` (
 CREATE TABLE `campaigns` (
     `id` int unsigned NOT NULL AUTO_INCREMENT,
     `name` varchar(255) NOT NULL,
-    `status` enum('created', 'tested', 'queued', 'started', 'done') NOT NULL,
+    `status` enum('created', 'tested', 'queued', 'started', 'paused', 'finished') NOT NULL,
     `when_created` datetime NULL,
     `when_started` datetime NULL,
     `when_finished` datetime NULL,
-    CONSTRAINT `campaign_pk` PRIMARY KEY (`id`),
-    CONSTRAINT `campaign_name_unique` UNIQUE (`name`)
+    CONSTRAINT `campaign_pk` PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1;
 
 CREATE TABLE `templates` (

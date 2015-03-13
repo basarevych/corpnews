@@ -13,6 +13,62 @@
     <div class="row">
         <div class="col-sm-3">
             <div data-sidebar="sm">
+                <div id="status-panel" class="panel panel-default">
+                    <div class="panel-heading">
+                        <h3 class="panel-title"><?= $this->translate('Status filter') ?></h3>
+                    </div>
+                    <div class="panel-body checkbox-panel">
+                        <div class="checkbox">
+                            <label>
+                                <input type="checkbox"
+                                       <?= $this->createdFilter ? 'checked="checked"' : '' ?>
+                                       onclick="toggleFilter('created')">
+                                <?= $this->translate('STATUS_CREATED') ?>
+                            </label>
+                        </div>
+                        <div class="checkbox">
+                            <label>
+                                <input type="checkbox"
+                                       <?= $this->testedFilter ? 'checked="checked"' : '' ?>
+                                       onclick="toggleFilter('tested')">
+                                <?= $this->translate('STATUS_TESTED') ?>
+                            </label>
+                        </div>
+                        <div class="checkbox">
+                            <label>
+                                <input type="checkbox"
+                                       <?= $this->queuedFilter ? 'checked="checked"' : '' ?>
+                                       onclick="toggleFilter('queued')">
+                                <?= $this->translate('STATUS_QUEUED') ?>
+                            </label>
+                        </div>
+                        <div class="checkbox">
+                            <label>
+                                <input type="checkbox"
+                                       <?= $this->startedFilter ? 'checked="checked"' : '' ?>
+                                       onclick="toggleFilter('started')">
+                                <?= $this->translate('STATUS_STARTED') ?>
+                            </label>
+                        </div>
+                        <div class="checkbox">
+                            <label>
+                                <input type="checkbox"
+                                       <?= $this->pausedFilter ? 'checked="checked"' : '' ?>
+                                       onclick="toggleFilter('paused')">
+                                <?= $this->translate('STATUS_PAUSED') ?>
+                            </label>
+                        </div>
+                        <div class="checkbox">
+                            <label>
+                                <input type="checkbox"
+                                       <?= $this->finishedFilter ? 'checked="checked"' : '' ?>
+                                       onclick="toggleFilter('finished')">
+                                <?= $this->translate('STATUS_FINISHED') ?>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
                 <div id="actions-panel" class="panel panel-default">
                     <div class="panel-heading">
                         <h3 class="panel-title"><?= $this->translate('Table actions') ?></h3>
@@ -65,6 +121,32 @@
 </div>
 
 <script>
+    function toggleFilter(name) {
+        var created = <?= $this->createdFilter ? 'true' : 'false' ?>;
+        var tested = <?= $this->testedFilter ? 'true' : 'false' ?>;
+        var queued = <?= $this->queuedFilter ? 'true' : 'false' ?>;
+        var started = <?= $this->startedFilter ? 'true' : 'false' ?>;
+        var paused = <?= $this->pausedFilter ? 'true' : 'false' ?>;
+        var finished = <?= $this->finishedFilter ? 'true' : 'false' ?>;
+
+        switch (name) {
+            case 'created':     created = !created; break;
+            case 'tested':      tested = !tested; break;
+            case 'queued':      queued = !queued; break;
+            case 'started':     started = !started; break;
+            case 'paused':      paused = !paused; break;
+            case 'finished':    finished = !finished; break;
+        }
+
+        window.location = '<?= $this->basePath('/admin/campaign') ?>'
+            + '?created=' + (created ? '1' : '0')
+            + '&tested=' + (tested ? '1' : '0')
+            + '&queued=' + (queued ? '1' : '0')
+            + '&started=' + (started ? '1' : '0')
+            + '&paused=' + (paused ? '1' : '0')
+            + '&finished=' + (finished ? '1' : '0');
+    }
+
     function updateActions() {
         var table = $('#table-campaigns').data('dynamicTable');
         var selected = table.getSelected();

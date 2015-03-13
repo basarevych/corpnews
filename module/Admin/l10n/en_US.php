@@ -40,6 +40,13 @@ return [
         . '<p><p>Or click a form in "Filled forms" to open the form of the client in admin mode</p>',
 
     // CampaignController
+    'Status filter' => 'Status filter',
+    'STATUS_CREATED' => 'Created',
+    'STATUS_TESTED' => 'Tested',
+    'STATUS_QUEUED' => 'Queueud',
+    'STATUS_STARTED' => 'Started sending',
+    'STATUS_PAUSED' => 'On pause',
+    'STATUS_FINISHED' => 'Finished',
     'Delete campaign' => 'Delete campaign',
     'When created' => 'When created',
     'When started' => 'When started',
