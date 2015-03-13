@@ -26,6 +26,21 @@ use Application\Entity\Letter;
 class Campaign
 {
     /**
+     * Campaign statuses
+     *
+     * @const STATUS_CREATED
+     * @const STATUS_TESTED
+     * @const STATUS_QUEUED
+     * @const STATUS_STARTED
+     * @const STATUS_DONE
+     */
+    const STATUS_CREATED = 'created';
+    const STATUS_TESTED = 'tested';
+    const STATUS_QUEUED = 'queued';
+    const STATUS_STARTED = 'started';
+    const STATUS_DONE = 'done';
+
+    /**
      * Row ID
      *
      * @var integer
@@ -212,5 +227,21 @@ class Campaign
     public function getLetters()
     {
         return $this->letters;
+    }
+
+    /**
+     * Returns array of all the statuses
+     *
+     * @return array
+     */
+    public static function getStatuses()
+    {
+        return [
+            self::STATUS_CREATED,
+            self::STATUS_TESTED,
+            self::STATUS_QUEUED,
+            self::STATUS_STARTED,
+            self::STATUS_DONE,
+        ];
     }
 }
