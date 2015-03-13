@@ -247,6 +247,17 @@
         );
     }
 
+    function createCampaign() {
+        var table = $('#table-' + selectedBox).data('dynamicTable');
+        var selected = table.getSelected();
+        if (selected.length == 0)
+            return;
+
+        window.location = '<?= $this->basePath('/admin/campaign/create') ?>'
+            + '?box=' + selectedBox
+            + '&uid=' + (selected == 'all' ? '_all' : selected.join(','));
+    }
+
     function deleteLetter() {
         var table = $('#table-' + selectedBox).data('dynamicTable');
         var selected = table.getSelected();

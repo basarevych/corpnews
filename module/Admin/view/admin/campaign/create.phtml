@@ -1,0 +1,49 @@
+<?php
+
+    $this->layout()->activePage = 'campaign';
+
+?>
+
+<div class="container">
+    <div class="row">
+        <div class="col-sm-offset-3 col-sm-9">
+            <h1><span id="page-title"><?= $this->translate('Mail campaigns') ?></span></h1>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-sm-3">
+            <div data-sidebar="sm">
+                <div class="list-group">
+                    <div class="list-group-item active">
+                        <h4 class="list-group-item-heading">
+                            <?= $this->translate('CAMPAIGN_STEP_1_TITLE') ?>
+                        </h4>
+                        <p class="list-group-item-text">
+                            <?= $this->translate('CAMPAIGN_STEP_1_TEXT') ?>
+                        </p>
+                    </div>
+                    <div class="list-group-item">
+                        <h4 class="list-group-item-heading">
+                            <?= $this->translate('CAMPAIGN_STEP_2_TITLE') ?>
+                        </h4>
+                        <p class="list-group-item-text">
+                            <?= $this->translate('CAMPAIGN_STEP_2_TEXT') ?>
+                        </p>
+                    </div>
+                    <div class="list-group-item">
+                        <h4 class="list-group-item-heading">
+                            <?= $this->translate('CAMPAIGN_STEP_3_TITLE') ?>
+                        </h4>
+                        <p class="list-group-item-text">
+                            <?= $this->translate('CAMPAIGN_STEP_3_TEXT') ?>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-sm-9">
+        </div>
+    </div>
+</div>

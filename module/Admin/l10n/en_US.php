@@ -8,6 +8,7 @@ return [
     'Campaign' => 'Campaign',
     'Client groups' => 'Client groups',
     'Clients' => 'Clients',
+    'Mail campaigns' => 'Mail campaigns',
     'Data forms' => 'Data forms',
     'Settings' => 'Settings',
     'Mailbox settings' => 'Mailbox settings',
@@ -37,6 +38,14 @@ return [
     'CONFIRM_DELETE_CLIENT' => 'Delete selected client(s)?',
     'TOUR_CLIENTS_EDIT_CLIENT' => '<p>Click any client\'s email to edit the client'
         . '<p><p>Or click a form in "Filled forms" to open the form of the client in admin mode</p>',
+
+    // CampaignController
+    'CAMPAIGN_STEP_1_TITLE' => 'Step 1',
+    'CAMPAIGN_STEP_1_TEXT' => 'Create campaign',
+    'CAMPAIGN_STEP_2_TITLE' => 'Step 2',
+    'CAMPAIGN_STEP_2_TEXT' => 'Test campaign',
+    'CAMPAIGN_STEP_3_TITLE' => 'Step 3',
+    'CAMPAIGN_STEP_3_TEXT' => 'Start campaign',
 
     // DocumentController
     'Available data forms' => 'Available data forms',

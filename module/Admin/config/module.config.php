@@ -7,6 +7,7 @@ return [
             'Admin\Controller\Auth' => 'Admin\Controller\AuthController',
             'Admin\Controller\Group' => 'Admin\Controller\GroupController',
             'Admin\Controller\Client' => 'Admin\Controller\ClientController',
+            'Admin\Controller\Campaign' => 'Admin\Controller\CampaignController',
             'Admin\Controller\Document' => 'Admin\Controller\DocumentController',
             'Admin\Controller\Mailbox' => 'Admin\Controller\MailboxController',
             'Admin\Controller\Setting' => 'Admin\Controller\SettingController',

@@ -8,6 +8,7 @@ return [
     'Campaign' => 'Кампания',
     'Client groups' => 'Группы клиентов',
     'Clients' => 'Клиенты',
+    'Mail campaigns' => 'Почтовые кампании',
     'Data forms' => 'Формы данных',
     'Settings' => 'Настройки',
     'Mailbox settings' => 'Настройки почтового ящика',
@@ -36,6 +37,15 @@ return [
     'CONFIRM_DELETE_CLIENT' => 'Удалить выбранного клиента (клиентов)?',
     'TOUR_CLIENTS_EDIT_CLIENT' => '<p>Кликните почтовый адрес клиента для того, чтобы редактировать его запись</p>'
         . '<p>Или кликните любую форму в "Запоненных формах" для того, чтобы открыть эту форму данного клиента в режиме администратора</p>',
+
+    // CampaignController
+    'CAMPAIGN_STEP_1_TITLE' => 'Шаг 1',
+    'CAMPAIGN_STEP_1_TEXT' => 'Создать кампанию',
+    'CAMPAIGN_STEP_2_TITLE' => 'Шаг 2',
+    'CAMPAIGN_STEP_2_TEXT' => 'Тестировать кампанию',
+    'CAMPAIGN_STEP_3_TITLE' => 'Шаг 3',
+    'CAMPAIGN_STEP_3_TEXT' => 'Начать кампанию',
+
 
     // DocumentController
     'Available data forms' => 'Доступные формы данных',
