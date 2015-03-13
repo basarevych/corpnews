@@ -8,6 +8,7 @@ use Zend\Json\Json;
 use Zend\Test\PHPUnit\Controller\AbstractHttpControllerTestCase;
 use Webfactory\Doctrine\ORMTestInfrastructure\ORMInfrastructure;
 use Application\Entity\Client as ClientEntity;
+use Application\Entity\Group as GroupEntity;
 
 class ClientControllerQueryMock {
     public function getSingleScalarResult() {
@@ -50,10 +51,35 @@ class ClientControllerTest extends AbstractHttpControllerTestCase
                                   ->setMethods([ 'find', 'removeAll' ])
                                   ->getMock();
 
+        $this->repoGroups = $this->getMockBuilder('Application\Entity\GroupRepository')
+                                 ->disableOriginalConstructor()
+                                 ->setMethods([ 'find', 'findBy' ])
+                                 ->getMock();
+
+        $a = new GroupEntity();
+        $a->setName('a');
+
+        $reflection = new \ReflectionClass(get_class($a));
+        $property = $reflection->getProperty('id');
+        $property->setAccessible(true);
+        $property->setValue($a, 9000);
+
+        $this->repoGroups->expects($this->any())
+                         ->method('find')
+                         ->will($this->returnCallback(function ($id) use ($a) {
+                            if ($id == 9000)
+                                return $a;
+                         }));
+
+        $this->repoGroups->expects($this->any())
+                         ->method('findBy')
+                         ->will($this->returnValue([ $a ]));
+
         $this->em->expects($this->any())
                  ->method('getRepository')
                  ->will($this->returnValueMap([
                     [ 'Application\Entity\Client', $this->repoClients ],
+                    [ 'Application\Entity\Group', $this->repoGroups ],
                  ]));
 
         $this->qb = $this->getMockBuilder('Doctrine\ORM\QueryBuilder')
@@ -116,7 +142,8 @@ class ClientControllerTest extends AbstractHttpControllerTestCase
     public function testClientTableActionSendsData()
     {
         $this->infrastructure = new ORMInfrastructure([
-            'Application\Entity\Client'
+            'Application\Entity\Client',
+            'Application\Entity\Group'
         ]);
         $this->repository = $this->infrastructure->getRepository(
             'Application\Entity\Client'
@@ -158,6 +185,9 @@ class ClientControllerTest extends AbstractHttpControllerTestCase
         $this->em->expects($this->any())
                  ->method('persist')
                  ->will($this->returnCallback(function ($entity) use (&$persisted) {
+                    if (! $entity instanceof ClientEntity)
+                        return;
+
                     $reflection = new \ReflectionClass(get_class($entity));
                     $property = $reflection->getProperty('id');
                     $property->setAccessible(true);
@@ -184,13 +214,16 @@ class ClientControllerTest extends AbstractHttpControllerTestCase
 
         $postParams = [
             'security' => $security,
-            'email' => 'test@example.com'
+            'email' => 'test-new@example.com',
+            'groups' => [ 9000 ]
         ];
 
         $this->dispatch('/admin/client/edit-client', HttpRequest::METHOD_POST, $postParams);
         $this->assertResponseStatusCode(200);
 
-        $this->assertEquals('test@example.com', $persisted->getEmail(), "Email is incorrect");
+        $groups = array_values($persisted->getGroups()->toArray());
+        $this->assertEquals('test-new@example.com', $persisted->getEmail(), "Email is incorrect");
+        $this->assertEquals(9000, $groups[0]->getId(), "Group ID is incorrect");
         $this->assertEquals(42, $createdDocsId, "Documents were created for wrong entity");
     }
 
@@ -213,6 +246,9 @@ class ClientControllerTest extends AbstractHttpControllerTestCase
         $this->em->expects($this->any())
                  ->method('persist')
                  ->will($this->returnCallback(function ($entity) use (&$persisted) {
+                    if (! $entity instanceof ClientEntity)
+                        return;
+
                     $persisted = $entity;
                  }));
 
@@ -237,13 +273,16 @@ class ClientControllerTest extends AbstractHttpControllerTestCase
         $postParams = [
             'security' => $security,
             'id' => 42,
-            'email' => 'test@example.com'
+            'email' => 'test@example.com',
+            'groups' => [ 9000 ]
         ];
 
         $this->dispatch('/admin/client/edit-client', HttpRequest::METHOD_POST, $postParams);
         $this->assertResponseStatusCode(200);
 
+        $groups = array_values($persisted->getGroups()->toArray());
         $this->assertEquals('test@example.com', $persisted->getEmail(), "Email is incorrect");
+        $this->assertEquals(9000, $groups[0]->getId(), "Group ID is incorrect");
         $this->assertEquals(42, $updatedDocsId, "Documents were updated for wrong entity");
     }
 

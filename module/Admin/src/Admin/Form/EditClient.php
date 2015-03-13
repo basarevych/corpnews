@@ -90,6 +90,7 @@ class EditClient extends Form
         $groups = new Element\MultiCheckbox('groups');
         $groups->setLabel('Groups');
         $groups->setValueOptions($options);
+        $groups->setValue([]);
         $this->add($groups);
     }
 

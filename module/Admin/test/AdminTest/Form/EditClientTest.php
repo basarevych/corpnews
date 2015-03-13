@@ -3,6 +3,7 @@
 namespace AdminTest\Form;
 
 use Zend\Test\PHPUnit\Controller\AbstractControllerTestCase;
+use Application\Entity\Group as GroupEntity;
 use Admin\Form\EditClient as EditClientForm;
 
 class EditClientQueryMock {
@@ -21,8 +22,29 @@ class EditClientTest extends AbstractControllerTestCase
 
         $this->em = $this->getMockBuilder('Doctrine\ORM\EntityManager')
                          ->disableOriginalConstructor()
-                         ->setMethods([ 'createQueryBuilder' ])
+                         ->setMethods([ 'getRepository', 'createQueryBuilder' ])
                          ->getMock();
+
+        $this->repoGroups = $this->getMockBuilder('Application\Entity\GroupRepository')
+                                 ->disableOriginalConstructor()
+                                 ->setMethods([ 'findBy' ])
+                                 ->getMock();
+
+        $a = new GroupEntity();
+        $a->setName('a');
+
+        $reflection = new \ReflectionClass(get_class($a));
+        $property = $reflection->getProperty('id');
+        $property->setAccessible(true);
+        $property->setValue($a, 42);
+
+        $this->repoGroups->expects($this->any())
+                         ->method('findBy')
+                         ->will($this->returnValue([ $a ]));
+
+        $this->em->expects($this->any())
+                 ->method('getRepository')
+                 ->will($this->returnValue($this->repoGroups));
 
         $this->qb = $this->getMockBuilder('Doctrine\ORM\QueryBuilder')
                          ->disableOriginalConstructor()

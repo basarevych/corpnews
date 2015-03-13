@@ -129,9 +129,9 @@ class ClientController extends AbstractActionController
                         $entity->removeGroup($group);
                         $group->removeClient($entity);
                     }
-                    foreach ($data['groups'] as $id) {
+                    foreach ($data['groups'] as $groupId) {
                         $group = $em->getRepository('Application\Entity\Group')
-                                    ->find($id);
+                                    ->find($groupId);
                         if (!$group)
                             continue;
                         $entity->addGroup($group);
