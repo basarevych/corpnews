@@ -59,86 +59,9 @@ class CampaignController extends AbstractActionController
     }
 
     /**
-     * Create/edit group entity form action
+     * Delete campaign form action
      */
-    public function editGroupAction()
-    {
-        $sl = $this->getServiceLocator();
-        $em = $sl->get('Doctrine\ORM\EntityManager');
-        $translate = $sl->get('viewhelpermanager')->get('translate');
-
-        // Handle validate request
-        if ($this->params()->fromQuery('query') == 'validate') {
-            $field = $this->params()->fromQuery('field');
-            $data = $this->params()->fromQuery('form');
-
-            $form = new EditGroupForm($em, @$data['id']);
-            $form->setData($data);
-            $form->isValid();
-
-            $control = $form->get($field);
-            $messages = [];
-            foreach ($control->getMessages() as $msg)
-                $messages[] = $translate($msg);
-
-            return new JsonModel([
-                'valid'     => (count($messages) == 0),
-                'messages'  => $messages,
-            ]);
-        }
-
-        $entity = null;
-        $id = $this->params()->fromQuery('id');
-        if (!$id)
-            $id = $this->params()->fromPost('id');
-        if ($id) {
-            $entity = $em->getRepository('Application\Entity\Group')
-                         ->find($id);
-            if (!$entity)
-                throw new NotFoundException('Wrong ID');
-        }
-
-        $script = null;
-        $form = new EditGroupForm($em, $id);
-        $messages = [];
-
-        $request = $this->getRequest();
-        if ($request->isPost()) {  // Handle form submission
-            $form->setData($request->getPost());
-
-            if ($form->isValid()) {
-                $data = $form->getData();
-
-                if (!$entity)
-                    $entity = new GroupEntity();
-
-                $entity->setName($data['name']);
-
-                $em->persist($entity);
-                $em->flush();
-
-                $script = "$('#modal-form').modal('hide'); reloadTable()";
-            }
-        } else if ($entity) {       // Load initial form values
-            $form->setData([
-                'id'    => $entity->getId(),
-                'name'  => $entity->getName(),
-            ]);
-        }
-
-        $model = new ViewModel([
-            'script'    => $script,
-            'form'      => $form,
-            'messages'  => $messages,
-        ]);
-        $model->setTerminal(true);
-        return $model;
-    }
-
-    /**
-     * Delete group form action
-     */
-    public function deleteGroupAction()
+    public function deleteCampaignAction()
     {
         $id = $this->params()->fromQuery('id');
         if (!$id)
@@ -148,7 +71,7 @@ class CampaignController extends AbstractActionController
 
         $sl = $this->getServiceLocator();
         $em = $sl->get('Doctrine\ORM\EntityManager');
-        $repo = $em->getRepository('Application\Entity\Group');
+        $repo = $em->getRepository('Application\Entity\Campaign');
 
         $script = null;
         $form = new ConfirmForm();
@@ -212,7 +135,7 @@ class CampaignController extends AbstractActionController
         $table->setColumns([
             'id' => [
                 'title'     => $translate('ID'),
-                'sql_id'    => 'g.id',
+                'sql_id'    => 'c.id',
                 'type'      => Table::TYPE_INTEGER,
                 'filters'   => [ Table::FILTER_BETWEEN ],
                 'sortable'  => true,
@@ -226,11 +149,27 @@ class CampaignController extends AbstractActionController
                 'sortable'  => true,
                 'visible'   => true,
             ],
-            'clients' => [
-                'title'     => $translate('Number of clients'),
-                'sql_id'    => 'none',
-                'type'      => Table::TYPE_INTEGER,
-                'filters'   => [  ],
+            'when_created' => [
+                'title'     => $translate('When created'),
+                'sql_id'    => 'c.when_created',
+                'type'      => Table::TYPE_DATETIME,
+                'filters'   => [ Table::FILTER_BETWEEN ],
+                'sortable'  => false,
+                'visible'   => true,
+            ],
+            'when_started' => [
+                'title'     => $translate('When started'),
+                'sql_id'    => 'c.when_started',
+                'type'      => Table::TYPE_DATETIME,
+                'filters'   => [ Table::FILTER_BETWEEN, Table::FILTER_NULL ],
+                'sortable'  => false,
+                'visible'   => true,
+            ],
+            'when_finished' => [
+                'title'     => $translate('When finished'),
+                'sql_id'    => 'c.when_finished',
+                'type'      => Table::TYPE_DATETIME,
+                'filters'   => [ Table::FILTER_BETWEEN, Table::FILTER_NULL ],
                 'sortable'  => false,
                 'visible'   => true,
             ],
@@ -249,23 +188,28 @@ class CampaignController extends AbstractActionController
         $sl = $this->getServiceLocator();
         $em = $sl->get('Doctrine\ORM\EntityManager');
         $escapeHtml = $sl->get('viewhelpermanager')->get('escapeHtml');
+        $basePath = $sl->get('viewhelpermanager')->get('basePath');
 
         $qb = $em->createQueryBuilder();
-        $qb->select('g')
-           ->from('Application\Entity\Group', 'g')
-           ->leftJoin('g.clients', 'c');
+        $qb->select('c')
+           ->from('Application\Entity\Campaign', 'c');
 
         $adapter = new DoctrineORMAdapter();
         $adapter->setQueryBuilder($qb);
 
-        $mapper = function ($row) use ($escapeHtml) {
-            $name = '<a href="javascript:void(0)" onclick="editGroup('
-                . $row->getId() . ')">' . $escapeHtml($row->getName()) . '</a>';
+        $mapper = function ($row) use ($escapeHtml, $basePath) {
+            $name = '<a href="' . $basePath('/admin/campaign/edit?id=' . $row->getId()) .'">'
+                . $escapeHtml($row->getName()) . '</a>';
+            $whenCreated = $row->getWhenCreated();
+            $whenStarted = $row->getWhenStarted();
+            $whenFinished = $row->getWhenFinished();
 
             return [
-                'id'        => $row->getId(),
-                'name'      => $name,
-                'clients'   => count($row->getClients()),
+                'id'            => $row->getId(),
+                'name'          => $name,
+                'when_created'  => $whenCreated ? $whenCreated->getTimestamp() : null,
+                'when_started'  => $whenStarted ? $whenStarted->getTimestamp() : null,
+                'when_finished' => $whenFinished ? $whenFinished->getTimestamp() : null,
             ];
         };
 

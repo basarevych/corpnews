@@ -39,13 +39,18 @@ return [
         . '<p>Или кликните любую форму в "Запоненных формах" для того, чтобы открыть эту форму данного клиента в режиме администратора</p>',
 
     // CampaignController
+    'Delete campaign' => 'Удалить кампанию',
+    'When created' => 'Когда создано',
+    'When started' => 'Когда начато',
+    'When finished' => 'Когда закончено',
+    'CAMPAIGN_STEP_1_TITLE' => 'Step 1',
     'CAMPAIGN_STEP_1_TITLE' => 'Шаг 1',
     'CAMPAIGN_STEP_1_TEXT' => 'Создать кампанию',
     'CAMPAIGN_STEP_2_TITLE' => 'Шаг 2',
     'CAMPAIGN_STEP_2_TEXT' => 'Тестировать кампанию',
     'CAMPAIGN_STEP_3_TITLE' => 'Шаг 3',
     'CAMPAIGN_STEP_3_TEXT' => 'Начать кампанию',
-
+    'CONFIRM_DELETE_CAMPAIGN' => 'Удалить выбранную кампанию (кампании)?',
 
     // DocumentController
     'Available data forms' => 'Доступные формы данных',

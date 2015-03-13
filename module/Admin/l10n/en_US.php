@@ -40,12 +40,17 @@ return [
         . '<p><p>Or click a form in "Filled forms" to open the form of the client in admin mode</p>',
 
     // CampaignController
+    'Delete campaign' => 'Delete campaign',
+    'When created' => 'When created',
+    'When started' => 'When started',
+    'When finished' => 'When finished',
     'CAMPAIGN_STEP_1_TITLE' => 'Step 1',
     'CAMPAIGN_STEP_1_TEXT' => 'Create campaign',
     'CAMPAIGN_STEP_2_TITLE' => 'Step 2',
     'CAMPAIGN_STEP_2_TEXT' => 'Test campaign',
     'CAMPAIGN_STEP_3_TITLE' => 'Step 3',
     'CAMPAIGN_STEP_3_TEXT' => 'Start campaign',
+    'CONFIRM_DELETE_CAMPAIGN' => 'Delete selected campaign(s)?',
 
     // DocumentController
     'Available data forms' => 'Available data forms',
