@@ -1,3 +1,5 @@
+DROP TABLE IF EXISTS `letters`;
+DROP TABLE IF EXISTS `campaigns`;
 DROP TABLE IF EXISTS `client_groups`;
 DROP TABLE IF EXISTS `clients`;
 DROP TABLE IF EXISTS `groups`;
@@ -42,4 +44,27 @@ CREATE TABLE `client_groups` (
     CONSTRAINT `client_groups_group_fk` FOREIGN KEY (`group_id`)
         REFERENCES `groups` (`id`)
         ON UPDATE CASCADE ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1;
+
+CREATE TABLE `campaigns` (
+    `id` int unsigned NOT NULL AUTO_INCREMENT,
+    `name` varchar(255) NOT NULL,
+    `status` enum('created', 'tested', 'queued', 'started', 'done') NOT NULL,
+    `when_started` datetime NULL,
+    `when_finished` datetime NULL,
+    CONSTRAINT `campaign_pk` PRIMARY KEY (`id`),
+    CONSTRAINT `campaign_name_unique` UNIQUE (`name`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1;
+
+CREATE TABLE `letters` (
+    `id` int unsigned NOT NULL AUTO_INCREMENT,
+    `campaign_id` int unsigned NOT NULL,
+    `client_id` int unsigned NULL,
+    `key` varchar(255) NOT NULL,
+    `when_sent` datetime NULL,
+    `to_address` text NOT NULL,
+    `subject` text NULL,
+    `headers` mediumtext NULL,
+    `body` mediumtext NULL,
+    CONSTRAINT `campaign_pk` PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1;

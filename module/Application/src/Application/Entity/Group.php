@@ -124,10 +124,13 @@ class Group
      * Remove client
      *
      * @param Client $client
+     * @return Group
      */
     public function removeClient(Client $client)
     {
         $this->clients->removeElement($client);
+
+        return $this;
     }
 
     /**

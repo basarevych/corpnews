@@ -9,21 +9,21 @@
 
 namespace Application\Entity;
 
+use DateTime;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
-use Application\Entity\Group;
 use Application\Entity\Letter;
 
 /**
- * Client entity
+ * Campaign entity
  * 
  * @category    Application
  * @package     Entity
  * 
- * @ORM\Entity(repositoryClass="Application\Entity\ClientRepository")
- * @ORM\Table(name="clients")
+ * @ORM\Entity(repositoryClass="Application\Entity\CampaignRepository")
+ * @ORM\Table(name="campaigns")
  */
-class Client
+class Campaign
 {
     /**
      * Row ID
@@ -37,39 +37,38 @@ class Client
     protected $id;
 
     /**
-     * Email
+     * Name
      *
      * @var string
      * 
      * @ORM\Column(type="string")
      */
-    protected $email;
+    protected $name;
 
     /**
-     * When bounced
+     * Status
+     *
+     * @var string
+     * 
+     * @ORM\Column(type="string")
+     */
+    protected $status;
+
+    /**
+     * When started to send emails
      *
      * @var DateTime
      * 
      * @ORM\Column(type="utcdatetime", nullable=true)
      */
-    protected $when_bounced;
-
-    /**
-     * Group entities
-     *
-     * @var ArrayCollection
-     *
-     * @ORM\ManyToMany(targetEntity="Group", inversedBy="clients")
-     * @ORM\JoinTable(name="client_groups")
-     */
-    protected $groups;
+    protected $when_started;
 
     /**
      * Letter entities
      *
      * @var ArrayCollection
      *
-     * @ORM\OneToMany(targetEntity="Letter", mappedBy="client")
+     * @ORM\OneToMany(targetEntity="Letter", mappedBy="campaign")
      */
     protected $letters;
 
@@ -78,7 +77,6 @@ class Client
      */
     public function __construct()
     {
-        $this->groups = new ArrayCollection();
         $this->letters = new ArrayCollection();
     }
 
@@ -89,13 +87,15 @@ class Client
      */
     public function toArray()
     {
-        $whenBounced = $this->getWhenBounced();
+        $whenStarted = $this->getWhenStarted();
+        $whenFinished = $this->getWhenFinished();
 
         return [
-            'id'                => $this->getId(),
-            'email'             => $this->getEmail(),
-            'when_bounced'      => $whenBounced ? $whenBounced->getTimestamp() : null,
-            'groups'            => $this->getGroups()->toArray(),
+            'id'            => $this->getId(),
+            'name'          => $this->getName(),
+            'status'        => $this->getStatus(),
+            'when_started'  => $whenStarted ? $whenStarted->getTimestamp() : null,
+            'when_finished' => $whenFinished ? $whenFinished->getTimestamp() : null,
         ];
     }
 
@@ -110,92 +110,79 @@ class Client
     }
 
     /**
-     * Set email
+     * Set name
      *
-     * @param string $email
-     * @return Client
+     * @param string $name
+     * @return Campaign
      */
-    public function setEmail($email)
+    public function setName($name)
     {
-        $this->email = $email;
+        $this->name = $name;
 
         return $this;
     }
 
     /**
-     * Get email
+     * Get name
      *
      * @return string 
      */
-    public function getEmail()
+    public function getName()
     {
-        return $this->email;
+        return $this->name;
     }
 
     /**
-     * Set when_bounced
+     * Set status
      *
-     * @param utcdatetime $whenBounced
-     * @return Client
+     * @param string $status
+     * @return Campaign
      */
-    public function setWhenBounced($whenBounced)
+    public function setStatus($status)
     {
-        $this->when_bounced = $whenBounced;
+        $this->status = $status;
 
         return $this;
     }
 
     /**
-     * Get when_bounced
+     * Get status
      *
-     * @return utcdatetime 
+     * @return string 
      */
-    public function getWhenBounced()
+    public function getStatus()
     {
-        return $this->when_bounced;
+        return $this->status;
     }
 
     /**
-     * Add group
+     * Set when_started
      *
-     * @param Group $group
-     * @return Client
+     * @param DateTime $whenStarted
+     * @return Campaign
      */
-    public function addGroup(Group $group)
+    public function setWhenStarted($whenStarted)
     {
-        $this->groups[] = $group;
+        $this->when_started = $whenStarted;
 
         return $this;
     }
 
     /**
-     * Remove group
+     * Get when_started
      *
-     * @param Group $group
-     * @return Client
+     * @return DateTime 
      */
-    public function removeGroup(Group $group)
+    public function getWhenStarted()
     {
-        $this->groups->removeElement($group);
-
-        return $this;
-    }
-
-    /**
-     * Get groups
-     *
-     * @return ArrayCollection
-     */
-    public function getGroups()
-    {
-        return $this->groups;
+        return $this->when_started;
     }
 
     /**
      * Add letter
      *
      * @param Letter $letter
-     * @return Client
+     * @return Campaign
      */
     public function addLetter(Letter $letter)
     {
@@ -205,10 +192,10 @@ class Client
     }
 
     /**
-     * Remove letters
+     * Remove letter
      *
      * @param Letter $letter
-     * @return Client
+     * @return Campaign
      */
     public function removeLetter(Letter $letter)
     {

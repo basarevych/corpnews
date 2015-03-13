@@ -22,6 +22,7 @@ return [
     // GroupController
     'Create group' => 'Create group',
     'Delete group' => 'Create group',
+    'Number of clients' => 'Число клиентов',
     'CONFIRM_DELETE_GROUP' => 'Delete selected group(s)?',
 
     // ClientController
