@@ -27,6 +27,11 @@ use Application\Entity\Letter;
 class Template
 {
     /**
+     * @const MESSAGE_ID_LENGTH
+     */
+    const MESSAGE_ID_LENGTH = 48;
+
+    /**
      * Row ID
      *
      * @var integer
@@ -275,5 +280,22 @@ class Template
     public function getLetters()
     {
         return $this->letters;
+    }
+
+    /**
+     * Generate unique Message-ID
+     *
+     * @return string
+     */
+    public static function generateMessageId()
+    {
+        $randomData = openssl_random_pseudo_bytes(1024);
+        if ($randomData === false)
+            throw new \Exception('Could not generate random string');
+
+        $host = '@corpnews';
+        $token = substr(hash('sha512', $randomData), 0, self::MESSAGE_ID_LENGTH - strlen($host));
+
+        return $token . $host;
     }
 }

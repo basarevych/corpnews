@@ -253,9 +253,19 @@
         if (selected.length == 0)
             return;
 
-        window.location = '<?= $this->basePath('/admin/campaign/create') ?>'
-            + '?box=' + selectedBox
-            + '&uid=' + (selected == 'all' ? '_all' : selected.join(','));
+        $.ajax({
+            url: '<?= $this->basePath('/admin/mailbox/create-campaign') ?>',
+            data: {
+                box: selectedBox,
+                uid: selected == 'all' ? '_all' : selected.join(',')
+            },
+            success: function (html) {
+                var modal = $('#modal-form');
+                modal.find('.modal-title').text('<?= $this->translate('Create campaign') ?>');
+                modal.find('button[type=submit]').text('<?= $this->translate('Create') ?>');
+                modal.find('.modal-body').html(html);
+            }
+        });
     }
 
     function deleteLetter() {

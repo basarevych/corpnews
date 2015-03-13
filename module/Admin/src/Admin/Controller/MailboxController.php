@@ -20,6 +20,8 @@ use DynamicTable\Table;
 use Application\Exception\NotFoundException;
 use Application\Exception\BadRequestException;
 use Application\Model\Mailbox;
+use Application\Entity\Campaign as CampaignEntity;
+use Application\Entity\Template as TemplateEntity;
 use Admin\DynamicTable\MailboxAdapter;
 use Admin\Form\MailConfirm as MailConfirmForm;
 
@@ -110,15 +112,18 @@ class MailboxController extends AbstractActionController
         if ($syntaxSuccess)
             $syntaxSuccess = $mp->checkSyntax($letter->getTextMessage(), $output, false);
 
+        $subject = $letter->getSubject();
+        if ($syntaxSuccess) {
+            $syntaxSuccess = $mp->checkSyntax($subject, $output, true);
+            $subject = $output;
+        }
+
         if (!$analysisSuccess)
             $error = 'analysis';
         else if (!$syntaxSuccess)
             $error = 'syntax';
         else
             $error = false;
-
-        $mp->checkSyntax($letter->getSubject(), $output, true);
-        $subject = $output;
 
         return new JsonModel([
             'error'         => $error,
@@ -225,6 +230,114 @@ class MailboxController extends AbstractActionController
         ]);
         $response->setContent($result);
         return $response;
+    }
+
+    /**
+     * Create campaign form action
+     */
+    public function createCampaignAction()
+    {
+        $box = $this->params()->fromQuery('box');
+        if (!$box)
+            $box = $this->params()->fromPost('box');
+        if (!$box)
+            throw new \Exception('No "box" parameter');
+
+        $uid = $this->params()->fromQuery('uid');
+        if (!$uid)
+            $uid = $this->params()->fromPost('uid');
+        if (!$uid)
+            throw new \Exception('No "uid" parameter');
+
+        $sl = $this->getServiceLocator();
+        $imap = $sl->get('ImapClient');
+        $mp = $sl->get('MailParser');
+        $em = $sl->get('Doctrine\ORM\EntityManager');
+        $basePath = $sl->get('viewhelpermanager')->get('basePath');
+
+        $letters = [];
+        if ($uid == '_all') {
+            foreach ($imap->getLetters($box) as $letter)
+                $letters[] = $letter;
+        } else {
+            foreach (explode(',', $uid) as $item) {
+                $letter = $imap->getLetter($box, $item);
+                if ($letter)
+                    $letters[] = $letter;
+            }
+        }
+
+        if (count($letters) == 0)
+            throw new NotFoundException('No letters found');
+
+        $parseError = false;
+        foreach ($letters as $letter) {
+            $analysisSuccess = $imap->loadLetter($letter, $box, $uid);
+            $syntaxSuccess = $mp->checkSyntax($letter->getHtmlMessage(), $output, true);
+            if ($syntaxSuccess)
+                $syntaxSuccess = $mp->checkSyntax($letter->getTextMessage(), $output, false);
+            if ($syntaxSuccess)
+                $syntaxSuccess = $mp->checkSyntax($letter->getSubject(), $output, true);
+
+            if (!$analysisSuccess || !$syntaxSuccess) {
+                $parseError = true;
+                break;
+            }
+        }
+
+        $script = null;
+        $form = new MailConfirmForm();
+        $messages = [];
+
+        $request = $this->getRequest();
+        if ($request->isPost()) {
+            $form->setData($request->getPost());
+
+            if ($form->isValid()) {
+                if (!$parseError) {
+                    $campaign = new CampaignEntity();
+                    $campaign->setName($letters[0]->getSubject());
+                    $campaign->setStatus(CampaignEntity::STATUS_CREATED);
+                    $campaign->setWhenCreated(new \DateTime());
+                    $em->persist($campaign);
+
+                    foreach ($letters as $letter) {
+                        $template = new TemplateEntity();
+                        $template->setMessageId(TemplateEntity::generateMessageId());
+                        $template->setSubject($letter->getSubject());
+                        $template->setHeaders($letter->getRawHeaders());
+                        $template->setBody($letter->getRawBody());
+                        $em->persist($template);
+
+                        $campaign->addTemplate($template);
+                        $template->setCampaign($campaign);
+                    }
+
+                    $em->flush();
+
+                    $script = "$('#modal-form').modal('hide'); "
+                        . "window.location = '"
+                        . $basePath('/admin/campaign/edit')
+                        . "?id=" . $campaign->getId() . "'";
+                } else {
+                    $script = "$('#modal-form').modal('hide'); reloadTables()";
+                }
+            }
+        } else {
+            $form->setData([
+                'box' => $box,
+                'uid' => $uid
+            ]);
+        }
+
+        $model = new ViewModel([
+            'script'        => $script,
+            'form'          => $form,
+            'messages'      => $messages,
+            'parseError'    => $parseError,
+        ]);
+        $model->setTerminal(true);
+        return $model;
     }
 
     /**

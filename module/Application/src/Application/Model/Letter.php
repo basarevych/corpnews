@@ -285,6 +285,26 @@ class Letter
     }
 
     /**
+     * Get raw headers
+     *
+     * @return string
+     */
+    public function getRawHeaders()
+    {
+        return $this->rawHeaders;
+    }
+
+    /**
+     * Get raw body
+     *
+     * @return string
+     */
+    public function getRawBody()
+    {
+        return $this->rawBody;
+    }
+
+    /**
      * Get parsing status
      *
      * @return boolean

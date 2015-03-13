@@ -40,6 +40,14 @@ class CampaignController extends AbstractActionController
      */
     public function createAction()
     {
+        $box = $this->params()->fromQuery('box');
+        if (!$box)
+            throw new \Exception("No 'box' parameter");
+
+        $uid = $this->params()->fromQuery('uid');
+        if (!$uid)
+            throw new \Exception("No 'uid' parameter");
+
         return new ViewModel();
     }
 }
