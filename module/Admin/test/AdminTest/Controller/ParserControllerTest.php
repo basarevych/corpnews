@@ -26,8 +26,8 @@ class ParserControllerTest extends AbstractHttpControllerTestCase
         $config['corpnews'] = [
             'parser' => [
                 'variables' => [
-                    'first_name' => [
-                        'descr'     => 'PARSER_FIRST_NAME_DESCR',
+                    'custom_var' => [
+                        'descr'     => 'CUSTOM_DESCR',
                     ],
                 ],
             ],
@@ -52,6 +52,7 @@ class ParserControllerTest extends AbstractHttpControllerTestCase
     public function testIndexActionDisplaysVariables()
     {
         $this->dispatch('/admin/parser');
-        $this->assertQueryContentRegexAtLeastOnce('p.parser-variable', '/^.*\$first_name.*$/m');
+        $this->assertQueryContentRegexAtLeastOnce('p.parser-variable', '/^.*\$custom_var.*$/m');
+        $this->assertQueryContentRegexAtLeastOnce('p.parser-descr', '/^.*\CUSTOM_DESCR.*$/m');
     }
 }
