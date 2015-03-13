@@ -8,6 +8,8 @@ use Zend\Json\Json;
 use Zend\Test\PHPUnit\Controller\AbstractHttpControllerTestCase;
 use Application\Model\Letter;
 use Application\Model\Mailbox;
+use Application\Entity\Campaign as CampaignEntity;
+use Application\Entity\Template as TemplateEntity;
 
 class MailboxControllerTest extends AbstractHttpControllerTestCase
 {
@@ -233,6 +235,66 @@ class MailboxControllerTest extends AbstractHttpControllerTestCase
 
         $response = $this->getResponse()->getContent();
         $this->assertEquals($this->attBody, $response);
+    }
+
+    public function testCreateCampaignActionCanBeAccessed()
+    {
+        $this->dispatch('/admin/mailbox/create-campaign');
+
+        $this->assertModuleName('admin');
+        $this->assertControllerName('admin\controller\mailbox');
+        $this->assertControllerClass('MailboxController');
+        $this->assertMatchedRouteName('admin');
+    }
+
+    public function testCreateCampaignActionWorks()
+    {
+        $sl = $this->getApplicationServiceLocator();
+
+        $this->em = $this->getMockBuilder('Doctrine\ORM\EntityManager')
+                         ->disableOriginalConstructor()
+                         ->setMethods([ 'getRepository', 'persist', 'flush' ])
+                         ->getMock();
+
+        $persisted = [];
+        $this->em->expects($this->any())
+                 ->method('persist')
+                 ->will($this->returnCallback(function ($entity) use (&$persisted) {
+                    $persisted[] = $entity;
+                 }));
+
+        $sl->setAllowOverride(true);
+        $sl->setService('Doctrine\ORM\EntityManager', $this->em);
+
+        $getParams = [
+            'box' => 'box',
+            'uid' => 42
+        ];
+        $this->dispatch('/admin/mailbox/create-campaign', HttpRequest::METHOD_GET, $getParams);
+        $this->assertResponseStatusCode(200);
+
+        $response = $this->getResponse();
+        $dom = new Query($response->getContent());
+        $result = $dom->execute('input[name="security"]');
+        $security = count($result) ? $result[0]->getAttribute('value') : null;
+
+        $postParams = [
+            'security' => $security,
+            'box' => 'box',
+            'uid' => 42
+        ];
+
+        $this->dispatch('/admin/mailbox/create-campaign', HttpRequest::METHOD_POST, $postParams);
+        $this->assertResponseStatusCode(200);
+        $this->assertEquals(2, count($persisted), "Two entities should have been saved");
+
+        $this->assertEquals(true, $persisted[0] instanceof CampaignEntity, "First entity is not a Campaign");
+        $this->assertEquals('subject', $persisted[0]->getName(), "Campaign name is wrong");
+
+        $this->assertEquals(true, $persisted[1] instanceof TemplateEntity, "Second entity is not a Template");
+        $this->assertEquals('subject', $persisted[1]->getSubject(), "Template subject is wrong");
+        $this->assertEquals('headers', $persisted[1]->getHeaders(), "Template headers are wrong");
+        $this->assertEquals('body', $persisted[1]->getBody(), "Template body is wrong");
     }
 
     public function testDeleteLetterActionCanBeAccessed()
