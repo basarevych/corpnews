@@ -1,4 +1,5 @@
 DROP TABLE IF EXISTS `letters`;
+DROP TABLE IF EXISTS `templates`;
 DROP TABLE IF EXISTS `campaigns`;
 DROP TABLE IF EXISTS `client_groups`;
 DROP TABLE IF EXISTS `clients`;
@@ -56,9 +57,22 @@ CREATE TABLE `campaigns` (
     CONSTRAINT `campaign_name_unique` UNIQUE (`name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1;
 
-CREATE TABLE `letters` (
+CREATE TABLE `templates` (
     `id` int unsigned NOT NULL AUTO_INCREMENT,
     `campaign_id` int unsigned NOT NULL,
+    `message_id` varchar(255) NOT NULL,
+    `subject` text NULL,
+    `headers` mediumtext NULL,
+    `body` mediumtext NULL,
+    CONSTRAINT `campaign_pk` PRIMARY KEY (`id`),
+    CONSTRAINT `templates_campaign_fk` FOREIGN KEY (`campaign_id`)
+        REFERENCES `campaigns` (`id`)
+        ON UPDATE CASCADE ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1;
+
+CREATE TABLE `letters` (
+    `id` int unsigned NOT NULL AUTO_INCREMENT,
+    `template_id` int unsigned NOT NULL,
     `client_id` int unsigned NULL,
     `key` varchar(255) NOT NULL,
     `when_sent` datetime NULL,
@@ -66,5 +80,11 @@ CREATE TABLE `letters` (
     `subject` text NULL,
     `headers` mediumtext NULL,
     `body` mediumtext NULL,
-    CONSTRAINT `campaign_pk` PRIMARY KEY (`id`)
+    CONSTRAINT `campaign_pk` PRIMARY KEY (`id`),
+    CONSTRAINT `letters_template_fk` FOREIGN KEY (`template_id`)
+        REFERENCES `templates` (`id`)
+        ON UPDATE CASCADE ON DELETE CASCADE,
+    CONSTRAINT `letters_client_fk` FOREIGN KEY (`client_id`)
+        REFERENCES `clients` (`id`)
+        ON UPDATE CASCADE ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1;

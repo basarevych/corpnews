@@ -205,7 +205,7 @@ class Client
     }
 
     /**
-     * Remove letters
+     * Remove letter
      *
      * @param Letter $letter
      * @return Client

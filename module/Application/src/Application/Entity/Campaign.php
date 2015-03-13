@@ -12,7 +12,7 @@ namespace Application\Entity;
 use DateTime;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
-use Application\Entity\Letter;
+use Application\Entity\Template;
 
 /**
  * Campaign entity
@@ -79,20 +79,20 @@ class Campaign
     protected $when_started;
 
     /**
-     * Letter entities
+     * Templates entities
      *
      * @var ArrayCollection
      *
-     * @ORM\OneToMany(targetEntity="Letter", mappedBy="campaign")
+     * @ORM\OneToMany(targetEntity="Template", mappedBy="campaign")
      */
-    protected $letters;
+    protected $templates;
 
     /**
      * Constructor
      */
     public function __construct()
     {
-        $this->letters = new ArrayCollection();
+        $this->templates = new ArrayCollection();
     }
 
     /**
@@ -194,39 +194,39 @@ class Campaign
     }
 
     /**
-     * Add letter
+     * Add template
      *
-     * @param Letter $letter
+     * @param Template $template
      * @return Campaign
      */
-    public function addLetter(Letter $letter)
+    public function addTemplate(Template $template)
     {
-        $this->letters[] = $letter;
+        $this->templates[] = $template;
 
         return $this;
     }
 
     /**
-     * Remove letter
+     * Remove templates
      *
-     * @param Letter $letter
+     * @param Template $template
      * @return Campaign
      */
-    public function removeLetter(Letter $letter)
+    public function removeTemplate(Template $template)
     {
-        $this->letters->removeElement($letter);
+        $this->templates->removeElement($template);
 
         return $this;
     }
 
     /**
-     * Get letters
+     * Get templates
      *
      * @return ArrayCollection
      */
-    public function getLetters()
+    public function getTemplates()
     {
-        return $this->letters;
+        return $this->templates;
     }
 
     /**

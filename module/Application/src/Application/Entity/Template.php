@@ -9,21 +9,22 @@
 
 namespace Application\Entity;
 
+use DateTime;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
-use Application\Entity\Template;
-use Application\Entity\Client;
+use Application\Entity\Campaign;
+use Application\Entity\Letter;
 
 /**
- * Letter entity
+ * Mail template entity
  * 
  * @category    Application
  * @package     Entity
  * 
- * @ORM\Entity(repositoryClass="Application\Entity\LetterRepository")
- * @ORM\Table(name="letters")
+ * @ORM\Entity(repositoryClass="Application\Entity\TemplateRepository")
+ * @ORM\Table(name="templates")
  */
-class Letter
+class Template
 {
     /**
      * Row ID
@@ -37,31 +38,13 @@ class Letter
     protected $id;
 
     /**
-     * Secret key
+     * Message ID
      *
      * @var string
      * 
      * @ORM\Column(type="string")
      */
-    protected $key;
-
-    /**
-     * When sent
-     *
-     * @var DateTime
-     * 
-     * @ORM\Column(type="utcdatetime", nullable=true)
-     */
-    protected $when_sent;
-
-    /**
-     * To address
-     *
-     * @var string
-     * 
-     * @ORM\Column(type="string")
-     */
-    protected $to_address;
+    protected $message_id;
 
     /**
      * Subject
@@ -91,24 +74,31 @@ class Letter
     protected $body;
 
     /**
-     * Template entity
+     * Campaign entity
      *
      * @var ArrayCollection
      *
-     * @ORM\ManyToOne(targetEntity="Template", inversedBy="letters")
-     * @ORM\JoinColumn(name="template_id", referencedColumnName="id")
+     * @ORM\ManyToOne(targetEntity="Campaign", inversedBy="templates")
+     * @ORM\JoinColumn(name="campaign_id", referencedColumnName="id")
      */
-    protected $template;
+    protected $campaign;
 
     /**
-     * Client entity
+     * Letter entities
      *
      * @var ArrayCollection
      *
-     * @ORM\ManyToOne(targetEntity="Client", inversedBy="letters")
-     * @ORM\JoinColumn(name="client_id", referencedColumnName="id")
+     * @ORM\OneToMany(targetEntity="Letter", mappedBy="template")
      */
-    protected $client;
+    protected $letters;
+
+    /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        $this->letters = new ArrayCollection();
+    }
 
     /**
      * Converts this object to array
@@ -117,13 +107,9 @@ class Letter
      */
     public function toArray()
     {
-        $whenSent = $this->getWhenSent();
-
         return [
             'id'            => $this->getId(),
-            'key'           => $this->getKey(),
-            'when_sent'     => $whenSent ? $whenSent->getTimestamp() : null,
-            'to_address'    => $this->getToAddresss(),
+            'message_id'    => $this->getMessageId(),
             'subject'       => $this->getSubject(),
             'headers'       => $this->getHeaders(),
             'body'          => $this->getBody(),
@@ -141,79 +127,33 @@ class Letter
     }
 
     /**
-     * Set key
+     * Set message_id
      *
-     * @param string $key
-     * @return Letter
+     * @param string $messageId
+     * @return Template
      */
-    public function setKey($key)
+    public function setMessageId($messageId)
     {
-        $this->key = $key;
+        $this->message_id = $messageId;
 
         return $this;
     }
 
     /**
-     * Get key
+     * Get message_id
      *
      * @return string 
      */
-    public function getKey()
+    public function getMessageId()
     {
-        return $this->key;
-    }
-
-    /**
-     * Set when_sent
-     *
-     * @param utcdatetime $whenSent
-     * @return Letter
-     */
-    public function setWhenSent($whenSent)
-    {
-        $this->when_sent = $whenSent;
-
-        return $this;
-    }
-
-    /**
-     * Get when_sent
-     *
-     * @return utcdatetime 
-     */
-    public function getWhenSent()
-    {
-        return $this->when_sent;
-    }
-
-    /**
-     * Set to_address
-     *
-     * @param string $toAddress
-     * @return Letter
-     */
-    public function setToAddress($toAddress)
-    {
-        $this->to_address = $toAddress;
-
-        return $this;
-    }
-
-    /**
-     * Get to_address
-     *
-     * @return string 
-     */
-    public function getToAddress()
-    {
-        return $this->to_address;
+        return $this->message_id;
     }
 
     /**
      * Set subject
      *
      * @param string $subject
-     * @return Letter
+     * @return Template
      */
     public function setSubject($subject)
     {
@@ -236,7 +176,7 @@ class Letter
      * Set headers
      *
      * @param string $headers
-     * @return Letter
+     * @return Template
      */
     public function setHeaders($headers)
     {
@@ -259,7 +199,7 @@ class Letter
      * Set body
      *
      * @param string $body
-     * @return Letter
+     * @return Template
      */
     public function setBody($body)
     {
@@ -279,48 +219,61 @@ class Letter
     }
 
     /**
-     * Set template
+     * Set campaign
      *
-     * @param Template $template
-     * @return Letter
+     * @param Campaign $campaign
+     * @return Template
      */
-    public function setTemplates(Template $template = null)
+    public function setCampaign(Campaign $campaign = null)
     {
-        $this->template = $template;
+        $this->campaign = $campaign;
 
         return $this;
     }
 
     /**
-     * Get template
+     * Get campaign
      *
-     * @return Template 
+     * @return Campaign 
      */
-    public function getTemplate()
+    public function getCampaign()
     {
-        return $this->template;
+        return $this->campaign;
     }
 
     /**
-     * Set client
+     * Add letter
      *
-     * @param Client $client
-     * @return Letter
+     * @param Letter $letter
+     * @return Template
      */
-    public function setClient(Client $client = null)
+    public function addLetter(Letter $letter)
     {
-        $this->client = $client;
+        $this->letters[] = $letter;
 
         return $this;
     }
 
     /**
-     * Get client
+     * Remove letters
      *
-     * @return Client 
+     * @param Letter $letter
+     * @return Template
      */
-    public function getClient()
+    public function removeLetter(Letter $letter)
     {
-        return $this->client;
+        $this->letters->removeElement($letter);
+
+        return $this;
+    }
+
+    /**
+     * Get letters
+     *
+     * @return ArrayCollection
+     */
+    public function getLetters()
+    {
+        return $this->letters;
     }
 }
