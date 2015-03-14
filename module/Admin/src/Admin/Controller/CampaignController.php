@@ -250,6 +250,14 @@ class CampaignController extends AbstractActionController
             ],
             'name' => [
                 'title'     => $translate('Name'),
+                'sql_id'    => 'c.name',
+                'type'      => Table::TYPE_STRING,
+                'filters'   => [ Table::FILTER_LIKE ],
+                'sortable'  => true,
+                'visible'   => true,
+            ],
+            'groups' => [
+                'title'     => $translate('Groups'),
                 'sql_id'    => 'g.name',
                 'type'      => Table::TYPE_STRING,
                 'filters'   => [ Table::FILTER_LIKE ],
@@ -278,7 +286,7 @@ class CampaignController extends AbstractActionController
                 'type'      => Table::TYPE_DATETIME,
                 'filters'   => [ Table::FILTER_BETWEEN, Table::FILTER_NULL ],
                 'sortable'  => true,
-                'visible'   => true,
+                'visible'   => false,
             ],
             'when_finished' => [
                 'title'     => $translate('When finished'),
@@ -319,8 +327,9 @@ class CampaignController extends AbstractActionController
         }
 
         $qb = $em->createQueryBuilder();
-        $qb->select('c')
+        $qb->select('c, g')
            ->from('Application\Entity\Campaign', 'c')
+           ->leftJoin('c.groups', 'g')
            ->andWhere('c.status IN (:status_filter)')
            ->setParameter('status_filter', $filter);
 
@@ -330,6 +339,11 @@ class CampaignController extends AbstractActionController
         $mapper = function ($row) use ($escapeHtml, $basePath) {
             $name = '<a href="' . $basePath('/admin/campaign/edit?id=' . $row->getId()) .'">'
                 . $escapeHtml($row->getName()) . '</a>';
+
+            $groups = [];
+            foreach ($row->getGroups() as $group)
+                $groups[] = $escapeHtml($group->getName());
+
             $whenCreated = $row->getWhenCreated();
             $whenStarted = $row->getWhenStarted();
             $whenFinished = $row->getWhenFinished();
@@ -337,6 +351,7 @@ class CampaignController extends AbstractActionController
             return [
                 'id'            => $row->getId(),
                 'name'          => $name,
+                'groups'        => join(', ', $groups),
                 'when_created'  => $whenCreated ? $whenCreated->getTimestamp() : null,
                 'when_started'  => $whenStarted ? $whenStarted->getTimestamp() : null,
                 'when_finished' => $whenFinished ? $whenFinished->getTimestamp() : null,
