@@ -17,6 +17,7 @@ use DynamicTable\Adapter\DoctrineORMAdapter;
 use Application\Exception\NotFoundException;
 use Application\Entity\Campaign as CampaignEntity;
 use Application\Form\Confirm as ConfirmForm;
+use Admin\Form\EditCampaign as EditCampaignForm;
 
 /**
  * Campaigns controller
@@ -63,7 +64,105 @@ class CampaignController extends AbstractActionController
      */
     public function editAction()
     {
-        return new ViewModel();
+        $id = $this->params()->fromQuery('id');
+        if (!$id)
+            throw new NotFoundException("No 'id' parameter given");
+
+        $sl = $this->getServiceLocator();
+        $em = $sl->get('Doctrine\ORM\EntityManager');
+        $repo = $em->getRepository('Application\Entity\Campaign');
+        $translate = $sl->get('viewhelpermanager')->get('translate');
+
+        $entity = $repo->find($id);
+        if (!$entity)
+            throw new NotFoundException('Entity not found');
+
+        $form = new EditCampaignForm($em);
+        $messages = [];
+        $saved = false;
+
+        // Handle validate request
+        if ($this->params()->fromQuery('query') == 'validate') {
+            $field = $this->params()->fromQuery('field');
+            $data = $this->params()->fromQuery('form');
+
+            $form->setData($data);
+            $form->isValid();
+
+            $control = $form->get($field);
+            $messages = [];
+            foreach ($control->getMessages() as $msg)
+                $messages[] = $translate($msg);
+
+            return new JsonModel([
+                'valid'     => (count($messages) == 0),
+                'messages'  => $messages,
+            ]);
+        }
+
+        $request = $this->getRequest();
+        $prg = $this->prg($request->getRequestUri(), true);
+        if ($prg instanceof \Zend\Http\PhpEnvironment\Response)
+            return $prg;
+
+        if ($prg !== false) {
+            $form->setData($prg);
+
+            if ($form->isValid()) {
+                $data = $form->getData();
+
+                $date = null;
+                if (!empty($data['when_deadline'])) {
+                    $format = $form->get('when_deadline')->getFormat();
+                    $date = \DateTime::createFromFormat($format, $data['when_deadline']);
+                }
+
+                $entity->setName($data['name']);
+                $entity->setWhenDeadline($date);
+
+                foreach ($entity->getGroups() as $group) {
+                    $entity->removeGroup($group);
+                    $group->removeCampaign($entity);
+                }
+                foreach ($data['groups'] as $groupId) {
+                    $group = $em->getRepository('Application\Entity\Group')
+                                ->find($groupId);
+                    if (!$group)
+                        continue;
+                    $entity->addGroup($group);
+                    $group->addCampaign($entity);
+                    $em->persist($group);
+                }
+
+                $em->persist($entity);
+                $em->flush();
+
+                $saved = true;
+            }
+        } else {
+            $date = "";
+            if (($dt = $entity->getWhenDeadline()) !== null) {
+                $format = $form->get('when_deadline')->getFormat();
+                $date = $dt->format($format);
+            }
+
+            $groups = [];
+            foreach ($entity->getGroups() as $group)
+                $groups[] = $group->getId();
+
+            $form->setData([
+                'name'          => $entity->getName(),
+                'when_deadline' => $date,
+                'groups'        => $groups,
+            ]);
+        }
+
+        return new ViewModel([
+            'id'        => $id,
+            'form'      => $form,
+            'messages'  => $messages,
+            'saved'     => $saved,
+        ]);
     }
 
     /**
@@ -162,15 +261,23 @@ class CampaignController extends AbstractActionController
                 'sql_id'    => 'c.when_created',
                 'type'      => Table::TYPE_DATETIME,
                 'filters'   => [ Table::FILTER_BETWEEN ],
-                'sortable'  => false,
-                'visible'   => true,
+                'sortable'  => true,
+                'visible'   => false,
             ],
             'when_started' => [
                 'title'     => $translate('When started'),
                 'sql_id'    => 'c.when_started',
                 'type'      => Table::TYPE_DATETIME,
                 'filters'   => [ Table::FILTER_BETWEEN, Table::FILTER_NULL ],
-                'sortable'  => false,
+                'sortable'  => true,
+                'visible'   => true,
+            ],
+            'when_deadline' => [
+                'title'     => $translate('When deadline'),
+                'sql_id'    => 'c.when_deadline',
+                'type'      => Table::TYPE_DATETIME,
+                'filters'   => [ Table::FILTER_BETWEEN, Table::FILTER_NULL ],
+                'sortable'  => true,
                 'visible'   => true,
             ],
             'when_finished' => [
@@ -178,7 +285,7 @@ class CampaignController extends AbstractActionController
                 'sql_id'    => 'c.when_finished',
                 'type'      => Table::TYPE_DATETIME,
                 'filters'   => [ Table::FILTER_BETWEEN, Table::FILTER_NULL ],
-                'sortable'  => false,
+                'sortable'  => true,
                 'visible'   => true,
             ],
         ]);

@@ -12,6 +12,7 @@ namespace Application\Entity;
 use DateTime;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
+use Application\Entity\Group;
 use Application\Entity\Template;
 
 /**
@@ -72,6 +73,15 @@ class Campaign
     protected $status;
 
     /**
+     * When deadline (will automatically finish)
+     *
+     * @var DateTime
+     * 
+     * @ORM\Column(type="utcdatetime", nullable=true)
+     */
+    protected $when_deadline;
+
+    /**
      * When created
      *
      * @var DateTime
@@ -99,6 +109,16 @@ class Campaign
     protected $when_finished;
 
     /**
+     * Group entities
+     *
+     * @var ArrayCollection
+     *
+     * @ORM\ManyToMany(targetEntity="Group", inversedBy="campaigns")
+     * @ORM\JoinTable(name="campaign_groups")
+     */
+    protected $groups;
+
+    /**
      * Templates entities
      *
      * @var ArrayCollection
@@ -112,6 +132,7 @@ class Campaign
      */
     public function __construct()
     {
+        $this->groups = new ArrayCollection();
         $this->templates = new ArrayCollection();
     }
 
@@ -122,6 +143,7 @@ class Campaign
      */
     public function toArray()
     {
+        $whenDeadline = $this->getWhenDeadline();
         $whenCreated = $this->getWhenCreated();
         $whenStarted = $this->getWhenStarted();
         $whenFinished = $this->getWhenFinished();
@@ -130,6 +152,7 @@ class Campaign
             'id'            => $this->getId(),
             'name'          => $this->getName(),
             'status'        => $this->getStatus(),
+            'when_deadline' => $whenDeadline ? $whenDeadline->getTimestamp() : null,
             'when_created'  => $whenCreated ? $whenCreated->getTimestamp() : null,
             'when_started'  => $whenStarted ? $whenStarted->getTimestamp() : null,
             'when_finished' => $whenFinished ? $whenFinished->getTimestamp() : null,
@@ -190,6 +213,29 @@ class Campaign
     public function getStatus()
     {
         return $this->status;
+    }
+
+    /**
+     * Set when_deadline
+     *
+     * @param DateTime $whenDeadline
+     * @return Campaign
+     */
+    public function setWhenDeadline($whenDeadline)
+    {
+        $this->when_deadline = $whenDeadline;
+
+        return $this;
+    }
+
+    /**
+     * Get when_deadline
+     *
+     * @return DateTime 
+     */
+    public function getWhenDeadline()
+    {
+        return $this->when_deadline;
     }
 
     /**
@@ -259,6 +305,42 @@ class Campaign
     public function getWhenFinished()
     {
         return $this->when_finished;
+    }
+
+    /**
+     * Add group
+     *
+     * @param Group $group
+     * @return Campaign
+     */
+    public function addGroup(Group $group)
+    {
+        $this->groups[] = $group;
+
+        return $this;
+    }
+
+    /**
+     * Remove group
+     *
+     * @param Group $group
+     * @return Campaign
+     */
+    public function removeGroup(Group $group)
+    {
+        $this->groups->removeElement($group);
+
+        return $this;
+    }
+
+    /**
+     * Get groups
+     *
+     * @return ArrayCollection
+     */
+    public function getGroups()
+    {
+        return $this->groups;
     }
 
     /**

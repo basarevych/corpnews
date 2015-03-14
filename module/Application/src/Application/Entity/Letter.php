@@ -323,4 +323,17 @@ class Letter
     {
         return $this->client;
     }
+
+    /**
+     * Set template
+     *
+     * @param \Application\Entity\Template $template
+     * @return Letter
+     */
+    public function setTemplate(\Application\Entity\Template $template = null)
+    {
+        $this->template = $template;
+
+        return $this;
+    }
 }

@@ -1,5 +1,6 @@
 DROP TABLE IF EXISTS `letters`;
 DROP TABLE IF EXISTS `templates`;
+DROP TABLE IF EXISTS `campaign_groups`;
 DROP TABLE IF EXISTS `campaigns`;
 DROP TABLE IF EXISTS `client_groups`;
 DROP TABLE IF EXISTS `clients`;
@@ -51,10 +52,24 @@ CREATE TABLE `campaigns` (
     `id` int unsigned NOT NULL AUTO_INCREMENT,
     `name` varchar(255) NOT NULL,
     `status` enum('created', 'tested', 'queued', 'started', 'paused', 'finished') NOT NULL,
+    `when_deadline` datetime NULL,
     `when_created` datetime NULL,
     `when_started` datetime NULL,
     `when_finished` datetime NULL,
     CONSTRAINT `campaign_pk` PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1;
+
+CREATE TABLE `campaign_groups` (
+    `id` int unsigned NOT NULL AUTO_INCREMENT,
+    `campaign_id` int unsigned NOT NULL,
+    `group_id` int unsigned NOT NULL,
+    CONSTRAINT `campaign_groups_pk` PRIMARY KEY (`id`),
+    CONSTRAINT `campaign_groups_campaign_fk` FOREIGN KEY (`campaign_id`)
+        REFERENCES `campaigns` (`id`)
+        ON UPDATE CASCADE ON DELETE CASCADE,
+    CONSTRAINT `campaign_groups_group_fk` FOREIGN KEY (`group_id`)
+        REFERENCES `groups` (`id`)
+        ON UPDATE CASCADE ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1;
 
 CREATE TABLE `templates` (

@@ -12,6 +12,7 @@ namespace Application\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 use Application\Entity\Client;
+use Application\Entity\Campaign;
 
 /**
  * Client group entity
@@ -54,11 +55,21 @@ class Group
     protected $clients;
 
     /**
+     * Campaign entities
+     *
+     * @var ArrayCollection
+     *
+     * @ORM\ManyToMany(targetEntity="Campaign", mappedBy="groups")
+     */
+    protected $campaigns;
+
+    /**
      * Constructor
      */
     public function __construct()
     {
         $this->clients = new ArrayCollection();
+        $this->campaigns = new ArrayCollection();
     }
 
     /**
@@ -141,5 +152,41 @@ class Group
     public function getClients()
     {
         return $this->clients;
+    }
+
+    /**
+     * Add campaign
+     *
+     * @param Campaign $campaign
+     * @return Group
+     */
+    public function addCampaign(Campaign $campaign)
+    {
+        $this->campaigns[] = $campaign;
+
+        return $this;
+    }
+
+    /**
+     * Remove campaign
+     *
+     * @param Campaign $campaign
+     * @return Group
+     */
+    public function removeCampaign(Campaign $campaign)
+    {
+        $this->campaigns->removeElement($campaign);
+
+        return $this;
+    }
+
+    /**
+     * Get campaigns
+     *
+     * @return ArrayCollection
+     */
+    public function getCampaigns()
+    {
+        return $this->campaigns;
     }
 }
