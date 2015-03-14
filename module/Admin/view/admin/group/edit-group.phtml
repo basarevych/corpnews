@@ -11,7 +11,6 @@ $form = $this->form;
 
 $security = $form->get('security');
 $id = $form->has('id') ? $form->get('id') : null;
-$name = $form->get('name');
 
 ?>
 
@@ -35,31 +34,42 @@ $name = $form->get('name');
         </div>
     <?php endforeach ?>
 
-    <?php $valid = count($name->getMessages()) == 0 ?>
-    <div class="form-group <?= $valid ? '' : 'has-error' ?>">
-        <label class="col-sm-4 control-label" for="<?= $name->getName() ?>">
-            <?= $this->escapeHtml($this->translate($name->getLabel())) ?>:
-            <span class="required-marker text-danger">
-                <?= $this->translate('REQUIRED FIELD') ?>
-            </span>
-        </label>
-        <div class="col-sm-8">
-            <input type="text" class="form-control"
-                   name="<?= $name->getName() ?>"
-                   value="<?= $this->escapeHtml($name->getValue()) ?>"
-                   data-on-blur="validateFormField($('#modal-form [name=<?= $name->getName() ?>]'))"
-                   data-on-enter="$('#modal-form button[type=submit]').focus().click()">
-            <div class="help-block">
-                <?php if (!$valid): ?>
-                    <ul class="list-unstyled icon-list error-list">
-                    <?php foreach ($name->getMessages() as $msg): ?>
-                        <li><?= $this->escapeHtml($this->translate($msg)) ?></li>
-                    <?php endforeach ?>
-                    </ul>
-                <?php endif ?>
+    <?php if ($form instanceof \Application\Form\Confirm): ?>
+        <p><?= $this->translate('CANNOT_EDIT_SYSTEM_GROUP') ?></p>
+        <script>
+            $('#modal-form button[type=submit]').hide();
+            $('#modal-form').on('hidden.bs.modal', function () {
+                $('#modal-form button[type=submit]').show();
+            });
+        </script>
+    <?php else: ?>
+        <?php $name = $form->get('name'); ?>
+        <?php $valid = count($name->getMessages()) == 0 ?>
+        <div class="form-group <?= $valid ? '' : 'has-error' ?>">
+            <label class="col-sm-4 control-label" for="<?= $name->getName() ?>">
+                <?= $this->escapeHtml($this->translate($name->getLabel())) ?>:
+                <span class="required-marker text-danger">
+                    <?= $this->translate('REQUIRED FIELD') ?>
+                </span>
+            </label>
+            <div class="col-sm-8">
+                <input type="text" class="form-control"
+                       name="<?= $name->getName() ?>"
+                       value="<?= $this->escapeHtml($name->getValue()) ?>"
+                       data-on-blur="validateFormField($('#modal-form [name=<?= $name->getName() ?>]'))"
+                       data-on-enter="$('#modal-form button[type=submit]').focus().click()">
+                <div class="help-block">
+                    <?php if (!$valid): ?>
+                        <ul class="list-unstyled icon-list error-list">
+                        <?php foreach ($name->getMessages() as $msg): ?>
+                            <li><?= $this->escapeHtml($this->translate($msg)) ?></li>
+                        <?php endforeach ?>
+                        </ul>
+                    <?php endif ?>
+                </div>
             </div>
         </div>
-    </div>
+    <?php endif ?>
 </form>
 
 <script>

@@ -22,8 +22,10 @@ return [
 
     // GroupController
     'Create group' => 'Создать группу',
+    'Edit group' => 'Редактировать группу',
     'Delete group' => 'Удалить группу',
     'Number of clients' => 'Число клиентов',
+    'CANNOT_EDIT_SYSTEM_GROUP' => 'Нельзя редактирвать системную группу',
     'CONFIRM_DELETE_GROUP' => 'Удалить выбранную группу (группы)?',
     'CANNOT_DELETE_SYSTEM_GROUPS' => 'NOTE: Системные группы не могут быть удалены',
 

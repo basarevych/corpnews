@@ -22,6 +22,7 @@ return [
 
     // GroupController
     'Create group' => 'Create group',
+    'Edit group' => 'Edit group',
     'Delete group' => 'Create group',
     'Number of clients' => 'Number of clients',
     'CONFIRM_DELETE_GROUP' => 'Delete selected group(s)?',
@@ -36,6 +37,7 @@ return [
     'Email address' => 'Email address',
     'Email bounced' => 'Email bounced',
     'Groups' => 'Groups',
+    'CANNOT_EDIT_SYSTEM_GROUP' => 'Can not edit system group',
     'CONFIRM_DELETE_CLIENT' => 'Delete selected client(s)?',
     'TOUR_CLIENTS_EDIT_CLIENT' => '<p>Click any client\'s email to edit the client'
         . '<p><p>Or click a form in "Filled forms" to open the form of the client in admin mode</p>',

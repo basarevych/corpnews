@@ -100,23 +100,29 @@ class GroupController extends AbstractActionController
         }
 
         $script = null;
-        $form = new EditGroupForm($em, $id);
         $messages = [];
+
+        if ($entity && in_array($entity->getName(), GroupEntity::getSystemNames()))
+            $form = new ConfirmForm();
+        else
+            $form = new EditGroupForm($em, $id);
 
         $request = $this->getRequest();
         if ($request->isPost()) {  // Handle form submission
             $form->setData($request->getPost());
 
             if ($form->isValid()) {
-                $data = $form->getData();
+                if ($form instanceof EditGroupForm) {
+                    $data = $form->getData();
 
-                if (!$entity)
-                    $entity = new GroupEntity();
+                    if (!$entity)
+                        $entity = new GroupEntity();
 
-                $entity->setName($data['name']);
+                    $entity->setName($data['name']);
 
-                $em->persist($entity);
-                $em->flush();
+                    $em->persist($entity);
+                    $em->flush();
+                }
 
                 $script = "$('#modal-form').modal('hide'); reloadTable()";
             }
