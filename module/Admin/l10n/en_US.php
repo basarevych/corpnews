@@ -49,6 +49,7 @@ return [
     'STATUS_FINISHED' => 'Finished',
     'Apply filter' => 'Apply filter',
     'Delete campaign' => 'Delete campaign',
+    'Status' => 'Status',
     'When deadline' => 'When deadline',
     'When created' => 'When created',
     'When started' => 'When started',

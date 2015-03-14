@@ -48,6 +48,7 @@ return [
     'STATUS_FINISHED' => 'Завершено',
     'Apply filter' => 'Применить фильтр',
     'Delete campaign' => 'Удалить кампанию',
+    'Status' => 'Статус',
     'When deadline' => 'Когда крайний срок',
     'When created' => 'Когда создано',
     'When started' => 'Когда начато',

@@ -256,6 +256,14 @@ class CampaignController extends AbstractActionController
                 'sortable'  => true,
                 'visible'   => true,
             ],
+            'status' => [
+                'title'     => $translate('Status'),
+                'sql_id'    => 'c.status',
+                'type'      => Table::TYPE_STRING,
+                'filters'   => [ ],
+                'sortable'  => true,
+                'visible'   => true,
+            ],
             'groups' => [
                 'title'     => $translate('Groups'),
                 'sql_id'    => 'g.name',
@@ -312,6 +320,7 @@ class CampaignController extends AbstractActionController
         $em = $sl->get('Doctrine\ORM\EntityManager');
         $escapeHtml = $sl->get('viewhelpermanager')->get('escapeHtml');
         $basePath = $sl->get('viewhelpermanager')->get('basePath');
+        $translate = $sl->get('viewhelpermanager')->get('translate');
 
         $createdFilter = $this->params()->fromQuery('created', 1);
         $testedFilter = $this->params()->fromQuery('tested', 1);
@@ -336,7 +345,7 @@ class CampaignController extends AbstractActionController
         $adapter = new DoctrineORMAdapter();
         $adapter->setQueryBuilder($qb);
 
-        $mapper = function ($row) use ($escapeHtml, $basePath) {
+        $mapper = function ($row) use ($escapeHtml, $basePath, $translate) {
             $name = '<a href="' . $basePath('/admin/campaign/edit?id=' . $row->getId()) .'">'
                 . $escapeHtml($row->getName()) . '</a>';
 
@@ -351,6 +360,7 @@ class CampaignController extends AbstractActionController
             return [
                 'id'            => $row->getId(),
                 'name'          => $name,
+                'status'        => $translate('STATUS_' . strtoupper($row->getStatus())),
                 'groups'        => join(', ', $groups),
                 'when_created'  => $whenCreated ? $whenCreated->getTimestamp() : null,
                 'when_started'  => $whenStarted ? $whenStarted->getTimestamp() : null,
