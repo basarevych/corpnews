@@ -207,6 +207,16 @@ class GroupControllerTest extends AbstractHttpControllerTestCase
         $this->assertEquals('test', $persisted->getName(), "Name is incorrect");
     }
 
+    public function testDeleteGroupActionCanBeAccessed()
+    {
+        $this->dispatch('/admin/group/delete-group');
+
+        $this->assertModuleName('admin');
+        $this->assertControllerName('admin\controller\group');
+        $this->assertControllerClass('GroupController');
+        $this->assertMatchedRouteName('admin');
+    }
+
     public function testDeleteGroupActionRemovesAll()
     {
         $entitiesRemoved = false;
