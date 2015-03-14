@@ -69,12 +69,26 @@ class ClientController extends AbstractActionController
         $em = $sl->get('Doctrine\ORM\EntityManager');
         $translate = $sl->get('viewhelpermanager')->get('translate');
 
+        $entity = null;
+        $id = $this->params()->fromQuery('id');
+        if (!$id)
+            $id = $this->params()->fromPost('id');
+        if ($id) {
+            $entity = $em->getRepository('Application\Entity\Client')
+                         ->find($id);
+            if (!$entity)
+                throw new NotFoundException('Wrong ID');
+        }
+
+        $script = null;
+        $form = new EditClientForm($sl, $id);
+        $messages = [];
+
         // Handle validate request
         if ($this->params()->fromQuery('query') == 'validate') {
             $field = $this->params()->fromQuery('field');
             $data = $this->params()->fromQuery('form');
 
-            $form = new EditClientForm($em, @$data['id']);
             $form->setData($data);
             $form->isValid();
 
@@ -88,21 +102,6 @@ class ClientController extends AbstractActionController
                 'messages'  => $messages,
             ]);
         }
-
-        $entity = null;
-        $id = $this->params()->fromQuery('id');
-        if (!$id)
-            $id = $this->params()->fromPost('id');
-        if ($id) {
-            $entity = $em->getRepository('Application\Entity\Client')
-                         ->find($id);
-            if (!$entity)
-                throw new NotFoundException('Wrong ID');
-        }
-
-        $script = null;
-        $form = new EditClientForm($em, $id);
-        $messages = [];
 
         $request = $this->getRequest();
         if ($request->isPost()) {  // Handle form submission

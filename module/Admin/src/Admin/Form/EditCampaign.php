@@ -15,6 +15,7 @@ use Zend\InputFilter\Input;
 use Zend\InputFilter\InputFilter;
 use Zend\Filter;
 use Zend\Validator;
+use Zend\ServiceManager\ServiceLocatorInterface;
 use Doctrine\ORM\EntityManager;
 
 /**
@@ -42,13 +43,13 @@ class EditCampaign extends Form
     /**
      * Constructor
      *
-     * @param EntityManager    $em          Doctrine EntityManager
-     * @param null|int|string  $name        Optional name
-     * @param array            $options     Optional options
+     * @param ServiceLocatorInterface $em        Service locator
+     * @param null|int|string         $name      Optional name
+     * @param array                   $options   Optional options
      */
-    public function __construct($em, $name = 'edit-campaign', $options = array())
+    public function __construct(ServiceLocatorInterface $sl, $name = 'edit-campaign', $options = array())
     {
-        $this->em = $em;
+        $this->em = $sl->get('Doctrine\ORM\EntityManager');
 
         parent::__construct($name, $options);
         $this->setAttribute('method', 'post');
@@ -60,14 +61,16 @@ class EditCampaign extends Form
         $name->setLabel('Name');
         $this->add($name);
 
+        $translate = $sl->get('viewhelpermanager')->get('translate');
+
         $whenDeadline = new Element\DateTime('when_deadline');
         $whenDeadline->setLabel('When deadline');
-        $whenDeadline->setFormat("Y-m-d H:i:s P");
+        $whenDeadline->setFormat($translate('GENERIC_DATETIME_FORMAT'));
         $whenDeadline->setAttribute('step', 'any');
         $this->add($whenDeadline);
 
-        $entities = $em->getRepository('Application\Entity\Group')
-                       ->findBy([], [ 'name' => 'ASC' ]);
+        $entities = $this->em->getRepository('Application\Entity\Group')
+                             ->findBy([], [ 'name' => 'ASC' ]);
         $options = [];
         foreach ($entities as $entity)
             $options[$entity->getId()] = $entity->getName();

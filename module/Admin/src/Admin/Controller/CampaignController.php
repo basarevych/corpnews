@@ -77,7 +77,7 @@ class CampaignController extends AbstractActionController
         if (!$entity)
             throw new NotFoundException('Entity not found');
 
-        $form = new EditCampaignForm($em);
+        $form = new EditCampaignForm($sl);
         $messages = [];
         $saved = false;
 

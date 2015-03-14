@@ -15,6 +15,7 @@ use Zend\InputFilter\Input;
 use Zend\InputFilter\InputFilter;
 use Zend\Filter;
 use Zend\Validator;
+use Zend\ServiceManager\ServiceLocatorInterface;
 use Doctrine\ORM\EntityManager;
 use Application\Validator\EntityNotExists;
 
@@ -50,14 +51,14 @@ class EditClient extends Form
     /**
      * Constructor
      *
-     * @param EntityManager    $em          Doctrine EntityManager
-     * @param integer          $id          ID of the entity being edited (null when creating)
-     * @param null|int|string  $name        Optional name
-     * @param array            $options     Optional options
+     * @param ServiceLocatorInterface $em        Service locator
+     * @param integer                 $id        ID of the entity being edited (null when creating)
+     * @param null|int|string         $name      Optional name
+     * @param array                   $options   Optional options
      */
-    public function __construct($em, $id = null, $name = 'edit-client', $options = array())
+    public function __construct(ServiceLocatorInterface $sl, $id = null, $name = 'edit-client', $options = array())
     {
-        $this->em = $em;
+        $this->em = $sl->get('Doctrine\ORM\EntityManager');
         $this->id = $id;
 
         parent::__construct($name, $options);
@@ -75,14 +76,16 @@ class EditClient extends Form
         $email->setLabel('Email address');
         $this->add($email);
 
+        $translate = $sl->get('viewhelpermanager')->get('translate');
+
         $whenBounced = new Element\DateTime('when_bounced');
         $whenBounced->setLabel('Email bounced');
-        $whenBounced->setFormat("Y-m-d H:i:s P");
+        $whenBounced->setFormat($translate('GENERIC_DATETIME_FORMAT'));
         $whenBounced->setAttribute('step', 'any');
         $this->add($whenBounced);
 
-        $entities = $em->getRepository('Application\Entity\Group')
-                       ->findBy([], [ 'name' => 'ASC' ]);
+        $entities = $this->em->getRepository('Application\Entity\Group')
+                             ->findBy([], [ 'name' => 'ASC' ]);
         $options = [];
         foreach ($entities as $entity)
             $options[$entity->getId()] = $entity->getName();

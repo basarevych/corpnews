@@ -59,14 +59,14 @@ class EditClientTest extends AbstractControllerTestCase
                  ->method('getQuery')
                  ->will($this->returnValue(new EditClientQueryMock()));
 
-        $sl = $this->getApplicationServiceLocator();
-        $sl->setAllowOverride(true);
-        $sl->setService('Doctrine\ORM\EntityManager', $this->em);
+        $this->sl = $this->getApplicationServiceLocator();
+        $this->sl->setAllowOverride(true);
+        $this->sl->setService('Doctrine\ORM\EntityManager', $this->em);
     }
 
     public function testInvalidForm()
     {
-        $form = new EditClientForm($this->em, 42);
+        $form = new EditClientForm($this->sl, 42);
 
         $input = [
         ];
@@ -82,7 +82,7 @@ class EditClientTest extends AbstractControllerTestCase
 
     public function testValidForm()
     {
-        $form = new EditClientForm($this->em, 42);
+        $form = new EditClientForm($this->sl, 42);
         $dt = new \DateTime();
         $format = $form->get('when_bounced')->getFormat();
 

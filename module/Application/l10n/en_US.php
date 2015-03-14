@@ -14,6 +14,10 @@ return [
     'Save changes' => 'Save changes',
     'Delete' => 'Delete',
 
+    // Formats
+    'GENERIC_DATETIME_FORMAT' => 'Y-m-d H:i:s P',
+    'GENERIC_MOMENT_FORMAT' => 'YYYY-MM-DD HH:mm:ss Z',
+
     // Data forms
     'Profile' => 'Profile',
 

@@ -62,14 +62,14 @@ class EditCampaignTest extends AbstractControllerTestCase
                  ->method('getQuery')
                  ->will($this->returnValue(new EditCampaignQueryMock()));
 
-        $sl = $this->getApplicationServiceLocator();
-        $sl->setAllowOverride(true);
-        $sl->setService('Doctrine\ORM\EntityManager', $this->em);
+        $this->sl = $this->getApplicationServiceLocator();
+        $this->sl->setAllowOverride(true);
+        $this->sl->setService('Doctrine\ORM\EntityManager', $this->em);
     }
 
     public function testInvalidForm()
     {
-        $form = new EditCampaignForm($this->em);
+        $form = new EditCampaignForm($this->sl);
 
         $input = [
         ];
@@ -85,7 +85,7 @@ class EditCampaignTest extends AbstractControllerTestCase
 
     public function testValidForm()
     {
-        $form = new EditCampaignForm($this->em);
+        $form = new EditCampaignForm($this->sl);
         $dt = new \DateTime();
         $format = $form->get('when_deadline')->getFormat();
 

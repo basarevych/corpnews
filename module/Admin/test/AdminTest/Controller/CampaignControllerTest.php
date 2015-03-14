@@ -28,8 +28,8 @@ class CampaignControllerTest extends AbstractHttpControllerTestCase
 
         parent::setUp();
 
-        $sl = $this->getApplicationServiceLocator();
-        $session = $sl->get('Session');
+        $this->sl = $this->getApplicationServiceLocator();
+        $session = $this->sl->get('Session');
         $cnt = $session->getContainer();
         $cnt->is_admin = true;
 
@@ -103,14 +103,13 @@ class CampaignControllerTest extends AbstractHttpControllerTestCase
                  ->method('getQuery')
                  ->will($this->returnValue(new CampaignControllerQueryMock()));
 
-        $sl->setAllowOverride(true);
-        $sl->setService('Doctrine\ORM\EntityManager', $this->em);
+        $this->sl->setAllowOverride(true);
+        $this->sl->setService('Doctrine\ORM\EntityManager', $this->em);
     }
 
     public function setUpAdminAccess()
     {
-        $sl = $this->getApplicationServiceLocator();
-        $session = $sl->get('Session');
+        $session = $this->sl->get('Session');
         $cnt = $session->getContainer();
         $cnt->is_admin = true;
     }
@@ -158,9 +157,7 @@ class CampaignControllerTest extends AbstractHttpControllerTestCase
         );
         $this->em = $this->infrastructure->getEntityManager();
 
-        $sl = $this->getApplicationServiceLocator();
-        $sl->setAllowOverride(true);
-        $sl->setService('Doctrine\ORM\EntityManager', $this->em);
+        $this->sl->setService('Doctrine\ORM\EntityManager', $this->em);
 
         $a = new CampaignEntity();
         $a->setName('foobar');
@@ -204,7 +201,7 @@ class CampaignControllerTest extends AbstractHttpControllerTestCase
         $this->setUp();
         $this->setUpAdminAccess();
 
-        $form = new EditCampaignForm($this->em);
+        $form = new EditCampaignForm($this->sl);
         $dt = new \DateTime();
         $format = $form->get('when_deadline')->getFormat();
 

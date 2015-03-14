@@ -42,7 +42,7 @@
                     mapper: function (row) {
                         if (row['when_updated'] != null) {
                             var m = moment.unix(row['when_updated']).local();
-                            row['when_updated'] = m.format('YYYY-MM-DD HH:mm:ss Z');
+                            row['when_updated'] = m.format('<?= $this->translate('GENERIC_MOMENT_FORMAT') ?>');
                         }
 
                         return row;

@@ -78,7 +78,7 @@
 
                                         if (row['date'] != null) {
                                             var m = moment.unix(row['date']).local();
-                                            row['date'] = m.format('YYYY-MM-DD HH:mm:ss');
+                                            row['date'] = m.format('<?= $this->translate('GENERIC_MOMENT_FORMAT') ?>');
                                         }
 
                                         return row;

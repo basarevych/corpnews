@@ -133,7 +133,7 @@
                         </div>
                         <script>
                             $('#dt-<?= $whenDeadline->getName() ?>').datetimepicker({
-                                format: "YYYY-MM-DD HH:mm:ss Z",
+                                format: "<?= $this->translate('GENERIC_MOMENT_FORMAT') ?>",
                                 locale: '<?= \Locale::getDefault() ?>'
                             });
                         </script>

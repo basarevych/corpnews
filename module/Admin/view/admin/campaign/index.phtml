@@ -131,19 +131,19 @@
             mapper: function (row) {
                 if (row['when_created'] != null) {
                     var m = moment.unix(row['when_created']).local();
-                    row['when_created'] = m.format('YYYY-MM-DD HH:mm:ss Z');
+                    row['when_created'] = m.format('<?= $this->translate('GENERIC_MOMENT_FORMAT') ?>');
                 }
                 if (row['when_started'] != null) {
                     var m = moment.unix(row['when_started']).local();
-                    row['when_started'] = m.format('YYYY-MM-DD HH:mm:ss Z');
+                    row['when_started'] = m.format('<?= $this->translate('GENERIC_MOMENT_FORMAT') ?>');
                 }
                 if (row['when_deadline'] != null) {
                     var m = moment.unix(row['when_deadline']).local();
-                    row['when_deadline'] = m.format('YYYY-MM-DD HH:mm:ss Z');
+                    row['when_deadline'] = m.format('<?= $this->translate('GENERIC_MOMENT_FORMAT') ?>');
                 }
                 if (row['when_finished'] != null) {
                     var m = moment.unix(row['when_finished']).local();
-                    row['when_finished'] = m.format('YYYY-MM-DD HH:mm:ss Z');
+                    row['when_finished'] = m.format('<?= $this->translate('GENERIC_MOMENT_FORMAT') ?>');
                 }
 
                 return row;

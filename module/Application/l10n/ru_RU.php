@@ -14,6 +14,10 @@ return [
     'Save changes' => 'Сохранить изменения',
     'Delete' => 'Удалить',
 
+    // Formats
+    'GENERIC_DATETIME_FORMAT' => 'Y-m-d H:i:s P',
+    'GENERIC_MOMENT_FORMAT' => 'YYYY-MM-DD HH:mm:ss Z',
+
     // Data forms
     'Profile' => 'Профиль',
 
