@@ -353,6 +353,7 @@ class CampaignController extends AbstractActionController
             foreach ($row->getGroups() as $group)
                 $groups[] = $escapeHtml($group->getName());
 
+            $whenDeadline = $row->getWhenDeadline();
             $whenCreated = $row->getWhenCreated();
             $whenStarted = $row->getWhenStarted();
             $whenFinished = $row->getWhenFinished();
@@ -364,6 +365,7 @@ class CampaignController extends AbstractActionController
                 'groups'        => join(', ', $groups),
                 'when_created'  => $whenCreated ? $whenCreated->getTimestamp() : null,
                 'when_started'  => $whenStarted ? $whenStarted->getTimestamp() : null,
+                'when_deadline' => $whenDeadline? $whenDeadline->getTimestamp() : null,
                 'when_finished' => $whenFinished ? $whenFinished->getTimestamp() : null,
             ];
         };
