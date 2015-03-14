@@ -4,7 +4,7 @@
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "5edfd8a9afbbfd95e8aacc0268f16184",
+    "hash": "b7e12c641cc119c528433df806fe1201",
     "packages": [
         {
             "name": "basarevych/dynamic-table",
@@ -12,12 +12,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/basarevych/dynamic-table.git",
-                "reference": "4f5ec6de351619f2552ce08d5ac647f8e08537c5"
+                "reference": "f43af158d4e4e1da5bac761982d54b9bfe1c9de3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/basarevych/dynamic-table/zipball/4f5ec6de351619f2552ce08d5ac647f8e08537c5",
-                "reference": "4f5ec6de351619f2552ce08d5ac647f8e08537c5",
+                "url": "https://api.github.com/repos/basarevych/dynamic-table/zipball/f43af158d4e4e1da5bac761982d54b9bfe1c9de3",
+                "reference": "f43af158d4e4e1da5bac761982d54b9bfe1c9de3",
                 "shasum": ""
             },
             "require": {
@@ -50,7 +50,7 @@
                 "orm",
                 "php"
             ],
-            "time": "2015-03-10 14:47:27"
+            "time": "2015-03-14 08:08:31"
         },
         {
             "name": "doctrine/annotations",
@@ -1137,16 +1137,16 @@
         },
         {
             "name": "zendframework/zendframework",
-            "version": "2.3.6",
+            "version": "2.3.7",
             "source": {
                 "type": "git",
                 "url": "https://github.com/zendframework/zf2.git",
-                "reference": "cf1f2212b5ff772ba695f9efbb315505ec0211eb"
+                "reference": "a1aae5fdd27a422beb32c56ddf5a197654a0f94a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zendframework/zf2/zipball/cf1f2212b5ff772ba695f9efbb315505ec0211eb",
-                "reference": "cf1f2212b5ff772ba695f9efbb315505ec0211eb",
+                "url": "https://api.github.com/repos/zendframework/zf2/zipball/a1aae5fdd27a422beb32c56ddf5a197654a0f94a",
+                "reference": "a1aae5fdd27a422beb32c56ddf5a197654a0f94a",
                 "shasum": ""
             },
             "require": {
@@ -1251,7 +1251,7 @@
                 "framework",
                 "zf2"
             ],
-            "time": "2015-03-12 14:02:09"
+            "time": "2015-03-12 16:55:53"
         },
         {
             "name": "zendframework/zendxml",
@@ -2263,6 +2263,7 @@
     "prefer-lowest": false,
     "platform": {
         "php": ">=5.4.8",
+        "ext-openssl": "*",
         "ext-pdo": "*",
         "ext-mongo": "*"
     },
