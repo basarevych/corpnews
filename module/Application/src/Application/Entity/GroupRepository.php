@@ -29,8 +29,9 @@ class GroupRepository extends EntityRepository
         $em = $this->getEntityManager();
 
         $query = $em->createQuery(
-            'DELETE Application\Entity\Group g'
+            'DELETE Application\Entity\Group g WHERE g.name NOT IN (:system)'
         );
+        $query->setParameter('system', GroupEntity::getSystemNames());
         $query->getResult();
     }
 }

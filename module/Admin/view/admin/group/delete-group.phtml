@@ -32,6 +32,12 @@ $id = $form->get('id');
     <?php endforeach ?>
 
     <p><?= $this->translate('CONFIRM_DELETE_GROUP') ?></p>
+    <?php if ($this->keepSystemGroup): ?>
+        <p>
+            <?= $this->translate('CANNOT_DELETE_SYSTEM_GROUPS') ?>:
+            <?= join(', ', $this->systemGroups) ?>
+        </p>
+    <?php endif ?>
 </form>
 
 <script>

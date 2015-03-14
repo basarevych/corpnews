@@ -26,6 +26,11 @@ use Application\Entity\Campaign;
 class Group 
 {
     /**
+     * @const NAME_TESTERS
+     */
+    const NAME_TESTERS = 'Testers';
+
+    /**
      * Row ID
      *
      * @var integer
@@ -188,5 +193,17 @@ class Group
     public function getCampaigns()
     {
         return $this->campaigns;
+    }
+
+    /**
+     * Get system (non-deletable) group names
+     *
+     * @return array
+     */
+    public static function getSystemNames()
+    {
+        return [
+            self::NAME_TESTERS,
+        ];
     }
 }

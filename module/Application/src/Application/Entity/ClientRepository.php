@@ -22,6 +22,26 @@ use Application\Entity\Client as ClientEntity;
 class ClientRepository extends EntityRepository
 {
     /**
+     * Find all clients by their group name
+     *
+     * @param string $name
+     * @return array
+     */
+    public function findByGroupName($name)
+    {
+        $em = $this->getEntityManager();
+
+        $qb = $em->createQueryBuilder();
+        $qb->select('c')
+           ->from('Application\Entity\Client', 'c')
+           ->join('c.groups', 'g')
+           ->where('g.name = :name')
+           ->setParameter('name', $name)
+           ->orderBy('c.email');
+
+        return $qb->getQuery()->getResult();
+    }
+    /**
      * Remove all the table content
      */
     public function removeAll()

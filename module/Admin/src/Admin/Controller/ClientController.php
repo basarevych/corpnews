@@ -69,6 +69,26 @@ class ClientController extends AbstractActionController
         $em = $sl->get('Doctrine\ORM\EntityManager');
         $translate = $sl->get('viewhelpermanager')->get('translate');
 
+        // Handle validate request
+        if ($this->params()->fromQuery('query') == 'validate') {
+            $field = $this->params()->fromQuery('field');
+            $data = $this->params()->fromQuery('form');
+
+            $form = new EditClientForm($sl, @$data['id']);
+            $form->setData($data);
+            $form->isValid();
+
+            $control = $form->get($field);
+            $messages = [];
+            foreach ($control->getMessages() as $msg)
+                $messages[] = $translate($msg);
+
+            return new JsonModel([
+                'valid'     => (count($messages) == 0),
+                'messages'  => $messages,
+            ]);
+        }
+
         $entity = null;
         $id = $this->params()->fromQuery('id');
         if (!$id)
@@ -83,25 +103,6 @@ class ClientController extends AbstractActionController
         $script = null;
         $form = new EditClientForm($sl, $id);
         $messages = [];
-
-        // Handle validate request
-        if ($this->params()->fromQuery('query') == 'validate') {
-            $field = $this->params()->fromQuery('field');
-            $data = $this->params()->fromQuery('form');
-
-            $form->setData($data);
-            $form->isValid();
-
-            $control = $form->get($field);
-            $messages = [];
-            foreach ($control->getMessages() as $msg)
-                $messages[] = $translate($msg);
-
-            return new JsonModel([
-                'valid'     => (count($messages) == 0),
-                'messages'  => $messages,
-            ]);
-        }
 
         $request = $this->getRequest();
         if ($request->isPost()) {  // Handle form submission

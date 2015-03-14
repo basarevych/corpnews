@@ -23,8 +23,9 @@ return [
     // GroupController
     'Create group' => 'Create group',
     'Delete group' => 'Create group',
-    'Number of clients' => 'Число клиентов',
+    'Number of clients' => 'Number of clients',
     'CONFIRM_DELETE_GROUP' => 'Delete selected group(s)?',
+    'CANNOT_DELETE_SYSTEM_GROUPS' => 'NOTE: System groups can not be deleted',
 
     // ClientController
     'Filled forms' => 'Filled forms',
@@ -61,6 +62,7 @@ return [
     'CAMPAIGN_STEP_2_TEXT' => 'Test campaign',
     'CAMPAIGN_STEP_3_TITLE' => 'Step 3',
     'CAMPAIGN_STEP_3_TEXT' => 'Start campaign',
+    'TEST_CAMPAIGN_NO_TESTERS' => 'No testers found.<br><br>Please add clients to "Testers" group',
     'CONFIRM_DELETE_CAMPAIGN' => 'Delete selected campaign(s)?',
 
     // DocumentController

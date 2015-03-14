@@ -5,6 +5,7 @@ namespace ApplicationTest\Controller;
 use Zend\Test\PHPUnit\Controller\AbstractConsoleControllerTestCase;
 use Application\Entity\Setting as SettingEntity;
 use Application\Entity\Client as ClientEntity;
+use Application\Entity\Group as GroupEntity;
 use Application\Model\Mailbox;
 use Application\Model\Letter;
 use DataForm\Document\Profile as ProfileDocument;
@@ -32,6 +33,11 @@ class ConsoleControllerTest extends AbstractConsoleControllerTestCase
                                  ->setMethods([ 'find', 'findAll' ])
                                  ->getMock();
 
+        $this->repoGroup = $this->getMockBuilder('Application\Client\GroupRepository')
+                                ->disableOriginalConstructor()
+                                ->setMethods([ 'findOneByName' ])
+                                ->getMock();
+
         $this->autodelete = 30;
         $this->repoSetting->expects($this->any())
                           ->method('getValue')
@@ -42,6 +48,7 @@ class ConsoleControllerTest extends AbstractConsoleControllerTestCase
                  ->will($this->returnValueMap([
                     [ 'Application\Entity\Setting', $this->repoSetting ],
                     [ 'Application\Entity\Client', $this->repoClient ],
+                    [ 'Application\Entity\Group', $this->repoGroup ],
                 ]));
 
         $this->dm = $this->getMockBuilder('Doctrine\ODM\MongoDB\DocumentManager')
@@ -227,10 +234,17 @@ class ConsoleControllerTest extends AbstractConsoleControllerTestCase
                           ->method('findOneByName')
                           ->will($this->returnValue(null));
 
+        $this->repoGroup->expects($this->any())
+                        ->method('findOneByName')
+                        ->will($this->returnValue(null));
+
         $persistedSettings = [];
-        $callback = function ($entity) use (&$persistedSettings) {
+        $persistedGroups = [];
+        $callback = function ($entity) use (&$persistedSettings, &$persistedGroups) {
             if ($entity instanceof SettingEntity)
                 $persistedSettings[] = $entity;
+            else if ($entity instanceof GroupEntity)
+                $persistedGroups[] = $entity;
         };
 
         $this->em->expects($this->any())
@@ -248,8 +262,13 @@ class ConsoleControllerTest extends AbstractConsoleControllerTestCase
                 $autodelete = true;
             }
         }
-
         $this->assertEquals(true, $autodelete, "MailboxAutodelete was not created");
+
+        $this->assertEquals(true, count($persistedGroups) == count(GroupEntity::getSystemNames()), "All system Groups should have been saved");
+
+        $system = GroupEntity::getSystemNames();
+        for ($i = 0; $i < count($persistedGroups); $i++)
+            $this->assertEquals($system[$i], $persistedGroups[$i]->getName(), "System group not created");
     }
 
     public function testCheckDbActionCanBeAccessed()

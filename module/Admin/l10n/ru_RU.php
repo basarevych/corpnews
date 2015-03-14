@@ -23,7 +23,9 @@ return [
     // GroupController
     'Create group' => 'Создать группу',
     'Delete group' => 'Удалить группу',
+    'Number of clients' => 'Число клиентов',
     'CONFIRM_DELETE_GROUP' => 'Удалить выбранную группу (группы)?',
+    'CANNOT_DELETE_SYSTEM_GROUPS' => 'NOTE: Системные группы не могут быть удалены',
 
     // ClientController
     'Filled forms' => 'Заполненные формы',
@@ -61,6 +63,7 @@ return [
     'CAMPAIGN_STEP_2_TEXT' => 'Тестировать кампанию',
     'CAMPAIGN_STEP_3_TITLE' => 'Шаг 3',
     'CAMPAIGN_STEP_3_TEXT' => 'Начать кампанию',
+    'TEST_CAMPAIGN_NO_TESTERS' => 'Тестеры не найдены.<br><br>Пожалуйста, добавьте киентов в группу "Testers"',
     'CONFIRM_DELETE_CAMPAIGN' => 'Удалить выбранную кампанию (кампании)?',
 
     // DocumentController

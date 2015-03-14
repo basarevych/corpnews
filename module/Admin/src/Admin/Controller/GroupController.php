@@ -155,6 +155,21 @@ class GroupController extends AbstractActionController
         $form = new ConfirmForm();
         $messages = [];
 
+        $entities = [];
+        $keepSystemGroup = ($id == '_all');
+        if ($id != '_all') {
+            foreach (explode(',', $id) as $item) {
+                $entity = $repo->find($item);
+                if (!$entity)
+                    continue;
+
+                if (in_array($entity->getName(), GroupEntity::getSystemNames()))
+                    $keepSystemGroup = true;
+                else
+                    $entities[] = $entity;
+            }
+        }
+
         $request = $this->getRequest();
         if ($request->isPost()) {
             $form->setData($request->getPost());
@@ -163,11 +178,7 @@ class GroupController extends AbstractActionController
                 if ($id == '_all') {
                     $repo->removeAll();
                 } else {
-                    foreach (explode(',', $id) as $item) {
-                        $entity = $repo->find($item);
-                        if (!$entity)
-                            continue;
-
+                    foreach ($entities as $entity) {
                         $em->remove($entity);
                         $em->flush();
                     }
@@ -182,9 +193,11 @@ class GroupController extends AbstractActionController
         }
 
         $model = new ViewModel([
-            'script'    => $script,
-            'form'      => $form,
-            'messages'  => $messages,
+            'script'            => $script,
+            'form'              => $form,
+            'messages'          => $messages,
+            'systemGroups'      => GroupEntity::getSystemNames(),
+            'keepSystemGroup'   => $keepSystemGroup,
         ]);
         $model->setTerminal(true);
         return $model;

@@ -11,6 +11,7 @@ namespace Application\Controller;
 
 use Zend\Mvc\Controller\AbstractConsoleController;
 use Application\Entity\Setting as SettingEntity;
+use Application\Entity\Group as GroupEntity;
 use Application\Model\Mailbox;
 
 /**
@@ -212,6 +213,18 @@ class ConsoleController extends AbstractConsoleController
 
             $em->persist($autodelete);
             $em->flush();
+        }
+
+        foreach (GroupEntity::getSystemNames() as $name) {
+            $group = $em->getRepository('Application\Entity\Group')
+                        ->findOneByName($name);
+            if (!$group) {
+                $group = new GroupEntity();
+                $group->setName($name);
+
+                $em->persist($group);
+                $em->flush();
+            }
         }
     }
 

@@ -16,6 +16,7 @@ use DynamicTable\Table;
 use DynamicTable\Adapter\DoctrineORMAdapter;
 use Application\Exception\NotFoundException;
 use Application\Entity\Campaign as CampaignEntity;
+use Application\Entity\Group as GroupEntity;
 use Application\Form\Confirm as ConfirmForm;
 use Admin\Form\EditCampaign as EditCampaignForm;
 
@@ -162,6 +163,33 @@ class CampaignController extends AbstractActionController
             'form'      => $form,
             'messages'  => $messages,
             'saved'     => $saved,
+        ]);
+    }
+
+    /**
+     * Test campaign action
+     */
+    public function testAction()
+    {
+        $id = $this->params()->fromQuery('id');
+        if (!$id)
+            throw new NotFoundException("No 'id' parameter given");
+
+        $sl = $this->getServiceLocator();
+        $em = $sl->get('Doctrine\ORM\EntityManager');
+        $translate = $sl->get('viewhelpermanager')->get('translate');
+
+        $entity = $em->getRepository('Application\Entity\Campaign')
+                     ->find($id);
+        if (!$entity)
+            throw new NotFoundException('Entity not found');
+
+
+        $testers = $em->getRepository('Application\Entity\Client')
+                      ->findByGroupName(GroupEntity::NAME_TESTERS);
+
+        return new ViewModel([
+            'testers' => $testers,
         ]);
     }
 
