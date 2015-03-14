@@ -17,55 +17,52 @@
                     <div class="panel-heading">
                         <h3 class="panel-title"><?= $this->translate('Status filter') ?></h3>
                     </div>
-                    <div class="panel-body checkbox-panel">
+                    <div class="panel-body button-panel">
                         <div class="checkbox">
                             <label>
-                                <input type="checkbox"
-                                       <?= $this->createdFilter ? 'checked="checked"' : '' ?>
+                                <input type="checkbox" checked="checked"
                                        onclick="toggleFilter('created')">
                                 <?= $this->translate('STATUS_CREATED') ?>
                             </label>
                         </div>
                         <div class="checkbox">
                             <label>
-                                <input type="checkbox"
-                                       <?= $this->testedFilter ? 'checked="checked"' : '' ?>
+                                <input type="checkbox" checked="checked"
                                        onclick="toggleFilter('tested')">
                                 <?= $this->translate('STATUS_TESTED') ?>
                             </label>
                         </div>
                         <div class="checkbox">
                             <label>
-                                <input type="checkbox"
-                                       <?= $this->queuedFilter ? 'checked="checked"' : '' ?>
+                                <input type="checkbox" checked="checked"
                                        onclick="toggleFilter('queued')">
                                 <?= $this->translate('STATUS_QUEUED') ?>
                             </label>
                         </div>
                         <div class="checkbox">
                             <label>
-                                <input type="checkbox"
-                                       <?= $this->startedFilter ? 'checked="checked"' : '' ?>
+                                <input type="checkbox" checked="checked"
                                        onclick="toggleFilter('started')">
                                 <?= $this->translate('STATUS_STARTED') ?>
                             </label>
                         </div>
                         <div class="checkbox">
                             <label>
-                                <input type="checkbox"
-                                       <?= $this->pausedFilter ? 'checked="checked"' : '' ?>
+                                <input type="checkbox" checked="checked"
                                        onclick="toggleFilter('paused')">
                                 <?= $this->translate('STATUS_PAUSED') ?>
                             </label>
                         </div>
                         <div class="checkbox">
                             <label>
-                                <input type="checkbox"
-                                       <?= $this->finishedFilter ? 'checked="checked"' : '' ?>
+                                <input type="checkbox" checked="checked"
                                        onclick="toggleFilter('finished')">
                                 <?= $this->translate('STATUS_FINISHED') ?>
                             </label>
                         </div>
+                        <button class="btn btn-default" onclick="applyFilter()">
+                            <?= $this->translate('Apply') ?>
+                        </button>
                     </div>
                 </div>
 
@@ -85,30 +82,6 @@
         <div class="col-sm-9">
             <div id="table-campaigns"></div>
             <script>
-                $('#table-campaigns').dynamicTable({
-                    url: '<?= $this->basePath('/admin/campaign/campaign-table') ?>',
-                    row_id_column: 'id',
-                    sort_column: 'when_created',
-                    sort_dir: 'desc',
-                    loader_image: '<?= $this->basePath('/img/loader.gif') ?>',
-                    strings: dynamicTableStrings,
-                    mapper: function (row) {
-                        if (row['when_created'] != null) {
-                            var m = moment.unix(row['when_created']).local();
-                            row['when_created'] = m.format('YYYY-MM-DD HH:mm:ss Z');
-                        }
-                        if (row['when_started'] != null) {
-                            var m = moment.unix(row['when_started']).local();
-                            row['when_started'] = m.format('YYYY-MM-DD HH:mm:ss Z');
-                        }
-                        if (row['when_finished'] != null) {
-                            var m = moment.unix(row['when_finished']).local();
-                            row['when_finished'] = m.format('YYYY-MM-DD HH:mm:ss Z');
-                        }
-
-                        return row;
-                    },
-                });
                 $('#table-campaigns').on('dt.selected', function () {
                     updateActions();
                 });
@@ -121,14 +94,14 @@
 </div>
 
 <script>
-    function toggleFilter(name) {
-        var created = <?= $this->createdFilter ? 'true' : 'false' ?>;
-        var tested = <?= $this->testedFilter ? 'true' : 'false' ?>;
-        var queued = <?= $this->queuedFilter ? 'true' : 'false' ?>;
-        var started = <?= $this->startedFilter ? 'true' : 'false' ?>;
-        var paused = <?= $this->pausedFilter ? 'true' : 'false' ?>;
-        var finished = <?= $this->finishedFilter ? 'true' : 'false' ?>;
+    var created = true;
+    var tested = true;
+    var queued = true;
+    var started = true;
+    var paused = true;
+    var finished = true;
 
+    function toggleFilter(name) {
         switch (name) {
             case 'created':     created = !created; break;
             case 'tested':      tested = !tested; break;
@@ -137,15 +110,43 @@
             case 'paused':      paused = !paused; break;
             case 'finished':    finished = !finished; break;
         }
+    }
 
-        window.location = '<?= $this->basePath('/admin/campaign') ?>'
+    function applyFilter() {
+        var url = '<?= $this->basePath('/admin/campaign/campaign-table') ?>'
             + '?created=' + (created ? '1' : '0')
             + '&tested=' + (tested ? '1' : '0')
             + '&queued=' + (queued ? '1' : '0')
             + '&started=' + (started ? '1' : '0')
             + '&paused=' + (paused ? '1' : '0')
             + '&finished=' + (finished ? '1' : '0');
+
+        $('#table-campaigns').dynamicTable({
+            url: url,
+            row_id_column: 'id',
+            sort_column: 'when_created',
+            sort_dir: 'desc',
+            loader_image: '<?= $this->basePath('/img/loader.gif') ?>',
+            strings: dynamicTableStrings,
+            mapper: function (row) {
+                if (row['when_created'] != null) {
+                    var m = moment.unix(row['when_created']).local();
+                    row['when_created'] = m.format('YYYY-MM-DD HH:mm:ss Z');
+                }
+                if (row['when_started'] != null) {
+                    var m = moment.unix(row['when_started']).local();
+                    row['when_started'] = m.format('YYYY-MM-DD HH:mm:ss Z');
+                }
+                if (row['when_finished'] != null) {
+                    var m = moment.unix(row['when_finished']).local();
+                    row['when_finished'] = m.format('YYYY-MM-DD HH:mm:ss Z');
+                }
+
+                return row;
+            },
+        });
     }
+    applyFilter();
 
     function updateActions() {
         var table = $('#table-campaigns').data('dynamicTable');

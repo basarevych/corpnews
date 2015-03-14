@@ -31,21 +31,7 @@ class CampaignController extends AbstractActionController
      */
     public function indexAction()
     {
-        $createdFilter = $this->params()->fromQuery('created', 1);
-        $testedFilter = $this->params()->fromQuery('tested', 1);
-        $queuedFilter = $this->params()->fromQuery('queued', 1);
-        $startedFilter = $this->params()->fromQuery('started', 1);
-        $pausedFilter = $this->params()->fromQuery('paused', 1);
-        $finishedFilter = $this->params()->fromQuery('finished', 1);
-
-        return new ViewModel([
-            'createdFilter' => $createdFilter,
-            'testedFilter' => $testedFilter,
-            'queuedFilter' => $queuedFilter,
-            'startedFilter' => $startedFilter,
-            'pausedFilter' => $pausedFilter,
-            'finishedFilter' => $finishedFilter,
-        ]);
+        return new ViewModel();
     }
 
     /**
@@ -212,9 +198,24 @@ class CampaignController extends AbstractActionController
         $escapeHtml = $sl->get('viewhelpermanager')->get('escapeHtml');
         $basePath = $sl->get('viewhelpermanager')->get('basePath');
 
+        $createdFilter = $this->params()->fromQuery('created', 1);
+        $testedFilter = $this->params()->fromQuery('tested', 1);
+        $queuedFilter = $this->params()->fromQuery('queued', 1);
+        $startedFilter = $this->params()->fromQuery('started', 1);
+        $pausedFilter = $this->params()->fromQuery('paused', 1);
+        $finishedFilter = $this->params()->fromQuery('finished', 1);
+
+        $filter = [];
+        foreach (CampaignEntity::getStatuses() as $status) {
+            if ($this->params()->fromQuery($status, 1))
+                $filter[] = $status;
+        }
+
         $qb = $em->createQueryBuilder();
         $qb->select('c')
-           ->from('Application\Entity\Campaign', 'c');
+           ->from('Application\Entity\Campaign', 'c')
+           ->andWhere('c.status IN (:status_filter)')
+           ->setParameter('status_filter', $filter);
 
         $adapter = new DoctrineORMAdapter();
         $adapter->setQueryBuilder($qb);
