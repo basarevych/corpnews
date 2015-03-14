@@ -146,7 +146,9 @@ class EditClient extends Form
         $whenBounced = new Input('when_bounced');
         $whenBounced->setRequired(false)
                     ->setBreakOnFailure(false)
-                    ->getValidatorChain()
+                    ->getFilterChain()
+                    ->attach(new Filter\StringTrim());
+        $whenBounced->getValidatorChain()
                     ->attach(new Validator\Date($params));
         $filter->add($whenBounced);
 

@@ -3,16 +3,17 @@
 namespace AdminTest\Form;
 
 use Zend\Test\PHPUnit\Controller\AbstractControllerTestCase;
+use Admin\Form\EditCampaign as EditCampaignForm;
+use Application\Entity\Campaign as CampaignEntity;
 use Application\Entity\Group as GroupEntity;
-use Admin\Form\EditClient as EditClientForm;
 
-class EditClientQueryMock {
+class EditCampaignQueryMock {
     public function getSingleScalarResult() {
         return 0;
     }
 }
 
-class EditClientTest extends AbstractControllerTestCase
+class EditCampaignTest extends AbstractControllerTestCase
 {
     public function setUp()
     {
@@ -30,21 +31,23 @@ class EditClientTest extends AbstractControllerTestCase
                                  ->setMethods([ 'findBy' ])
                                  ->getMock();
 
-        $a = new GroupEntity();
-        $a->setName('a');
+        $this->group = new GroupEntity();
+        $this->group->setName('group');
 
-        $reflection = new \ReflectionClass(get_class($a));
+        $reflection = new \ReflectionClass(get_class($this->group));
         $property = $reflection->getProperty('id');
         $property->setAccessible(true);
-        $property->setValue($a, 42);
+        $property->setValue($this->group, 9000);
 
         $this->repoGroups->expects($this->any())
                          ->method('findBy')
-                         ->will($this->returnValue([ $a ]));
+                         ->will($this->returnValue([ $this->group ]));
 
         $this->em->expects($this->any())
                  ->method('getRepository')
-                 ->will($this->returnValue($this->repoGroups));
+                 ->will($this->returnValueMap([
+                    [ 'Application\Entity\Group', $this->repoGroups ],
+                 ]));
 
         $this->qb = $this->getMockBuilder('Doctrine\ORM\QueryBuilder')
                          ->disableOriginalConstructor()
@@ -57,7 +60,7 @@ class EditClientTest extends AbstractControllerTestCase
 
         $this->qb->expects($this->any())
                  ->method('getQuery')
-                 ->will($this->returnValue(new EditClientQueryMock()));
+                 ->will($this->returnValue(new EditCampaignQueryMock()));
 
         $sl = $this->getApplicationServiceLocator();
         $sl->setAllowOverride(true);
@@ -66,7 +69,7 @@ class EditClientTest extends AbstractControllerTestCase
 
     public function testInvalidForm()
     {
-        $form = new EditClientForm($this->em, 42);
+        $form = new EditCampaignForm($this->em);
 
         $input = [
         ];
@@ -76,21 +79,21 @@ class EditClientTest extends AbstractControllerTestCase
 
         $this->assertEquals(false, $valid, "Form should not be reported as valid");
         $this->assertGreaterThan(0, count($form->get('security')->getMessages()), "Security should have errors");
-        $this->assertGreaterThan(0, count($form->get('id')->getMessages()), "ID should have errors");
-        $this->assertGreaterThan(0, count($form->get('email')->getMessages()), "Email should have errors");
+        $this->assertGreaterThan(0, count($form->get('name')->getMessages()), "Name should have errors");
+        $this->assertGreaterThan(0, count($form->get('groups')->getMessages()), "Groups should have errors");
     }
 
     public function testValidForm()
     {
-        $form = new EditClientForm($this->em, 42);
+        $form = new EditCampaignForm($this->em);
         $dt = new \DateTime();
-        $format = $form->get('when_bounced')->getFormat();
+        $format = $form->get('when_deadline')->getFormat();
 
         $input = [
             'security' => $form->get('security')->getValue(),
-            'id' => 42,
-            'email' => ' email@example.com ',
-            'when_bounced' => " " . $dt->format($format),
+            'name' => ' example ',
+            'when_deadline' => " " . $dt->format($format),
+            'groups' => [ 9000 ],
         ];
 
         $form->setData($input);
@@ -98,7 +101,8 @@ class EditClientTest extends AbstractControllerTestCase
         $output = $form->getData();
 
         $this->assertEquals(true, $valid, "Form should be reported as valid");
-        $this->assertEquals('email@example.com', $output['email'], "Email should be trimmed");
-        $this->assertEquals($dt->format($format), $output['when_bounced'], "WhenBounced should be trimmed and converted");
+        $this->assertEquals('example', $output['name'], "Name should be trimmed");
+        $this->assertEquals($dt->format($format), $output['when_deadline'], "Deadline should be trimmed and converted");
+        $this->assertEquals([ 9000 ], $output['groups'], "Name should be trimmed");
     }
 }

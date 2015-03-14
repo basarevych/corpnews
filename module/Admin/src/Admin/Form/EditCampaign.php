@@ -110,7 +110,9 @@ class EditCampaign extends Form
         $whenDeadline = new Input('when_deadline');
         $whenDeadline->setRequired(false)
                      ->setBreakOnFailure(false)
-                     ->getValidatorChain()
+                     ->getFilterChain()
+                     ->attach(new Filter\StringTrim());
+        $whenDeadline->getValidatorChain()
                      ->attach(new Validator\Date($params));
         $filter->add($whenDeadline);
 
