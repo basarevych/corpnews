@@ -19,9 +19,6 @@ class CampaignControllerQueryMock {
 
 class CampaignControllerTest extends AbstractHttpControllerTestCase
 {
-    use \ApplicationTest\Controller\RegexAtLeastOnceTrait;
-    use \ApplicationTest\Controller\PostRedirectGetTrait;
-
     public function setUp()
     {
         $this->setApplicationConfig(require 'config/application.config.php');
@@ -105,13 +102,6 @@ class CampaignControllerTest extends AbstractHttpControllerTestCase
 
         $this->sl->setAllowOverride(true);
         $this->sl->setService('Doctrine\ORM\EntityManager', $this->em);
-    }
-
-    public function setUpAdminAccess()
-    {
-        $session = $this->sl->get('Session');
-        $cnt = $session->getContainer();
-        $cnt->is_admin = true;
     }
 
     public function testIndexActionCanBeAccessed()
