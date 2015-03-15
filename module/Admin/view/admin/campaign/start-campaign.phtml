@@ -17,131 +17,206 @@ $groups = $form->get('groups');
 
 ?>
 
-<form class="form-horizontal" name="<?= $form->getName() ?>" onsubmit="return false"
-      method="<?= $form->getAttribute('method') ?>"
-      action="<?= $this->basePath('/admin/campaign/start-campaign') ?>">
+<?php if (count($this->testers) == 0): ?>
+    <p><?= $this->translate('CAMPAIGN_NO_TESTERS') ?></p>
+<?php else: ?>
 
-    <input type="hidden"
-           name="<?= $security->getName() ?>"
-           value="<?= $security->getValue() ?>">
+    <div role="tabpanel">
 
-    <input type="hidden"
-           name="<?= $id->getName() ?>"
-           value="<?= $id->getValue() ?>">
+        <ul class="nav nav-tabs" role="tablist">
+            <li role="presentation" class="active">
+                <a href="#tab-test" aria-controls="tab-test" role="tab" data-toggle="tab">
+                    <?= $this->translate('Test') ?>
+                </a>
+            </li>
+            <li role="presentation">
+                <a href="#tab-launch" aria-controls="tab-launch" role="tab" data-toggle="tab">
+                    <?= $this->translate('Launch') ?>
+                </a>
+            </li>
+        </ul>
 
-    <?php foreach (array_merge($this->messages, $security->getMessages()) as $msg): ?>
-        <div class="alert alert-danger">
-            <center><?= $this->escapeHtml($this->translate($msg)) ?></center>
-        </div>
-    <?php endforeach ?>
+        <div class="tab-content">
+            <div role="tabpanel" class="tab-pane tab-padded-pane active" id="tab-test">
+                <form class="form-horizontal" onsubmit="return false">
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label" for="test-clients">
+                            <?= $this->escapeHtml($this->translate('Tester')) ?>:
+                            <span class="required-marker text-danger">
+                                <?= $this->translate('REQUIRED FIELD') ?>
+                            </span>
+                        </label>
+                        <div class="col-sm-8">
+                            <?php $first = true ?>
+                            <?php foreach ($this->testers as $tester): ?>
+                                <div class="radio">
+                                    <label>
+                                        <input type="radio"
+                                               name="test-clients"
+                                               value="<?= $this->escapeHtml($tester->getEmail()) ?>"
+                                               onchange="updateTesters()"
+                                               <?= $first ? 'checked="checked"' : '' ?>
+                                               data-on-enter="$('#test-button').focus().click()">
+                                        <?= $this->escapeHtml($tester->getEmail()) ?>
+                                    </label>
+                                </div>
+                                <?php if ($first) $first = false ?>
+                            <?php endforeach ?>
+                        </div>
+                    </div>
 
-    <?php if ($this->saved): ?>
-        <div class="alert alert-success">
-            <center><?= $this->escapeHtml($this->translate('Data saved')) ?></center>
-        </div>
-    <?php endif ?>
+                    <div id="test-forms" class="form-group">
+                        <label class="col-sm-4 control-label" for="test-clients">
+                            <?= $this->escapeHtml($this->translate('Variables')) ?>:
+                        </label>
+                        <div class="col-sm-8">
+                            <p class="form-control-static"><?= $this->translate('CAMPAIGN_TEST_FORMS') ?>:</p>
+                            <ul class="content"></ul>
+                        </div>
+                    </div>
 
-    <?php $valid = count($name->getMessages()) == 0 ?>
-    <div class="form-group <?= $valid ? '' : 'has-error' ?>">
-        <label class="col-sm-4 control-label" for="<?= $name->getName() ?>">
-            <?= $this->escapeHtml($this->translate($name->getLabel())) ?>:
-            <span class="required-marker text-danger">
-                <?= $this->translate('REQUIRED FIELD') ?>
-            </span>
-        </label>
-        <div class="col-sm-6">
-            <input type="text" class="form-control"
-                   name="<?= $name->getName() ?>"
-                   value="<?= $this->escapeHtml($name->getValue()) ?>"
-                   data-on-blur="validateFormField($('form [name=<?= $name->getName() ?>]'))"
-                   data-on-enter="$('form [name=<?= $whenDeadline->getName() ?>]').focus()">
-            <div class="help-block">
-                <?php if (!$valid): ?>
-                    <ul class="list-unstyled icon-list error-list">
-                    <?php foreach ($name->getMessages() as $msg): ?>
-                        <li><?= $this->escapeHtml($this->translate($msg)) ?></li>
+                    <div class="form-group">
+                        <div class="col-sm-offset-4 col-sm-8">
+                            <button id="test-button" type="button" class="btn btn-primary">
+                                <?= $this->translate('Send test letter') ?>
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <div role="tabpanel" class="tab-pane tab-padded-pane" id="tab-launch">
+                <form class="form-horizontal" name="<?= $form->getName() ?>" onsubmit="return false"
+                      method="<?= $form->getAttribute('method') ?>"
+                      action="<?= $this->basePath('/admin/campaign/start-campaign') ?>">
+
+                    <input type="hidden"
+                           name="<?= $security->getName() ?>"
+                           value="<?= $security->getValue() ?>">
+
+                    <input type="hidden"
+                           name="<?= $id->getName() ?>"
+                           value="<?= $id->getValue() ?>">
+
+                    <?php foreach (array_merge($this->messages, $security->getMessages()) as $msg): ?>
+                        <div class="alert alert-danger">
+                            <center><?= $this->escapeHtml($this->translate($msg)) ?></center>
+                        </div>
                     <?php endforeach ?>
-                    </ul>
-                <?php endif ?>
+
+                    <?php if ($this->saved): ?>
+                        <div class="alert alert-success">
+                            <center><?= $this->escapeHtml($this->translate('Data saved')) ?></center>
+                        </div>
+                    <?php endif ?>
+
+                    <?php $valid = count($name->getMessages()) == 0 ?>
+                    <div class="form-group <?= $valid ? '' : 'has-error' ?>">
+                        <label class="col-sm-4 control-label" for="<?= $name->getName() ?>">
+                            <?= $this->escapeHtml($this->translate($name->getLabel())) ?>:
+                            <span class="required-marker text-danger">
+                                <?= $this->translate('REQUIRED FIELD') ?>
+                            </span>
+                        </label>
+                        <div class="col-sm-8">
+                            <input type="text" class="form-control"
+                                   name="<?= $name->getName() ?>"
+                                   value="<?= $this->escapeHtml($name->getValue()) ?>"
+                                   data-on-blur="validateFormField($('form [name=<?= $name->getName() ?>]'))"
+                                   data-on-enter="$('#modal-form [name=<?= $whenDeadline->getName() ?>]').focus()">
+                            <div class="help-block">
+                                <?php if (!$valid): ?>
+                                    <ul class="list-unstyled icon-list error-list">
+                                    <?php foreach ($name->getMessages() as $msg): ?>
+                                        <li><?= $this->escapeHtml($this->translate($msg)) ?></li>
+                                    <?php endforeach ?>
+                                    </ul>
+                                <?php endif ?>
+                            </div>
+                        </div>
+                    </div>
+
+                    <?php $valid = count($whenDeadline->getMessages()) == 0 ?>
+                    <div class="form-group <?= $valid ? '' : 'has-error' ?>">
+                        <label class="col-sm-4 control-label" for="<?= $whenDeadline->getName() ?>">
+                            <?= $this->escapeHtml($this->translate($whenDeadline->getLabel())) ?>:
+                        </label>
+                        <div class="col-sm-8">
+                            <div class="input-group date" id="dt-<?= $whenDeadline->getName() ?>">
+                                <input type="text" class="form-control"
+                                       name="<?= $whenDeadline->getName() ?>"
+                                       value="<?= $this->escapeHtml($whenDeadline->getValue()) ?>"
+                                       data-on-blur="validateFormField($('form [name=<?= $whenDeadline->getName() ?>]'))"
+                                       data-on-enter="$('#modal-form [type=checkbox]:first').focus()">
+                                <span class="input-group-addon">
+                                    <span class="glyphicon glyphicon-calendar"></span>
+                                </span>
+                            </div>
+                            <div class="help-block">
+                                <?php if (!$valid): ?>
+                                    <ul class="list-unstyled icon-list error-list">
+                                    <?php foreach ($whenDeadline->getMessages() as $msg): ?>
+                                        <li><?= $this->escapeHtml($this->translate($msg)) ?></li>
+                                    <?php endforeach ?>
+                                    </ul>
+                                <?php endif ?>
+                            </div>
+                            <script>
+                                $('#dt-<?= $whenDeadline->getName() ?>').datetimepicker({
+                                    format: "<?= $this->translate('GENERIC_MOMENT_FORMAT') ?>",
+                                    locale: '<?= \Locale::getDefault() ?>'
+                                });
+                            </script>
+                        </div>
+                    </div>
+
+                    <?php $valid = count($groups->getMessages()) == 0 ?>
+                    <div class="form-group <?= $valid ? '' : 'has-error' ?>">
+                        <label class="col-sm-4 control-label" for="<?= $groups->getName() ?>">
+                            <?= $this->escapeHtml($this->translate($groups->getLabel())) ?>:
+                            <span class="required-marker text-danger">
+                                <?= $this->translate('REQUIRED FIELD') ?>
+                            </span>
+                        </label>
+                        <div class="col-sm-8">
+                            <?php foreach ($groups->getValueOptions() as $value => $label): ?>
+                                <div class="checkbox">
+                                    <label>
+                                        <input type="checkbox"
+                                               name="<?= $groups->getName() ?>[]"
+                                               value="<?= $this->escapeHtml($value) ?>"
+                                               <?= in_array($value, $groups->getValue()) ? 'checked="checked"' : '' ?>
+                                               data-on-enter="$('#submit-button').focus().click()">
+                                        <?= $this->translate($label) ?>
+                                    </label>
+                                </div>
+                            <?php endforeach ?>
+                            <div class="help-block">
+                                <?php if (!$valid): ?>
+                                    <ul class="list-unstyled icon-list error-list">
+                                    <?php foreach ($groups->getMessages() as $msg): ?>
+                                        <li><?= $this->escapeHtml($this->translate($msg)) ?></li>
+                                    <?php endforeach ?>
+                                    </ul>
+                                <?php endif ?>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="col-sm-offset-4 col-sm-8">
+                            <button id="submit-button" type="button" class="btn btn-primary">
+                                <?= $this->translate('Start campaign') ?>
+                            </button>
+                        </div>
+                    </div>
+                </form>
             </div>
         </div>
+
     </div>
 
-    <?php $valid = count($whenDeadline->getMessages()) == 0 ?>
-    <div class="form-group <?= $valid ? '' : 'has-error' ?>">
-        <label class="col-sm-4 control-label" for="<?= $whenDeadline->getName() ?>">
-            <?= $this->escapeHtml($this->translate($whenDeadline->getLabel())) ?>:
-        </label>
-        <div class="col-sm-6">
-            <div class="input-group date" id="dt-<?= $whenDeadline->getName() ?>">
-                <input type="text" class="form-control"
-                       name="<?= $whenDeadline->getName() ?>"
-                       value="<?= $this->escapeHtml($whenDeadline->getValue()) ?>"
-                       data-on-blur="validateFormField($('form [name=<?= $whenDeadline->getName() ?>]'))"
-                       data-on-enter="$('form [name=<?= $groups->getName() ?>]').focus()">
-                <span class="input-group-addon">
-                    <span class="glyphicon glyphicon-calendar"></span>
-                </span>
-            </div>
-            <div class="help-block">
-                <?php if (!$valid): ?>
-                    <ul class="list-unstyled icon-list error-list">
-                    <?php foreach ($whenDeadline->getMessages() as $msg): ?>
-                        <li><?= $this->escapeHtml($this->translate($msg)) ?></li>
-                    <?php endforeach ?>
-                    </ul>
-                <?php endif ?>
-            </div>
-            <script>
-                $('#dt-<?= $whenDeadline->getName() ?>').datetimepicker({
-                    format: "<?= $this->translate('GENERIC_MOMENT_FORMAT') ?>",
-                    locale: '<?= \Locale::getDefault() ?>'
-                });
-            </script>
-        </div>
-    </div>
-
-    <?php $valid = count($groups->getMessages()) == 0 ?>
-    <div class="form-group <?= $valid ? '' : 'has-error' ?>">
-        <label class="col-sm-4 control-label" for="<?= $groups->getName() ?>">
-            <?= $this->escapeHtml($this->translate($groups->getLabel())) ?>:
-            <span class="required-marker text-danger">
-                <?= $this->translate('REQUIRED FIELD') ?>
-            </span>
-        </label>
-        <div class="col-sm-6">
-            <?php foreach ($groups->getValueOptions() as $value => $label): ?>
-                <div class="checkbox">
-                    <label>
-                        <input type="checkbox"
-                               name="<?= $groups->getName() ?>[]"
-                               value="<?= $this->escapeHtml($value) ?>"
-                               <?= in_array($value, $groups->getValue()) ? 'checked="checked"' : '' ?>
-                               data-on-enter="$('#modal-form button[type=submit]').focus().click()">
-                        <?= $this->translate($label) ?>
-                    </label>
-                </div>
-            <?php endforeach ?>
-            <div class="help-block">
-                <?php if (!$valid): ?>
-                    <ul class="list-unstyled icon-list error-list">
-                    <?php foreach ($groups->getMessages() as $msg): ?>
-                        <li><?= $this->escapeHtml($this->translate($msg)) ?></li>
-                    <?php endforeach ?>
-                    </ul>
-                <?php endif ?>
-            </div>
-        </div>
-    </div>
-
-    <div class="form-group">
-        <div class="col-sm-offset-4 col-sm-6">
-            <button id="start-button" type="button" class="btn btn-primary">
-                <?= $this->translate('Start campaign') ?>
-            </button>
-        </div>
-    </div>
-</form>
+<?php endif ?>
 
 <script>
     var modal = $('#modal-form');
@@ -149,7 +224,24 @@ $groups = $form->get('groups');
     modal.on('hide.bs.modal', function() {
         modal.find('button[type="submit"]').show();
     });
-    modal.find('#start-button')
+
+    function updateTesters() {
+        var email = $('#modal-form input[name="test-clients"]:checked').val();
+        var ul = $('<ul class="content"></ul>');
+        <?php foreach ($this->dataForms as $doc): ?>
+            var li = $('<li></li>');
+            li.html(
+                '<a target="_blank" href="<?= $this->basePath($doc['url']) ?>'
+                + '?email=' + email + '">'
+                + '<?= $this->escapeHtml($doc['title']) ?>'
+                + '</a>'
+            ).appendTo(ul);
+        <?php endforeach ?>
+        $('#test-forms .content').replaceWith(ul);
+    }
+    updateTesters();
+
+    $('#submit-button')
         .off('click')
         .on('click', function () {
             modal.find('form').ajaxSubmit({ // jQuery form plugin

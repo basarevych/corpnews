@@ -60,9 +60,16 @@ return [
     'Launch mail campaign' => 'Launch mail campaign',
     'Test' => 'Test',
     'Launch' => 'Launch',
-    'Test campaign' => 'Test campaign',
+    'Tester' => 'Tester',
+    'Variables' => 'Variables',
+    'Send test letter' => 'Send test letter',
     'Start campaign' => 'Start campaign',
-    'TEST_CAMPAIGN_NO_TESTERS' => 'No testers found.<br><br>Please add clients to "Testers" group',
+    'CAMPAIGN_NO_TESTERS' => 'No testers found.'
+        . '<br><br>'
+        . 'Please add clients to "Testers" group',
+    'CAMPAIGN_TEST_FORMS' => 'Mail parser variables are set to the appropriate fields of data forms'
+        . '<br><br>'
+        . 'You can edit the following data forms of selected tester',
     'CONFIRM_DELETE_CAMPAIGN' => 'Delete selected campaign(s)?',
 
     // DocumentController

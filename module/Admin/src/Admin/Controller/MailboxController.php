@@ -320,8 +320,8 @@ class MailboxController extends AbstractActionController
 
                     $script = "$('#modal-form').modal('hide'); "
                         . "window.location = '"
-                        . $basePath('/admin/campaign/edit')
-                        . "?id=" . $campaign->getId() . "'";
+                        . $basePath('/admin/campaign')
+                        . "'";
                 } else {
                     $script = "$('#modal-form').modal('hide'); reloadTables()";
                 }

@@ -17,6 +17,7 @@ use DynamicTable\Adapter\DoctrineORMAdapter;
 use Application\Exception\NotFoundException;
 use Application\Entity\Campaign as CampaignEntity;
 use Application\Entity\Group as GroupEntity;
+use Application\Entity\Client as ClientEntity;
 use Application\Form\Confirm as ConfirmForm;
 use Admin\Form\StartCampaign as StartCampaignForm;
 
@@ -67,7 +68,7 @@ class CampaignController extends AbstractActionController
     {
         $sl = $this->getServiceLocator();
         $em = $sl->get('Doctrine\ORM\EntityManager');
-        $repo = $em->getRepository('Application\Entity\Campaign');
+        $dfm = $sl->get('DataFormManager');
         $translate = $sl->get('viewhelpermanager')->get('translate');
 
         $form = new StartCampaignForm($sl);
@@ -99,9 +100,10 @@ class CampaignController extends AbstractActionController
         if (!$id)
             throw new \Exception('No "id" parameter');
 
-        $entity = $repo->find($id);
-        if (!$entity)
-            throw new NotFoundException('Entity not found');
+        $campaign = $em->getRepository('Application\Entity\Campaign')
+                       ->find($id);
+        if (!$campaign)
+            throw new NotFoundException('Campaign not found');
 
         $request = $this->getRequest();
         if ($request->isPost()) {
@@ -116,51 +118,64 @@ class CampaignController extends AbstractActionController
                     $date = \DateTime::createFromFormat($format, $data['when_deadline']);
                 }
 
-                $entity->setName($data['name']);
-                $entity->setWhenDeadline($date);
+                $campaign->setName($data['name']);
+                $campaign->setWhenDeadline($date);
 
-                foreach ($entity->getGroups() as $group) {
-                    $entity->removeGroup($group);
-                    $group->removeCampaign($entity);
+                foreach ($campaign->getGroups() as $group) {
+                    $campaign->removeGroup($group);
+                    $group->removeCampaign($campaign);
                 }
                 foreach ($data['groups'] as $groupId) {
                     $group = $em->getRepository('Application\Entity\Group')
                                 ->find($groupId);
                     if (!$group)
                         continue;
-                    $entity->addGroup($group);
-                    $group->addCampaign($entity);
+                    $campaign->addGroup($group);
+                    $group->addCampaign($campaign);
                     $em->persist($group);
                 }
 
-                $em->persist($entity);
+                $em->persist($campaign);
                 $em->flush();
 
                 $script = "$('#modal-form').modal('hide'); reloadTable()";
             }
         } else {
             $date = "";
-            if (($dt = $entity->getWhenDeadline()) !== null) {
+            if (($dt = $campaign->getWhenDeadline()) !== null) {
                 $format = $form->get('when_deadline')->getFormat();
                 $date = $dt->format($format);
             }
 
             $groups = [];
-            foreach ($entity->getGroups() as $group)
+            foreach ($campaign->getGroups() as $group)
                 $groups[] = $group->getId();
 
             $form->setData([
                 'id'            => $id,
-                'name'          => $entity->getName(),
+                'name'          => $campaign->getName(),
                 'when_deadline' => $date,
                 'groups'        => $groups,
             ]);
+        }
+
+        $testers = $em->getRepository('Application\Entity\Client')
+                      ->findByGroupName(GroupEntity::NAME_TESTERS);
+
+        $dataForms = [];
+        foreach ($dfm->getNames() as $name) {
+            $dataForms[] = [
+                'url'       => $dfm->getUrl($name),
+                'title'     => $dfm->getTitle($name),
+            ];
         }
 
         $model = new ViewModel([
             'script'    => $script,
             'form'      => $form,
             'messages'  => $messages,
+            'testers'   => $testers,
+            'dataForms' => $dataForms,
         ]);
         $model->setTerminal(true);
         return $model;
@@ -347,8 +362,9 @@ class CampaignController extends AbstractActionController
         $adapter->setQueryBuilder($qb);
 
         $mapper = function ($row) use ($escapeHtml, $basePath, $translate) {
-            $name = '<a href="javascript:void(0)" onclick="editCampaign(' . $row->getId() . ')">'
-                . $escapeHtml($row->getName()) . '</a>';
+            $name = $escapeHtml($row->getName()) . '</a>';
+            if (in_array($row->getStatus(), [ CampaignEntity::STATUS_STARTED, CampaignEntity::STATUS_PAUSED, CampaignEntity::STATUS_DONE ]))
+                $name = '<a href="' . $basePath('/admin/stats?id=') . $row->getId(). '">' . $name . '</a>';
 
             $groups = [];
             foreach ($row->getGroups() as $group)

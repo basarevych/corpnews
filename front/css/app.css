@@ -137,6 +137,13 @@ div.letter-frame {
     white-space: pre-wrap;
 }
 
+.tab-padded-pane {
+    padding: 30px 10px 10px 10px;
+    border-left: 1px solid #dddddd;
+    border-right: 1px solid #dddddd;
+    border-bottom: 1px solid #dddddd;
+}
+
 .button-panel {
     text-align: center;
 }
