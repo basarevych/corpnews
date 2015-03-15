@@ -185,6 +185,8 @@ function updateSidebar()
         var edge = element.attr('data-sidebar');
         var sizes = ['xs', 'sm', 'md', 'lg'];
 
+        element.css({ position: 'fixed' });
+
         var bottom = element.position().top + element.outerHeight(true),
             position = win.height() < bottom ? 'static' : undefined;
 

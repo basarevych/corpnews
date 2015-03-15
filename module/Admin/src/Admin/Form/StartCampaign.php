@@ -19,12 +19,12 @@ use Zend\ServiceManager\ServiceLocatorInterface;
 use Doctrine\ORM\EntityManager;
 
 /**
- * Edit campaign entity form
+ * Start campaign entity form
  *
  * @category    Admin
  * @package     Form
  */
-class EditCampaign extends Form
+class StartCampaign extends Form
 {
     /**
      * The input filter
@@ -56,6 +56,9 @@ class EditCampaign extends Form
 
         $csrf = new Element\Csrf('security');
         $this->add($csrf);
+
+        $id = new Element\Hidden('id');
+        $this->add($id);
 
         $name = new Element\Text('name');
         $name->setLabel('Name');
@@ -98,6 +101,11 @@ class EditCampaign extends Form
         $csrf->setRequired(true)
              ->setBreakOnFailure(false);
         $filter->add($csrf);
+
+        $id = new Input('id');
+        $id->setRequired(true)
+           ->setBreakOnFailure(false);
+        $filter->add($id);
 
         $name = new Input('name');
         $name->setRequired(true)

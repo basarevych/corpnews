@@ -18,7 +18,7 @@ use Application\Exception\NotFoundException;
 use Application\Entity\Campaign as CampaignEntity;
 use Application\Entity\Group as GroupEntity;
 use Application\Form\Confirm as ConfirmForm;
-use Admin\Form\EditCampaign as EditCampaignForm;
+use Admin\Form\StartCampaign as StartCampaignForm;
 
 /**
  * Campaigns controller
@@ -61,26 +61,18 @@ class CampaignController extends AbstractActionController
     }
 
     /**
-     * Edit campaign action
+     * Start/test campaign action
      */
-    public function editAction()
+    public function startCampaignAction()
     {
-        $id = $this->params()->fromQuery('id');
-        if (!$id)
-            throw new NotFoundException("No 'id' parameter given");
-
         $sl = $this->getServiceLocator();
         $em = $sl->get('Doctrine\ORM\EntityManager');
         $repo = $em->getRepository('Application\Entity\Campaign');
         $translate = $sl->get('viewhelpermanager')->get('translate');
 
-        $entity = $repo->find($id);
-        if (!$entity)
-            throw new NotFoundException('Entity not found');
-
-        $form = new EditCampaignForm($sl);
+        $form = new StartCampaignForm($sl);
         $messages = [];
-        $saved = false;
+        $script = "";
 
         // Handle validate request
         if ($this->params()->fromQuery('query') == 'validate') {
@@ -101,13 +93,19 @@ class CampaignController extends AbstractActionController
             ]);
         }
 
-        $request = $this->getRequest();
-        $prg = $this->prg($request->getRequestUri(), true);
-        if ($prg instanceof \Zend\Http\PhpEnvironment\Response)
-            return $prg;
+        $id = $this->params()->fromQuery('id');
+        if (!$id)
+            $id = $this->params()->fromPost('id');
+        if (!$id)
+            throw new \Exception('No "id" parameter');
 
-        if ($prg !== false) {
-            $form->setData($prg);
+        $entity = $repo->find($id);
+        if (!$entity)
+            throw new NotFoundException('Entity not found');
+
+        $request = $this->getRequest();
+        if ($request->isPost()) {
+            $form->setData($request->getPost());
 
             if ($form->isValid()) {
                 $data = $form->getData();
@@ -138,7 +136,7 @@ class CampaignController extends AbstractActionController
                 $em->persist($entity);
                 $em->flush();
 
-                $saved = true;
+                $script = "$('#modal-form').modal('hide'); reloadTable()";
             }
         } else {
             $date = "";
@@ -152,45 +150,20 @@ class CampaignController extends AbstractActionController
                 $groups[] = $group->getId();
 
             $form->setData([
+                'id'            => $id,
                 'name'          => $entity->getName(),
                 'when_deadline' => $date,
                 'groups'        => $groups,
             ]);
         }
 
-        return new ViewModel([
-            'id'        => $id,
+        $model = new ViewModel([
+            'script'    => $script,
             'form'      => $form,
             'messages'  => $messages,
-            'saved'     => $saved,
         ]);
-    }
-
-    /**
-     * Test campaign action
-     */
-    public function testAction()
-    {
-        $id = $this->params()->fromQuery('id');
-        if (!$id)
-            throw new NotFoundException("No 'id' parameter given");
-
-        $sl = $this->getServiceLocator();
-        $em = $sl->get('Doctrine\ORM\EntityManager');
-        $translate = $sl->get('viewhelpermanager')->get('translate');
-
-        $entity = $em->getRepository('Application\Entity\Campaign')
-                     ->find($id);
-        if (!$entity)
-            throw new NotFoundException('Entity not found');
-
-
-        $testers = $em->getRepository('Application\Entity\Client')
-                      ->findByGroupName(GroupEntity::NAME_TESTERS);
-
-        return new ViewModel([
-            'testers' => $testers,
-        ]);
+        $model->setTerminal(true);
+        return $model;
     }
 
     /**
@@ -374,7 +347,7 @@ class CampaignController extends AbstractActionController
         $adapter->setQueryBuilder($qb);
 
         $mapper = function ($row) use ($escapeHtml, $basePath, $translate) {
-            $name = '<a href="' . $basePath('/admin/campaign/edit?id=' . $row->getId()) .'">'
+            $name = '<a href="javascript:void(0)" onclick="editCampaign(' . $row->getId() . ')">'
                 . $escapeHtml($row->getName()) . '</a>';
 
             $groups = [];

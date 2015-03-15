@@ -9,7 +9,7 @@ use Zend\Test\PHPUnit\Controller\AbstractHttpControllerTestCase;
 use Webfactory\Doctrine\ORMTestInfrastructure\ORMInfrastructure;
 use Application\Entity\Campaign as CampaignEntity;
 use Application\Entity\Group as GroupEntity;
-use Admin\Form\EditCampaign as EditCampaignForm;
+use Admin\Form\StartCampaign as StartCampaignForm;
 
 class CampaignControllerQueryMock {
     public function getSingleScalarResult() {
@@ -175,9 +175,9 @@ class CampaignControllerTest extends AbstractHttpControllerTestCase
         $this->assertEquals(1, $data['rows'][0]['id'], "Invalid ID");
     }
 
-    public function testEditActionCanBeAccessed()
+    public function testStartCampaignActionCanBeAccessed()
     {
-        $this->dispatch('/admin/campaign/edit');
+        $this->dispatch('/admin/campaign/start-campaign');
 
         $this->assertModuleName('admin');
         $this->assertControllerName('admin\controller\campaign');
@@ -185,32 +185,29 @@ class CampaignControllerTest extends AbstractHttpControllerTestCase
         $this->assertMatchedRouteName('admin');
     }
 
-    public function testEditActionUpdatesCampaign()
+    public function testStartCampaignActionUpdatesCampaign()
     {
-        $this->setUpAdminAccess();
-
-        $this->dispatch('/admin/campaign/edit', HttpRequest::METHOD_GET, [ 'id' => 42 ]);
+        $this->dispatch('/admin/campaign/start-campaign', HttpRequest::METHOD_GET, [ 'id' => 42 ]);
+        $this->assertResponseStatusCode(200);
 
         $response = $this->getResponse();
         $dom = new Query($response->getContent());
         $result = $dom->execute('input[name="security"]');
         $security = count($result) ? $result[0]->getAttribute('value') : null;
 
-        $this->reset();
-
-        $this->setUp();
-        $this->setUpAdminAccess();
-
-        $form = new EditCampaignForm($this->sl);
+        $form = new StartCampaignForm($this->sl);
         $dt = new \DateTime();
         $format = $form->get('when_deadline')->getFormat();
 
-        $this->prg('/admin/campaign/edit?id=42', [
+        $postParams = [
             'security'  => $security,
+            'id' => 42,
             'name' => ' name ',
             'when_deadline' => $dt->format($format),
             'groups' => [ 9000 ],
-        ]);
+        ];
+        $this->dispatch('/admin/campaign/start-campaign', HttpRequest::METHOD_POST, $postParams);
+        $this->assertResponseStatusCode(200);
 
         $groups = array_values($this->campaign->getGroups()->toArray());
         $this->assertEquals('name', $this->campaign->getName(), "Name is wrong");
