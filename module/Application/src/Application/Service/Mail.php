@@ -15,8 +15,12 @@ use Zend\ServiceManager\ServiceLocatorInterface;
 use Zend\Mail\Transport;
 use Zend\Mime\Mime;
 use Zend\Mail\Message;
+use Zend\Mail\Headers;
 use Zend\Mime\Message as MimeMessage;
 use Zend\Mime\Part as MimePart;
+use Application\Model\Letter as LetterModel;
+use Application\Entity\Template as TemplateEntity;
+use Application\Entity\Client as ClientEntity;
 
 /**
  * Mail service
@@ -120,6 +124,34 @@ class Mail implements ServiceLocatorAwareInterface
         $msg->setBody($body);
         $msg->setEncoding('UTF-8');
 
+        return $msg;
+    }
+
+    /**
+     * Create parsed message
+     *
+     * @param TemplateEntity $template
+     * @param ClientEntity $client
+     * @return Message
+     */
+    public function createFromTemplate(TemplateEntity $template, ClientEntity $client)
+    {
+        $sl = $this->getServiceLocator();
+        $config = $sl->get('Config');
+
+        $mp = $sl->get('MailParser');
+        $mp->setClient($client);
+
+        $letter = new LetterModel(null);
+        $letter->setMid('<' . $template->getMessageId() . '>');
+        $letter->setSubject($template->getSubject());
+        $letter->setFrom(@$config['corpnews']['mail']['from_address']);
+        $letter->setTo($client->getEmail());
+
+        if (!$letter->load($template->getHeaders(), $template->getBody(), $mp))
+            return false;
+
+        $msg = Message::fromString($letter->getParsedSource());
         return $msg;
     }
 }

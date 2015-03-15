@@ -72,6 +72,7 @@ $groups = $form->get('groups');
                         <div class="col-sm-8">
                             <p class="form-control-static"><?= $this->translate('CAMPAIGN_TEST_FORMS') ?>:</p>
                             <ul class="content"></ul>
+                            <div class="result"></div>
                         </div>
                     </div>
 
@@ -240,6 +241,23 @@ $groups = $form->get('groups');
         $('#test-forms .content').replaceWith(ul);
     }
     updateTesters();
+
+    $('#test-button')
+        .off('click')
+        .on('click', function () {
+            var email = $('#modal-form input[name="test-clients"]:checked').val();
+
+            $.ajax({
+                url: '<?= $this->basePath('/admin/campaign/test-letter') ?>',
+                data: {
+                    campaign: <?= $this->id ?>,
+                    email: email,
+                },
+                success: function (data) {
+                    alert(data.result);
+                }
+            });
+        });
 
     $('#submit-button')
         .off('click')

@@ -14,5 +14,9 @@ return [
             'account'   => 'imap_username',
             'password'  => 'imap_password',
         ],
+
+        'mail' => [
+            'from_address'  => 'mail_from',
+        ],
     ],
 ];

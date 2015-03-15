@@ -119,6 +119,13 @@ class Letter
     protected $sections;
 
     /**
+     * Parsed body
+     *
+     * @var string
+     */
+    protected $parsedBody;
+
+    /**
      * Is the message successfully parsed?
      *
      * @var boolean
@@ -156,6 +163,18 @@ class Letter
     }
 
     /**
+     * UID setter
+     *
+     * @param integer $uid
+     * @return Letter
+     */
+    public function setUid($uid)
+    {
+        $this->uid = $uid;
+        return $this;
+    }
+
+    /**
      * UID getter
      *
      * @return string
@@ -163,6 +182,18 @@ class Letter
     public function getUid()
     {
         return $this->uid;
+    }
+
+    /**
+     * Message ID setter
+     *
+     * @param string $mid
+     * @return Letter
+     */
+    public function setMid($mid)
+    {
+        $this->mid = $mid;
+        return $this;
     }
 
     /**
@@ -176,13 +207,36 @@ class Letter
     }
 
     /**
+     * Date setter
+     *
+     * @param DateTime $date
+     */
+    public function setDate($date)
+    {
+        $this->date = $date;
+        return $this;
+    }
+
+    /**
      * Date getter
      *
-     * @return string
+     * @return DateTime
      */
     public function getDate()
     {
         return $this->date;
+    }
+
+    /**
+     * From field setter
+     *
+     * @param string $from
+     * @return Letter
+     */
+    public function setFrom($from)
+    {
+        $this->from = $from;
+        return $this;
     }
 
     /**
@@ -196,6 +250,18 @@ class Letter
     }
 
     /**
+     * To field setter
+     *
+     * @param string $to
+     * @return Letter
+     */
+    public function setTo($to)
+    {
+        $this->to = $to;
+        return $this;
+    }
+
+    /**
      * To field getter
      *
      * @return string
@@ -203,6 +269,18 @@ class Letter
     public function getTo()
     {
         return $this->to;
+    }
+
+    /**
+     * Subject setter
+     *
+     * @param string $subject
+     * @return Letter
+     */
+    public function setSubject($subject)
+    {
+        $this->subject = $subject;
+        return $this;
     }
 
     /**
@@ -305,6 +383,51 @@ class Letter
     }
 
     /**
+     * Parsed headers and body
+     *
+     * @return string
+     */
+    public function getParsedSource()
+    {
+        $headers = "";
+        $preferences = array(
+            "scheme" => "Q",
+            "input-charset" => "UTF-8",
+            "output-charset" => "UTF-8",
+            "line-length" => 76,
+            "line-break-chars" => "\n"
+        );
+
+        $mimeVersion = join(" ", $this->getHeader('MIME-Version'));
+        if (strlen($mimeVersion) > 0) {
+            $headers .= "MIME-Version: $mimeVersion";
+            $headers .= "\n";
+        }
+
+        $headers .= "Content-Type: ";
+        $headers .= join(" ", $this->getHeader('Content-Type'));
+        $headers .= "\n";
+
+        $encoding = join(" ", $this->getHeader('Content-Transfer-Encoding'));
+        $headers .= "Content-Transfer-Encoding: " . (strlen($encoding) > 0 ? $encoding : "8bit");
+        $headers .= "\n";
+
+        $headers .= "Message-ID: " . $this->getMid();
+        $headers .= "\n";
+
+        $headers .= @iconv_mime_encode('Subject', $this->getSubject(), $preferences);
+        $headers .= "\n";
+
+        $headers .= @iconv_mime_encode('From', $this->getFrom(), $preferences);
+        $headers .= "\n";
+
+        $headers .= @iconv_mime_encode('To', $this->getTo(), $preferences);
+        $headers .= "\n";
+
+        return $headers . "\n\n" . $this->parsedBody;
+    }
+
+    /**
      * Get parsing status
      *
      * @return boolean
@@ -327,14 +450,16 @@ class Letter
     /**
      * Loads and analyzes the message
      *
-     * @param string $rawHeaders
-     * @param string $rawBody
-     * @return boolean                  Success or not
+     * @param string            $rawHeaders
+     * @param string            $rawBody
+     * @param MailParser|null   $mp
+     * @return boolean          Success or not
      */
-    public function load($rawHeaders, $rawBody)
+    public function load($rawHeaders, $rawBody, $mp = null)
     {
         $this->rawHeaders = $rawHeaders;
         $this->rawBody = $rawBody;
+        $this->parsedBody = "";
 
         $this->htmlMessage= '';
         $this->textMessage = '';
@@ -453,7 +578,7 @@ class Letter
         }
 
         $this->log .= "Structure:\n";
-        $this->parseSections(1, $this->sections);
+        $this->parseSections(1, $this->sections, $mp);
         if ($this->error) {
             $this->error = true;
             $this->log .= "= Analysis aborted =\n";
@@ -467,9 +592,9 @@ class Letter
     /**
      * Load MIME parts
      *
-     * @param   string $body
-     * @param   string $boundary
-     * @return  array
+     * @param string            $body
+     * @param string            $boundary
+     * @return array
      */
     protected function loadSections($body, $boundary)
     {
@@ -564,13 +689,29 @@ class Letter
     /**
      * Parse sections
      *
-     * @param integer $level
-     * @param array $sections
+     * @param integer           $level
+     * @param array             $sections
+     * @param MailParser|null   $mp
      * @return boolean          False on error
      */
-    protected function parseSections($level, $sections)
+    protected function parseSections($level, $sections, $mp = null)
     {
+        $prevBoundary = null;
         foreach ($sections as $section) {
+            if ($section['boundary']) {
+                if ($prevBoundary && $prevBoundary != $section['boundary'])
+                    $this->parsedBody .= '--' . $prevBoundary . "--\n";
+
+                $this->parsedBody .= '--' . $section['boundary'] . "\n";
+                foreach ($section['headers'] as $headerKey => $headerValue) {
+                    $this->parsedBody .= "$headerKey: ";
+                    $this->parsedBody .= join("\n    ", $headerValue);
+                    $this->parsedBody .= "\n";
+                }
+                $this->parsedBody .= "\n";
+                $prevBoundary = $section['boundary'];
+            }
+
             $contentType = null;
             foreach ($section['headers'] as $headerKey => $headerValue) {
                 if (strtolower($headerKey) == 'content-type')
@@ -594,16 +735,52 @@ class Letter
                 switch ($encoding) {
                     case 'base64':
                         $body = imap_base64($section['body']);
+                        if (preg_match('/^text\/plain/', $contentType)) {
+                            $charset = $this->lookupKey('charset', $contentType);
+                            $converted = iconv($charset, 'UTF-8', $body);
+                            if ($converted !== false)
+                                $body = $converted;
+                            $this->parsedBody .= imap_binary($body);
+                        } else if (preg_match('/^text\/html/', $contentType)) {
+                            $charset = $this->lookupKey('charset', $contentType);
+                            $converted = iconv($charset, 'UTF-8', $body);
+                            if ($converted !== false)
+                                $body = $converted;
+                            $this->parsedBody .= imap_binary($body);
+                        } else {
+                            $this->parsedBody .= $section['body'];
+                        }
                         $this->log .= \Application\Tool\Text::sizeToStr(strlen($body));
                         break;
                     case 'quoted-printable':
                         $body = imap_qprint($section['body']);
+                        if (preg_match('/^text\/plain/', $contentType)) {
+                            $charset = $this->lookupKey('charset', $contentType);
+                            $converted = iconv($charset, 'UTF-8', $body);
+                            if ($converted !== false)
+                                $body = $converted;
+                            $this->parsedBody .= imap_8bit($body);
+                        } else if (preg_match('/^text\/html/', $contentType)) {
+                            $charset = $this->lookupKey('charset', $contentType);
+                            $converted = iconv($charset, 'UTF-8', $body);
+                            if ($converted !== false)
+                                $body = $converted;
+                            $this->parsedBody .= imap_8bit($body);
+                        } else {
+                            $this->parsedBody .= $section['body'];
+                        }
                         $this->log .= \Application\Tool\Text::sizeToStr(strlen($body));
                         break;
                     case '7bit':
                     case '8bit':
                     case 'binary':
                         $body = $section['body'];
+                        if (preg_match('/^text\/plain/', $contentType))
+                            $this->parsedBody .= $body;
+                        else if (preg_match('/^text\/html/', $contentType))
+                            $this->parsedBody .= $body;
+                        else
+                            $this->parsedBody .= $section['body'];
                         $this->log .= \Application\Tool\Text::sizeToStr(strlen($body));
                         break;
                     default:
@@ -613,6 +790,7 @@ class Letter
                 }
             } else {
                 $body = $section['body'];
+                $this->parsedBody .= $body;
                 $this->log .= \Application\Tool\Text::sizeToStr(strlen($body));
             }
             $this->log .= ")\n";
@@ -668,6 +846,11 @@ class Letter
                     return false;
             }
         }
+
+        $boundary = $sections[count($sections) -1]['boundary'];
+        if ($boundary)
+            $this->parsedBody .= '--' . $boundary . "--\n";
+
         return true;
     }
 

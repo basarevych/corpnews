@@ -18,6 +18,7 @@ use Application\Exception\NotFoundException;
 use Application\Entity\Campaign as CampaignEntity;
 use Application\Entity\Group as GroupEntity;
 use Application\Entity\Client as ClientEntity;
+use Application\Model\Letter;
 use Application\Form\Confirm as ConfirmForm;
 use Admin\Form\StartCampaign as StartCampaignForm;
 
@@ -171,6 +172,7 @@ class CampaignController extends AbstractActionController
         }
 
         $model = new ViewModel([
+            'id'        => $id,
             'script'    => $script,
             'form'      => $form,
             'messages'  => $messages,
@@ -179,6 +181,61 @@ class CampaignController extends AbstractActionController
         ]);
         $model->setTerminal(true);
         return $model;
+    }
+
+    /**
+     * Send test letter action
+     */
+    public function testLetterAction()
+    {
+        $campaignId = $this->params()->fromQuery('campaign');
+        if (!$campaignId)
+            throw new \Exception('Campaign ID is required');
+        $email = $this->params()->fromQuery('email');
+        if (!$email)
+            throw new \Exception('Client email is required');
+
+        $sl = $this->getServiceLocator();
+        $em = $sl->get('Doctrine\ORM\EntityManager');
+        $mail = $sl->get('Mail');
+        $translate = $sl->get('viewhelpermanager')->get('translate');
+
+        $campaign = $em->getRepository('Application\Entity\Campaign')
+                       ->find($campaignId);
+        if (!$campaign)
+            throw new NotFoundException('Campaign not found');
+
+        $client = $em->getRepository('Application\Entity\Client')
+                     ->findOneByEmail($email);
+        if (!$client)
+            throw new NotFoundException('Client not found');
+
+        $result = true;
+
+        $letters = [];
+        foreach ($campaign->getTemplates() as $template) {
+            $letter = $mail->createFromTemplate($template, $client);
+            if ($letter === false) {
+                $result = $translate('Variable substitution failed');
+                break;
+            }
+            $letters[] = $letter;
+        }
+
+        if ($result === true) {
+            foreach ($letters as $letter) {
+                try {
+                    $mail->getTransport()->send($letter);
+                } catch (\Exception $ex) {
+                    $result = $translate('Sending the letter failed');
+                    break;
+                }
+            }
+        }
+
+        return new JsonModel([
+            'result' => $result === true ? $translate('Letter has been sent') : $result,
+        ]);
     }
 
     /**

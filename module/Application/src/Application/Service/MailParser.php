@@ -12,6 +12,7 @@ namespace Application\Service;
 use Exception;
 use Zend\ServiceManager\ServiceLocatorAwareInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
+use Application\Entity\Client as ClientEntity;
 
 /**
  * MailParser service
@@ -34,6 +35,13 @@ class MailParser implements ServiceLocatorAwareInterface
      * @var mixed
      */
     protected $variables = null;
+
+    /**
+     * Current client
+     *
+     * @var ClientEntity
+     */
+    protected $client = null;
 
     /**
      * Set service locator
@@ -68,6 +76,27 @@ class MailParser implements ServiceLocatorAwareInterface
         return $this->serviceLocator;
     }
 
+    /**
+     * Set current client
+     *
+     * @param ClientEntity $client
+     * @return MailParser
+     */
+    public function setClient(ClientEntity $client)
+    {
+        $this->client = $client;
+        return $this;
+    }
+
+    /**
+     * Get current client
+     *
+     * @return ClientEntity
+     */
+    public function getClient()
+    {
+        return $this->client;
+    }
 
     /**
      * Get parser variables
@@ -94,7 +123,7 @@ class MailParser implements ServiceLocatorAwareInterface
     }
 
     /**
-     * Check syntax
+     * Check syntax (parsed $output is HTML)
      *
      * @param string $msg
      * @param string &$output
@@ -128,59 +157,83 @@ class MailParser implements ServiceLocatorAwareInterface
 
         $success = true;
         $output = "";
-        $prevPos = 0;
-        foreach ($scripts as $script) {
-            $error = false;
+        if (count($scripts) > 0) {
+            $prevPos = 0;
+            foreach ($scripts as $script) {
+                $error = false;
 
-            $length = strlen($script);
-            if ($script[0] != '{' || $script[1] != '{')
-                continue;
-            if ($script[$length-1] != '}' || $script[$length-2] != '}')
-                $error = true;
-
-            if (!$error) {
-                $code = substr($script, 2, $length-4) . ';';
-                if ($htmlInput)
-                    $code = html_entity_decode($code);
-
-                if (!$this->testCode($code))
+                $length = strlen($script);
+                if ($script[0] != '{' || $script[1] != '{')
+                    continue;
+                if ($script[$length-1] != '}' || $script[$length-2] != '}')
                     $error = true;
-            }
 
-            if ($error)
-                $success = false;
+                if (!$error) {
+                    $code = substr($script, 2, $length-4) . ';';
+                    if ($htmlInput)
+                        $code = html_entity_decode($code);
 
-            $pos = strpos($msg, $script, $prevPos);
-            if ($pos !== false) {
-                $originalChunk = substr($msg, $prevPos, $pos - $prevPos);
+                    if (!$this->testCode($code))
+                        $error = true;
+                }
+
+                if ($error)
+                    $success = false;
+
+                $pos = strpos($msg, $script, $prevPos);
+                if ($pos !== false) {
+                    $originalChunk = substr($msg, $prevPos, $pos - $prevPos);
+                    if ($htmlInput) {
+                        $output .= $originalChunk;
+                    } else {
+                        $escapedChunk = $escapeHtml($originalChunk);
+                        $output .= $escapedChunk;
+                    }
+
+                    $highlight = '<span style="background: '
+                        . ($error ? '#a90000' : '#00a900')
+                        . '; color: #ffffff;">'
+                        . $escapeHtml($script)
+                        . '</span>';
+                    $output .= $highlight;
+                    $prevPos = $pos + $length;
+                }
+
+                $originalChunk = substr($msg, $prevPos, strlen($msg) - $prevPos);
                 if ($htmlInput) {
                     $output .= $originalChunk;
                 } else {
                     $escapedChunk = $escapeHtml($originalChunk);
                     $output .= $escapedChunk;
                 }
-
-                $highlight = '<span style="background: '
-                    . ($error ? '#a90000' : '#00a900')
-                    . '; color: #ffffff;">'
-                    . $escapeHtml($script)
-                    . '</span>';
-                $output .= $highlight;
-                $prevPos = $pos + $length;
             }
-        }
-
-        $originalChunk = substr($msg, $prevPos, strlen($msg) - $prevPos);
-        if ($htmlInput) {
-            $output .= $originalChunk;
         } else {
-            $escapedChunk = $escapeHtml($originalChunk);
-            $output .= $escapedChunk;
+            $output = $htmlInput ? $msg : $escapeHtml($msg);
         }
 
         return $success;
     }
 
+    /**
+     * Parse and run the code
+     *
+     * @param string $msg
+     * @param string &$output
+     * @param boolean $htmlInput
+     * @return boolean
+     */
+    public function parse($msg, &$output, $htmlInput)
+    {
+        $sl = $this->getServiceLocator();
+        $escapeHtml = $sl->get('viewhelpermanager')->get('escapeHtml');
+    }
+
+    /**
+     * Test PHP syntax is OK
+     *
+     * @param string $code
+     * @return boolean
+     */
     protected function testCode($code)
     {
         $oldReporting = error_reporting(0);

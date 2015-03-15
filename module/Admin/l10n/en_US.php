@@ -63,6 +63,9 @@ return [
     'Tester' => 'Tester',
     'Variables' => 'Variables',
     'Send test letter' => 'Send test letter',
+    'Letter has been sent' => 'Letter has been sent',
+    'Variable substitution failed' => 'Variable substitution failed',
+    'Sending the letter failed' => 'Sending the letter failed',
     'Start campaign' => 'Start campaign',
     'CAMPAIGN_NO_TESTERS' => 'No testers found.'
         . '<br><br>'
