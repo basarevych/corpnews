@@ -9,6 +9,7 @@ use Zend\Test\PHPUnit\Controller\AbstractHttpControllerTestCase;
 use Webfactory\Doctrine\ORMTestInfrastructure\ORMInfrastructure;
 use Application\Entity\Campaign as CampaignEntity;
 use Application\Entity\Group as GroupEntity;
+use Application\Entity\Client as ClientEntity;
 use Admin\Form\StartCampaign as StartCampaignForm;
 
 class CampaignControllerQueryMock {
@@ -80,11 +81,24 @@ class CampaignControllerTest extends AbstractHttpControllerTestCase
                          ->method('findBy')
                          ->will($this->returnValue([ $this->group ]));
 
+        $this->repoClients = $this->getMockBuilder('Application\Entity\GroupRepository')
+                                  ->disableOriginalConstructor()
+                                  ->setMethods([ 'findByGroupName' ])
+                                  ->getMock();
+
+        $this->client = new ClientEntity();
+        $this->client->setEmail('foo@bar');
+
+        $this->repoClients->expects($this->any())
+                          ->method('findByGroupName')
+                          ->will($this->returnValue([ $this->client ]));
+
         $this->em->expects($this->any())
                  ->method('getRepository')
                  ->will($this->returnValueMap([
                     [ 'Application\Entity\Campaign', $this->repoCampaigns ],
                     [ 'Application\Entity\Group', $this->repoGroups ],
+                    [ 'Application\Entity\Client', $this->repoClients ],
                  ]));
 
         $this->qb = $this->getMockBuilder('Doctrine\ORM\QueryBuilder')
