@@ -3,9 +3,9 @@
 namespace ApplicationTest\Service;
 
 use Zend\Test\PHPUnit\Controller\AbstractControllerTestCase;
-use Application\Service\MailParser;
+use Application\Service\Parser;
 
-class MailParserTest extends AbstractControllerTestCase
+class ParserTest extends AbstractControllerTestCase
 {
     public function setUp()
     {
@@ -30,7 +30,7 @@ class MailParserTest extends AbstractControllerTestCase
 
     public function testServiceLocatorMethods()
     {
-        $service = new MailParser();
+        $service = new Parser();
         $sl = $this->getApplicationServiceLocator();
         $service->setServiceLocator($sl);
 
@@ -39,7 +39,7 @@ class MailParserTest extends AbstractControllerTestCase
 
     public function testSimpleMethods()
     {
-        $service = new MailParser();
+        $service = new Parser();
         $sl = $this->getApplicationServiceLocator();
         $service->setServiceLocator($sl);
 
@@ -51,7 +51,7 @@ class MailParserTest extends AbstractControllerTestCase
     {
         $msg = 'Hello {{ echo "Sir" }}';
 
-        $service = new MailParser();
+        $service = new Parser();
         $sl = $this->getApplicationServiceLocator();
         $service->setServiceLocator($sl);
 
@@ -63,7 +63,7 @@ class MailParserTest extends AbstractControllerTestCase
     {
         $msg = '{{ echo 1; }} Hello  <<{{ echo %"Sir" }}>> {{ echo "Sir" }}  {{ xxx';
 
-        $service = new MailParser();
+        $service = new Parser();
         $sl = $this->getApplicationServiceLocator();
         $service->setServiceLocator($sl);
 

@@ -450,12 +450,12 @@ class Letter
     /**
      * Loads and analyzes the message
      *
-     * @param string            $rawHeaders
-     * @param string            $rawBody
-     * @param MailParser|null   $mp
-     * @return boolean          Success or not
+     * @param string        $rawHeaders
+     * @param string        $rawBody
+     * @param Parser|null   $parser
+     * @return boolean      Success or not
      */
-    public function load($rawHeaders, $rawBody, $mp = null)
+    public function load($rawHeaders, $rawBody, $parser = null)
     {
         $this->rawHeaders = $rawHeaders;
         $this->rawBody = $rawBody;
@@ -578,7 +578,7 @@ class Letter
         }
 
         $this->log .= "Structure:\n";
-        $this->parseSections(1, $this->sections, $mp);
+        $this->parseSections(1, $this->sections, $parser);
         if ($this->error) {
             $this->error = true;
             $this->log .= "= Analysis aborted =\n";
@@ -689,12 +689,12 @@ class Letter
     /**
      * Parse sections
      *
-     * @param integer           $level
-     * @param array             $sections
-     * @param MailParser|null   $mp
-     * @return boolean          False on error
+     * @param integer       $level
+     * @param array         $sections
+     * @param Parser|null   $parser
+     * @return boolean      False on error
      */
-    protected function parseSections($level, $sections, $mp = null)
+    protected function parseSections($level, $sections, $parser = null)
     {
         $prevBoundary = null;
         foreach ($sections as $section) {

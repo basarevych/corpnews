@@ -28,12 +28,12 @@ class ParserController extends AbstractActionController
     public function indexAction()
     {
         $sl = $this->getServiceLocator();
-        $mp = $sl->get('MailParser');
+        $parser = $sl->get('Parser');
 
         $variables = [];
-        foreach ($mp->getVariables() as $name) {
+        foreach ($parser->getVariables() as $name) {
             $variables[$name] = [
-                'descr'     => $mp->getVariableDescr($name),
+                'descr'     => $parser->getVariableDescr($name),
             ];
         }
 

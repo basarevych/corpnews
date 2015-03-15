@@ -101,20 +101,20 @@ class MailboxController extends AbstractActionController
 
         $sl = $this->getServiceLocator();
         $imap = $sl->get('ImapClient');
-        $mp = $sl->get('MailParser');
+        $parser = $sl->get('Parser');
 
         $letter = $imap->getLetter($box, $uid);
         if (!$letter)
             throw new NotFoundException('Letter not found');
 
         $analysisSuccess = $imap->loadLetter($letter, $box, $uid);
-        $syntaxSuccess = $mp->checkSyntax($letter->getHtmlMessage(), $output, true);
+        $syntaxSuccess = $parser->checkSyntax($letter->getHtmlMessage(), $output, true);
         if ($syntaxSuccess)
-            $syntaxSuccess = $mp->checkSyntax($letter->getTextMessage(), $output, false);
+            $syntaxSuccess = $parser->checkSyntax($letter->getTextMessage(), $output, false);
 
         $subject = $letter->getSubject();
         if ($syntaxSuccess) {
-            $syntaxSuccess = $mp->checkSyntax($subject, $output, true);
+            $syntaxSuccess = $parser->checkSyntax($subject, $output, true);
             $subject = $output;
         }
 
@@ -251,7 +251,7 @@ class MailboxController extends AbstractActionController
 
         $sl = $this->getServiceLocator();
         $imap = $sl->get('ImapClient');
-        $mp = $sl->get('MailParser');
+        $parser = $sl->get('Parser');
         $em = $sl->get('Doctrine\ORM\EntityManager');
         $basePath = $sl->get('viewhelpermanager')->get('basePath');
         $translate = $sl->get('viewhelpermanager')->get('translate');
@@ -274,11 +274,11 @@ class MailboxController extends AbstractActionController
         $parseError = false;
         foreach ($letters as $letter) {
             $analysisSuccess = $imap->loadLetter($letter, $box, $uid);
-            $syntaxSuccess = $mp->checkSyntax($letter->getHtmlMessage(), $output, true);
+            $syntaxSuccess = $parser->checkSyntax($letter->getHtmlMessage(), $output, true);
             if ($syntaxSuccess)
-                $syntaxSuccess = $mp->checkSyntax($letter->getTextMessage(), $output, false);
+                $syntaxSuccess = $parser->checkSyntax($letter->getTextMessage(), $output, false);
             if ($syntaxSuccess)
-                $syntaxSuccess = $mp->checkSyntax($letter->getSubject(), $output, true);
+                $syntaxSuccess = $parser->checkSyntax($letter->getSubject(), $output, true);
 
             if (!$analysisSuccess || !$syntaxSuccess) {
                 $parseError = true;
@@ -558,7 +558,7 @@ class MailboxController extends AbstractActionController
     protected function prepareHtml($box, $letter)
     {
         $sl = $this->getServiceLocator();
-        $mp = $sl->get('MailParser');
+        $parser = $sl->get('Parser');
         $basePath = $sl->get('viewhelpermanager')->get('basePath');
 
         $config = HTMLPurifier_Config::createDefault();
@@ -579,7 +579,7 @@ class MailboxController extends AbstractActionController
             $message
         );
 
-        $mp->checkSyntax($message, $output, true);
+        $parser->checkSyntax($message, $output, true);
         $message = $output;
 
         $purifier = new HTMLPurifier($config);
@@ -597,10 +597,10 @@ class MailboxController extends AbstractActionController
     protected function prepareText($box, $letter)
     {
         $sl = $this->getServiceLocator();
-        $mp = $sl->get('MailParser');
+        $parser = $sl->get('Parser');
 
         $message = $letter->getTextMessage();
-        $mp->checkSyntax($message, $output, false);
+        $parser->checkSyntax($message, $output, false);
 
         $result = '<p>' . str_replace("\n", "<br>", $output) . '</p>';
 

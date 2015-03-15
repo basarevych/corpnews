@@ -139,8 +139,8 @@ class Mail implements ServiceLocatorAwareInterface
         $sl = $this->getServiceLocator();
         $config = $sl->get('Config');
 
-        $mp = $sl->get('MailParser');
-        $mp->setClient($client);
+        $parser = $sl->get('Parser');
+        $parser->setClient($client);
 
         $letter = new LetterModel(null);
         $letter->setMid('<' . $template->getMessageId() . '>');
@@ -148,7 +148,7 @@ class Mail implements ServiceLocatorAwareInterface
         $letter->setFrom(@$config['corpnews']['mail']['from_address']);
         $letter->setTo($client->getEmail());
 
-        if (!$letter->load($template->getHeaders(), $template->getBody(), $mp))
+        if (!$letter->load($template->getHeaders(), $template->getBody(), $parser))
             return false;
 
         $msg = Message::fromString($letter->getParsedSource());

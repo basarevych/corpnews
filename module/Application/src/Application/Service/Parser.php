@@ -15,12 +15,12 @@ use Zend\ServiceManager\ServiceLocatorInterface;
 use Application\Entity\Client as ClientEntity;
 
 /**
- * MailParser service
+ * Parser service
  * 
  * @category    Application
  * @package     Service
  */
-class MailParser implements ServiceLocatorAwareInterface
+class Parser implements ServiceLocatorAwareInterface
 {
     /**
      * Service Locator
@@ -47,7 +47,7 @@ class MailParser implements ServiceLocatorAwareInterface
      * Set service locator
      *
      * @param ServiceLocatorInterface $serviceLocator
-     * @return MailParser
+     * @return Parser
      */
     public function setServiceLocator(ServiceLocatorInterface $serviceLocator)
     {
@@ -80,7 +80,7 @@ class MailParser implements ServiceLocatorAwareInterface
      * Set current client
      *
      * @param ClientEntity $client
-     * @return MailParser
+     * @return Parser
      */
     public function setClient(ClientEntity $client)
     {
