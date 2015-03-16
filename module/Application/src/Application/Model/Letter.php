@@ -459,7 +459,8 @@ class Letter
     {
         $this->rawHeaders = $rawHeaders;
         $this->rawBody = $rawBody;
-        $this->parsedBody = "";
+        if ($parser)
+            $this->parsedBody = "";
 
         $this->htmlMessage= '';
         $this->textMessage = '';
@@ -699,16 +700,18 @@ class Letter
         $prevBoundary = null;
         foreach ($sections as $section) {
             if ($section['boundary']) {
-                if ($prevBoundary && $prevBoundary != $section['boundary'])
+                if ($prevBoundary && $prevBoundary != $section['boundary'] && $parser)
                     $this->parsedBody .= '--' . $prevBoundary . "--\n";
 
-                $this->parsedBody .= '--' . $section['boundary'] . "\n";
-                foreach ($section['headers'] as $headerKey => $headerValue) {
-                    $this->parsedBody .= "$headerKey: ";
-                    $this->parsedBody .= join("\n    ", $headerValue);
+                if ($parser) {
+                    $this->parsedBody .= '--' . $section['boundary'] . "\n";
+                    foreach ($section['headers'] as $headerKey => $headerValue) {
+                        $this->parsedBody .= "$headerKey: ";
+                        $this->parsedBody .= join("\n    ", $headerValue);
+                        $this->parsedBody .= "\n";
+                    }
                     $this->parsedBody .= "\n";
                 }
-                $this->parsedBody .= "\n";
                 $prevBoundary = $section['boundary'];
             }
 
@@ -724,7 +727,14 @@ class Letter
             }
             $type = explode(';', $contentType);
             $this->log .= str_repeat("  ", $level) . "- " . $type[0];
-            
+
+            if (isset($section['sections'])) {
+                $this->log .= "\n";
+                if (!$this->parseSections($level+1, $section['sections'], $parser))
+                    return false;
+                continue;
+            }
+
             $this->log .= " (";
             $encoding = null;
             foreach ($section['headers'] as $headerKey => $headerValue) {
@@ -742,12 +752,14 @@ class Letter
                                 if ($converted !== false)
                                     $body = $converted;
                             }
-                            $parsed = $body;
-                            if ($parser && !$parser->parse($body, $parsed, false, false)) {
-                                $this->error = true;
-                                return false;
+                            if ($parser) {
+                                $parsed = $body;
+                                if (!$parser->parse($body, $parsed, false, false)) {
+                                    $this->error = true;
+                                    return false;
+                                }
+                                $this->parsedBody .= imap_binary($parsed);
                             }
-                            $this->parsedBody .= imap_binary($parsed);
                         } else if (preg_match('/^text\/html/', $contentType)) {
                             $charset = $this->lookupKey('charset', $contentType);
                             if ($charset) {
@@ -755,13 +767,15 @@ class Letter
                                 if ($converted !== false)
                                     $body = $converted;
                             }
-                            $parsed = $body;
-                            if ($parser && !$parser->parse($body, $parsed, true, true)) {
-                                $this->error = true;
-                                return false;
+                            if ($parser) {
+                                $parsed = $body;
+                                if (!$parser->parse($body, $parsed, true, true)) {
+                                    $this->error = true;
+                                    return false;
+                                }
+                                $this->parsedBody .= imap_binary($parsed);
                             }
-                            $this->parsedBody .= imap_binary($parsed);
-                        } else {
+                        } else if ($parser) {
                             $this->parsedBody .= $section['body'];
                         }
                         $this->log .= \Application\Tool\Text::sizeToStr(strlen($body));
@@ -775,12 +789,14 @@ class Letter
                                 if ($converted !== false)
                                     $body = $converted;
                             }
-                            $parsed = $body;
-                            if ($parser && !$parser->parse($body, $parsed, false, false)) {
-                                $this->error = true;
-                                return false;
+                            if ($parser) {
+                                $parsed = $body;
+                                if (!$parser->parse($body, $parsed, false, false)) {
+                                    $this->error = true;
+                                    return false;
+                                }
+                                $this->parsedBody .= imap_8bit($parsed);
                             }
-                            $this->parsedBody .= imap_8bit($parsed);
                         } else if (preg_match('/^text\/html/', $contentType)) {
                             $charset = $this->lookupKey('charset', $contentType);
                             if ($charset) {
@@ -788,13 +804,15 @@ class Letter
                                 if ($converted !== false)
                                     $body = $converted;
                             }
-                            $parsed = $body;
-                            if ($parser && !$parser->parse($body, $parsed, true, true)) {
-                                $this->error = true;
-                                return false;
+                            if ($parser) {
+                                $parsed = $body;
+                                if (!$parser->parse($body, $parsed, true, true)) {
+                                    $this->error = true;
+                                    return false;
+                                }
+                                $this->parsedBody .= imap_8bit($parsed);
                             }
-                            $this->parsedBody .= imap_8bit($parsed);
-                        } else {
+                        } else if ($parser) {
                             $this->parsedBody .= $section['body'];
                         }
                         $this->log .= \Application\Tool\Text::sizeToStr(strlen($body));
@@ -810,12 +828,14 @@ class Letter
                                 if ($converted !== false)
                                     $body = $converted;
                             }
-                            $parsed = $body;
-                            if ($parser && !$parser->parse($body, $parsed, false, false)) {
-                                $this->error = true;
-                                return false;
+                            if ($parser) {
+                                $parsed = $body;
+                                if (!$parser->parse($body, $parsed, false, false)) {
+                                    $this->error = true;
+                                    return false;
+                                }
+                                $this->parsedBody .= $parsed;
                             }
-                            $this->parsedBody .= $parsed;
                         } else if (preg_match('/^text\/html/', $contentType)) {
                             $charset = $this->lookupKey('charset', $contentType);
                             if ($charset) {
@@ -823,13 +843,15 @@ class Letter
                                 if ($converted !== false)
                                     $body = $converted;
                             }
-                            $parsed = $body;
-                            if ($parser && !$parser->parse($body, $parsed, true, true)) {
-                                $this->error = true;
-                                return false;
+                            if ($parser) {
+                                $parsed = $body;
+                                if (!$parser->parse($body, $parsed, true, true)) {
+                                    $this->error = true;
+                                    return false;
+                                }
+                                $this->parsedBody .= $parsed;
                             }
-                            $this->parsedBody .= $parsed;
-                        } else {
+                        } else if ($parser) {
                             $this->parsedBody .= $section['body'];
                         }
                         $this->log .= \Application\Tool\Text::sizeToStr(strlen($body));
@@ -848,12 +870,14 @@ class Letter
                         if ($converted !== false)
                             $body = $converted;
                     }
-                    $parsed = $body;
-                    if ($parser && !$parser->parse($body, $parsed, false, false)) {
-                        $this->error = true;
-                        return false;
+                    if ($parser) {
+                        $parsed = $body;
+                        if (!$parser->parse($body, $parsed, false, false)) {
+                            $this->error = true;
+                            return false;
+                        }
+                        $this->parsedBody .= $parsed;
                     }
-                    $this->parsedBody .= $parsed;
                 } else if (preg_match('/^text\/html/', $contentType)) {
                     $charset = $this->lookupKey('charset', $contentType);
                     if ($charset) {
@@ -861,18 +885,22 @@ class Letter
                         if ($converted !== false)
                             $body = $converted;
                     }
-                    $parsed = $body;
-                    if ($parser && !$parser->parse($body, $parsed, true, true)) {
-                        $this->error = true;
-                        return false;
+                    if ($parser) {
+                        $parsed = $body;
+                        if (!$parser->parse($body, $parsed, true, true)) {
+                            $this->error = true;
+                            return false;
+                        }
+                        $this->parsedBody .= $parsed;
                     }
-                    $this->parsedBody .= $parsed;
-                } else {
+                } else if ($parser) {
                     $this->parsedBody .= $section['body'];
                 }
                 $this->log .= \Application\Tool\Text::sizeToStr(strlen($body));
             }
             $this->log .= ")\n";
+            if ($parser)
+                $this->parsedBody .= "\n";
 
             if (preg_match('/^text\/plain/', $contentType))
                 $this->textMessage .= $body;
@@ -919,15 +947,10 @@ class Letter
                     );
                 }
             }
-
-            if (isset($section['sections'])) {
-                if (!$this->parseSections($level+1, $section['sections'], $parser))
-                    return false;
-            }
         }
 
         $boundary = $sections[count($sections) -1]['boundary'];
-        if ($boundary)
+        if ($boundary && $parser)
             $this->parsedBody .= '--' . $boundary . "--\n";
 
         return true;

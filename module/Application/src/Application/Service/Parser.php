@@ -358,6 +358,9 @@ class Parser implements ServiceLocatorAwareInterface
                 $output .= htmlentities($msg, ENT_COMPAT | ENT_HTML401, 'UTF-8');
         }
 
+        if (strpos($output, '{{') !== false)
+            $success = false;
+
         return $success;
     }
 
