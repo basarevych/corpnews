@@ -70,4 +70,24 @@ class ParserTest extends AbstractControllerTestCase
         $valid = $service->checkSyntax($msg, $output, false);
         $this->assertEquals(false, $valid, "Invalid syntax reported as valid");
     }
+
+    public function testParseWorks()
+    {
+        $msg = 'Hello {{ echo "Sir-" . $first_name }}';
+
+        $service = $this->getMockBuilder('Application\Service\Parser')
+                        ->setMethods([ 'getVariableValue' ])
+                        ->getMock();
+
+        $service->expects($this->any())
+                ->method('getVariableValue')
+                ->will($this->returnValue('foobar'));
+
+        $sl = $this->getApplicationServiceLocator();
+        $service->setServiceLocator($sl);
+
+        $valid = $service->parse($msg, $output, false, false);
+        $this->assertEquals('Hello Sir-foobar', $output, "Substitution error");
+    }
+
 }

@@ -28,8 +28,6 @@ class CampaignControllerTransportMock {
 
 class CampaignControllerTest extends AbstractHttpControllerTestCase
 {
-    use \ApplicationTest\Controller\RegexAtLeastOnceTrait;
-
     public function setUp()
     {
         $this->setApplicationConfig(require 'config/application.config.php');
@@ -232,7 +230,7 @@ class CampaignControllerTest extends AbstractHttpControllerTestCase
     {
         $this->dispatch('/admin/campaign/start-campaign', HttpRequest::METHOD_GET, [ 'id' => 42 ]);
 
-        $this->assertQueryContentRegexAtLeastOnce('input[type="radio"][value="foo@bar"]', '//m');
+        $this->assertQuery('input[type="radio"][value="foo@bar"]');
     }
 
     public function testStartCampaignActionUpdatesCampaign()

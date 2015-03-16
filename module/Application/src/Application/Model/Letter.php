@@ -737,9 +737,11 @@ class Letter
                         $body = imap_base64($section['body']);
                         if (preg_match('/^text\/plain/', $contentType)) {
                             $charset = $this->lookupKey('charset', $contentType);
-                            $converted = iconv($charset, 'UTF-8', $body);
-                            if ($converted !== false)
-                                $body = $converted;
+                            if ($charset) {
+                                $converted = iconv($charset, 'UTF-8', $body);
+                                if ($converted !== false)
+                                    $body = $converted;
+                            }
                             $parsed = $body;
                             if ($parser && !$parser->parse($body, $parsed, false, false)) {
                                 $this->error = true;
@@ -748,9 +750,11 @@ class Letter
                             $this->parsedBody .= imap_binary($parsed);
                         } else if (preg_match('/^text\/html/', $contentType)) {
                             $charset = $this->lookupKey('charset', $contentType);
-                            $converted = iconv($charset, 'UTF-8', $body);
-                            if ($converted !== false)
-                                $body = $converted;
+                            if ($charset) {
+                                $converted = iconv($charset, 'UTF-8', $body);
+                                if ($converted !== false)
+                                    $body = $converted;
+                            }
                             $parsed = $body;
                             if ($parser && !$parser->parse($body, $parsed, true, true)) {
                                 $this->error = true;
@@ -766,9 +770,11 @@ class Letter
                         $body = imap_qprint($section['body']);
                         if (preg_match('/^text\/plain/', $contentType)) {
                             $charset = $this->lookupKey('charset', $contentType);
-                            $converted = iconv($charset, 'UTF-8', $body);
-                            if ($converted !== false)
-                                $body = $converted;
+                            if ($charset) {
+                                $converted = iconv($charset, 'UTF-8', $body);
+                                if ($converted !== false)
+                                    $body = $converted;
+                            }
                             $parsed = $body;
                             if ($parser && !$parser->parse($body, $parsed, false, false)) {
                                 $this->error = true;
@@ -777,9 +783,11 @@ class Letter
                             $this->parsedBody .= imap_8bit($parsed);
                         } else if (preg_match('/^text\/html/', $contentType)) {
                             $charset = $this->lookupKey('charset', $contentType);
-                            $converted = iconv($charset, 'UTF-8', $body);
-                            if ($converted !== false)
-                                $body = $converted;
+                            if ($charset) {
+                                $converted = iconv($charset, 'UTF-8', $body);
+                                if ($converted !== false)
+                                    $body = $converted;
+                            }
                             $parsed = $body;
                             if ($parser && !$parser->parse($body, $parsed, true, true)) {
                                 $this->error = true;
@@ -795,12 +803,35 @@ class Letter
                     case '8bit':
                     case 'binary':
                         $body = $section['body'];
-                        if (preg_match('/^text\/plain/', $contentType))
-                            $this->parsedBody .= $body;
-                        else if (preg_match('/^text\/html/', $contentType))
-                            $this->parsedBody .= $body;
-                        else
+                        if (preg_match('/^text\/plain/', $contentType)) {
+                            $charset = $this->lookupKey('charset', $contentType);
+                            if ($charset) {
+                                $converted = iconv($charset, 'UTF-8', $body);
+                                if ($converted !== false)
+                                    $body = $converted;
+                            }
+                            $parsed = $body;
+                            if ($parser && !$parser->parse($body, $parsed, false, false)) {
+                                $this->error = true;
+                                return false;
+                            }
+                            $this->parsedBody .= $parsed;
+                        } else if (preg_match('/^text\/html/', $contentType)) {
+                            $charset = $this->lookupKey('charset', $contentType);
+                            if ($charset) {
+                                $converted = iconv($charset, 'UTF-8', $body);
+                                if ($converted !== false)
+                                    $body = $converted;
+                            }
+                            $parsed = $body;
+                            if ($parser && !$parser->parse($body, $parsed, true, true)) {
+                                $this->error = true;
+                                return false;
+                            }
+                            $this->parsedBody .= $parsed;
+                        } else {
                             $this->parsedBody .= $section['body'];
+                        }
                         $this->log .= \Application\Tool\Text::sizeToStr(strlen($body));
                         break;
                     default:
@@ -810,7 +841,35 @@ class Letter
                 }
             } else {
                 $body = $section['body'];
-                $this->parsedBody .= $body;
+                if (preg_match('/^text\/plain/', $contentType)) {
+                    $charset = $this->lookupKey('charset', $contentType);
+                    if ($charset) {
+                        $converted = iconv($charset, 'UTF-8', $body);
+                        if ($converted !== false)
+                            $body = $converted;
+                    }
+                    $parsed = $body;
+                    if ($parser && !$parser->parse($body, $parsed, false, false)) {
+                        $this->error = true;
+                        return false;
+                    }
+                    $this->parsedBody .= $parsed;
+                } else if (preg_match('/^text\/html/', $contentType)) {
+                    $charset = $this->lookupKey('charset', $contentType);
+                    if ($charset) {
+                        $converted = iconv($charset, 'UTF-8', $body);
+                        if ($converted !== false)
+                            $body = $converted;
+                    }
+                    $parsed = $body;
+                    if ($parser && !$parser->parse($body, $parsed, true, true)) {
+                        $this->error = true;
+                        return false;
+                    }
+                    $this->parsedBody .= $parsed;
+                } else {
+                    $this->parsedBody .= $section['body'];
+                }
                 $this->log .= \Application\Tool\Text::sizeToStr(strlen($body));
             }
             $this->log .= ")\n";
