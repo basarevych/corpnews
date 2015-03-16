@@ -606,14 +606,26 @@ class Letter
             foreach (explode("\n", $body) as $line) {
                 $line = rtrim($line);
                 if ($line == "--" . $boundary . "--") {
-                    if (strlen($buffer))
+                    if (strlen($buffer)) {
+                        if (strlen($buffer) > 2
+                                && $buffer[strlen($buffer) - 1] == "\n"
+                                && $buffer[strlen($buffer) - 2] == "\n") {
+                            $buffer = substr($buffer, 0, strlen($buffer) - 2);
+                        }
                         $sections[] = $buffer;
+                    }
                     break;
                 }
                 if ($line == "--" . $boundary) {
                     $started = true;
-                    if (strlen($buffer))
+                    if (strlen($buffer)) {
+                        if (strlen($buffer) > 2
+                                && $buffer[strlen($buffer) - 1] == "\n"
+                                && $buffer[strlen($buffer) - 2] == "\n") {
+                            $buffer = substr($buffer, 0, strlen($buffer) - 2);
+                        }
                         $sections[] = $buffer;
+                    }
                     $buffer = '';
                     continue;
                 }
