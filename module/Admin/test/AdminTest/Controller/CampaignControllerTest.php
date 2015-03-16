@@ -5,11 +5,13 @@ namespace AdminTest\Controller;
 use Zend\Http\Request as HttpRequest;
 use Zend\Dom\Query;
 use Zend\Json\Json;
+use Zend\Mail\Message;
 use Zend\Test\PHPUnit\Controller\AbstractHttpControllerTestCase;
 use Webfactory\Doctrine\ORMTestInfrastructure\ORMInfrastructure;
 use Application\Entity\Campaign as CampaignEntity;
 use Application\Entity\Group as GroupEntity;
 use Application\Entity\Client as ClientEntity;
+use Application\Entity\Template as TemplateEntity;
 use Admin\Form\StartCampaign as StartCampaignForm;
 
 class CampaignControllerQueryMock {
@@ -18,8 +20,16 @@ class CampaignControllerQueryMock {
     }
 }
 
+class CampaignControllerTransportMock {
+    public function send() {
+        return null;
+    }
+}
+
 class CampaignControllerTest extends AbstractHttpControllerTestCase
 {
+    use \ApplicationTest\Controller\RegexAtLeastOnceTrait;
+
     public function setUp()
     {
         $this->setApplicationConfig(require 'config/application.config.php');
@@ -41,9 +51,18 @@ class CampaignControllerTest extends AbstractHttpControllerTestCase
                                     ->setMethods([ 'find', 'removeAll' ])
                                     ->getMock();
 
+        $this->template = new TemplateEntity();
+        $this->template->setMessageId('mid');
+        $this->template->setSubject('subject');
+        $this->template->setHeaders('headers');
+        $this->template->setBody('body');
+
         $this->campaign = new CampaignEntity();
         $this->campaign->setName('foo');
         $this->campaign->setStatus('bar');
+
+        $this->campaign->addTemplate($this->template);
+        $this->template->setCampaign($this->campaign);
 
         $reflection = new \ReflectionClass(get_class($this->campaign));
         $property = $reflection->getProperty('id');
@@ -83,7 +102,7 @@ class CampaignControllerTest extends AbstractHttpControllerTestCase
 
         $this->repoClients = $this->getMockBuilder('Application\Entity\GroupRepository')
                                   ->disableOriginalConstructor()
-                                  ->setMethods([ 'findByGroupName' ])
+                                  ->setMethods([ 'findByGroupName', 'findOneByEmail' ])
                                   ->getMock();
 
         $this->client = new ClientEntity();
@@ -91,7 +110,18 @@ class CampaignControllerTest extends AbstractHttpControllerTestCase
 
         $this->repoClients->expects($this->any())
                           ->method('findByGroupName')
-                          ->will($this->returnValue([ $this->client ]));
+                          ->will($this->returnCallback(function ($name) {
+                                if ($name == GroupEntity::NAME_TESTERS)
+                                    return [ $this->client ];
+                                return [];
+                          }));
+
+        $this->repoClients->expects($this->any())
+                          ->method('findOneByEmail')
+                          ->will($this->returnCallback(function ($email) {
+                                if ($email == 'foo@bar')
+                                    return $this->client;
+                          }));
 
         $this->em->expects($this->any())
                  ->method('getRepository')
@@ -114,8 +144,17 @@ class CampaignControllerTest extends AbstractHttpControllerTestCase
                  ->method('getQuery')
                  ->will($this->returnValue(new CampaignControllerQueryMock()));
 
+        $this->mail = $this->getMockBuilder('Application\Service\Mail')
+                           ->setMethods([ 'createFromTemplate', 'getTransport' ])
+                           ->getMock();
+
+        $this->mail->expects($this->any())
+                   ->method('getTransport')
+                   ->will($this->returnValue(new CampaignControllerTransportMock()));
+
         $this->sl->setAllowOverride(true);
         $this->sl->setService('Doctrine\ORM\EntityManager', $this->em);
+        $this->sl->setService('Mail', $this->mail);
     }
 
     public function testIndexActionCanBeAccessed()
@@ -189,6 +228,13 @@ class CampaignControllerTest extends AbstractHttpControllerTestCase
         $this->assertMatchedRouteName('admin');
     }
 
+    public function testStartCampaignActionDisplaysTesters()
+    {
+        $this->dispatch('/admin/campaign/start-campaign', HttpRequest::METHOD_GET, [ 'id' => 42 ]);
+
+        $this->assertQueryContentRegexAtLeastOnce('input[type="radio"][value="foo@bar"]', '//m');
+    }
+
     public function testStartCampaignActionUpdatesCampaign()
     {
         $this->dispatch('/admin/campaign/start-campaign', HttpRequest::METHOD_GET, [ 'id' => 42 ]);
@@ -217,6 +263,38 @@ class CampaignControllerTest extends AbstractHttpControllerTestCase
         $this->assertEquals('name', $this->campaign->getName(), "Name is wrong");
         $this->assertEquals($dt, $this->campaign->getWhenDeadline(), "Deadline is wrong");
         $this->assertEquals(9000, $groups[0]->getId(), "Group ID is wrong");
+    }
+
+    public function testTestLetterActionCanBeAccessed()
+    {
+        $this->dispatch('/admin/campaign/test-letter');
+
+        $this->assertModuleName('admin');
+        $this->assertControllerName('admin\controller\campaign');
+        $this->assertControllerClass('CampaignController');
+        $this->assertMatchedRouteName('admin');
+    }
+
+    public function testTestLetterActionWorks()
+    {
+        $passedTemplate = null;
+        $passedClient = null;
+        $this->mail->expects($this->any())
+                   ->method('createFromTemplate')
+                   ->will($this->returnCallback(function ($template, $client) use (&$passedTemplate, &$passedClient) {
+                        $passedTemplate = $template;
+                        $passedClient = $client;
+                        return new Message();
+                   }));
+
+        $getParams = [
+            'campaign' => 42,
+            'email' => 'foo@bar'
+        ];
+        $this->dispatch('/admin/campaign/test-letter', HttpRequest::METHOD_GET, $getParams);
+
+        $this->assertEquals($this->template, $passedTemplate, "Wrong template used");
+        $this->assertEquals($this->client, $passedClient, "Wrong client used");
     }
 
     public function testDeleteCampaignActionCanBeAccessed()
