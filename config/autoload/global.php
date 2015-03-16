@@ -59,27 +59,35 @@ return [
             'variables' => [
                 'first_name' => [
                     'descr'     => 'PARSER_FIRST_NAME_DESCR',
+                    'class'     => 'DataForm\Variable\FirstName',
                 ],
                 'middle_name' => [
                     'descr'     => 'PARSER_MIDDLE_NAME_DESCR',
+                    'class'     => 'DataForm\Variable\MiddleName',
                 ],
                 'last_name' => [
                     'descr'     => 'PARSER_LAST_NAME_DESCR',
+                    'class'     => 'DataForm\Variable\LastName',
                 ],
                 'short_name' => [
                     'descr'     => 'PARSER_SHORT_NAME_DESCR',
+                    'class'     => 'DataForm\Variable\ShortName',
                 ],
                 'full_name' => [
                     'descr'     => 'PARSER_FULL_NAME_DESCR',
+                    'class'     => 'DataForm\Variable\FullName',
                 ],
                 'gender' => [
                     'descr'     => 'PARSER_GENDER_DESCR',
+                    'class'     => 'DataForm\Variable\Gender',
                 ],
                 'company' => [
                     'descr'     => 'PARSER_COMPANY_DESCR',
+                    'class'     => 'DataForm\Variable\Company',
                 ],
                 'position' => [
                     'descr'     => 'PARSER_POSITION_DESCR',
+                    'class'     => 'DataForm\Variable\Position',
                 ],
             ],
         ],

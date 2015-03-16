@@ -65,7 +65,7 @@ class ErrorStrategy implements ListenerAggregateInterface, ServiceLocatorAwareIn
      * Set service locator
      *
      * @param ServiceLocatorInterface $serviceLocator
-     * @return Acl
+     * @return ErrorStrategy
      */
     public function setServiceLocator(ServiceLocatorInterface $serviceLocator)
     {

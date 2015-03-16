@@ -740,13 +740,23 @@ class Letter
                             $converted = iconv($charset, 'UTF-8', $body);
                             if ($converted !== false)
                                 $body = $converted;
-                            $this->parsedBody .= imap_binary($body);
+                            $parsed = $body;
+                            if ($parser && !$parser->parse($body, $parsed, false, false)) {
+                                $this->error = true;
+                                return false;
+                            }
+                            $this->parsedBody .= imap_binary($parsed);
                         } else if (preg_match('/^text\/html/', $contentType)) {
                             $charset = $this->lookupKey('charset', $contentType);
                             $converted = iconv($charset, 'UTF-8', $body);
                             if ($converted !== false)
                                 $body = $converted;
-                            $this->parsedBody .= imap_binary($body);
+                            $parsed = $body;
+                            if ($parser && !$parser->parse($body, $parsed, true, true)) {
+                                $this->error = true;
+                                return false;
+                            }
+                            $this->parsedBody .= imap_binary($parsed);
                         } else {
                             $this->parsedBody .= $section['body'];
                         }
@@ -759,13 +769,23 @@ class Letter
                             $converted = iconv($charset, 'UTF-8', $body);
                             if ($converted !== false)
                                 $body = $converted;
-                            $this->parsedBody .= imap_8bit($body);
+                            $parsed = $body;
+                            if ($parser && !$parser->parse($body, $parsed, false, false)) {
+                                $this->error = true;
+                                return false;
+                            }
+                            $this->parsedBody .= imap_8bit($parsed);
                         } else if (preg_match('/^text\/html/', $contentType)) {
                             $charset = $this->lookupKey('charset', $contentType);
                             $converted = iconv($charset, 'UTF-8', $body);
                             if ($converted !== false)
                                 $body = $converted;
-                            $this->parsedBody .= imap_8bit($body);
+                            $parsed = $body;
+                            if ($parser && !$parser->parse($body, $parsed, true, true)) {
+                                $this->error = true;
+                                return false;
+                            }
+                            $this->parsedBody .= imap_8bit($parsed);
                         } else {
                             $this->parsedBody .= $section['body'];
                         }
@@ -842,7 +862,7 @@ class Letter
             }
 
             if (isset($section['sections'])) {
-                if (!$this->parseSections($level+1, $section['sections']))
+                if (!$this->parseSections($level+1, $section['sections'], $parser))
                     return false;
             }
         }
