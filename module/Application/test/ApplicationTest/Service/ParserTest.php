@@ -12,20 +12,6 @@ class ParserTest extends AbstractControllerTestCase
         $this->setApplicationConfig(require 'config/application.config.php');
 
         parent::setUp();
-
-        $sl = $this->getApplicationServiceLocator();
-        $sl->setAllowOverride(true);
-
-        $config = $sl->get('Config');
-        $config['corpnews']['parser'] = [
-            'variables' => [
-                'first_name' => [
-                    'descr'     => 'PARSER_FIRST_NAME_DESCR',
-                ],
-            ],
-        ];
-
-        $sl->setService('Config', $config);
     }
 
     public function testServiceLocatorMethods()
@@ -43,7 +29,10 @@ class ParserTest extends AbstractControllerTestCase
         $sl = $this->getApplicationServiceLocator();
         $service->setServiceLocator($sl);
 
-        $this->assertEquals([ 'first_name' ], $service->getVariables(), "Returned variables are wrong");
+        $config = $sl->get('Config');
+        $keys = array_keys($config['corpnews']['parser']['variables']);
+
+        $this->assertEquals($keys, $service->getVariables(), "Returned variables are wrong");
         $this->assertEquals('PARSER_FIRST_NAME_DESCR', $service->getVariableDescr('first_name'), "Returned description is wrong");
     }
 

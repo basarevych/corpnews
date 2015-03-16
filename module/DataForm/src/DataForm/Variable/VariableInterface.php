@@ -7,14 +7,14 @@
  * @license     http://choosealicense.com/licenses/mit/ MIT
  */
 
-namespace Application\Variable;
+namespace DataForm\Variable;
 
 use Application\Entity\Client as ClientEntity;
 
 /**
  * Variable interface
  *
- * @category    Application
+ * @category    DataForm
  * @package     Variable
  */
 interface VariableInterface

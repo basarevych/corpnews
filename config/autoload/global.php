@@ -69,13 +69,13 @@ return [
                     'descr'     => 'PARSER_LAST_NAME_DESCR',
                     'class'     => 'DataForm\Variable\LastName',
                 ],
-                'short_name' => [
+                'short_full_name' => [
                     'descr'     => 'PARSER_SHORT_NAME_DESCR',
-                    'class'     => 'DataForm\Variable\ShortName',
+                    'class'     => 'DataForm\Variable\ShortFullName',
                 ],
-                'full_name' => [
+                'long_full_name' => [
                     'descr'     => 'PARSER_FULL_NAME_DESCR',
-                    'class'     => 'DataForm\Variable\FullName',
+                    'class'     => 'DataForm\Variable\LongFullName',
                 ],
                 'gender' => [
                     'descr'     => 'PARSER_GENDER_DESCR',

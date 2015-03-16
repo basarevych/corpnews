@@ -60,18 +60,17 @@ class Parser implements ServiceLocatorAwareInterface
                 throw new \Exception("No 'parser/variables' section in the config");
 
             $this->variables = $options['corpnews']['parser']['variables'];
-/*
-            foreach ($this->variables as $var) {
-                $class = $var['class'];
+
+            foreach ($this->variables as $var => $props) {
+                $class = $this->getVariableClass($var);
                 $reflection = new ReflectionClass($class);
 
-                if (!$reflection->implementsInterface('Application\Variable\VariableInterface'))
+                if (!$reflection->implementsInterface('DataForm\Variable\VariableInterface'))
                     throw new Exception('All the variables must implement VariableInterface');
 
                 if (!$reflection->implementsInterface('Zend\ServiceManager\ServiceLocatorAwareInterface'))
                     throw new Exception('All the variables must implement ServiceLocatorAwareInterface');
             }
-*/
         }
 
         return $this;

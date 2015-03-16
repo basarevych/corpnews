@@ -11,8 +11,8 @@ namespace DataForm\Variable;
 
 use Zend\ServiceManager\ServiceLocatorAwareInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
-use Application\Variable\VariableInterface;
 use Application\Entity\Client as ClientEntity;
+use DataForm\Variable\VariableInterface;
 use DataForm\Document\Profile as ProfileDocument;
 
 /**

@@ -16,13 +16,13 @@ use DataForm\Variable\VariableInterface;
 use DataForm\Document\Profile as ProfileDocument;
 
 /**
- * $first_name variable
+ * $short_full_name variable
  *
  * @category    DataForm
  * @package     Variable
  */
-class FirstName implements ServiceLocatorAwareInterface,
-                           VariableInterface
+class ShortFullName implements ServiceLocatorAwareInterface,
+                               VariableInterface
 {
     /**
      * Service Locator
@@ -105,6 +105,6 @@ class FirstName implements ServiceLocatorAwareInterface,
         if (!$doc)
             return null;
 
-        return $doc->getFirstName();
+        return trim($doc->getFirstName() . ' ' . $doc->getLastName());
     }
 }
