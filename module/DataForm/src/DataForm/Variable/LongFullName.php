@@ -110,6 +110,8 @@ class LongFullName implements ServiceLocatorAwareInterface,
         else
             $name = $doc->getFirstName();
 
-        return trim($name . ' ' . $doc->getLastName());
+        $name = trim($name . ' ' . $doc->getLastName());
+
+        return (strlen($name) > 0 ? $name : null);
     }
 }

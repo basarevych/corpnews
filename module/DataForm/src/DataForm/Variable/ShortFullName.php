@@ -105,6 +105,8 @@ class ShortFullName implements ServiceLocatorAwareInterface,
         if (!$doc)
             return null;
 
-        return trim($doc->getFirstName() . ' ' . $doc->getLastName());
+        $name = trim($doc->getFirstName() . ' ' . $doc->getLastName());
+
+        return (strlen($name) > 0 ? $name : null);
     }
 }

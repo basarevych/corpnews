@@ -133,7 +133,7 @@ return [
         . 'The parser will run <em>any_php_code</em> and replace it with the code output.'
         . '</p><p>'
         . 'Some examples:'
-        . '<pre>Hello, {{ echo $full_name }}</pre>'
+        . '<pre>Hello, {{ echo $long_full_name }}</pre>'
         . 'Will be replaced with <strong>"Hello, John Doe"</strong> if the first name is "John" and last name is "Doe".'
         . 'If the variable is not set or does not exist nothing will be printed, for example, the above will produce just <strong>"Hello, "</strong>. But you can use something like this:'
         . '<pre>Dear {{ echo $first_name ? $first_name : "friend" }}</pre>'
