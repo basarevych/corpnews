@@ -287,7 +287,8 @@ class CampaignControllerTest extends AbstractHttpControllerTestCase
 
         $getParams = [
             'campaign' => 42,
-            'email' => 'foo@bar'
+            'email' => 'foo@bar',
+            'send_to' => 'foo@bar'
         ];
         $this->dispatch('/admin/campaign/test-letter', HttpRequest::METHOD_GET, $getParams);
 
