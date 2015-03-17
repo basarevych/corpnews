@@ -191,9 +191,14 @@ class CampaignController extends AbstractActionController
         $campaignId = $this->params()->fromQuery('campaign');
         if (!$campaignId)
             throw new \Exception('Campaign ID is required');
+
         $email = $this->params()->fromQuery('email');
         if (!$email)
             throw new \Exception('Client email is required');
+
+        $sendTo = $this->params()->fromQuery('send_to');
+        if (!$sendTo)
+            throw new \Exception('Target email is required');
 
         $sl = $this->getServiceLocator();
         $em = $sl->get('Doctrine\ORM\EntityManager');
@@ -214,7 +219,7 @@ class CampaignController extends AbstractActionController
 
         $letters = [];
         foreach ($campaign->getTemplates() as $template) {
-            $letter = $mail->createFromTemplate($template, $client);
+            $letter = $mail->createFromTemplate($template, $client, $sendTo);
             if ($letter === false) {
                 $result = $translate('Variable substitution failed');
                 break;

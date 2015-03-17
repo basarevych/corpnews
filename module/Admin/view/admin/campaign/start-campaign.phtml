@@ -25,67 +25,19 @@ $groups = $form->get('groups');
 
         <ul class="nav nav-tabs" role="tablist">
             <li role="presentation" class="active">
-                <a href="#tab-test" aria-controls="tab-test" role="tab" data-toggle="tab">
-                    <?= $this->translate('Test') ?>
+                <a href="#tab-launch" aria-controls="tab-launch" role="tab" data-toggle="tab">
+                    <?= $this->translate('Launch') ?>
                 </a>
             </li>
             <li role="presentation">
-                <a href="#tab-launch" aria-controls="tab-launch" role="tab" data-toggle="tab">
-                    <?= $this->translate('Launch') ?>
+                <a href="#tab-test" aria-controls="tab-test" role="tab" data-toggle="tab">
+                    <?= $this->translate('Test') ?>
                 </a>
             </li>
         </ul>
 
         <div class="tab-content">
-            <div role="tabpanel" class="tab-pane tab-padded-pane active" id="tab-test">
-                <form class="form-horizontal" onsubmit="return false">
-                    <div class="form-group">
-                        <label class="col-sm-4 control-label" for="test-clients">
-                            <?= $this->escapeHtml($this->translate('Tester')) ?>:
-                            <span class="required-marker text-danger">
-                                <?= $this->translate('REQUIRED FIELD') ?>
-                            </span>
-                        </label>
-                        <div class="col-sm-8">
-                            <?php $first = true ?>
-                            <?php foreach ($this->testers as $tester): ?>
-                                <div class="radio">
-                                    <label>
-                                        <input type="radio"
-                                               name="test-clients"
-                                               value="<?= $this->escapeHtml($tester->getEmail()) ?>"
-                                               onchange="updateTesters()"
-                                               <?= $first ? 'checked="checked"' : '' ?>
-                                               data-on-enter="$('#test-button').focus().click()">
-                                        <?= $this->escapeHtml($tester->getEmail()) ?>
-                                    </label>
-                                </div>
-                                <?php if ($first) $first = false ?>
-                            <?php endforeach ?>
-                        </div>
-                    </div>
-
-                    <div id="test-forms" class="form-group">
-                        <label class="col-sm-4 control-label" for="test-clients">
-                            <?= $this->escapeHtml($this->translate('Variables')) ?>:
-                        </label>
-                        <div class="col-sm-8">
-                            <p class="form-control-static"><?= $this->translate('CAMPAIGN_TEST_FORMS') ?>:</p>
-                            <p class="content"></p>
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <div class="col-sm-offset-4 col-sm-8">
-                            <button id="test-button" type="button" class="btn btn-primary">
-                                <?= $this->translate('Send test letter') ?>
-                            </button>
-                        </div>
-                    </div>
-                </form>
-            </div>
-
-            <div role="tabpanel" class="tab-pane tab-padded-pane" id="tab-launch">
+            <div role="tabpanel" class="tab-pane tab-padded-pane active" id="tab-launch">
                 <form class="form-horizontal" name="<?= $form->getName() ?>" onsubmit="return false"
                       method="<?= $form->getAttribute('method') ?>"
                       action="<?= $this->basePath('/admin/campaign/start-campaign') ?>">
@@ -212,6 +164,67 @@ $groups = $form->get('groups');
                     </div>
                 </form>
             </div>
+
+            <div role="tabpanel" class="tab-pane tab-padded-pane" id="tab-test">
+                <form class="form-horizontal" onsubmit="return false">
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label" for="test-clients">
+                            <?= $this->escapeHtml($this->translate('Tester')) ?>:
+                            <span class="required-marker text-danger">
+                                <?= $this->translate('REQUIRED FIELD') ?>
+                            </span>
+                        </label>
+                        <div class="col-sm-8">
+                            <?php $first = true ?>
+                            <?php foreach ($this->testers as $tester): ?>
+                                <div class="radio">
+                                    <label>
+                                        <input type="radio"
+                                               name="test-clients"
+                                               value="<?= $this->escapeHtml($tester->getEmail()) ?>"
+                                               onchange="updateTesters()"
+                                               <?= $first ? 'checked="checked"' : '' ?>
+                                               data-on-enter="$('#test-address').focus()">
+                                        <?= $this->escapeHtml($tester->getEmail()) ?>
+                                    </label>
+                                </div>
+                                <?php if ($first) $first = false ?>
+                            <?php endforeach ?>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label" for="test-address">
+                            <?= $this->escapeHtml($this->translate('Send to')) ?>:
+                            <span class="required-marker text-danger">
+                                <?= $this->translate('REQUIRED FIELD') ?>
+                            </span>
+                        </label>
+                        <div class="col-sm-8">
+                            <input type="text" class="form-control" id="test-address"
+                                   data-on-enter="$('#test-button').focus().click()">
+                        </div>
+                    </div>
+
+                    <div id="test-forms" class="form-group">
+                        <label class="col-sm-4 control-label" for="test-clients">
+                            <?= $this->escapeHtml($this->translate('Variables')) ?>:
+                        </label>
+                        <div class="col-sm-8">
+                            <p class="form-control-static"><?= $this->translate('CAMPAIGN_TEST_FORMS') ?>:</p>
+                            <ul class="content"></ul>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="col-sm-offset-4 col-sm-8">
+                            <button id="test-button" type="button" class="btn btn-primary">
+                                <?= $this->translate('Send test letter') ?>
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
         </div>
 
     </div>
@@ -228,9 +241,9 @@ $groups = $form->get('groups');
 
     function updateTesters() {
         var email = $('#modal-form input[name="test-clients"]:checked').val();
-        var p = $('<p class="content"><strong>' + email + ':</strong></p>');
-        var ul = $('<ul></ul>');
-        ul.appendTo(p);
+        $('#test-address').val(email);
+
+        var ul = $('<ul class="content"></ul>');
         <?php foreach ($this->dataForms as $doc): ?>
             var li = $('<li></li>');
             li.html(
@@ -240,7 +253,7 @@ $groups = $form->get('groups');
                 + '</a>'
             ).appendTo(ul);
         <?php endforeach ?>
-        $('#test-forms .content').replaceWith(p);
+        $('#test-forms .content').replaceWith(ul);
     }
     updateTesters();
 
@@ -254,6 +267,7 @@ $groups = $form->get('groups');
                 data: {
                     campaign: <?= $this->id ?>,
                     email: email,
+                    send_to: $('#test-address').val(),
                 },
                 success: function (data) {
                     alert(data.result);

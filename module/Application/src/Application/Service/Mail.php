@@ -133,9 +133,10 @@ class Mail implements ServiceLocatorAwareInterface
      *
      * @param TemplateEntity $template
      * @param ClientEntity $client
+     * @param string $toAddressOverride
      * @return LetterEntity|false
      */
-    public function createFromTemplate(TemplateEntity $template, ClientEntity $client)
+    public function createFromTemplate(TemplateEntity $template, ClientEntity $client, $toAddressOverride = null)
     {
         $sl = $this->getServiceLocator();
         $config = $sl->get('Config');
@@ -150,7 +151,7 @@ class Mail implements ServiceLocatorAwareInterface
         $model->setMid('<' . $template->getMessageId() . '>');
         $model->setSubject($subject);
         $model->setFrom(@$config['corpnews']['server']['address']);
-        $model->setTo($client->getEmail());
+        $model->setTo($toAddressOverride ? $toAddressOverride : $client->getEmail());
 
         if (!$model->load($template->getHeaders(), $template->getBody(), $parser))
             return false;

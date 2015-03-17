@@ -63,6 +63,7 @@ return [
     'Test' => 'Test',
     'Launch' => 'Launch',
     'Tester' => 'Tester',
+    'Send to' => 'Send to',
     'Variables' => 'Variables',
     'Send test letter' => 'Send test letter',
     'Letter has been sent' => 'Letter has been sent',
@@ -72,7 +73,9 @@ return [
     'CAMPAIGN_NO_TESTERS' => 'No testers found.'
         . '<br><br>'
         . 'Please add clients to "Testers" group',
-    'CAMPAIGN_TEST_FORMS' => 'Mail parser variables are set to the appropriate fields of data forms',
+    'CAMPAIGN_TEST_FORMS' => 'Mail parser variables are set to the appropriate fields of data forms'
+        . '<br><br>'
+        . 'Edit selected user\'s data forms:',
     'CONFIRM_DELETE_CAMPAIGN' => 'Delete selected campaign(s)?',
 
     // DocumentController
@@ -133,7 +136,7 @@ return [
         . 'The parser will run <em>any_php_code</em> and replace it with the code output.'
         . '</p><p>'
         . 'Some examples:'
-        . '<pre>Hello, {{ echo $long_full_name }}</pre>'
+        . '<pre>Hello, {{ echo $short_full_name }}</pre>'
         . 'Will be replaced with <strong>"Hello, John Doe"</strong> if the first name is "John" and last name is "Doe".'
         . 'If the variable is not set or does not exist nothing will be printed, for example, the above will produce just <strong>"Hello, "</strong>. But you can use something like this:'
         . '<pre>Dear {{ echo $first_name ? $first_name : "friend" }}</pre>'
