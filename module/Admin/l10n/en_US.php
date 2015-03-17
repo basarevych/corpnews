@@ -5,6 +5,7 @@ return [
     'Mail' => 'Mail',
     'Message parser' => 'Message parser',
     'Mailbox' => 'Mailbox',
+    'Sent log' => 'Sent log',
     'Campaign' => 'Campaign',
     'Client groups' => 'Client groups',
     'Clients' => 'Clients',
@@ -145,6 +146,13 @@ return [
     'PARSER_GENDER_DESCR' => 'Variable is set to "male" if the gender of the client is male or "female" if it is female. NULL if gender is not set',
     'PARSER_COMPANY_DESCR' => 'Contains company name or NULL if it is not known',
     'PARSER_POSITION_DESCR' => 'Contains client\'s position or NULL if it is now known',
+
+    // SentLogController
+    'Secret key' => 'Secret key',
+    'Error' => 'Error',
+    'When sent' => 'When sent',
+    'From address' => 'From address',
+    'To address' => 'To address',
 
     // SettingController
     'Autodelete' => 'Autodelete',

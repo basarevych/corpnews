@@ -9,10 +9,11 @@ return [
             'Admin\Controller\Client' => 'Admin\Controller\ClientController',
             'Admin\Controller\Campaign' => 'Admin\Controller\CampaignController',
             'Admin\Controller\Document' => 'Admin\Controller\DocumentController',
+            'Admin\Controller\Parser' => 'Admin\Controller\ParserController',
             'Admin\Controller\Mailbox' => 'Admin\Controller\MailboxController',
             'Admin\Controller\Letter' => 'Admin\Controller\LetterController',
+            'Admin\Controller\SentLog' => 'Admin\Controller\SentLogController',
             'Admin\Controller\Setting' => 'Admin\Controller\SettingController',
-            'Admin\Controller\Parser' => 'Admin\Controller\ParserController',
         ],
     ],
 

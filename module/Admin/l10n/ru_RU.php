@@ -5,6 +5,7 @@ return [
     'Mail' => 'Почта',
     'Message parser' => 'Парсер сообщений',
     'Mailbox' => 'Почтовый ящик',
+    'Sent log' => 'Журнал отправленных',
     'Campaign' => 'Кампания',
     'Client groups' => 'Группы клиентов',
     'Clients' => 'Клиенты',
@@ -146,7 +147,12 @@ return [
     'PARSER_COMPANY_DESCR' => 'Содержит название компании или NULL, если оно неизвестно',
     'PARSER_POSITION_DESCR' => 'Содержит должность клиента или NULL, если она неизвестнa',
 
-
+    // SentLogController
+    'Secret key' => 'Секретный ключ',
+    'Error' => 'Ошибка',
+    'When sent' => 'Когда отправлено',
+    'From address' => 'Адрес "От кого"',
+    'To address' => 'Адрес "Кому"',
 
     // SettingController
     'Autodelete' => 'Автоудаление',
