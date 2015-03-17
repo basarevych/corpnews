@@ -179,17 +179,19 @@ class Mail implements ServiceLocatorAwareInterface
         $sl = $this->getServiceLocator();
         $em = $sl->get('Doctrine\ORM\EntityManager');
 
+        $letter->setWhenSent(new \DateTime());
+        $letter->setError(null);
+        $em->persist($letter);
+        $em->flush();
+
         try {
             $msg = Message::fromString($letter->getHeaders() . "\n\n" . $letter->getBody());
             $this->getTransport()->send($msg);
-            $letter->setError(null);
         } catch (\Exception $e) {
             $letter->setError($e->getMessage());
+            $em->persist($letter);
+            $em->flush();
         }
-
-        $letter->setWhenSent(new \DateTime());
-        $em->persist($letter);
-        $em->flush();
 
         return ($letter->getError() === null);
     }
