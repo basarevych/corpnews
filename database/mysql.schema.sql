@@ -79,7 +79,7 @@ CREATE TABLE `templates` (
     `subject` text NULL,
     `headers` mediumtext NULL,
     `body` mediumtext NULL,
-    CONSTRAINT `campaign_pk` PRIMARY KEY (`id`),
+    CONSTRAINT `templates_pk` PRIMARY KEY (`id`),
     CONSTRAINT `templates_campaign_fk` FOREIGN KEY (`campaign_id`)
         REFERENCES `campaigns` (`id`)
         ON UPDATE CASCADE ON DELETE CASCADE
@@ -89,13 +89,16 @@ CREATE TABLE `letters` (
     `id` int unsigned NOT NULL AUTO_INCREMENT,
     `template_id` int unsigned NOT NULL,
     `client_id` int unsigned NULL,
-    `key` varchar(255) NOT NULL,
+    `secret_key` varchar(255) NOT NULL,
     `when_sent` datetime NULL,
+    `error` varchar(255) NULL,
+    `from_address` text NOT NULL,
     `to_address` text NOT NULL,
-    `subject` text NULL,
-    `headers` mediumtext NULL,
-    `body` mediumtext NULL,
-    CONSTRAINT `campaign_pk` PRIMARY KEY (`id`),
+    `subject` text NOT NULL,
+    `headers` mediumtext NOT NULL,
+    `body` mediumtext NOT NULL,
+    CONSTRAINT `letters_pk` PRIMARY KEY (`id`),
+    CONSTRAINT `letters_secret_key_unique` UNIQUE (`secret_key`),
     CONSTRAINT `letters_template_fk` FOREIGN KEY (`template_id`)
         REFERENCES `templates` (`id`)
         ON UPDATE CASCADE ON DELETE CASCADE,

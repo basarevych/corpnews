@@ -26,6 +26,11 @@ use Application\Entity\Client;
 class Letter
 {
     /**
+     * @const KEY_LENGTH
+     */
+    const KEY_LENGTH = 32;
+
+    /**
      * Row ID
      *
      * @var integer
@@ -43,7 +48,7 @@ class Letter
      * 
      * @ORM\Column(type="string")
      */
-    protected $key;
+    protected $secret_key;
 
     /**
      * When sent
@@ -53,6 +58,24 @@ class Letter
      * @ORM\Column(type="utcdatetime", nullable=true)
      */
     protected $when_sent;
+
+    /**
+     * Error message or NULL if success
+     *
+     * @var string
+     *
+     * @ORM\Column(type="string")
+     */
+    protected $error;
+
+    /**
+     * From address
+     *
+     * @var string
+     * 
+     * @ORM\Column(type="string")
+     */
+    protected $from_address;
 
     /**
      * To address
@@ -121,8 +144,10 @@ class Letter
 
         return [
             'id'            => $this->getId(),
-            'key'           => $this->getKey(),
+            'secret_key'    => $this->getSecretKey(),
             'when_sent'     => $whenSent ? $whenSent->getTimestamp() : null,
+            'error'         => $this->getError(),
+            'from_address'  => $this->getFromAddress(),
             'to_address'    => $this->getToAddresss(),
             'subject'       => $this->getSubject(),
             'headers'       => $this->getHeaders(),
@@ -141,26 +166,26 @@ class Letter
     }
 
     /**
-     * Set key
+     * Set secret key
      *
-     * @param string $key
+     * @param string $secretKey
      * @return Letter
      */
-    public function setKey($key)
+    public function setSecretKey($secretKey)
     {
-        $this->key = $key;
+        $this->secret_key = $secretKey;
 
         return $this;
     }
 
     /**
-     * Get key
+     * Get secret key
      *
      * @return string 
      */
-    public function getKey()
+    public function getSecretKey()
     {
-        return $this->key;
+        return $this->secret_key;
     }
 
     /**
@@ -184,6 +209,52 @@ class Letter
     public function getWhenSent()
     {
         return $this->when_sent;
+    }
+
+    /**
+     * Set error
+     *
+     * @param string $error
+     * @return Letter
+     */
+    public function setError($error)
+    {
+        $this->error = $error;
+
+        return $this;
+    }
+
+    /**
+     * Get error
+     *
+     * @return string 
+     */
+    public function getError()
+    {
+        return $this->error;
+    }
+
+    /**
+     * Set from_address
+     *
+     * @param string $fromAddress
+     * @return Letter
+     */
+    public function setFromAddress($fromAddress)
+    {
+        $this->from_address = $fromAddress;
+
+        return $this;
+    }
+
+    /**
+     * Get from_address
+     *
+     * @return string 
+     */
+    public function getFromAddress()
+    {
+        return $this->from_address;
     }
 
     /**
@@ -335,5 +406,19 @@ class Letter
         $this->template = $template;
 
         return $this;
+    }
+
+    /**
+     * Generate unique secret key
+     *
+     * @return string
+     */
+    public static function generateSecretKey()
+    {
+        $randomData = openssl_random_pseudo_bytes(1024);
+        if ($randomData === false)
+            throw new \Exception('Could not generate random string');
+
+        return substr(hash('sha512', $randomData), 0, self::KEY_LENGTH);
     }
 }

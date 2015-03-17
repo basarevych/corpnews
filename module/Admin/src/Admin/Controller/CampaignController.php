@@ -223,14 +223,8 @@ class CampaignController extends AbstractActionController
         }
 
         if ($result === true) {
-            foreach ($letters as $letter) {
-                try {
-                    $mail->getTransport()->send($letter);
-                } catch (\Exception $ex) {
-                    $result = $translate('Sending the letter failed');
-                    break;
-                }
-            }
+            foreach ($letters as $letter)
+                $mail->sendLetter($letter);
         }
 
         return new JsonModel([

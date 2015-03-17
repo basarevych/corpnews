@@ -383,11 +383,11 @@ class Letter
     }
 
     /**
-     * Parsed headers and body
+     * Parsed headers
      *
      * @return string
      */
-    public function getParsedSource()
+    public function getParsedHeaders()
     {
         $headers = "";
         $preferences = array(
@@ -424,7 +424,17 @@ class Letter
         $headers .= @iconv_mime_encode('To', $this->getTo(), $preferences);
         $headers .= "\n";
 
-        return $headers . "\n\n" . $this->parsedBody;
+        return $headers;
+    }
+
+    /**
+     * Parsed body
+     *
+     * @return string
+     */
+    public function getParsedBody()
+    {
+        return $this->parsedBody;
     }
 
     /**

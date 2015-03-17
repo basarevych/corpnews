@@ -21,6 +21,7 @@ use Zend\Mime\Part as MimePart;
 use Application\Model\Letter as LetterModel;
 use Application\Entity\Template as TemplateEntity;
 use Application\Entity\Client as ClientEntity;
+use Application\Entity\Letter as LetterEntity;
 
 /**
  * Mail service
@@ -128,11 +129,11 @@ class Mail implements ServiceLocatorAwareInterface
     }
 
     /**
-     * Create parsed message
+     * Create parsed message as LetterEntity (not persisted)
      *
      * @param TemplateEntity $template
      * @param ClientEntity $client
-     * @return Message
+     * @return LetterEntity|false
      */
     public function createFromTemplate(TemplateEntity $template, ClientEntity $client)
     {
@@ -145,16 +146,51 @@ class Mail implements ServiceLocatorAwareInterface
         if (!$parser->parse($template->getSubject(), $subject, true, true))
             return false;
 
-        $letter = new LetterModel(null);
-        $letter->setMid('<' . $template->getMessageId() . '>');
-        $letter->setSubject($subject);
-        $letter->setFrom(@$config['corpnews']['server']['from_address']);
-        $letter->setTo($client->getEmail());
+        $model = new LetterModel(null);
+        $model->setMid('<' . $template->getMessageId() . '>');
+        $model->setSubject($subject);
+        $model->setFrom(@$config['corpnews']['server']['address']);
+        $model->setTo($client->getEmail());
 
-        if (!$letter->load($template->getHeaders(), $template->getBody(), $parser))
+        if (!$model->load($template->getHeaders(), $template->getBody(), $parser))
             return false;
 
-        $msg = Message::fromString($letter->getParsedSource());
-        return $msg;
+        $letter = new LetterEntity();
+        $letter->setSecretKey(LetterEntity::generateSecretKey());
+        $letter->setFromAddress($model->getFrom());
+        $letter->setToAddress($model->getTo());
+        $letter->setSubject($model->getSubject());
+        $letter->setHeaders($model->getParsedHeaders());
+        $letter->setBody($model->getParsedBody());
+        $letter->setTemplate($template);
+        $letter->setClient($client);
+
+        return $letter;
+    }
+
+    /**
+     * Send the letter
+     *
+     * @param LetterEntity $letter
+     * @return boolean
+     */
+    public function sendLetter(LetterEntity $letter)
+    {
+        $sl = $this->getServiceLocator();
+        $em = $sl->get('Doctrine\ORM\EntityManager');
+
+        try {
+            $msg = Message::fromString($letter->getHeaders() . "\n\n" . $letter->getBody());
+            $this->getTransport()->send($msg);
+            $letter->setError(null);
+        } catch (\Exception $e) {
+            $letter->setError($e->getMessage());
+        }
+
+        $letter->setWhenSent(new \DateTime());
+        $em->persist($letter);
+        $em->flush();
+
+        return ($letter->getError() === null);
     }
 }
