@@ -48,12 +48,12 @@ class LetterController extends AbstractActionController
         $em = $sl->get('Doctrine\ORM\EntityManager');
 
         if ($box && $uid) {
-            $letter = $imap->getLetter($box, $uid);
-            if (!$letter)
+            $model = $imap->getLetter($box, $uid);
+            if (!$model)
                 throw new NotFoundException('Letter not found');
 
             $params = [ 'box' => $box ];
-            $analysisSuccess = $imap->loadLetter($letter, $box, $uid);
+            $analysisSuccess = $imap->loadLetter($model, $box, $uid);
         } else if ($template) {
             $template = $em->getRepository('Application\Entity\Template')
                            ->find($template);
@@ -61,15 +61,16 @@ class LetterController extends AbstractActionController
                 throw new NotFoundException('Template not found');
 
             $params = [ 'template' => $template->getId() ];
-            $letter = new LetterModel(null);
-            $analysisSuccess = $letter->load($template->getHeaders(), $template->getBody());
+            $model = new LetterModel(null);
+            $model->setSubject($template->getSubject());
+            $analysisSuccess = $model->load($template->getHeaders(), $template->getBody());
         }
 
-        $syntaxSuccess = $parser->checkSyntax($letter->getHtmlMessage(), $output, true);
+        $syntaxSuccess = $parser->checkSyntax($model->getHtmlMessage(), $output, true);
         if ($syntaxSuccess)
-            $syntaxSuccess = $parser->checkSyntax($letter->getTextMessage(), $output, false);
+            $syntaxSuccess = $parser->checkSyntax($model->getTextMessage(), $output, false);
 
-        $subject = $letter->getSubject();
+        $subject = $model->getSubject();
         if ($syntaxSuccess) {
             $syntaxSuccess = $parser->checkSyntax($subject, $output, true);
             $subject = $output;
@@ -85,11 +86,11 @@ class LetterController extends AbstractActionController
         return new JsonModel([
             'error'         => $error,
             'subject'       => $subject,
-            'html'          => $this->prepareHtml($letter, $params),
-            'attachments'   => $this->prepareAttachments($letter, $params),
-            'text'          => $this->prepareText($letter),
-            'log'           => $this->prepareLog($letter),
-            'source'        => $this->prepareSource($letter),
+            'html'          => $this->prepareHtml($model, $params),
+            'attachments'   => $this->prepareAttachments($model, $params),
+            'text'          => $this->prepareText($model),
+            'log'           => $this->prepareLog($model),
+            'source'        => $this->prepareSource($model),
         ]);
     }
 
@@ -118,19 +119,19 @@ class LetterController extends AbstractActionController
         $em = $sl->get('Doctrine\ORM\EntityManager');
 
         if ($box && $uid) {
-            $letter = $imap->getLetter($box, $uid);
-            if (!$letter)
+            $model = $imap->getLetter($box, $uid);
+            if (!$model)
                 throw new NotFoundException('Letter not found');
 
-            $success = $imap->loadLetter($letter, $box, $uid);
+            $success = $imap->loadLetter($model, $box, $uid);
         } else if ($template) {
             $template = $em->getRepository('Application\Entity\Template')
                            ->find($template);
             if (!$template)
                 throw new NotFoundException('Template not found');
 
-            $letter = new LetterModel(null);
-            $success = $letter->load($template->getHeaders(), $template->getBody());
+            $model = new LetterModel(null);
+            $success = $model->load($template->getHeaders(), $template->getBody());
         }
 
         if (!$success)
@@ -138,7 +139,7 @@ class LetterController extends AbstractActionController
 
         $att = null;
         $type = 'application/octet-stream';
-        foreach ($letter->getAttachments() as $item) {
+        foreach ($model->getAttachments() as $item) {
             if (($cid && $item['cid'] == "<$cid>") || ($filename && $item['name'] == $filename)) {
                 $att = $item['data'];
                 $type = $item['type'];
