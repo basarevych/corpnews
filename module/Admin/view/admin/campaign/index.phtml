@@ -75,6 +75,10 @@
                             <?= $this->translate('Start campaign') ?>
                         </button>
                         <hr>
+                        <button id="template-button" class="btn btn-default disabled" disabled="disabled" onclick="viewTemplate()">
+                            <?= $this->translate('View template') ?>
+                        </button>
+                        <hr>
                         <button id="delete-button" class="btn btn-default disabled" disabled="disabled" onclick="deleteCampaign()">
                             <?= $this->translate('Delete campaign') ?>
                         </button>
@@ -164,8 +168,14 @@
             $('#start-button')
                 .attr('disabled', 'disabled')
                 .addClass('disabled');
+            $('#template-button')
+                .attr('disabled', 'disabled')
+                .addClass('disabled');
         } else {
             $('#start-button')
+                .removeAttr('disabled')
+                .removeClass('disabled');
+            $('#template-button')
                 .removeAttr('disabled')
                 .removeClass('disabled');
         }
@@ -202,6 +212,15 @@
                 modal.find('.modal-body').html(html);
             }
         });
+    }
+
+    function viewTemplate() {
+        var table = $('#table-campaigns').data('dynamicTable');
+        var selected = table.getSelected();
+        if (selected == 'all' || selected.length != 1)
+            return;
+
+        openLetter({ template: selected[0] });
     }
 
     function deleteCampaign() {

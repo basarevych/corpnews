@@ -10,6 +10,7 @@ return [
             'Admin\Controller\Campaign' => 'Admin\Controller\CampaignController',
             'Admin\Controller\Document' => 'Admin\Controller\DocumentController',
             'Admin\Controller\Mailbox' => 'Admin\Controller\MailboxController',
+            'Admin\Controller\Letter' => 'Admin\Controller\LetterController',
             'Admin\Controller\Setting' => 'Admin\Controller\SettingController',
             'Admin\Controller\Parser' => 'Admin\Controller\ParserController',
         ],

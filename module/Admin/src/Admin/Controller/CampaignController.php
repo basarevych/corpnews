@@ -225,6 +225,10 @@ class CampaignController extends AbstractActionController
         if ($result === true) {
             foreach ($letters as $letter)
                 $mail->sendLetter($letter);
+
+            $campaign->setStatus(CampaignEntity::STATUS_TESTED);
+            $em->persist($campaign);
+            $em->flush();
         }
 
         return new JsonModel([

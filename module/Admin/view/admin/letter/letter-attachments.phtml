@@ -12,9 +12,13 @@
             <tr>
                 <?php if ($item['is_image']): ?>
 <?php
-    $path = $this->basePath('/admin/mailbox/attachment')
-        . '?box=' . urlencode($this->box)
-        . '&uid=' . urlencode($this->letter->getUid())
+    if (isset($params['box']))
+        $query = 'box=' . urlencode($params['box']) . '&uid=' . urlencode($letter->getUid());
+    else if (isset($params['template']))
+        $query = 'template=' . urlencode($params['template']);
+
+    $path = $this->basePath('/admin/letter/attachment')
+        . '?' . $query
         . '&cid=' . urlencode($item['cid'])
         . '&filename=' . urlencode($item['name'])
         . '&preview=1';

@@ -223,6 +223,7 @@ $groups = $form->get('groups');
     modal.find('button[type="submit"]').hide();
     modal.on('hide.bs.modal', function() {
         modal.find('button[type="submit"]').show();
+        reloadTable();
     });
 
     function updateTesters() {
