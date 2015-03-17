@@ -70,9 +70,7 @@ return [
     'CAMPAIGN_NO_TESTERS' => 'No testers found.'
         . '<br><br>'
         . 'Please add clients to "Testers" group',
-    'CAMPAIGN_TEST_FORMS' => 'Mail parser variables are set to the appropriate fields of data forms'
-        . '<br><br>'
-        . 'You can edit the following data forms of selected tester',
+    'CAMPAIGN_TEST_FORMS' => 'Mail parser variables are set to the appropriate fields of data forms',
     'CONFIRM_DELETE_CAMPAIGN' => 'Delete selected campaign(s)?',
 
     // DocumentController

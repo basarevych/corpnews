@@ -71,8 +71,7 @@ $groups = $form->get('groups');
                         </label>
                         <div class="col-sm-8">
                             <p class="form-control-static"><?= $this->translate('CAMPAIGN_TEST_FORMS') ?>:</p>
-                            <ul class="content"></ul>
-                            <div class="result"></div>
+                            <p class="content"></p>
                         </div>
                     </div>
 
@@ -228,7 +227,9 @@ $groups = $form->get('groups');
 
     function updateTesters() {
         var email = $('#modal-form input[name="test-clients"]:checked').val();
-        var ul = $('<ul class="content"></ul>');
+        var p = $('<p class="content"><strong>' + email + ':</strong></p>');
+        var ul = $('<ul></ul>');
+        ul.appendTo(p);
         <?php foreach ($this->dataForms as $doc): ?>
             var li = $('<li></li>');
             li.html(
@@ -238,7 +239,7 @@ $groups = $form->get('groups');
                 + '</a>'
             ).appendTo(ul);
         <?php endforeach ?>
-        $('#test-forms .content').replaceWith(ul);
+        $('#test-forms .content').replaceWith(p);
     }
     updateTesters();
 
