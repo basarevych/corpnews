@@ -176,7 +176,7 @@ class SentLogController extends AbstractActionController
             $subject = $row->getSubject();
             if (!$subject)
                 $subject = $translate('(No subject)');
-            $subject = '<a href="javascript:void(0)" onclick="showLetter({ id: '
+            $subject = '<a href="javascript:void(0)" onclick="openLetter({ letter: '
                 . $row->getId() . ' })">' . $escapeHtml($subject) . '</a>';
 
             return [

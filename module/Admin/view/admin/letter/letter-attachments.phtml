@@ -16,6 +16,8 @@
         $query = 'box=' . urlencode($params['box']) . '&uid=' . urlencode($letter->getUid());
     else if (isset($params['template']))
         $query = 'template=' . urlencode($params['template']);
+    else if (isset($params['letter']))
+        $query = 'letter=' . urlencode($params['letter']);
 
     $path = $this->basePath('/admin/letter/attachment')
         . '?' . $query

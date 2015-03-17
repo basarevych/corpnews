@@ -38,9 +38,10 @@ class LetterController extends AbstractActionController
         $box = $this->params()->fromQuery('box');
         $uid = $this->params()->fromQuery('uid');
         $template = $this->params()->fromQuery('template');
+        $letter = $this->params()->fromQuery('letter');
 
-        if ((!$box || !$uid) && !$template)
-            throw new \Exception('No "box/uid" or "template" parameter');
+        if ((!$box || !$uid) && !$template && !$letter)
+            throw new \Exception('No "box/uid", "template" or "letter" parameter');
 
         $sl = $this->getServiceLocator();
         $imap = $sl->get('ImapClient');
@@ -64,6 +65,16 @@ class LetterController extends AbstractActionController
             $model = new LetterModel(null);
             $model->setSubject($template->getSubject());
             $analysisSuccess = $model->load($template->getHeaders(), $template->getBody());
+        } else if ($letter) {
+            $letter = $em->getRepository('Application\Entity\Letter')
+                         ->find($letter);
+            if (!$letter)
+                throw new NotFoundException('Letter not found');
+
+            $params = [ 'letter' => $letter->getId() ];
+            $model = new LetterModel(null);
+            $model->setSubject($letter->getSubject());
+            $analysisSuccess = $model->load($letter->getHeaders(), $letter->getBody());
         }
 
         $syntaxSuccess = $parser->checkSyntax($model->getHtmlMessage(), $output, true);
@@ -104,9 +115,10 @@ class LetterController extends AbstractActionController
         $box = $this->params()->fromQuery('box');
         $uid = $this->params()->fromQuery('uid');
         $template = $this->params()->fromQuery('template');
+        $letter = $this->params()->fromQuery('letter');
 
-        if ((!$box || !$uid) && !$template)
-            throw new \Exception('No "box/uid" or "template" parameter');
+        if ((!$box || !$uid) && !$template && !$letter)
+            throw new \Exception('No "box/uid", "template" or "letter" parameter');
 
         $cid = $this->params()->fromQuery('cid');
         $filename = $this->params()->fromQuery('filename');
@@ -132,6 +144,14 @@ class LetterController extends AbstractActionController
 
             $model = new LetterModel(null);
             $success = $model->load($template->getHeaders(), $template->getBody());
+        } else if ($letter) {
+            $letter = $em->getRepository('Application\Entity\Letter')
+                         ->find($letter);
+            if (!$letter)
+                throw new NotFoundException('Letter not found');
+
+            $model = new LetterModel(null);
+            $success = $model->load($letter->getHeaders(), $letter->getBody());
         }
 
         if (!$success)
@@ -235,6 +255,8 @@ class LetterController extends AbstractActionController
                     $query = 'box=' . urlencode($params['box']) . '&uid=' . urlencode($letter->getUid());
                 else if (isset($params['template']))
                     $query = 'template=' . urlencode($params['template']);
+                else if (isset($params['letter']))
+                    $query = 'letter=' . urlencode($params['letter']);
 
                 return 'src="'
                     . $basePath('/admin/letter/attachment')
