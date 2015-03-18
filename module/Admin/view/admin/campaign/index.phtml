@@ -21,8 +21,7 @@
                         <?php foreach ($this->statuses as $status): ?>
                             <div class="checkbox">
                                 <label>
-                                    <input type="checkbox" checked="checked"
-                                           onclick="toggleFilter('<?= $status ?>')">
+                                    <input type="checkbox" name="status-<?= $status ?>" value="1" checked="checked">
                                     <?= $this->translate('STATUS_' . strtoupper($status)) ?>
                                 </label>
                             </div>
@@ -69,22 +68,10 @@
 </div>
 
 <script>
-    <?php foreach ($this->statuses as $status): ?>
-        var <?= $status ?> = true;
-    <?php endforeach ?>
-
-    function toggleFilter(name) {
-        switch (name) {
-            <?php foreach ($this->statuses as $status): ?>
-                case '<?= $status ?>':     <?= $status ?> = !<?= $status ?>; break;
-            <?php endforeach ?>
-        }
-    }
-
     function applyFilter() {
         var statuses = [
             <?php foreach ($this->statuses as $status): ?>
-                '<?= $status ?>=' + (<?= $status ?> ? '1' : '0'),
+                '<?= $status ?>=' + ($('.button-panel input[name="status-<?= $status ?>"]').prop('checked') ? 1 : 0),
             <?php endforeach ?>
         ];
         var url = '<?= $this->basePath('/admin/campaign/campaign-table') ?>'

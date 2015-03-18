@@ -33,15 +33,13 @@
 
                                 <div class="checkbox">
                                     <label>
-                                        <input type="checkbox" checked="checked"
-                                               onclick="toggleFilter('successful')">
+                                        <input type="checkbox" name="successful" value="1" checked="checked">
                                         <?= $this->translate('OUTGOING_SUCCESSFUL_FILTER') ?>
                                     </label>
                                 </div>
                                 <div class="checkbox">
                                     <label>
-                                        <input type="checkbox" checked="checked"
-                                               onclick="toggleFilter('erroneous')">
+                                        <input type="checkbox" name="erroneous" value="1" checked="checked">
                                         <?= $this->translate('OUTGOING_ERRONEOUS_FILTER') ?>
                                     </label>
                                 </div>
@@ -62,21 +60,11 @@
 </div>
 
 <script>
-    var successful = true;
-    var erroneous = true;
-
-    function toggleFilter(name) {
-        switch (name) {
-            case 'successful':  successful = !successful; break;
-            case 'erroneous':   erroneous = !errroneous; break;
-        }
-    }
-
     function applyFilter() {
         var filters = [
             'status=' + $('.button-panel input[name="status"]:checked').val(),
-            'successful=' + (successful ? '1' : '0'),
-            'erroneous=' + (erroneous ? '1' : '0'),
+            'successful=' + ($('.button-panel input[name="successful"]').prop('checked') ? 1 : 0),
+            'erroneous=' + ($('.button-panel input[name="erroneous"]').prop('checked') ? 1 : 0),
         ];
         var url = '<?= $this->basePath('/admin/outgoing/outgoing-table') ?>'
             + '?' + filters.join('&');
