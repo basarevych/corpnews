@@ -35,7 +35,9 @@ class CampaignController extends AbstractActionController
      */
     public function indexAction()
     {
-        return new ViewModel();
+        return new ViewModel([
+            'statuses' => CampaignEntity::getStatuses(),
+        ]);
     }
 
     /**
@@ -423,7 +425,7 @@ class CampaignController extends AbstractActionController
 
         $mapper = function ($row) use ($escapeHtml, $basePath, $translate) {
             $name = $escapeHtml($row->getName()) . '</a>';
-            if (in_array($row->getStatus(), [ CampaignEntity::STATUS_STARTED, CampaignEntity::STATUS_PAUSED, CampaignEntity::STATUS_DONE ]))
+            if (in_array($row->getStatus(), [ CampaignEntity::STATUS_STARTED, CampaignEntity::STATUS_PAUSED, CampaignEntity::STATUS_FINISHED ]))
                 $name = '<a href="' . $basePath('/admin/stats?id=') . $row->getId(). '">' . $name . '</a>';
 
             $groups = [];

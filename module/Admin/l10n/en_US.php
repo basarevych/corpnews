@@ -5,7 +5,7 @@ return [
     'Mail' => 'Mail',
     'Message parser' => 'Message parser',
     'Mailbox' => 'Mailbox',
-    'Sent log' => 'Sent log',
+    'Outgoing messages' => 'Outgoing messages',
     'Campaign' => 'Campaign',
     'Client groups' => 'Client groups',
     'Clients' => 'Clients',
@@ -13,6 +13,16 @@ return [
     'Data forms' => 'Data forms',
     'Settings' => 'Settings',
     'Mailbox settings' => 'Mailbox settings',
+
+    // IndexController
+    'MESSAGE_PARSER_HELP' => 'This page lists all the parser variables with their description.'
+        . ' Please, read this page before writing mail campaign templates',
+    'MAILBOX_HELP' => 'This is an interface to the IMAP mailbox used by CorpNews',
+    'OUTGOING_HELP' => 'A table with the outgoing email messages. Contains both sent messages and messages that are only scheduled to be sent',
+    'GROUPS_HELP' => 'When you start a mail campaign you set which client groups will receive the letter. This page defines such groups.',
+    'CLIENTS_HELP' => 'Mail campaign target is the client. This pages allows you to manage clients and to combine clients into groups.',
+    'CAMPAIGNS_HELP' => 'Mail campaign management page. Allows you to edit/start/stop/view statistics of mail campaigns.',
+    'DATA_FORMS_HELP' => 'Client data is stored in data forms. This page provides access to the clients data.',
 
     // AuthController
     'Restricted area' => 'Restricted area',

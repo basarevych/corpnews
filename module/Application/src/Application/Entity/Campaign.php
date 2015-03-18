@@ -34,14 +34,14 @@ class Campaign
      * @const STATUS_QUEUED
      * @const STATUS_STARTED
      * @const STATUS_PAUSED
-     * @const STATUS_DONE
+     * @const STATUS_FINISHED
      */
     const STATUS_CREATED = 'created';
     const STATUS_TESTED = 'tested';
     const STATUS_QUEUED = 'queued';
     const STATUS_STARTED = 'started';
     const STATUS_PAUSED = 'paused';
-    const STATUS_DONE = 'done';
+    const STATUS_FINISHED = 'finished';
 
     /**
      * Row ID
@@ -392,7 +392,7 @@ class Campaign
             self::STATUS_QUEUED,
             self::STATUS_STARTED,
             self::STATUS_PAUSED,
-            self::STATUS_DONE,
+            self::STATUS_FINISHED,
         ];
     }
 }

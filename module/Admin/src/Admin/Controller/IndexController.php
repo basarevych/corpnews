@@ -13,6 +13,7 @@ use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
 use Zend\View\Model\JsonModel;
 use Application\Exception\NotFoundException;
+use Application\Entity\Campaign as CampaignEntity;
 
 /**
  * Index controller
@@ -27,7 +28,17 @@ class IndexController extends AbstractActionController
      */
     public function indexAction()
     {
-        return new ViewModel();
+        $sl = $this->getServiceLocator();
+        $em = $sl->get('Doctrine\ORM\EntityManager');
+        $repo = $em->getRepository('Application\Entity\Campaign');
+
+        $statuses = [];
+        foreach (CampaignEntity::getStatuses() as $status)
+            $statuses[$status] = $repo->getStatusCount($status);
+
+        return new ViewModel([
+            'statuses'  => $statuses,
+        ]);
     }
 
     /**

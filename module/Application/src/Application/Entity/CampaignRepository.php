@@ -22,6 +22,25 @@ use Application\Entity\Campaign as CampaignEntity;
 class CampaignRepository extends EntityRepository
 {
     /**
+     * Count entities by status
+     *
+     * @param string $status
+     * @return integer
+     */
+    public function getStatusCount($status)
+    {
+        $em = $this->getEntityManager();
+
+        $qb = $em->createQueryBuilder();
+        $qb->select('COUNT(c)')
+           ->from('Application\Entity\Campaign', 'c')
+           ->where('c.status = :status')
+           ->setParameter('status', $status);
+
+        return $qb->getQuery()->getSingleScalarResult();
+    }
+
+    /**
      * Remove all the table content
      */
     public function removeAll()

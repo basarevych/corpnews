@@ -18,48 +18,15 @@
                         <h3 class="panel-title"><?= $this->translate('Status filter') ?></h3>
                     </div>
                     <div class="panel-body button-panel">
-                        <div class="checkbox">
-                            <label>
-                                <input type="checkbox" checked="checked"
-                                       onclick="toggleFilter('created')">
-                                <?= $this->translate('STATUS_CREATED') ?>
-                            </label>
-                        </div>
-                        <div class="checkbox">
-                            <label>
-                                <input type="checkbox" checked="checked"
-                                       onclick="toggleFilter('tested')">
-                                <?= $this->translate('STATUS_TESTED') ?>
-                            </label>
-                        </div>
-                        <div class="checkbox">
-                            <label>
-                                <input type="checkbox" checked="checked"
-                                       onclick="toggleFilter('queued')">
-                                <?= $this->translate('STATUS_QUEUED') ?>
-                            </label>
-                        </div>
-                        <div class="checkbox">
-                            <label>
-                                <input type="checkbox" checked="checked"
-                                       onclick="toggleFilter('started')">
-                                <?= $this->translate('STATUS_STARTED') ?>
-                            </label>
-                        </div>
-                        <div class="checkbox">
-                            <label>
-                                <input type="checkbox" checked="checked"
-                                       onclick="toggleFilter('paused')">
-                                <?= $this->translate('STATUS_PAUSED') ?>
-                            </label>
-                        </div>
-                        <div class="checkbox">
-                            <label>
-                                <input type="checkbox" checked="checked"
-                                       onclick="toggleFilter('finished')">
-                                <?= $this->translate('STATUS_FINISHED') ?>
-                            </label>
-                        </div>
+                        <?php foreach ($this->statuses as $status): ?>
+                            <div class="checkbox">
+                                <label>
+                                    <input type="checkbox" checked="checked"
+                                           onclick="toggleFilter('<?= $status ?>')">
+                                    <?= $this->translate('STATUS_' . strtoupper($status)) ?>
+                                </label>
+                            </div>
+                        <?php endforeach ?>
                         <button class="btn btn-default" onclick="applyFilter()">
                             <?= $this->translate('Apply filter') ?>
                         </button>
@@ -102,32 +69,26 @@
 </div>
 
 <script>
-    var created = true;
-    var tested = true;
-    var queued = true;
-    var started = true;
-    var paused = true;
-    var finished = true;
+    <?php foreach ($this->statuses as $status): ?>
+        var <?= $status ?> = true;
+    <?php endforeach ?>
 
     function toggleFilter(name) {
         switch (name) {
-            case 'created':     created = !created; break;
-            case 'tested':      tested = !tested; break;
-            case 'queued':      queued = !queued; break;
-            case 'started':     started = !started; break;
-            case 'paused':      paused = !paused; break;
-            case 'finished':    finished = !finished; break;
+            <?php foreach ($this->statuses as $status): ?>
+                case '<?= $status ?>':     <?= $status ?> = !<?= $status ?>; break;
+            <?php endforeach ?>
         }
     }
 
     function applyFilter() {
+        var statuses = [
+            <?php foreach ($this->statuses as $status): ?>
+                '<?= $status ?>=' + (<?= $status ?> ? '1' : '0'),
+            <?php endforeach ?>
+        ];
         var url = '<?= $this->basePath('/admin/campaign/campaign-table') ?>'
-            + '?created=' + (created ? '1' : '0')
-            + '&tested=' + (tested ? '1' : '0')
-            + '&queued=' + (queued ? '1' : '0')
-            + '&started=' + (started ? '1' : '0')
-            + '&paused=' + (paused ? '1' : '0')
-            + '&finished=' + (finished ? '1' : '0');
+            + '?' + statuses.join('&');
 
         $('#table-campaigns').dynamicTable({
             url: url,

@@ -40,6 +40,10 @@ body.form {
     font-size: 65%;
 }
 
+.breadcrumb-help-block {
+    padding-left: 15px;
+}
+
 .icon-list li {
     padding: 0 0 5px 20px;
     display: block;
@@ -55,9 +59,16 @@ body.form {
 .error-list li:before {
     content: '\e090';
 }
+.larger-font {
+    font-size: larger;
+}
 
 .inline-form-offset {
     margin-top: 30px;
+}
+
+.extra-top-margin {
+    margin-top: 70px;
 }
 
 .form-page {
