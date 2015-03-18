@@ -12,7 +12,7 @@ return [
             'Admin\Controller\Parser' => 'Admin\Controller\ParserController',
             'Admin\Controller\Mailbox' => 'Admin\Controller\MailboxController',
             'Admin\Controller\Letter' => 'Admin\Controller\LetterController',
-            'Admin\Controller\SentLog' => 'Admin\Controller\SentLogController',
+            'Admin\Controller\Outgoing' => 'Admin\Controller\OutgoingController',
             'Admin\Controller\Setting' => 'Admin\Controller\SettingController',
         ],
     ],

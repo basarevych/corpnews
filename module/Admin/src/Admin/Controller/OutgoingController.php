@@ -18,12 +18,12 @@ use Application\Exception\NotFoundException;
 use Application\Entity\Letter as LetterEntity;
 
 /**
- * Sent log controller
+ * Outgoing messages controller
  *
  * @category    Admin
  * @package     Controller
  */
-class SentLogController extends AbstractActionController
+class OutgoingController extends AbstractActionController
 {
     /**
      * Index action
@@ -36,10 +36,13 @@ class SentLogController extends AbstractActionController
     /**
      * Table data retrieving action
      */
-    public function sentTableAction()
+    public function outgoingTableAction()
     {
+        $sent = $this->params()->fromQuery('sent');
+        $planned = $this->params()->fromQuery('planned');
+
         $table = $this->createTable();
-        $this->connectTableData($table);
+        $this->connectTableData($table, $sent, $planned);
 
         $query = $this->params()->fromQuery('query');
         switch ($query) {
@@ -151,8 +154,10 @@ class SentLogController extends AbstractActionController
      * Create adapter and mapper
      *
      * @param Table $table
+     * @param boolean $sent
+     * @param boolean $planned
      */
-    protected function connectTableData($table)
+    protected function connectTableData($table, $sent, $planned)
     {
         $sl = $this->getServiceLocator();
         $em = $sl->get('Doctrine\ORM\EntityManager');
@@ -164,6 +169,13 @@ class SentLogController extends AbstractActionController
            ->from('Application\Entity\Letter', 'l')
            ->leftJoin('l.template', 't')
            ->leftJoin('t.campaign', 'c');
+
+        if ($sent && !$planned)
+            $qb->andWhere('l.when_sent IS NOT NULL');
+        else if (!$sent && $planned)
+            $qb->andWhere('l.when_sent IS NULL');
+        else if (!$sent && !$planned)
+            $qb->andWhere('l.when_sent = 0');
 
         $adapter = new DoctrineORMAdapter();
         $adapter->setQueryBuilder($qb);

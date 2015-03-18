@@ -1,0 +1,86 @@
+<?php
+
+    $this->layout()->activePage = 'outgoing';
+
+?>
+<div class="container">
+    <div class="row">
+        <div class="col-sm-offset-3 col-sm-9">
+            <h1><span id="page-title"><?= $this->translate('Outgoing messages') ?></span></h1>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-sm-3">
+            <div data-sidebar="sm">
+                <div id="status-panel" class="panel panel-default">
+                    <div class="panel-heading">
+                        <h3 class="panel-title"><?= $this->translate('Outgoing filter') ?></h3>
+                    </div>
+                    <div class="panel-body button-panel">
+                        <div class="checkbox">
+                            <label>
+                                <input type="checkbox" checked="checked"
+                                       onclick="toggleFilter('sent')">
+                                <?= $this->translate('OUTGOING_SENT_FILTER') ?>
+                            </label>
+                        </div>
+                        <div class="checkbox">
+                            <label>
+                                <input type="checkbox" checked="checked"
+                                       onclick="toggleFilter('planned')">
+                                <?= $this->translate('OUTGOING_PLANNED_FILTER') ?>
+                            </label>
+                        </div>
+                        <button class="btn btn-default" onclick="applyFilter()">
+                            <?= $this->translate('Apply filter') ?>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-sm-9">
+            <div id="table-outgoing"></div>
+        <div>
+    </div>
+</div>
+
+<script>
+    var sent = true;
+    var planned = true;
+
+    function toggleFilter(name) {
+        switch (name) {
+            case 'sent':    sent = !sent; break;
+            case 'planned': planned = !planned; break;
+        }
+    }
+
+    function applyFilter() {
+        var filters = [
+            'sent=' + (sent ? '1' : '0'),
+            'planned=' + (planned ? '1' : '0'),
+        ];
+        var url = '<?= $this->basePath('/admin/outgoing/outgoing-table') ?>'
+            + '?' + filters.join('&');
+
+        $('#table-outgoing').dynamicTable({
+            url: url,
+            row_id_column: 'id',
+            sort_column: 'id',
+            sort_dir: 'desc',
+            loader_image: '<?= $this->basePath('/img/loader.gif') ?>',
+            strings: dynamicTableStrings,
+            mapper: function (row) {
+                if (row['when_sent'] != null) {
+                    var m = moment.unix(row['when_sent']).local();
+                    row['when_sent'] = m.format('<?= $this->translate('GENERIC_MOMENT_FORMAT') ?>');
+                }
+
+                return row;
+            },
+        });
+    }
+    applyFilter();
+</script>

@@ -160,12 +160,15 @@ return [
     'PARSER_COMPANY_DESCR' => 'Contains company name or NULL if it is not known',
     'PARSER_POSITION_DESCR' => 'Contains client\'s position or NULL if it is now known',
 
-    // SentLogController
+    // OutgoingController
     'Secret key' => 'Secret key',
     'Error' => 'Error',
     'When sent' => 'When sent',
     'From address' => 'From address',
     'To address' => 'To address',
+    'Outgoing filter' => 'Outgoing filter',
+    'OUTGOING_SENT_FILTER' => 'Sent messages',
+    'OUTGOING_PLANNED_FILTER' => 'Planned messages',
 
     // SettingController
     'Autodelete' => 'Autodelete',

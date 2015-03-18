@@ -161,12 +161,15 @@ return [
     'PARSER_COMPANY_DESCR' => 'Содержит название компании или NULL, если оно неизвестно',
     'PARSER_POSITION_DESCR' => 'Содержит должность клиента или NULL, если она неизвестнa',
 
-    // SentLogController
+    // OutgoingController
     'Secret key' => 'Секретный ключ',
     'Error' => 'Ошибка',
     'When sent' => 'Когда отправлено',
     'From address' => 'Адрес "От кого"',
     'To address' => 'Адрес "Кому"',
+    'Outgoing filter' => 'Фильтр исходящих',
+    'OUTGOING_SENT_FILTER' => 'Отправленные сообщения',
+    'OUTGOING_PLANNED_FILTER' => 'Сообщения, запланированные к отправке',
 
     // SettingController
     'Autodelete' => 'Автоудаление',
