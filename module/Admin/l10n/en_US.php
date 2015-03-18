@@ -23,6 +23,7 @@ return [
     'CLIENTS_HELP' => 'Mail campaign target is the client. This pages allows you to manage clients and to combine clients into groups.',
     'CAMPAIGNS_HELP' => 'Mail campaign management page. Allows you to edit/start/stop/view statistics of mail campaigns.',
     'DATA_FORMS_HELP' => 'Client data is stored in data forms. This page provides access to the clients data.',
+    'SETTINGS_MAILBOX_HELP' => 'Set time after which old mail will be automatically deleted to keep mailbox size small',
 
     // AuthController
     'Restricted area' => 'Restricted area',
