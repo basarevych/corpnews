@@ -164,7 +164,7 @@ div.letter-frame {
 .button-panel hr {
     margin: 3px 0;
 }
-.button-panel .checkbox {
+.button-panel .checkbox, .button-panel .radio {
     width: 100%;
     text-align: left;
 }

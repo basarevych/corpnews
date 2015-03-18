@@ -18,32 +18,33 @@
                         <h3 class="panel-title"><?= $this->translate('Outgoing filter') ?></h3>
                     </div>
                     <div class="panel-body button-panel">
-                        <div class="checkbox">
+                        <div class="radio">
                             <label>
-                                <input type="checkbox" checked="checked"
-                                       onclick="toggleFilter('sent')">
-                                <?= $this->translate('OUTGOING_SENT_FILTER') ?>
-                            </label>
-                        </div>
-                        <div class="checkbox">
-                            <label>
-                                <input type="checkbox" checked="checked"
-                                       onclick="toggleFilter('planned')">
+                                <input type="radio" name="status" value="planned"
+                                       onclick="$(this).closest('.button-panel').find('.checkbox').hide()">
                                 <?= $this->translate('OUTGOING_PLANNED_FILTER') ?>
                             </label>
                         </div>
-                        <div class="checkbox">
+                        <div class="radio">
                             <label>
-                                <input type="checkbox" checked="checked"
-                                       onclick="toggleFilter('successful')">
-                                <?= $this->translate('OUTGOING_SUCCESSFUL_FILTER') ?>
-                            </label>
-                        </div>
-                        <div class="checkbox">
-                            <label>
-                                <input type="checkbox" checked="checked"
-                                       onclick="toggleFilter('erroneous')">
-                                <?= $this->translate('OUTGOING_ERRONEOUS_FILTER') ?>
+                                <input type="radio" name="status" value="processed" checked="checked"
+                                       onclick="$(this).closest('.button-panel').find('.checkbox').show()">
+                                <?= $this->translate('OUTGOING_PROCESSED_FILTER') ?>
+
+                                <div class="checkbox">
+                                    <label>
+                                        <input type="checkbox" checked="checked"
+                                               onclick="toggleFilter('successful')">
+                                        <?= $this->translate('OUTGOING_SUCCESSFUL_FILTER') ?>
+                                    </label>
+                                </div>
+                                <div class="checkbox">
+                                    <label>
+                                        <input type="checkbox" checked="checked"
+                                               onclick="toggleFilter('erroneous')">
+                                        <?= $this->translate('OUTGOING_ERRONEOUS_FILTER') ?>
+                                    </label>
+                                </div>
                             </label>
                         </div>
                         <button class="btn btn-default" onclick="applyFilter()">
@@ -61,15 +62,11 @@
 </div>
 
 <script>
-    var sent = true;
-    var planned = true;
     var successful = true;
     var erroneous = true;
 
     function toggleFilter(name) {
         switch (name) {
-            case 'sent':        sent = !sent; break;
-            case 'planned':     planned = !planned; break;
             case 'successful':  successful = !successful; break;
             case 'erroneous':   erroneous = !errroneous; break;
         }
@@ -77,8 +74,7 @@
 
     function applyFilter() {
         var filters = [
-            'sent=' + (sent ? '1' : '0'),
-            'planned=' + (planned ? '1' : '0'),
+            'status=' + $('.button-panel input[name="status"]:checked').val(),
             'successful=' + (successful ? '1' : '0'),
             'erroneous=' + (erroneous ? '1' : '0'),
         ];

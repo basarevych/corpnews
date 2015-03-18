@@ -39,8 +39,7 @@ class OutgoingController extends AbstractActionController
     public function outgoingTableAction()
     {
         $filter = [
-            'sent'          => $this->params()->fromQuery('sent'),
-            'planned'       => $this->params()->fromQuery('planned'),
+            'status'        => $this->params()->fromQuery('status'),
             'successful'    => $this->params()->fromQuery('successful'),
             'erroneous'     => $this->params()->fromQuery('erroneous'),
         ];
@@ -173,19 +172,17 @@ class OutgoingController extends AbstractActionController
            ->leftJoin('l.template', 't')
            ->leftJoin('t.campaign', 'c');
 
-        if ($filter['sent'] && !$filter['planned'])
+        if ($filter['status'] == 'processed') {
             $qb->andWhere('l.when_sent IS NOT NULL');
-        else if (!$filter['sent'] && $filter['planned'])
+            if ($filter['successful'] && !$filter['erroneous'])
+                $qb->andWhere('l.error IS NULL');
+            else if (!$filter['successful'] && $filter['erroneous'])
+                $qb->andWhere('l.error IS NOT NULL');
+            else if (!$filter['successful'] && !$filter['erroneous'])
+                $qb->andWhere('l.error = 0');
+        } else if ($filter['status'] == 'planned') {
             $qb->andWhere('l.when_sent IS NULL');
-        else if (!$filter['sent'] && !$filter['planned'])
-            $qb->andWhere('l.when_sent = 0');
-
-        if ($filter['successful'] && !$filter['erroneous'])
-            $qb->andWhere('l.error IS NULL');
-        else if (!$filter['successful'] && $filter['erroneous'])
-            $qb->andWhere('l.error IS NOT NULL');
-        else if (!$filter['successful'] && !$filter['erroneous'])
-            $qb->andWhere('l.error = 0');
+        }
 
         $adapter = new DoctrineORMAdapter();
         $adapter->setQueryBuilder($qb);
