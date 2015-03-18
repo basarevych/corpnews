@@ -32,6 +32,20 @@
                                 <?= $this->translate('OUTGOING_PLANNED_FILTER') ?>
                             </label>
                         </div>
+                        <div class="checkbox">
+                            <label>
+                                <input type="checkbox" checked="checked"
+                                       onclick="toggleFilter('successful')">
+                                <?= $this->translate('OUTGOING_SUCCESSFUL_FILTER') ?>
+                            </label>
+                        </div>
+                        <div class="checkbox">
+                            <label>
+                                <input type="checkbox" checked="checked"
+                                       onclick="toggleFilter('erroneous')">
+                                <?= $this->translate('OUTGOING_ERRONEOUS_FILTER') ?>
+                            </label>
+                        </div>
                         <button class="btn btn-default" onclick="applyFilter()">
                             <?= $this->translate('Apply filter') ?>
                         </button>
@@ -49,11 +63,15 @@
 <script>
     var sent = true;
     var planned = true;
+    var successful = true;
+    var erroneous = true;
 
     function toggleFilter(name) {
         switch (name) {
-            case 'sent':    sent = !sent; break;
-            case 'planned': planned = !planned; break;
+            case 'sent':        sent = !sent; break;
+            case 'planned':     planned = !planned; break;
+            case 'successful':  successful = !successful; break;
+            case 'erroneous':   erroneous = !errroneous; break;
         }
     }
 
@@ -61,6 +79,8 @@
         var filters = [
             'sent=' + (sent ? '1' : '0'),
             'planned=' + (planned ? '1' : '0'),
+            'successful=' + (successful ? '1' : '0'),
+            'erroneous=' + (erroneous ? '1' : '0'),
         ];
         var url = '<?= $this->basePath('/admin/outgoing/outgoing-table') ?>'
             + '?' + filters.join('&');

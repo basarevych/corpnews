@@ -170,6 +170,8 @@ return [
     'Outgoing filter' => 'Фильтр исходящих',
     'OUTGOING_SENT_FILTER' => 'Отправленные сообщения',
     'OUTGOING_PLANNED_FILTER' => 'Сообщения, запланированные к отправке',
+    'OUTGOING_SUCCESSFUL_FILTER' => 'Сообщения, успешно отправленные',
+    'OUTGOING_ERRONEOUS_FILTER' => 'Сообщения, которые не удалось отправить',
 
     // SettingController
     'Autodelete' => 'Автоудаление',

@@ -169,6 +169,8 @@ return [
     'Outgoing filter' => 'Outgoing filter',
     'OUTGOING_SENT_FILTER' => 'Sent messages',
     'OUTGOING_PLANNED_FILTER' => 'Planned messages',
+    'OUTGOING_SUCCESSFUL_FILTER' => 'Successfuly sent messages',
+    'OUTGOING_ERRONEOUS_FILTER' => 'Failed to send messages',
 
     // SettingController
     'Autodelete' => 'Autodelete',

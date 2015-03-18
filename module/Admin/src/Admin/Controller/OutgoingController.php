@@ -38,11 +38,15 @@ class OutgoingController extends AbstractActionController
      */
     public function outgoingTableAction()
     {
-        $sent = $this->params()->fromQuery('sent');
-        $planned = $this->params()->fromQuery('planned');
+        $filter = [
+            'sent'          => $this->params()->fromQuery('sent'),
+            'planned'       => $this->params()->fromQuery('planned'),
+            'successful'    => $this->params()->fromQuery('successful'),
+            'erroneous'     => $this->params()->fromQuery('erroneous'),
+        ];
 
         $table = $this->createTable();
-        $this->connectTableData($table, $sent, $planned);
+        $this->connectTableData($table, $filter);
 
         $query = $this->params()->fromQuery('query');
         switch ($query) {
@@ -154,10 +158,9 @@ class OutgoingController extends AbstractActionController
      * Create adapter and mapper
      *
      * @param Table $table
-     * @param boolean $sent
-     * @param boolean $planned
+     * @param array $filter
      */
-    protected function connectTableData($table, $sent, $planned)
+    protected function connectTableData($table, $filter)
     {
         $sl = $this->getServiceLocator();
         $em = $sl->get('Doctrine\ORM\EntityManager');
@@ -170,12 +173,19 @@ class OutgoingController extends AbstractActionController
            ->leftJoin('l.template', 't')
            ->leftJoin('t.campaign', 'c');
 
-        if ($sent && !$planned)
+        if ($filter['sent'] && !$filter['planned'])
             $qb->andWhere('l.when_sent IS NOT NULL');
-        else if (!$sent && $planned)
+        else if (!$filter['sent'] && $filter['planned'])
             $qb->andWhere('l.when_sent IS NULL');
-        else if (!$sent && !$planned)
+        else if (!$filter['sent'] && !$filter['planned'])
             $qb->andWhere('l.when_sent = 0');
+
+        if ($filter['successful'] && !$filter['erroneous'])
+            $qb->andWhere('l.error IS NULL');
+        else if (!$filter['successful'] && $filter['erroneous'])
+            $qb->andWhere('l.error IS NOT NULL');
+        else if (!$filter['successful'] && !$filter['erroneous'])
+            $qb->andWhere('l.error = 0');
 
         $adapter = new DoctrineORMAdapter();
         $adapter->setQueryBuilder($qb);
