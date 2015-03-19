@@ -9,6 +9,7 @@ return [
             'ImapClient'        => 'Application\Service\ImapClient',
             'DataFormManager'   => 'Application\Service\DataFormManager',
             'Parser'            => 'Application\Service\Parser',
+            'Logger'            => 'Application\Service\Logger',
         ],
 
         'abstract_factories' => [

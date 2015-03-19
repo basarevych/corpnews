@@ -54,4 +54,18 @@ class Text
 
         return $size;
     }
+
+    /**
+     * Convert variable name to camel case
+     *
+     * @param string $name
+     * @return string
+     */
+    public static function toCamelCase($name)
+    {
+        $name = str_replace("_", " ", $name);
+        $name = ucwords($name);
+        $name = str_replace(" ", "", $name);
+        return $name;
+    }
 }

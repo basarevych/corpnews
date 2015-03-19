@@ -72,6 +72,7 @@ return [
     'File' => 'File',
     'Line' => 'Line',
     'Stack trace' => 'Stack trace',
+    'ERROR_CREATE_FROM_TEMPLATE' => 'Could not create letter from template (%id%)',
 
     // Csrf validator
     'The form submitted did not originate from the expected site' => 'The form submitted did not originate from the expected site',

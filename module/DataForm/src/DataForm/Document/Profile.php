@@ -15,7 +15,7 @@ use DataForm\Document\AbstractDataFormDocument;
 /**
  * User profile document
  * 
- * @category    Application
+ * @category    DataForm
  * @package     Document
  * 
  * @ODM\Document(repositoryClass="DataForm\Document\ProfileRepository")

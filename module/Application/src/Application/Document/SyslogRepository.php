@@ -7,19 +7,18 @@
  * @license     http://choosealicense.com/licenses/mit/ MIT
  */
 
-namespace DataForm\Document;
+namespace Application\Document;
 
 use Doctrine\ODM\MongoDB\DocumentRepository;
-use DataForm\Document\Profile as ProfileDocument;
+use Application\Document\Syslog as SyslogDocument;
 
 /**
- * Profile document repository
+ * Syslog document repository
  * 
- * @category    DataForm
+ * @category    Application
  * @package     Document
  */
-class ProfileRepository extends DocumentRepository
-                        implements DataFormRepositoryInterface
+class SyslogRepository extends DocumentRepository
 {
     /**
      * Remove all documents
@@ -29,7 +28,7 @@ class ProfileRepository extends DocumentRepository
         $dm = $this->getDocumentManager();
 
         $qb = $dm->createQueryBuilder();
-        $qb->remove('DataForm\Document\Profile')
+        $qb->remove('Application\Document\Syslog')
            ->getQuery()
            ->execute();
     }

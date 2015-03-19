@@ -86,7 +86,7 @@ class MailTest extends AbstractControllerTestCase
         $this->assertEquals($html, $parts[0]->getContent(), "Message content is wrong");
     }
 
-    public function testCreateFromTemplate()
+    public function testCreateFromTemplateWorks()
     {
         $sl = $this->getApplicationServiceLocator();
         $service = new MailService();

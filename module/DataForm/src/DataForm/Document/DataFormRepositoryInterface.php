@@ -12,7 +12,7 @@ namespace DataForm\Document;
 /**
  * Document repository interface
  * 
- * @category    Application
+ * @category    DataForm
  * @package     Document
  */
 interface DataFormRepositoryInterface

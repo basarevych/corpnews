@@ -144,8 +144,9 @@ class Mail implements ServiceLocatorAwareInterface
         $parser = $sl->get('Parser');
         $parser->setClient($client);
 
+        $error = false;
         if (!$parser->parse($template->getSubject(), $subject, true, true))
-            return false;
+            $error = true;
 
         $model = new LetterModel(null);
         $model->setMid('<' . $template->getMessageId() . '>');
@@ -154,7 +155,7 @@ class Mail implements ServiceLocatorAwareInterface
         $model->setTo($toAddressOverride ? $toAddressOverride : $client->getEmail());
 
         if (!$model->load($template->getHeaders(), $template->getBody(), $parser))
-            return false;
+            $error = true;
 
         $letter = new LetterEntity();
         $letter->setSecretKey(LetterEntity::generateSecretKey());
@@ -166,7 +167,19 @@ class Mail implements ServiceLocatorAwareInterface
         $letter->setTemplate($template);
         $letter->setClient($client);
 
-        return $letter;
+        if ($error) {
+            $logger = $sl->get('Logger');
+            $logger->log(
+                Logger::LEVEL_ERROR,
+                'ERROR_CREATE_FROM_TEMPLATE',
+                [
+                    'source_name' => get_class($template),
+                    'source_id' => $template->getId()
+                ]
+            );
+        }
+
+        return $error ? false : $letter;
     }
 
     /**
