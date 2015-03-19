@@ -11,6 +11,7 @@ return [
     'Clients' => 'Клиенты',
     'Mail campaigns' => 'Почтовые кампании',
     'Data forms' => 'Формы данных',
+    'System log' => 'Системный журнал',
     'Settings' => 'Настройки',
     'Mailbox settings' => 'Настройки почтового ящика',
 
@@ -178,6 +179,16 @@ return [
     // SettingController
     'Autodelete' => 'Автоудаление',
     'Days' => 'Дни',
+
+    // SyslogController
+    'Log level filter' => 'Фильтр уровня записи',
+    'LEVEL_INFO' => 'LEVEL_INFO',
+    'LEVEL_ERROR' => 'LEVEL_ERROR',
+    'LEVEL_CRITICAL' => 'LEVEL_CRITICAL',
+    'When happened' => 'Когда произошло',
+    'Level' => 'Уровень',
+    'Clear log' => 'Очистить журнал',
+    'CONFIRM_CLEAR_SYSLOG' => 'Удалить все записи системного журнала?',
 
     // Tours
     'TOUR_MAILBOX_INTRO' => '<p>Начните работу с CorpNews с отправки шаблона новостного письма как сообщения электронной почты на ящик приложения.</p>',

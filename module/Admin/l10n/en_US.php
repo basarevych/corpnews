@@ -11,6 +11,7 @@ return [
     'Clients' => 'Clients',
     'Mail campaigns' => 'Mail campaigns',
     'Data forms' => 'Data forms',
+    'System log' => 'System log',
     'Settings' => 'Settings',
     'Mailbox settings' => 'Mailbox settings',
 
@@ -178,6 +179,16 @@ return [
     // SettingController
     'Autodelete' => 'Autodelete',
     'Days' => 'Days',
+
+    // SyslogController
+    'Log level filter' => 'Log level filter',
+    'LEVEL_INFO' => 'LEVEL_INFO',
+    'LEVEL_ERROR' => 'LEVEL_ERROR',
+    'LEVEL_CRITICAL' => 'LEVEL_CRITICAL',
+    'When happened' => 'When happened',
+    'Level' => 'Level',
+    'Clear log' => 'Clear log',
+    'CONFIRM_CLEAR_SYSLOG' => 'Delete all entries of system log?',
 
     // Tours
     'TOUR_MAILBOX_INTRO' => '<p>Start working with CorpNews by sending newsletter template as an email to the application mailbox</p>',

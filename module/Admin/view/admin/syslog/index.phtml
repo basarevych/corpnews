@@ -1,0 +1,99 @@
+<?php
+
+    $this->layout()->activePage = 'syslog';
+
+?>
+<div class="container">
+    <div class="row">
+        <div class="col-sm-offset-3 col-sm-9">
+            <h1><span id="page-title"><?= $this->translate('System log') ?></span></h1>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-sm-3">
+            <div data-sidebar="sm">
+                <div id="status-panel" class="panel panel-default">
+                    <div class="panel-heading">
+                        <h3 class="panel-title"><?= $this->translate('Log level filter') ?></h3>
+                    </div>
+                    <div class="panel-body button-panel">
+                        <?php foreach ($this->levels as $level): ?>
+                            <div class="checkbox">
+                                <label>
+                                    <input type="checkbox" name="level-<?= $status ?>" value="1" checked="checked">
+                                    <?= $this->translate('LEVEL_' . strtoupper($level)) ?>
+                                </label>
+                            </div>
+                        <?php endforeach ?>
+                        <button class="btn btn-default" onclick="applyFilter()">
+                            <?= $this->translate('Apply filter') ?>
+                        </button>
+                    </div>
+                </div>
+
+                <div id="actions-panel" class="panel panel-default">
+                    <div class="panel-heading">
+                        <h3 class="panel-title"><?= $this->translate('Table actions') ?></h3>
+                    </div>
+                    <div class="panel-body button-panel">
+                        <button id="clear-button" class="btn btn-default" onclick="clearSyslog()">
+                            <?= $this->translate('Clear log') ?>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-sm-9">
+            <div id="table-syslog"></div>
+        <div>
+    </div>
+</div>
+
+<script>
+    function applyFilter() {
+        var levels = [
+            <?php foreach ($this->levels as $level): ?>
+                '<?= $level ?>=' + ($('.button-panel input[name="level-<?= $level ?>"]').prop('checked') ? 1 : 0),
+            <?php endforeach ?>
+        ];
+        var url = '<?= $this->basePath('/admin/syslog/syslog-table') ?>'
+            + '?' + levels.join('&');
+
+        $('#table-syslog').dynamicTable({
+            url: url,
+            row_id_column: 'id',
+            sort_column: 'when_happened',
+            sort_dir: 'desc',
+            loader_image: '<?= $this->basePath('/img/loader.gif') ?>',
+            strings: dynamicTableStrings,
+            mapper: function (row) {
+                if (row['when_happened'] != null) {
+                    var m = moment.unix(row['when_happened']).local();
+                    row['when_happened'] = m.format('<?= $this->translate('GENERIC_MOMENT_FORMAT') ?>');
+                }
+
+                return row;
+            },
+        });
+    }
+    applyFilter();
+
+    function reloadTable() {
+        var table = $('#table-syslog').data('dynamicTable');
+        table.refresh();
+    }
+
+    function clearSyslog() {
+        $.ajax({
+            url: '<?= $this->basePath('/admin/syslog/clear-syslog') ?>',
+            success: function (html) {
+                var modal = $('#modal-form');
+                modal.find('.modal-title').text('<?= $this->translate('Clear log') ?>');
+                modal.find('button[type=submit]').text('<?= $this->translate('Delete') ?>');
+                modal.find('.modal-body').html(html);
+            }
+        });
+    }
+</script>

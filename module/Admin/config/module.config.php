@@ -14,6 +14,7 @@ return [
             'Admin\Controller\Letter' => 'Admin\Controller\LetterController',
             'Admin\Controller\Outgoing' => 'Admin\Controller\OutgoingController',
             'Admin\Controller\Setting' => 'Admin\Controller\SettingController',
+            'Admin\Controller\Syslog' => 'Admin\Controller\SyslogController',
         ],
     ],
 
