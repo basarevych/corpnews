@@ -44,6 +44,12 @@ body.form {
     padding-left: 15px;
 }
 
+.empty-table {
+    font-style: italic;
+    text-align: center;
+    padding: 1em 0 !important;
+}
+
 .icon-list li {
     padding: 0 0 5px 20px;
     display: block;

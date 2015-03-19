@@ -21,6 +21,29 @@ use Application\Document\Syslog as SyslogDocument;
 class SyslogRepository extends DocumentRepository
 {
     /**
+     * Find all documents with level higher than or equal to $level
+     *
+     * @param string $level
+     * @param integer $limit
+     * @return array
+     */
+    public function findAllByLevel($level, $limit = null)
+    {
+        $dm = $this->getDocumentManager();
+        $levels = SyslogDocument::getLevels($level);
+
+        $qb = $dm->createQueryBuilder();
+        $qb->find('Application\Document\Syslog')
+           ->field('level')->in($levels)
+           ->sort('when_happened', 'desc');
+
+        if ($limit)
+            $qb->limit($limit);
+
+        return $qb->getQuery()->execute();
+    }
+
+    /**
      * Remove all documents
      */
     public function removeAll()

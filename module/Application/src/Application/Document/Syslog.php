@@ -236,4 +236,25 @@ class Syslog
     {
         return $this->source_id;
     }
+
+    /**
+     * Get levels higher than or equal to $level
+     *
+     * @param string $level
+     * @return array
+     */
+    public static function getLevels($level = null)
+    {
+        $levels = [];
+        switch ($level) {
+            case null:
+            case self::LEVEL_INFO:
+                $levels[] = self::LEVEL_INFO;
+            case self::LEVEL_ERROR:
+                $levels[] = self::LEVEL_ERROR;
+            case self::LEVEL_CRITICAL:
+                $levels[] = self::LEVEL_CRITICAL;
+        }
+        return $levels;
+    }
 }

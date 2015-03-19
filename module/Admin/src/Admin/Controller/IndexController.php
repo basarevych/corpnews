@@ -14,6 +14,7 @@ use Zend\View\Model\ViewModel;
 use Zend\View\Model\JsonModel;
 use Application\Exception\NotFoundException;
 use Application\Entity\Campaign as CampaignEntity;
+use Application\Document\Syslog as SyslogDocument;
 
 /**
  * Index controller
@@ -30,14 +31,19 @@ class IndexController extends AbstractActionController
     {
         $sl = $this->getServiceLocator();
         $em = $sl->get('Doctrine\ORM\EntityManager');
-        $repo = $em->getRepository('Application\Entity\Campaign');
+        $repoCampaign = $em->getRepository('Application\Entity\Campaign');
+        $dm = $this->getServiceLocator()->get('doctrine.documentmanager.odm_default');
+        $repoSyslog = $dm->getRepository('Application\Document\Syslog');
 
         $statuses = [];
         foreach (CampaignEntity::getStatuses() as $status)
-            $statuses[$status] = $repo->getStatusCount($status);
+            $statuses[$status] = $repoCampaign->getStatusCount($status);
+
+        $docs = $repoSyslog->findAllByLevel(SyslogDocument::LEVEL_ERROR, 5);
 
         return new ViewModel([
             'statuses'  => $statuses,
+            'log'       => $docs,
         ]);
     }
 
