@@ -68,6 +68,15 @@ class Syslog
     protected $message;
 
     /**
+     * Exception message
+     *
+     * @var string
+     *
+     * @ODM\String
+     */
+    protected $exception;
+
+    /**
      * Source name
      *
      * @var string
@@ -98,23 +107,10 @@ class Syslog
             'when_happened'     => $this->getWhenHappened(),
             'level'             => $this->getLevel(),
             'message'           => $this->getMessage(),
+            'exception'         => $this->getException(),
             'source_name'       => $this->getSourceName(),
             'source_id'         => $this->getSourceId(),
         );
-    }
-
-    /**
-     * Converts this object to string
-     *
-     * @param mixed $translate
-     * @return string
-     */
-    public function toString($translate)
-    {
-        $msg = $translate($this->getMessage());
-        $msg = str_replace('%source_name%', $this->getSourceName(), $msg);
-        $msg = str_replace('%source_id%', $this->getSourceId(), $msg);
-        return $msg;
     }
 
     /**
@@ -191,6 +187,28 @@ class Syslog
     public function getMessage()
     {
         return $this->message;
+    }
+
+    /**
+     * Set exception
+     *
+     * @param string $exception
+     * @return Syslog
+     */
+    public function setException($exception)
+    {
+        $this->exception = $exception;
+        return $this;
+    }
+
+    /**
+     * Get exception
+     *
+     * @return string
+     */
+    public function getException()
+    {
+        return $this->exception;
     }
 
     /**

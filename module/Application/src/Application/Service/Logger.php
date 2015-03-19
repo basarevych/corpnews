@@ -79,6 +79,25 @@ class Logger implements ServiceLocatorAwareInterface
     }
 
     /**
+     * Substitute variables in message string
+     *
+     * @param SyslogDocument $log
+     * @return string
+     */
+    public function prepareMessage(SyslogDocument $log)
+    {
+        $sl = $this->getServiceLocator();
+        $translate = $sl->get('viewhelpermanager')->get('translate');
+
+        $msg = $translate($log->getMessage());
+        $msg = str_replace('%exception%', $log->getException(), $msg);
+        $msg = str_replace('%source_name%', $log->getSourceName(), $msg);
+        $msg = str_replace('%source_id%', $log->getSourceId(), $msg);
+
+        return $msg;
+    }
+
+    /**
      * Clear the log
      *
      * @return Logger

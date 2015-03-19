@@ -89,8 +89,8 @@
                             <?php else: ?>
                                 <?php foreach ($this->log as $entry): ?>
                                     <tr>
-                                        <td><?= $this->getWhenHappened()->format($this->translate('GENERIC_DATETIME_FORMAT')) ?></td>
-                                        <td><?= $entry->toString($this->translate) ?></td>
+                                        <td><?= $entry['when'] ?></td>
+                                        <td><?= $entry['msg'] ?></td>
                                     </tr>
                                 <?php endforeach ?>
                             <?php endif ?>

@@ -73,6 +73,7 @@ return [
     'Line' => 'Строка',
     'Stack trace' => 'Трассировка стека',
     'ERROR_CREATE_FROM_TEMPLATE' => 'Не удалось создать письмо по шаблону (%id%)',
+    'ERROR_SEND_LETTER' => 'Не удалось отправить письмо: %exception%',
 
     // Csrf validator
     'The form submitted did not originate from the expected site' => 'Отправленная форма не принадлежит ожидаемому сайту',

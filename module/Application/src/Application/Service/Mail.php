@@ -22,6 +22,7 @@ use Application\Model\Letter as LetterModel;
 use Application\Entity\Template as TemplateEntity;
 use Application\Entity\Client as ClientEntity;
 use Application\Entity\Letter as LetterEntity;
+use Application\Document\Syslog as SyslogDocument;
 
 /**
  * Mail service
@@ -170,7 +171,7 @@ class Mail implements ServiceLocatorAwareInterface
         if ($error) {
             $logger = $sl->get('Logger');
             $logger->log(
-                Logger::LEVEL_ERROR,
+                SyslogDocument::LEVEL_ERROR,
                 'ERROR_CREATE_FROM_TEMPLATE',
                 [
                     'source_name' => get_class($template),
@@ -202,6 +203,15 @@ class Mail implements ServiceLocatorAwareInterface
             $msg = Message::fromString($letter->getHeaders() . "\n\n" . $letter->getBody());
             $this->getTransport()->send($msg);
         } catch (\Exception $e) {
+            $logger = $sl->get('Logger');
+            $logger->log(
+                SyslogDocument::LEVEL_ERROR,
+                'ERROR_SEND_LETTER',
+                [
+                    'exception' => $e->getMessage()
+                ]
+            );
+
             $letter->setError($e->getMessage());
             $em->persist($letter);
             $em->flush();

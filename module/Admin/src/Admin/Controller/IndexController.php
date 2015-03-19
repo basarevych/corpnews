@@ -30,6 +30,8 @@ class IndexController extends AbstractActionController
     public function indexAction()
     {
         $sl = $this->getServiceLocator();
+        $translate = $sl->get('viewhelpermanager')->get('translate');
+        $logger = $sl->get('Logger');
         $em = $sl->get('Doctrine\ORM\EntityManager');
         $repoCampaign = $em->getRepository('Application\Entity\Campaign');
         $dm = $this->getServiceLocator()->get('doctrine.documentmanager.odm_default');
@@ -40,10 +42,17 @@ class IndexController extends AbstractActionController
             $statuses[$status] = $repoCampaign->getStatusCount($status);
 
         $docs = $repoSyslog->findAllByLevel(SyslogDocument::LEVEL_ERROR, 5);
+        $log = [];
+        foreach ($docs as $doc) {
+            $log[] = [
+                'when'  => $doc->getWhenHappened()->format($translate('GENERIC_DATETIME_FORMAT')),
+                'msg'   => $logger->prepareMessage($doc),
+            ];
+        }
 
         return new ViewModel([
             'statuses'  => $statuses,
-            'log'       => $docs,
+            'log'       => $log,
         ]);
     }
 
