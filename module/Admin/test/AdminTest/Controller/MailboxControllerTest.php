@@ -173,9 +173,17 @@ class MailboxControllerTest extends AbstractHttpControllerTestCase
         $this->assertMatchedRouteName('admin');
     }
 
-    public function testCreateCampaignActionWorks()
+    public function testCreateCampaignChecksSyntax()
     {
         $sl = $this->getApplicationServiceLocator();
+
+        $this->parser = $this->getMockBuilder('Application\Service\Parser')
+                             ->setMethods([ 'checkSyntax' ])
+                             ->getMock();
+
+        $this->parser->expects($this->any())
+                     ->method('checkSyntax')
+                     ->will($this->returnValue(false));
 
         $this->em = $this->getMockBuilder('Doctrine\ORM\EntityManager')
                          ->disableOriginalConstructor()
@@ -191,6 +199,58 @@ class MailboxControllerTest extends AbstractHttpControllerTestCase
 
         $sl->setAllowOverride(true);
         $sl->setService('Doctrine\ORM\EntityManager', $this->em);
+        $sl->setService('Parser', $this->parser);
+
+        $getParams = [
+            'box' => 'box',
+            'uid' => 42
+        ];
+        $this->dispatch('/admin/mailbox/create-campaign', HttpRequest::METHOD_GET, $getParams);
+        $this->assertResponseStatusCode(200);
+
+        $response = $this->getResponse();
+        $dom = new Query($response->getContent());
+        $result = $dom->execute('input[name="security"]');
+        $security = count($result) ? $result[0]->getAttribute('value') : null;
+
+        $postParams = [
+            'security' => $security,
+            'box' => 'box',
+            'uid' => 42
+        ];
+
+        $this->dispatch('/admin/mailbox/create-campaign', HttpRequest::METHOD_POST, $postParams);
+        $this->assertResponseStatusCode(200);
+        $this->assertEquals(0, count($persisted), "No entities should have been saved");
+    }
+
+    public function testCreateCampaignActionWorks()
+    {
+        $sl = $this->getApplicationServiceLocator();
+
+        $this->parser = $this->getMockBuilder('Application\Service\Parser')
+                             ->setMethods([ 'checkSyntax' ])
+                             ->getMock();
+
+        $this->parser->expects($this->any())
+                     ->method('checkSyntax')
+                     ->will($this->returnValue(true));
+
+        $this->em = $this->getMockBuilder('Doctrine\ORM\EntityManager')
+                         ->disableOriginalConstructor()
+                         ->setMethods([ 'getRepository', 'persist', 'flush' ])
+                         ->getMock();
+
+        $persisted = [];
+        $this->em->expects($this->any())
+                 ->method('persist')
+                 ->will($this->returnCallback(function ($entity) use (&$persisted) {
+                    $persisted[] = $entity;
+                 }));
+
+        $sl->setAllowOverride(true);
+        $sl->setService('Doctrine\ORM\EntityManager', $this->em);
+        $sl->setService('Parser', $this->parser);
 
         $getParams = [
             'box' => 'box',

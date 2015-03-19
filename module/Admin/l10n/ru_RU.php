@@ -79,7 +79,7 @@ return [
     'Send test letter' => 'Отправить тестовое письмо',
     'Letter has been sent' => 'Письмо было отправлено',
     'Variable substitution failed' => 'Замена переменных не удалась',
-    'Sending the letter failed' => 'Отправка письма не удалась',
+    'Campaign test failed' => 'Тестирование камании завершилось неудачно',
     'Start campaign' => 'Начать кампанию',
     'CAMPAIGN_NO_TESTERS' => 'Тестеровщики не найдены.'
         . '<br><br>'

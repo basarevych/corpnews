@@ -230,12 +230,16 @@ class CampaignController extends AbstractActionController
         }
 
         if ($result === true) {
-            foreach ($letters as $letter)
-                $mail->sendLetter($letter);
+            foreach ($letters as $letter) {
+                if (!$mail->sendLetter($letter))
+                    $result = $translate('Campaign test failed');
+            }
 
-            $campaign->setStatus(CampaignEntity::STATUS_TESTED);
-            $em->persist($campaign);
-            $em->flush();
+            if ($result === true) {
+                $campaign->setStatus(CampaignEntity::STATUS_TESTED);
+                $em->persist($campaign);
+                $em->flush();
+            }
         }
 
         return new JsonModel([
