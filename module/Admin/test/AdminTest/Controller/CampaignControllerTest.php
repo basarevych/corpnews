@@ -12,6 +12,7 @@ use Application\Entity\Campaign as CampaignEntity;
 use Application\Entity\Group as GroupEntity;
 use Application\Entity\Client as ClientEntity;
 use Application\Entity\Template as TemplateEntity;
+use Application\Entity\Letter as LetterEntity;
 use Admin\Form\StartCampaign as StartCampaignForm;
 
 class CampaignControllerQueryMock {
@@ -150,6 +151,8 @@ class CampaignControllerTest extends AbstractHttpControllerTestCase
                    ->method('getTransport')
                    ->will($this->returnValue(new CampaignControllerTransportMock()));
 
+        $this->mail->setServiceLocator($this->sl);
+
         $this->sl->setAllowOverride(true);
         $this->sl->setService('Doctrine\ORM\EntityManager', $this->em);
         $this->sl->setService('Mail', $this->mail);
@@ -282,8 +285,24 @@ class CampaignControllerTest extends AbstractHttpControllerTestCase
                    ->will($this->returnCallback(function ($template, $client) use (&$passedTemplate, &$passedClient) {
                         $passedTemplate = $template;
                         $passedClient = $client;
-                        return new Message();
+
+                        $fixture = file_get_contents(__DIR__ . '/../../../../Application/test/ApplicationTest/LetterFixture.txt');
+                        $pos = strpos($fixture, "\n\n");
+                        $headers = substr($fixture, 0, $pos);
+                        $body = substr($fixture, $pos, strlen($fixture) - $pos);
+
+                        $letter = new LetterEntity();
+                        $letter->setHeaders($headers);
+                        $letter->setBody($body);
+                        return $letter;
                    }));
+
+        $persisted = [];
+        $this->em->expects($this->any())
+                 ->method('persist')
+                 ->will($this->returnCallback(function ($entity) use (&$persisted) {
+                        $persisted[] = $entity;
+                 }));
 
         $getParams = [
             'campaign' => 42,
@@ -294,6 +313,14 @@ class CampaignControllerTest extends AbstractHttpControllerTestCase
 
         $this->assertEquals($this->template, $passedTemplate, "Wrong template used");
         $this->assertEquals($this->client, $passedClient, "Wrong client used");
+
+        $this->assertEquals(true,
+            count($persisted) == 2
+                && $persisted[0] instanceof LetterEntity
+                && $persisted[1] instanceof CampaignEntity,
+            "Only letter and campaign should be persisted"
+        );
+        $this->assertEquals(CampaignEntity::STATUS_TESTED, $persisted[1]->getStatus(), "Status should be STATUS_TESTED");
     }
 
     public function testDeleteCampaignActionCanBeAccessed()
