@@ -126,16 +126,12 @@ class FirstName implements ServiceLocatorAwareInterface,
         $dfm = $sl->get('DataFormManager');
 
         $class = $dfm->getDocumentClass('profile');
-        if (!$class) {
-            echo $default;
-            return null;
-        }
+        if (!$class)
+            throw new \Exception('No class for profile');
 
         $client = $this->getClient();
-        if (!$client) {
-            echo $default;
-            return null;
-        }
+        if (!$client)
+            throw new \Exception('No client set');
 
         $doc = $dm->getRepository($class)
                   ->find($client->getId());

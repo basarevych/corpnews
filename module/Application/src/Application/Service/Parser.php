@@ -349,7 +349,13 @@ class Parser implements ServiceLocatorAwareInterface
                         $output .= htmlentities($originalChunk, ENT_COMPAT | ENT_HTML401, 'UTF-8');
 
                     ob_start();
-                    $callback($code);
+
+                    try {
+                        $callback($code);
+                    } catch (\Exception $e) {
+                        $success = false;
+                    }
+
                     $result = ob_get_contents();
                     ob_end_clean();
 
