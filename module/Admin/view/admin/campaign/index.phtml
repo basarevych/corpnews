@@ -37,10 +37,6 @@
                         <h3 class="panel-title"><?= $this->translate('Table actions') ?></h3>
                     </div>
                     <div class="panel-body button-panel">
-                        <button id="start-button" class="btn btn-primary disabled" disabled="disabled" onclick="startCampaign()">
-                            <?= $this->translate('Start campaign') ?>
-                        </button>
-                        <hr>
                         <button id="template-button" class="btn btn-default disabled" disabled="disabled" onclick="viewTemplate()">
                             <?= $this->translate('View template') ?>
                         </button>
@@ -85,6 +81,9 @@
             loader_image: '<?= $this->basePath('/img/loader.gif') ?>',
             strings: dynamicTableStrings,
             mapper: function (row) {
+                row['name'] = '<a href="javascript:void(0)" onclick="startCampaign('
+                    + row['id'] + ')">' + row['name'] + '</a>';
+
                 if (row['when_created'] != null) {
                     var m = moment.unix(row['when_created']).local();
                     row['when_created'] = m.format('<?= $this->translate('GENERIC_MOMENT_FORMAT') ?>');
@@ -113,16 +112,10 @@
         var selected = table.getSelected();
 
         if (selected == 'all' || selected.length != 1) {
-            $('#start-button')
-                .attr('disabled', 'disabled')
-                .addClass('disabled');
             $('#template-button')
                 .attr('disabled', 'disabled')
                 .addClass('disabled');
         } else {
-            $('#start-button')
-                .removeAttr('disabled')
-                .removeClass('disabled');
             $('#template-button')
                 .removeAttr('disabled')
                 .removeClass('disabled');
@@ -143,16 +136,11 @@
         table.refresh();
     }
 
-    function startCampaign() {
-        var table = $('#table-campaigns').data('dynamicTable');
-        var selected = table.getSelected();
-        if (selected == 'all' || selected.length != 1)
-            return;
-
+    function startCampaign(id) {
         $.ajax({
             url: '<?= $this->basePath('/admin/campaign/start-campaign') ?>',
             data: {
-                id: selected[0]
+                id: id
             },
             success: function (html) {
                 var modal = $('#modal-form');

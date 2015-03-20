@@ -23,9 +23,11 @@ use Application\Model\Mailbox;
 class ConsoleController extends AbstractConsoleController
 {
     /**
-     * @const MESSAGES_PER_CYCLE        Number of messages to process per Cron invocation
+     * @const ITEMS_LIMIT
+     * @const CRON_DURATION
      */
-    const MESSAGES_PER_CYCLE = 100;
+    const ITEMS_LIMIT = 100;
+    const CRON_DURATION = 50;
 
     /**
      * Cron script action template
@@ -39,6 +41,7 @@ class ConsoleController extends AbstractConsoleController
             return "Another cron job is running" . PHP_EOL;
         }
 
+        $startTime = time();
         $console = $this->getConsole();
         $request = $this->getRequest();
         $verbose = $request->getParam('verbose');
@@ -129,13 +132,12 @@ class ConsoleController extends AbstractConsoleController
         }
 
         foreach ($boxes as $box) {
-            if ($verbose) {
+            if ($verbose)
                 $console->writeLine('=> Searching box: ' . $box->getName());
-            }
 
             $messages = $imap->search($box->getName(), 0, 0, 'BEFORE "' . $oldDate . '"');
             if (count($messages)) {
-                $toDo = min(count($messages), self::MESSAGES_PER_CYCLE);
+                $toDo = min(count($messages), self::ITEMS_LIMIT);
                 if ($verbose) {
                     $console->writeLine('   Processing ' . $toDo . ' out of ' . count($messages) . ' found letter(s)');
                     $console->writeLine();
@@ -155,6 +157,12 @@ class ConsoleController extends AbstractConsoleController
                     $console->writeLine();
                 }
             }
+
+            if (time() - $startTime >= self::CRON_DURATION) {
+                if ($verbose)
+                    $console->writeLine('===> Time limit reached - exiting');
+                return;
+            }
         }
 
         if ($verbose) {
@@ -163,13 +171,12 @@ class ConsoleController extends AbstractConsoleController
         }
 
         foreach ($toSearch as $box) {
-            if ($verbose) {
+            if ($verbose)
                 $console->writeLine('=> Searching box: ' . $box->getName());
-            }
 
             $messages = $imap->search($box->getName(), 0, 0, 'SINCE "' . $oldDate . '"');
             if (count($messages)) {
-                $toDo = min(count($messages), self::MESSAGES_PER_CYCLE);
+                $toDo = min(count($messages), self::ITEMS_LIMIT);
                 if ($verbose) {
                     $console->writeLine('   Processing ' . $toDo . ' out of ' . count($messages) . ' found letter(s)');
                     $console->writeLine();
@@ -188,6 +195,12 @@ class ConsoleController extends AbstractConsoleController
                     $console->writeLine('   Nothing found');
                     $console->writeLine();
                 }
+            }
+
+            if (time() - $startTime >= self::CRON_DURATION) {
+                if ($verbose)
+                    $console->writeLine('===> Time limit reached - exiting');
+                return;
             }
         }
 
