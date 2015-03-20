@@ -13,6 +13,7 @@ use ReflectionClass;
 use Exception;
 use Zend\ServiceManager\ServiceLocatorAwareInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
+use Application\Entity\Template as TemplateEntity;
 use Application\Entity\Client as ClientEntity;
 
 /**
@@ -31,11 +32,18 @@ class Parser implements ServiceLocatorAwareInterface
     protected $serviceLocator = null;
 
     /**
-     * Variables
+     * Functions
      *
      * @var mixed
      */
-    protected $variables = null;
+    protected $functions = null;
+
+    /**
+     * Current template
+     *
+     * @var TemplateEntity
+     */
+    protected $template = null;
 
     /**
      * Current client
@@ -54,22 +62,22 @@ class Parser implements ServiceLocatorAwareInterface
     {
         $this->serviceLocator = $serviceLocator;
 
-        if (!$this->variables) {
+        if (!$this->functions) {
             $options = $serviceLocator->get('Config');
-            if (!isset($options['corpnews']['parser']['variables']))
-                throw new \Exception("No 'parser/variables' section in the config");
+            if (!isset($options['corpnews']['parser']['functions']))
+                throw new \Exception("No 'parser/functions' section in the config");
 
-            $this->variables = $options['corpnews']['parser']['variables'];
+            $this->functions = $options['corpnews']['parser']['functions'];
 
-            foreach ($this->variables as $var => $props) {
-                $class = $this->getVariableClass($var);
+            foreach ($this->functions as $name => $props) {
+                $class = $this->getFunctionClass($name);
                 $reflection = new ReflectionClass($class);
 
                 if (!$reflection->implementsInterface('DataForm\Variable\VariableInterface'))
-                    throw new Exception('All the variables must implement VariableInterface');
+                    throw new Exception('All the functions must implement VariableInterface');
 
                 if (!$reflection->implementsInterface('Zend\ServiceManager\ServiceLocatorAwareInterface'))
-                    throw new Exception('All the variables must implement ServiceLocatorAwareInterface');
+                    throw new Exception('All the functions must implement ServiceLocatorAwareInterface');
             }
         }
 
@@ -86,6 +94,28 @@ class Parser implements ServiceLocatorAwareInterface
         if (!$this->serviceLocator)
             throw new \Exception('No Service Locator configured');
         return $this->serviceLocator;
+    }
+
+    /**
+     * Set current template
+     *
+     * @param TemplateEntity $template
+     * @return Parser
+     */
+    public function setTemplate(TemplateEntity $template)
+    {
+        $this->template = $template;
+        return $this;
+    }
+
+    /**
+     * Get current template
+     *
+     * @return TemplateEntity
+     */
+    public function getTemplate()
+    {
+        return $this->template;
     }
 
     /**
@@ -111,58 +141,41 @@ class Parser implements ServiceLocatorAwareInterface
     }
 
     /**
-     * Get parser variables
+     * Get parser function names
      *
      * @return array
      */
-    public function getVariables()
+    public function getFunctions()
     {
-        return array_keys($this->variables);
+        return array_keys($this->functions);
     }
 
     /**
-     * Get variable description
+     * Get function description
      *
-     * @param string $variable
+     * @param string $name
      * @return string
      */
-    public function getVariableDescr($variable)
+    public function getFunctionDescr($name)
     {
-        if (!isset($this->variables[$variable]) || !isset($this->variables[$variable]['descr']))
+        if (!isset($this->functions[$name]) || !isset($this->functions[$name]['descr']))
             return null;
 
-        return $this->variables[$variable]['descr'];
+        return $this->functions[$name]['descr'];
     }
 
     /**
-     * Get variable class
+     * Get function class
      *
-     * @param string $variable
+     * @param string $name
      * @return string
      */
-    public function getVariableClass($variable)
+    public function getFunctionClass($name)
     {
-        if (!isset($this->variables[$variable]) || !isset($this->variables[$variable]['class']))
+        if (!isset($this->functions[$name]) || !isset($this->functions[$name]['class']))
             return null;
 
-        return $this->variables[$variable]['class'];
-    }
-
-    /**
-     * Get variable value
-     *
-     * @param string $variable
-     * @return string
-     */
-    public function getVariableValue($variable)
-    {
-        $class = $this->getVariableClass($variable);
-
-        $object = new $class();
-        $object->setServiceLocator($this->getServiceLocator());
-        $object->setClient($this->getClient());
-
-        return $object->getValue();
+        return $this->functions[$name]['class'];
     }
 
     /**
@@ -262,10 +275,18 @@ class Parser implements ServiceLocatorAwareInterface
      */
     public function parse($msg, &$output, $htmlInput, $htmlOutput)
     {
-        $callback = function ($code) {
-            //foreach ($this->getVariables() as $__var)
-            foreach ([ 'first_name', 'last_name' ] as $__var)
-                $$__var = $this->getVariableValue($__var);
+        $__sl = $this->getServiceLocator();
+        $callback = function ($code) use ($__sl) {
+            foreach ($this->getFunctions() as $__func) {
+                $$__func = function ($param1 = '', $param2 = '', $param3 = '') use ($__func, $__sl) {
+                    $__class = $this->getFunctionClass($__func);
+                    $__obj = new $__class();
+                    $__obj->setServiceLocator($__sl);
+                    $__obj->setTemplate($this->getTemplate());
+                    $__obj->setClient($this->getClient());
+                    $__obj->execute($param1, $param2, $param3);
+                };
+            }
 
             eval($code);
         };

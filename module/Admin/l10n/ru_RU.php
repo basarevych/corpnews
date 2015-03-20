@@ -16,7 +16,7 @@ return [
     'Mailbox settings' => 'Настройки почтового ящика',
 
     // IndexController
-    'MESSAGE_PARSER_HELP' => 'Эта страница содержит перечень переменных парсера почты.'
+    'MESSAGE_PARSER_HELP' => 'Эта страница содержит перечень функций парсера почты.'
         . ' Пожалуйста, прочтите эту страницу прежде, чем создавать шаблон почтовой кампании.',
     'MAILBOX_HELP' => 'Это интерфейс к почтовому ящику IMAP, используемым CorpNews',
     'OUTGOING_HELP' => 'Таблица исходящих сообщений. Содержит и отправленные сообщения, и сообщения, которые только были запланированы к отправке.',
@@ -144,26 +144,39 @@ return [
     'Execute' => 'Выполнить',
 
     // ParserController
-    'Message parser variables' => 'Переменные парсера сообщений',
+    'Message parser functions' => 'Функции парсера сообщений',
     'PARSER_SYNTAX_TITLE' => 'Синтаксис парсера',
     'PARSER_SYNTAX_BODY' => '<p>Общий синтаксис парсера:'
         . '<pre>{{ any_php_code }}</pre>'
-        . 'Парсер выполнит <em>any_php_code</em> и заменит его на вывод скрипта.'
+        . 'Парсер выполнит <em>any_php_code</em> и заменит {{ ... }} на текст вывода скрипта.'
         . '</p><p>'
-        . 'Несколько примеров:'
-        . '<pre>Здравствуйте, {{ echo $short_full_name }}</pre>'
-        . 'Будет заменено на <strong>"Здравствуйте, Петр Иванов"</strong> если имя - "Петр" и фамилия - "Иванов".'
-        . 'Если переменная не установлена или не существует, то ничего выведено не будет. Пример выше напечатает только <strong>"Здравствуйте, "</strong>. Но вы можете использовать что-то вроде этого:'
-        . '<pre>Дорогой {{ echo $first_name ? $first_name : "друг" }}</pre>'
-        . 'Это будет заменено на <strong>"Дорогой Петр"</strong>, если имя - "Петр" и <strong>"Дорогой друг"</strong>, если имя не установлено.',
-    'PARSER_FIRST_NAME_DESCR' => 'Содержит имя клиента или NULL, если оно неизвестно',
-    'PARSER_MIDDLE_NAME_DESCR' => 'Содержит отчество клиента или NULL, если оно неизвестно',
-    'PARSER_LAST_NAME_DESCR' => 'Содержит фамилию клиента или NULL, если она неизвестна',
-    'PARSER_SHORT_NAME_DESCR' => 'Объединение имени и отчества клиента, если они известны, или NULL',
-    'PARSER_FULL_NAME_DESCR' => 'Объединение имени, отчества и фамилии клиента, если они известны, или NULL',
-    'PARSER_GENDER_DESCR' => 'Содержит "male", если пол клиента мужской, или "female", если он женский. NULL, если пол не указан',
-    'PARSER_COMPANY_DESCR' => 'Содержит название компании или NULL, если оно неизвестно',
-    'PARSER_POSITION_DESCR' => 'Содержит должность клиента или NULL, если она неизвестнa',
+        . 'Немного примеров:'
+        . '<pre>40 + 2 = {{ echo 40 + 2 }}</pre>'
+        . 'Будет заменено на <strong>"40 + 2 = 42"</strong>.'
+        . '</p><p>'
+        . 'Парсер CorpNews расширяет PHP некоторым числом функций. Имена такий функций начинаются со знака доллара:'
+        . '<pre>Hello, {{ $first_name("Dear friend") }}</pre>'
+        . 'Здесь мы вызываем функцию <strong>$first_name</strong> с параметром "Dear friend".'
+        . 'Конкретно эта функция печатает имя клиента, которому мы пишем, параметр - это строка, которая будет напечатана, если имя неизвестно.'
+        . '</p><p>'
+        . 'Код, приведенный выше, будет заменен на <strong>Hello, John</strong>, если имя - "John", и <strong>Hello, Dear friend</strong>, если имя неизвестно.' 
+        . '</p>',
+    'PARSER_FIRST_NAME_DESCR' => '<pre>{{ $first_name("Default string") }}</pre>'
+        . 'Печатает имя клиента или "Default string" (опционально), если оно неизвестно',
+    'PARSER_MIDDLE_NAME_DESCR' => '<pre>{{ $middle_name("Default string") }}</pre>'
+        . 'Печатает отчество клиента или "Default sring" (опционально), если оно неизвестно',
+    'PARSER_LAST_NAME_DESCR' => '<pre>{{ $last_name("Default string") }}</pre>'
+        . 'Печатает фамилию клиента или "Default string" (опционально), если онa неизвестнa',
+    'PARSER_SHORT_NAME_DESCR' => '<pre>{{ $short_full_name("Default string") }}</pre>'
+        . 'Печатает имя и отчество клиента, если они известны, или "Default string" (опционально)',
+    'PARSER_LONG_NAME_DESCR' => '<pre>{{ $long_full_name("Default string") }}</pre>'
+        . 'Печатает имя, отчество и фамилию клиента, если они известны, или "Default string" (опционально)',
+    'PARSER_GENDER_DESCR' => '<pre>{{ $gender("Male string", "Female string", "Default string") }}</pre>'
+        . 'Печатает "Male string", если пол клиента мужской, или "Female string", если он женский. Если пол неизвестен, печатает "Default string"',
+    'PARSER_COMPANY_DESCR' => '<pre>{{ $company("Default string") }}</pre>'
+        . 'Печатает название компании или "Default string" (опционально), если оно неизвестно',
+    'PARSER_POSITION_DESCR' => '<pre>{{ $position("Default string") }}</pre>'
+        . 'Печатает должность клиента или "Default string" (опционально), если оно неизвестно',
 
     // OutgoingController
     'Secret key' => 'Секретный ключ',

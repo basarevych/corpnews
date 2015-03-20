@@ -4,6 +4,8 @@ namespace ApplicationTest\Service;
 
 use Zend\Test\PHPUnit\Controller\AbstractControllerTestCase;
 use Application\Service\Parser;
+use Application\Entity\Template as TemplateEntity;
+use Application\Entity\Client as ClientEntity;
 
 class ParserTest extends AbstractControllerTestCase
 {
@@ -30,19 +32,21 @@ class ParserTest extends AbstractControllerTestCase
         $service->setServiceLocator($sl);
 
         $config = $sl->get('Config');
-        $keys = array_keys($config['corpnews']['parser']['variables']);
+        $keys = array_keys($config['corpnews']['parser']['functions']);
 
-        $this->assertEquals($keys, $service->getVariables(), "Returned variables are wrong");
-        $this->assertEquals('PARSER_FIRST_NAME_DESCR', $service->getVariableDescr('first_name'), "Returned description is wrong");
+        $this->assertEquals($keys, $service->getFunctions(), "Returned functions are wrong");
+        $this->assertEquals('PARSER_FIRST_NAME_DESCR', $service->getFunctionDescr('first_name'), "Returned description is wrong");
     }
 
     public function testSyntaxValid()
     {
-        $msg = 'Hello {{ echo "Sir" }}';
+        $msg = 'Hello {{ echo "Sir"; $last_name("default") }}';
 
         $service = new Parser();
         $sl = $this->getApplicationServiceLocator();
         $service->setServiceLocator($sl);
+        $service->setTemplate(new TemplateEntity());
+        $service->setClient(new ClientEntity());
 
         $valid = $service->checkSyntax($msg, $output, false);
         $this->assertEquals(true, $valid, "Valid syntax reported as invalid");
@@ -62,21 +66,18 @@ class ParserTest extends AbstractControllerTestCase
 
     public function testParseWorks()
     {
-        $msg = 'Hello {{ echo "Sir-" . $first_name }}';
+        $msg = 'Hello {{ echo "Sir-"; $first_name("foobar") }}';
 
         $service = $this->getMockBuilder('Application\Service\Parser')
                         ->setMethods([ 'getVariableValue' ])
                         ->getMock();
 
-        $service->expects($this->any())
-                ->method('getVariableValue')
-                ->will($this->returnValue('foobar'));
-
         $sl = $this->getApplicationServiceLocator();
         $service->setServiceLocator($sl);
+        $service->setTemplate(new TemplateEntity());
+        $service->setClient(new ClientEntity());
 
         $valid = $service->parse($msg, $output, false, false);
         $this->assertEquals('Hello Sir-foobar', $output, "Substitution error");
     }
-
 }

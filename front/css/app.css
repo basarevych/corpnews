@@ -175,9 +175,10 @@ div.letter-frame {
     text-align: left;
 }
 
-.parser-variable {
-    font-size: 140%;
+.parser-function {
+    font-size: 125%;
     text-align: right;
+    margin-top: 15px;
 }
 .parser-descr {
     margin-top: 5px;

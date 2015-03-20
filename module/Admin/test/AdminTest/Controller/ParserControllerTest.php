@@ -34,16 +34,16 @@ class ParserControllerTest extends AbstractHttpControllerTestCase
         $this->assertMatchedRouteName('admin');
     }
 
-    public function testIndexActionDisplaysVariables()
+    public function testIndexActionDisplaysFunctions()
     {
         $sl = $this->getApplicationServiceLocator();
         $config = $sl->get('Config');
-        $keys = array_keys($config['corpnews']['parser']['variables']);
+        $keys = array_keys($config['corpnews']['parser']['functions']);
 
         $this->dispatch('/admin/parser');
         $this->assertResponseStatusCode(200);
 
         foreach ($keys as $key)
-            $this->assertQueryContentRegexAtLeastOnce('p.parser-variable', '/^.*\$' . $key . '.*$/m');
+            $this->assertQueryContentRegexAtLeastOnce('p.parser-function', '/^.*\$' . $key . '.*$/m');
     }
 }

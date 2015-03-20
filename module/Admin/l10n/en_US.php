@@ -16,7 +16,7 @@ return [
     'Mailbox settings' => 'Mailbox settings',
 
     // IndexController
-    'MESSAGE_PARSER_HELP' => 'This page lists all the parser variables with their description.'
+    'MESSAGE_PARSER_HELP' => 'This page lists all the parser functions with their descriptions.'
         . ' Please, read this page before writing mail campaign templates',
     'MAILBOX_HELP' => 'This is an interface to the IMAP mailbox used by CorpNews',
     'OUTGOING_HELP' => 'A table with the outgoing email messages. Contains both sent messages and messages that are only scheduled to be sent',
@@ -144,26 +144,39 @@ return [
     'Execute' => 'Execute',
 
     // ParserController
-    'Message parser variables' => 'Message parser variables',
+    'Message parser functions' => 'Message parser functions',
     'PARSER_SYNTAX_TITLE' => 'Parser syntax',
     'PARSER_SYNTAX_BODY' => '<p>General parser synatax is:'
         . '<pre>{{ any_php_code }}</pre>'
-        . 'The parser will run <em>any_php_code</em> and replace it with the code output.'
+        . 'The parser will run <em>any_php_code</em> and replace {{ ... }} with the code output.'
         . '</p><p>'
         . 'Some examples:'
-        . '<pre>Hello, {{ echo $short_full_name }}</pre>'
-        . 'Will be replaced with <strong>"Hello, John Doe"</strong> if the first name is "John" and last name is "Doe".'
-        . 'If the variable is not set or does not exist nothing will be printed, for example, the above will produce just <strong>"Hello, "</strong>. But you can use something like this:'
-        . '<pre>Dear {{ echo $first_name ? $first_name : "friend" }}</pre>'
-        . 'It will be replaces with <strong>"Dear John"</strong> if the first name is "John" and <strong>"Dear friend"</strong> if the first name is not set.',
-    'PARSER_FIRST_NAME_DESCR' => 'Contains first name of the client or NULL if it is not known',
-    'PARSER_MIDDLE_NAME_DESCR' => 'Contains middle name of the client or NULL if it is not known',
-    'PARSER_LAST_NAME_DESCR' => 'Contains last name of the client or NULL if it is not known',
-    'PARSER_SHORT_NAME_DESCR' => 'First and middle name concatenated if they are known or NULL',
-    'PARSER_FULL_NAME_DESCR' => 'First, middle and last name concatenated if they are known or NULL',
-    'PARSER_GENDER_DESCR' => 'Variable is set to "male" if the gender of the client is male or "female" if it is female. NULL if gender is not set',
-    'PARSER_COMPANY_DESCR' => 'Contains company name or NULL if it is not known',
-    'PARSER_POSITION_DESCR' => 'Contains client\'s position or NULL if it is now known',
+        . '<pre>40 + 2 = {{ echo 40 + 2 }}</pre>'
+        . 'Will be replaced with <strong>"40 + 2 = 42"</strong>.'
+        . '</p><p>'
+        . 'CorpNews Parser extends PHP with a number of functions. Name of these functions starts with a dollar sign:'
+        . '<pre>Hello, {{ $first_name("Dear friend") }}</pre>'
+        . 'Here we are calling function <strong>$first_name</strong> with parameter "Dear friend".'
+        . 'This particular function prints first name of the client we are writing to, the param is the string to print if the name is not known.'
+        . '</p><p>'
+        . 'The code above will be replaced with <strong>Hello, John</strong> if the first name is "John" and <strong>Hello, Dear friend</strong> if the first name is not set.'
+        . '</p>',
+    'PARSER_FIRST_NAME_DESCR' => '<pre>{{ $first_name("Default string") }}</pre>'
+        . 'Prints first name of the client or "Default string" (optional) if it is not known',
+    'PARSER_MIDDLE_NAME_DESCR' => '<pre>{{ $middle_name("Default string") }}</pre>'
+        . 'Prints middle name of the client or "Default sring" (optional) if it is not known',
+    'PARSER_LAST_NAME_DESCR' => '<pre>{{ $last_name("Default string") }}</pre>'
+        . 'Prints last name of the client or "Default string" (optional) if it is not known',
+    'PARSER_SHORT_NAME_DESCR' => '<pre>{{ $short_full_name("Default string") }}</pre>'
+        . 'Prints first and middle names concatenated if they are known or "Default string" (optional)',
+    'PARSER_LONG_NAME_DESCR' => '<pre>{{ $long_full_name("Default string") }}</pre>'
+        . 'Prints first, middle and last names concatenated if they are known or "Default string" (optional)',
+    'PARSER_GENDER_DESCR' => '<pre>{{ $gender("Male string", "Female string", "Default string") }}</pre>'
+        . 'Prints "Male string" if the gender of the client is male or "Female string" if it is female. Prints "Default string" if gender is not set',
+    'PARSER_COMPANY_DESCR' => '<pre>{{ $company("Default string") }}</pre>'
+        . 'Prints company name or "Default string" (optional) if it is not known',
+    'PARSER_POSITION_DESCR' => '<pre>{{ $position("Default string") }}</pre>'
+        . 'Prints client\'s position or "Default string" (optional) if it is not known',
 
     // OutgoingController
     'Secret key' => 'Secret key',

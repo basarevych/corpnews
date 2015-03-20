@@ -57,7 +57,7 @@ return [
             ],
         ],
         'parser' => [
-            'variables' => [
+            'functions' => [
                 'first_name' => [
                     'descr'     => 'PARSER_FIRST_NAME_DESCR',
                     'class'     => 'DataForm\Variable\FirstName',
@@ -75,7 +75,7 @@ return [
                     'class'     => 'DataForm\Variable\ShortFullName',
                 ],
                 'long_full_name' => [
-                    'descr'     => 'PARSER_FULL_NAME_DESCR',
+                    'descr'     => 'PARSER_LONG_NAME_DESCR',
                     'class'     => 'DataForm\Variable\LongFullName',
                 ],
                 'gender' => [

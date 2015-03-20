@@ -143,6 +143,7 @@ class Mail implements ServiceLocatorAwareInterface
         $config = $sl->get('Config');
 
         $parser = $sl->get('Parser');
+        $parser->setTemplate($template);
         $parser->setClient($client);
 
         $error = false;

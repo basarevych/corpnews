@@ -30,15 +30,15 @@ class ParserController extends AbstractActionController
         $sl = $this->getServiceLocator();
         $parser = $sl->get('Parser');
 
-        $variables = [];
-        foreach ($parser->getVariables() as $name) {
-            $variables[$name] = [
-                'descr'     => $parser->getVariableDescr($name),
+        $functions = [];
+        foreach ($parser->getFunctions() as $name) {
+            $functions[$name] = [
+                'descr'     => $parser->getFunctionDescr($name),
             ];
         }
 
         return new ViewModel([
-            'variables' => $variables,
+            'functions' => $functions,
         ]);
     }
 

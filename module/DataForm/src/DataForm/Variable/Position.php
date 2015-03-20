@@ -11,6 +11,7 @@ namespace DataForm\Variable;
 
 use Zend\ServiceManager\ServiceLocatorAwareInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
+use Application\Entity\Template as TemplateEntity;
 use Application\Entity\Client as ClientEntity;
 use DataForm\Variable\VariableInterface;
 use DataForm\Document\Profile as ProfileDocument;
@@ -30,6 +31,13 @@ class Position implements ServiceLocatorAwareInterface,
      * @var ServiceLocatorInterface
      */
     protected $serviceLocator = null;
+
+    /**
+     * Current template
+     *
+     * @var TemplateEntity
+     */
+    protected $template = null;
 
     /**
      * Current client
@@ -63,6 +71,28 @@ class Position implements ServiceLocatorAwareInterface,
     }
 
     /**
+     * Set current template
+     *
+     * @param TemplateEntity $template
+     * @return Position
+     */
+    public function setTemplate(TemplateEntity $template)
+    {
+        $this->template = $template;
+        return $this;
+    }
+
+    /**
+     * Get current template
+     *
+     * @return TemplateEntity
+     */
+    public function getTemplate()
+    {
+        return $this->template;
+    }
+
+    /**
      * Set current client
      *
      * @param ClientEntity $client
@@ -85,26 +115,36 @@ class Position implements ServiceLocatorAwareInterface,
     }
 
     /**
-     * Get variable value
+     * Execute the function
      *
-     * @return string
+     * @param string $default
      */
-    public function getValue()
+    public function execute($default = '')
     {
         $sl = $this->getServiceLocator();
         $dm = $sl->get('doctrine.documentmanager.odm_default');
         $dfm = $sl->get('DataFormManager');
 
         $class = $dfm->getDocumentClass('profile');
-        if (!$class)
+        if (!$class) {
+            echo $default;
             return null;
+        }
 
         $client = $this->getClient();
+        if (!$client) {
+            echo $default;
+            return null;
+        }
+
         $doc = $dm->getRepository($class)
                   ->find($client->getId());
-        if (!$doc)
+        if (!$doc) {
+            echo $default;
             return null;
+        }
 
-        return $doc->getPosition();
+        $value = $doc->getPosition();
+        echo strlen($value) == 0 ? $default : $value;
     }
 }

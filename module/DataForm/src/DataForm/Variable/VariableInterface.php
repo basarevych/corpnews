@@ -9,6 +9,7 @@
 
 namespace DataForm\Variable;
 
+use Application\Entity\Template as TemplateEntity;
 use Application\Entity\Client as ClientEntity;
 
 /**
@@ -19,6 +20,21 @@ use Application\Entity\Client as ClientEntity;
  */
 interface VariableInterface
 {
+    /**
+     * Set current template
+     *
+     * @param TemplateEntity $template
+     * @return self
+     */
+    public function setTemplate(TemplateEntity $template);
+
+    /**
+     * Get current template
+     *
+     * @return TemplateEntity
+     */
+    public function getTemplate();
+
     /**
      * Set current client
      *
@@ -35,9 +51,7 @@ interface VariableInterface
     public function getClient();
 
     /**
-     * Get variable value
-     *
-     * @return string
+     * Execute the function
      */
-    public function getValue();
+    public function execute();
 }
