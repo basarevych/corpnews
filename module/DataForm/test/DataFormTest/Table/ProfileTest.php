@@ -27,9 +27,6 @@ class ProfileTest extends AbstractHttpControllerTestCase
         parent::setUp();
 
         $sl = $this->getApplicationServiceLocator();
-        $session = $sl->get('Session');
-        $cnt = $session->getContainer();
-        $cnt->is_admin = true;
 
         $config = $sl->get('Config');
         $config['corpnews'] = [
