@@ -26,11 +26,6 @@ use Application\Entity\Client;
 class Letter
 {
     /**
-     * @const KEY_LENGTH
-     */
-    const KEY_LENGTH = 32;
-
-    /**
      * Row ID
      *
      * @var integer
@@ -40,15 +35,6 @@ class Letter
      * @ORM\GeneratedValue(strategy="AUTO")
      */
     protected $id;
-
-    /**
-     * Secret key
-     *
-     * @var string
-     * 
-     * @ORM\Column(type="string")
-     */
-    protected $secret_key;
 
     /**
      * When sent
@@ -144,7 +130,6 @@ class Letter
 
         return [
             'id'            => $this->getId(),
-            'secret_key'    => $this->getSecretKey(),
             'when_sent'     => $whenSent ? $whenSent->getTimestamp() : null,
             'error'         => $this->getError(),
             'from_address'  => $this->getFromAddress(),
@@ -163,29 +148,6 @@ class Letter
     public function getId()
     {
         return $this->id;
-    }
-
-    /**
-     * Set secret key
-     *
-     * @param string $secretKey
-     * @return Letter
-     */
-    public function setSecretKey($secretKey)
-    {
-        $this->secret_key = $secretKey;
-
-        return $this;
-    }
-
-    /**
-     * Get secret key
-     *
-     * @return string 
-     */
-    public function getSecretKey()
-    {
-        return $this->secret_key;
     }
 
     /**
@@ -355,7 +317,7 @@ class Letter
      * @param Template $template
      * @return Letter
      */
-    public function setTemplates(Template $template = null)
+    public function setTemplate(Template $template)
     {
         $this->template = $template;
 
@@ -378,7 +340,7 @@ class Letter
      * @param Client $client
      * @return Letter
      */
-    public function setClient(Client $client = null)
+    public function setClient(Client $client)
     {
         $this->client = $client;
 
@@ -393,32 +355,5 @@ class Letter
     public function getClient()
     {
         return $this->client;
-    }
-
-    /**
-     * Set template
-     *
-     * @param \Application\Entity\Template $template
-     * @return Letter
-     */
-    public function setTemplate(\Application\Entity\Template $template = null)
-    {
-        $this->template = $template;
-
-        return $this;
-    }
-
-    /**
-     * Generate unique secret key
-     *
-     * @return string
-     */
-    public static function generateSecretKey()
-    {
-        $randomData = openssl_random_pseudo_bytes(1024);
-        if ($randomData === false)
-            throw new \Exception('Could not generate random string');
-
-        return substr(hash('sha512', $randomData), 0, self::KEY_LENGTH);
     }
 }

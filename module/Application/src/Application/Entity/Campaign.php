@@ -14,6 +14,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 use Application\Entity\Group;
 use Application\Entity\Template;
+use Application\Entity\Secret;
 
 /**
  * Campaign entity
@@ -128,12 +129,22 @@ class Campaign
     protected $templates;
 
     /**
+     * Secret entities
+     *
+     * @var ArrayCollection
+     *
+     * @ORM\OneToMany(targetEntity="Secret", mappedBy="campaign")
+     */
+    protected $secrets;
+
+    /**
      * Constructor
      */
     public function __construct()
     {
         $this->groups = new ArrayCollection();
         $this->templates = new ArrayCollection();
+        $this->secrets = new ArrayCollection();
     }
 
     /**
@@ -377,6 +388,42 @@ class Campaign
     public function getTemplates()
     {
         return $this->templates;
+    }
+
+    /**
+     * Add secret
+     *
+     * @param Secret $secrets
+     * @return Campaign
+     */
+    public function addSecret(Secret $secret)
+    {
+        $this->secrets[] = $secret;
+
+        return $this;
+    }
+
+    /**
+     * Remove secret
+     *
+     * @param Secret $secret
+     * @return Campaign
+     */
+    public function removeSecret(Secret $secret)
+    {
+        $this->secrets->removeElement($secret);
+
+        return $this;
+    }
+
+    /**
+     * Get secrets
+     *
+     * @return ArrayCollection
+     */
+    public function getSecrets()
+    {
+        return $this->secrets;
     }
 
     /**

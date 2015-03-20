@@ -13,6 +13,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 use Application\Entity\Group;
 use Application\Entity\Letter;
+use Application\Entity\Secret;
 
 /**
  * Client entity
@@ -74,12 +75,22 @@ class Client
     protected $letters;
 
     /**
+     * Secret entities
+     *
+     * @var ArrayCollection
+     *
+     * @ORM\OneToMany(targetEntity="Secret", mappedBy="client")
+     */
+    protected $secrets;
+
+    /**
      * Constructor
      */
     public function __construct()
     {
         $this->groups = new ArrayCollection();
         $this->letters = new ArrayCollection();
+        $this->secrets = new ArrayCollection();
     }
 
     /**
@@ -225,5 +236,41 @@ class Client
     public function getLetters()
     {
         return $this->letters;
+    }
+
+    /**
+     * Add secret
+     *
+     * @param Secret $secret
+     * @return Client
+     */
+    public function addSecret(Secret $secret)
+    {
+        $this->secrets[] = $secret;
+
+        return $this;
+    }
+
+    /**
+     * Remove secret
+     *
+     * @param Secret $secret
+     * @return Client
+     */
+    public function removeSecret(Secret $secret)
+    {
+        $this->secrets->removeElement($secret);
+
+        return $this;
+    }
+
+    /**
+     * Get secrets
+     *
+     * @return ArrayCollection
+     */
+    public function getSecrets()
+    {
+        return $this->secrets;
     }
 }

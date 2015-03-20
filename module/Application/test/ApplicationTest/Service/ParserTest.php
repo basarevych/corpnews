@@ -59,6 +59,8 @@ class ParserTest extends AbstractControllerTestCase
         $service = new Parser();
         $sl = $this->getApplicationServiceLocator();
         $service->setServiceLocator($sl);
+        $service->setTemplate(new TemplateEntity());
+        $service->setClient(new ClientEntity());
 
         $valid = $service->checkSyntax($msg, $output, false);
         $this->assertEquals(false, $valid, "Invalid syntax reported as valid");

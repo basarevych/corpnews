@@ -1,3 +1,4 @@
+DROP TABLE IF EXISTS `secrets`;
 DROP TABLE IF EXISTS `letters`;
 DROP TABLE IF EXISTS `templates`;
 DROP TABLE IF EXISTS `campaign_groups`;
@@ -88,8 +89,7 @@ CREATE TABLE `templates` (
 CREATE TABLE `letters` (
     `id` int unsigned NOT NULL AUTO_INCREMENT,
     `template_id` int unsigned NOT NULL,
-    `client_id` int unsigned NULL,
-    `secret_key` varchar(255) NOT NULL,
+    `client_id` int unsigned NOT NULL,
     `when_sent` datetime NULL,
     `error` varchar(255) NULL,
     `from_address` text NOT NULL,
@@ -98,11 +98,28 @@ CREATE TABLE `letters` (
     `headers` mediumtext NOT NULL,
     `body` mediumtext NOT NULL,
     CONSTRAINT `letters_pk` PRIMARY KEY (`id`),
-    CONSTRAINT `letters_secret_key_unique` UNIQUE (`secret_key`),
     CONSTRAINT `letters_template_fk` FOREIGN KEY (`template_id`)
         REFERENCES `templates` (`id`)
         ON UPDATE CASCADE ON DELETE CASCADE,
     CONSTRAINT `letters_client_fk` FOREIGN KEY (`client_id`)
+        REFERENCES `clients` (`id`)
+        ON UPDATE CASCADE ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1;
+
+CREATE TABLE `secrets` (
+    `id` int unsigned NOT NULL AUTO_INCREMENT,
+    `campaign_id` int unsigned NOT NULL,
+    `client_id` int unsigned NOT NULL,
+    `secret_key` varchar(255) NOT NULL,
+    `when_opened` datetime NULL,
+    `when_saved` datetime NULL,
+    `data_form` varchar(255) NULL,
+    CONSTRAINT `secrets_pk` PRIMARY KEY (`id`),
+    CONSTRAINT `secrets_secret_key_unique` UNIQUE (`secret_key`),
+    CONSTRAINT `secrets_campaign_fk` FOREIGN KEY (`campaign_id`)
+        REFERENCES `campaigns` (`id`)
+        ON UPDATE CASCADE ON DELETE CASCADE,
+    CONSTRAINT `secrets_client_fk` FOREIGN KEY (`client_id`)
         REFERENCES `clients` (`id`)
         ON UPDATE CASCADE ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1;

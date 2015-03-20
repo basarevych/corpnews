@@ -160,7 +160,6 @@ class Mail implements ServiceLocatorAwareInterface
             $error = true;
 
         $letter = new LetterEntity();
-        $letter->setSecretKey(LetterEntity::generateSecretKey());
         $letter->setFromAddress($model->getFrom());
         $letter->setToAddress($model->getTo());
         $letter->setSubject($model->getSubject());
