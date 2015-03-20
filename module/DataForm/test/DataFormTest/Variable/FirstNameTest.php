@@ -54,12 +54,19 @@ class FirstNameTest extends AbstractHttpControllerTestCase
 
     public function testExecute()
     {
-        $this->doc->setFirstName('foobar');
-
         $var = new FirstNameVariable();
         $var->setServiceLocator($this->sl);
         $var->setTemplate(new TemplateEntity());
         $var->setClient(new ClientEntity());
+
+        ob_start();
+        $var->execute('foobar');
+        $output = ob_get_contents();
+        ob_end_clean();
+
+        $this->assertEquals('foobar', $output);
+
+        $this->doc->setFirstName('name');
 
         ob_start();
         $var->execute();

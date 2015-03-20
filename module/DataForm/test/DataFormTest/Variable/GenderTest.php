@@ -7,9 +7,9 @@ use Zend\Test\PHPUnit\Controller\AbstractHttpControllerTestCase;
 use Application\Entity\Template as TemplateEntity;
 use Application\Entity\Client as ClientEntity;
 use DataForm\Document\Profile as ProfileDocument;
-use DataForm\Variable\Company as CompanyVariable;
+use DataForm\Variable\Gender as GenderVariable;
 
-class CompanyTest extends AbstractHttpControllerTestCase
+class GenderTest extends AbstractHttpControllerTestCase
 {
     public function setUp()
     {
@@ -54,25 +54,34 @@ class CompanyTest extends AbstractHttpControllerTestCase
 
     public function testExecute()
     {
-        $var = new CompanyVariable();
+        $var = new GenderVariable();
         $var->setServiceLocator($this->sl);
         $var->setTemplate(new TemplateEntity());
         $var->setClient(new ClientEntity());
 
         ob_start();
-        $var->execute('foobar');
+        $var->execute('he', 'she', 'it');
         $output = ob_get_contents();
         ob_end_clean();
 
-        $this->assertEquals('foobar', $output);
+        $this->assertEquals('it', $output);
 
-        $this->doc->setCompany('company');
+        $this->doc->setGender('male');
 
         ob_start();
-        $var->execute();
+        $var->execute('he', 'she', 'it');
         $output = ob_get_contents();
         ob_end_clean();
 
-        $this->assertEquals($this->doc->getCompany(), $output);
+        $this->assertEquals('he', $output);
+
+        $this->doc->setGender('female');
+
+        ob_start();
+        $var->execute('he', 'she', 'it');
+        $output = ob_get_contents();
+        ob_end_clean();
+
+        $this->assertEquals('she', $output);
     }
 }
