@@ -90,6 +90,10 @@ return [
                     'descr'     => 'PARSER_POSITION_DESCR',
                     'class'     => 'DataForm\Variable\Position',
                 ],
+                'data_form_url' => [
+                    'descr'     => 'PARSER_DATA_FORM_URL_DESCR',
+                    'class'     => 'DataForm\Variable\DataFormUrl',
+                ],
             ],
         ],
     ],

@@ -115,6 +115,7 @@ CREATE TABLE `secrets` (
     `when_saved` datetime NULL,
     `data_form` varchar(255) NULL,
     CONSTRAINT `secrets_pk` PRIMARY KEY (`id`),
+    CONSTRAINT `secrets_campaign_client_unique` UNIQUE (`campaign_id`, `client_id`),
     CONSTRAINT `secrets_secret_key_unique` UNIQUE (`secret_key`),
     CONSTRAINT `secrets_campaign_fk` FOREIGN KEY (`campaign_id`)
         REFERENCES `campaigns` (`id`)
