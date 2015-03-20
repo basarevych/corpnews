@@ -7,9 +7,9 @@ use Zend\Test\PHPUnit\Controller\AbstractHttpControllerTestCase;
 use Application\Entity\Template as TemplateEntity;
 use Application\Entity\Client as ClientEntity;
 use DataForm\Document\Profile as ProfileDocument;
-use DataForm\Variable\FirstName as FirstNameVariable;
+use DataForm\Variable\LastName as LastNameVariable;
 
-class FirstNameTest extends AbstractHttpControllerTestCase
+class LastNameTest extends AbstractHttpControllerTestCase
 {
     public function setUp()
     {
@@ -54,7 +54,7 @@ class FirstNameTest extends AbstractHttpControllerTestCase
 
     public function testExecute()
     {
-        $var = new FirstNameVariable();
+        $var = new LastNameVariable();
         $var->setServiceLocator($this->sl);
         $var->setTemplate(new TemplateEntity());
         $var->setClient(new ClientEntity());
@@ -66,13 +66,13 @@ class FirstNameTest extends AbstractHttpControllerTestCase
 
         $this->assertEquals('foobar', $output);
 
-        $this->doc->setFirstName('first');
+        $this->doc->setLastName('last');
 
         ob_start();
         $var->execute();
         $output = ob_get_contents();
         ob_end_clean();
 
-        $this->assertEquals('first', $output);
+        $this->assertEquals('last', $output);
     }
 }

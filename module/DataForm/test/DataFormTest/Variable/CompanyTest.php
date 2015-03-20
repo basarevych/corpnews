@@ -73,6 +73,6 @@ class CompanyTest extends AbstractHttpControllerTestCase
         $output = ob_get_contents();
         ob_end_clean();
 
-        $this->assertEquals($this->doc->getCompany(), $output);
+        $this->assertEquals('company', $output);
     }
 }
