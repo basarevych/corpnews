@@ -73,8 +73,8 @@ class Parser implements ServiceLocatorAwareInterface
                 $class = $this->getFunctionClass($name);
                 $reflection = new ReflectionClass($class);
 
-                if (!$reflection->implementsInterface('DataForm\Variable\VariableInterface'))
-                    throw new Exception('All the functions must implement VariableInterface');
+                if (!$reflection->implementsInterface('DataForm\ParserFunction\ParserFunctionInterface'))
+                    throw new Exception('All the functions must implement ParserFunctionInterface');
 
                 if (!$reflection->implementsInterface('Zend\ServiceManager\ServiceLocatorAwareInterface'))
                     throw new Exception('All the functions must implement ServiceLocatorAwareInterface');

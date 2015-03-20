@@ -7,18 +7,18 @@
  * @license     http://choosealicense.com/licenses/mit/ MIT
  */
 
-namespace DataForm\Variable;
+namespace DataForm\ParserFunction;
 
 use Application\Entity\Template as TemplateEntity;
 use Application\Entity\Client as ClientEntity;
 
 /**
- * Variable interface
+ * ParserFunction interface
  *
  * @category    DataForm
- * @package     Variable
+ * @package     ParserFunction
  */
-interface VariableInterface
+interface ParserFunctionInterface
 {
     /**
      * Set current template

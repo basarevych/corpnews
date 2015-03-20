@@ -1,15 +1,15 @@
 <?php
 
-namespace DataFormTest\Variable;
+namespace DataFormTest\ParserFunction;
 
 use Zend\Json\Json;
 use Zend\Test\PHPUnit\Controller\AbstractHttpControllerTestCase;
 use Application\Entity\Template as TemplateEntity;
 use Application\Entity\Client as ClientEntity;
 use DataForm\Document\Profile as ProfileDocument;
-use DataForm\Variable\Position as PositionVariable;
+use DataForm\ParserFunction\Company as CompanyParserFunction;
 
-class PositionTest extends AbstractHttpControllerTestCase
+class CompanyTest extends AbstractHttpControllerTestCase
 {
     public function setUp()
     {
@@ -54,7 +54,7 @@ class PositionTest extends AbstractHttpControllerTestCase
 
     public function testExecute()
     {
-        $var = new PositionVariable();
+        $var = new CompanyParserFunction();
         $var->setServiceLocator($this->sl);
         $var->setTemplate(new TemplateEntity());
         $var->setClient(new ClientEntity());
@@ -66,13 +66,13 @@ class PositionTest extends AbstractHttpControllerTestCase
 
         $this->assertEquals('foobar', $output);
 
-        $this->doc->setPosition('position');
+        $this->doc->setCompany('company');
 
         ob_start();
         $var->execute();
         $output = ob_get_contents();
         ob_end_clean();
 
-        $this->assertEquals('position', $output);
+        $this->assertEquals('company', $output);
     }
 }

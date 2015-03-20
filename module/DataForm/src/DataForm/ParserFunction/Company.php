@@ -7,23 +7,23 @@
  * @license     http://choosealicense.com/licenses/mit/ MIT
  */
 
-namespace DataForm\Variable;
+namespace DataForm\ParserFunction;
 
 use Zend\ServiceManager\ServiceLocatorAwareInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 use Application\Entity\Template as TemplateEntity;
 use Application\Entity\Client as ClientEntity;
-use Application\Entity\Secret as SecretEntity;
-use DataForm\Variable\VariableInterface;
+use DataForm\ParserFunction\ParserFunctionInterface;
+use DataForm\Document\Profile as ProfileDocument;
 
 /**
- * $data_form_url variable
+ * $company variable
  *
  * @category    DataForm
- * @package     Variable
+ * @package     ParserFunction
  */
-class DataFormUrl implements ServiceLocatorAwareInterface,
-                             VariableInterface
+class Company implements ServiceLocatorAwareInterface,
+                         ParserFunctionInterface
 {
     /**
      * Service Locator
@@ -117,49 +117,34 @@ class DataFormUrl implements ServiceLocatorAwareInterface,
     /**
      * Execute the function
      *
-     * @param string $formName
-     * @param string $linkText
+     * @param string $default
      */
-    public function execute($formName = 'profile', $linkText = 'Profile')
+    public function execute($default = '')
     {
         $sl = $this->getServiceLocator();
-        $em = $sl->get('Doctrine\ORM\EntityManager');
+        $dm = $sl->get('doctrine.documentmanager.odm_default');
         $dfm = $sl->get('DataFormManager');
-        $config = $sl->get('Config');
 
-        if (!isset($config['corpnews']['server']['base_url']))
-            throw new \Exception('Base URL is not set');
-
-        $baseUrl = $config['corpnews']['server']['base_url'];
-
-        $template = $this->getTemplate();
-        if (!$template)
-            throw new \Exception('No template set');
-
-        $client = $this->getClient();
-        if (!$client)
-            throw new \Exception('No client set');
-
-        $campaign = $template->getCampaign();
-        $secret = $em->getRepository('Application\Entity\Secret')
-                     ->findOneBy([ 'campaign' => $campaign, 'client' => $client ]);
-        if (!$secret) {
-            $secret = new SecretEntity();
-            $secret->setCampaign($campaign);
-            $secret->setClient($client);
-            $secret->setSecretKey(SecretEntity::generateSecretKey());
-            $secret->setDataForm($formName);
-
-            $em->persist($secret);
-            $em->flush();
+        $class = $dfm->getDocumentClass('profile');
+        if (!$class) {
+            echo $default;
+            return null;
         }
 
-        $url = $baseUrl . '/' . $dfm->getUrl($formName)
-            . '?key=' . $secret->getSecretKey();
-        $url = preg_replace('/([^:])\/{2,}/', '$1/', $url);
+        $client = $this->getClient();
+        if (!$client) {
+            echo $default;
+            return null;
+        }
 
-        echo '<a href="' . $url . '">';
-        echo $linkText;
-        echo '</a>';
+        $doc = $dm->getRepository($class)
+                  ->find($client->getId());
+        if (!$doc) {
+            echo $default;
+            return null;
+        }
+
+        $value = $doc->getCompany();
+        echo strlen($value) == 0 ? $default : $value;
     }
 }

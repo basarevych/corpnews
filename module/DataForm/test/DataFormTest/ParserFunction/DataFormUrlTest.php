@@ -1,6 +1,6 @@
 <?php
 
-namespace DataFormTest\Variable;
+namespace DataFormTest\ParserFunction;
 
 use Zend\Json\Json;
 use Zend\Test\PHPUnit\Controller\AbstractHttpControllerTestCase;
@@ -8,7 +8,7 @@ use Application\Entity\Campaign as CampaignEntity;
 use Application\Entity\Template as TemplateEntity;
 use Application\Entity\Client as ClientEntity;
 use DataForm\Document\Profile as ProfileDocument;
-use DataForm\Variable\DataFormUrl as DataFormUrlVariable;
+use DataForm\ParserFunction\DataFormUrl as DataFormUrlParserFunction;
 
 class DataFormUrlTest extends AbstractHttpControllerTestCase
 {
@@ -73,7 +73,7 @@ class DataFormUrlTest extends AbstractHttpControllerTestCase
 
         $client = new ClientEntity();
 
-        $var = new DataFormUrlVariable();
+        $var = new DataFormUrlParserFunction();
         $var->setServiceLocator($this->sl);
         $var->setTemplate($template);
         $var->setClient($client);

@@ -1,15 +1,15 @@
 <?php
 
-namespace DataFormTest\Variable;
+namespace DataFormTest\ParserFunction;
 
 use Zend\Json\Json;
 use Zend\Test\PHPUnit\Controller\AbstractHttpControllerTestCase;
 use Application\Entity\Template as TemplateEntity;
 use Application\Entity\Client as ClientEntity;
 use DataForm\Document\Profile as ProfileDocument;
-use DataForm\Variable\Company as CompanyVariable;
+use DataForm\ParserFunction\LastName as LastNameParserFunction;
 
-class CompanyTest extends AbstractHttpControllerTestCase
+class LastNameTest extends AbstractHttpControllerTestCase
 {
     public function setUp()
     {
@@ -54,7 +54,7 @@ class CompanyTest extends AbstractHttpControllerTestCase
 
     public function testExecute()
     {
-        $var = new CompanyVariable();
+        $var = new LastNameParserFunction();
         $var->setServiceLocator($this->sl);
         $var->setTemplate(new TemplateEntity());
         $var->setClient(new ClientEntity());
@@ -66,13 +66,13 @@ class CompanyTest extends AbstractHttpControllerTestCase
 
         $this->assertEquals('foobar', $output);
 
-        $this->doc->setCompany('company');
+        $this->doc->setLastName('last');
 
         ob_start();
         $var->execute();
         $output = ob_get_contents();
         ob_end_clean();
 
-        $this->assertEquals('company', $output);
+        $this->assertEquals('last', $output);
     }
 }

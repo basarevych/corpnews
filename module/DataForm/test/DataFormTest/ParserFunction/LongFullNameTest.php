@@ -1,15 +1,15 @@
 <?php
 
-namespace DataFormTest\Variable;
+namespace DataFormTest\ParserFunction;
 
 use Zend\Json\Json;
 use Zend\Test\PHPUnit\Controller\AbstractHttpControllerTestCase;
 use Application\Entity\Template as TemplateEntity;
 use Application\Entity\Client as ClientEntity;
 use DataForm\Document\Profile as ProfileDocument;
-use DataForm\Variable\ShortFullName as ShortFullNameVariable;
+use DataForm\ParserFunction\LongFullName as LongFullNameParserFunction;
 
-class ShortFullNameTest extends AbstractHttpControllerTestCase
+class LongFullNameTest extends AbstractHttpControllerTestCase
 {
     public function setUp()
     {
@@ -54,7 +54,7 @@ class ShortFullNameTest extends AbstractHttpControllerTestCase
 
     public function testExecute()
     {
-        $var = new ShortFullNameVariable();
+        $var = new LongFullNameParserFunction();
         $var->setServiceLocator($this->sl);
         $var->setTemplate(new TemplateEntity());
         $var->setClient(new ClientEntity());
@@ -75,5 +75,14 @@ class ShortFullNameTest extends AbstractHttpControllerTestCase
         ob_end_clean();
 
         $this->assertEquals('first last', $output);
+
+        $this->doc->setMiddleName('middle');
+
+        ob_start();
+        $var->execute();
+        $output = ob_get_contents();
+        ob_end_clean();
+
+        $this->assertEquals('first middle last', $output);
     }
 }

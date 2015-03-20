@@ -1,13 +1,13 @@
 <?php
 
-namespace DataFormTest\Variable;
+namespace DataFormTest\ParserFunction;
 
 use Zend\Json\Json;
 use Zend\Test\PHPUnit\Controller\AbstractHttpControllerTestCase;
 use Application\Entity\Template as TemplateEntity;
 use Application\Entity\Client as ClientEntity;
 use DataForm\Document\Profile as ProfileDocument;
-use DataForm\Variable\FirstName as FirstNameVariable;
+use DataForm\ParserFunction\FirstName as FirstNameParserFunction;
 
 class FirstNameTest extends AbstractHttpControllerTestCase
 {
@@ -54,7 +54,7 @@ class FirstNameTest extends AbstractHttpControllerTestCase
 
     public function testExecute()
     {
-        $var = new FirstNameVariable();
+        $var = new FirstNameParserFunction();
         $var->setServiceLocator($this->sl);
         $var->setTemplate(new TemplateEntity());
         $var->setClient(new ClientEntity());

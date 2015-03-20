@@ -60,39 +60,39 @@ return [
             'functions' => [
                 'first_name' => [
                     'descr'     => 'PARSER_FIRST_NAME_DESCR',
-                    'class'     => 'DataForm\Variable\FirstName',
+                    'class'     => 'DataForm\ParserFunction\FirstName',
                 ],
                 'middle_name' => [
                     'descr'     => 'PARSER_MIDDLE_NAME_DESCR',
-                    'class'     => 'DataForm\Variable\MiddleName',
+                    'class'     => 'DataForm\ParserFunction\MiddleName',
                 ],
                 'last_name' => [
                     'descr'     => 'PARSER_LAST_NAME_DESCR',
-                    'class'     => 'DataForm\Variable\LastName',
+                    'class'     => 'DataForm\ParserFunction\LastName',
                 ],
                 'short_full_name' => [
                     'descr'     => 'PARSER_SHORT_NAME_DESCR',
-                    'class'     => 'DataForm\Variable\ShortFullName',
+                    'class'     => 'DataForm\ParserFunction\ShortFullName',
                 ],
                 'long_full_name' => [
                     'descr'     => 'PARSER_LONG_NAME_DESCR',
-                    'class'     => 'DataForm\Variable\LongFullName',
+                    'class'     => 'DataForm\ParserFunction\LongFullName',
                 ],
                 'gender' => [
                     'descr'     => 'PARSER_GENDER_DESCR',
-                    'class'     => 'DataForm\Variable\Gender',
+                    'class'     => 'DataForm\ParserFunction\Gender',
                 ],
                 'company' => [
                     'descr'     => 'PARSER_COMPANY_DESCR',
-                    'class'     => 'DataForm\Variable\Company',
+                    'class'     => 'DataForm\ParserFunction\Company',
                 ],
                 'position' => [
                     'descr'     => 'PARSER_POSITION_DESCR',
-                    'class'     => 'DataForm\Variable\Position',
+                    'class'     => 'DataForm\ParserFunction\Position',
                 ],
                 'data_form_url' => [
                     'descr'     => 'PARSER_DATA_FORM_URL_DESCR',
-                    'class'     => 'DataForm\Variable\DataFormUrl',
+                    'class'     => 'DataForm\ParserFunction\DataFormUrl',
                 ],
             ],
         ],

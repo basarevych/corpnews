@@ -1,15 +1,15 @@
 <?php
 
-namespace DataFormTest\Variable;
+namespace DataFormTest\ParserFunction;
 
 use Zend\Json\Json;
 use Zend\Test\PHPUnit\Controller\AbstractHttpControllerTestCase;
 use Application\Entity\Template as TemplateEntity;
 use Application\Entity\Client as ClientEntity;
 use DataForm\Document\Profile as ProfileDocument;
-use DataForm\Variable\MiddleName as MiddleNameVariable;
+use DataForm\ParserFunction\Position as PositionParserFunction;
 
-class MiddleNameTest extends AbstractHttpControllerTestCase
+class PositionTest extends AbstractHttpControllerTestCase
 {
     public function setUp()
     {
@@ -54,7 +54,7 @@ class MiddleNameTest extends AbstractHttpControllerTestCase
 
     public function testExecute()
     {
-        $var = new MiddleNameVariable();
+        $var = new PositionParserFunction();
         $var->setServiceLocator($this->sl);
         $var->setTemplate(new TemplateEntity());
         $var->setClient(new ClientEntity());
@@ -66,13 +66,13 @@ class MiddleNameTest extends AbstractHttpControllerTestCase
 
         $this->assertEquals('foobar', $output);
 
-        $this->doc->setMiddleName('middle');
+        $this->doc->setPosition('position');
 
         ob_start();
         $var->execute();
         $output = ob_get_contents();
         ob_end_clean();
 
-        $this->assertEquals('middle', $output);
+        $this->assertEquals('position', $output);
     }
 }

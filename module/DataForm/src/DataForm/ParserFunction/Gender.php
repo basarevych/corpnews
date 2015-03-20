@@ -7,23 +7,23 @@
  * @license     http://choosealicense.com/licenses/mit/ MIT
  */
 
-namespace DataForm\Variable;
+namespace DataForm\ParserFunction;
 
 use Zend\ServiceManager\ServiceLocatorAwareInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 use Application\Entity\Template as TemplateEntity;
 use Application\Entity\Client as ClientEntity;
-use DataForm\Variable\VariableInterface;
+use DataForm\ParserFunction\ParserFunctionInterface;
 use DataForm\Document\Profile as ProfileDocument;
 
 /**
- * $long_full_name variable
+ * $gender variable
  *
  * @category    DataForm
- * @package     Variable
+ * @package     ParserFunction
  */
-class LongFullName implements ServiceLocatorAwareInterface,
-                              VariableInterface
+class Gender implements ServiceLocatorAwareInterface,
+                        ParserFunctionInterface
 {
     /**
      * Service Locator
@@ -74,7 +74,7 @@ class LongFullName implements ServiceLocatorAwareInterface,
      * Set current template
      *
      * @param TemplateEntity $template
-     * @return LongFullName
+     * @return Gender
      */
     public function setTemplate(TemplateEntity $template)
     {
@@ -117,9 +117,11 @@ class LongFullName implements ServiceLocatorAwareInterface,
     /**
      * Execute the function
      *
+     * @param string $male
+     * @param string $female
      * @param string $default
      */
-    public function execute($default = '')
+    public function execute($male = '', $female = '', $default = '')
     {
         $sl = $this->getServiceLocator();
         $dm = $sl->get('doctrine.documentmanager.odm_default');
@@ -144,13 +146,11 @@ class LongFullName implements ServiceLocatorAwareInterface,
             return null;
         }
 
-        if ($doc->getFirstName() && $doc->getMiddleName())
-            $value = $doc->getFirstName() . ' ' . $doc->getMiddleName();
-        else
-            $value = $doc->getFirstName();
-
-        $value = trim($value . ' ' . $doc->getLastName());
-
-        echo strlen($value) == 0 ? $default : $value;
+        $value = $doc->getGender();
+        switch ($value) {
+            case 'male':    echo $male; break;
+            case 'female':  echo $female; break;
+            default:        echo $default; break;
+        }
     }
 }

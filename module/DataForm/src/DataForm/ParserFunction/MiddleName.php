@@ -7,23 +7,23 @@
  * @license     http://choosealicense.com/licenses/mit/ MIT
  */
 
-namespace DataForm\Variable;
+namespace DataForm\ParserFunction;
 
 use Zend\ServiceManager\ServiceLocatorAwareInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 use Application\Entity\Template as TemplateEntity;
 use Application\Entity\Client as ClientEntity;
-use DataForm\Variable\VariableInterface;
+use DataForm\ParserFunction\ParserFunctionInterface;
 use DataForm\Document\Profile as ProfileDocument;
 
 /**
- * $gender variable
+ * $middle_name variable
  *
  * @category    DataForm
- * @package     Variable
+ * @package     ParserFunction
  */
-class Gender implements ServiceLocatorAwareInterface,
-                        VariableInterface
+class MiddleName implements ServiceLocatorAwareInterface,
+                            ParserFunctionInterface
 {
     /**
      * Service Locator
@@ -74,7 +74,7 @@ class Gender implements ServiceLocatorAwareInterface,
      * Set current template
      *
      * @param TemplateEntity $template
-     * @return Gender
+     * @return MiddleName
      */
     public function setTemplate(TemplateEntity $template)
     {
@@ -117,11 +117,9 @@ class Gender implements ServiceLocatorAwareInterface,
     /**
      * Execute the function
      *
-     * @param string $male
-     * @param string $female
      * @param string $default
      */
-    public function execute($male = '', $female = '', $default = '')
+    public function execute($default = '')
     {
         $sl = $this->getServiceLocator();
         $dm = $sl->get('doctrine.documentmanager.odm_default');
@@ -146,11 +144,7 @@ class Gender implements ServiceLocatorAwareInterface,
             return null;
         }
 
-        $value = $doc->getGender();
-        switch ($value) {
-            case 'male':    echo $male; break;
-            case 'female':  echo $female; break;
-            default:        echo $default; break;
-        }
+        $value = $doc->getMiddleName();
+        echo strlen($value) == 0 ? $default : $value;
     }
 }

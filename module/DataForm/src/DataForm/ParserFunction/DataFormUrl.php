@@ -7,23 +7,23 @@
  * @license     http://choosealicense.com/licenses/mit/ MIT
  */
 
-namespace DataForm\Variable;
+namespace DataForm\ParserFunction;
 
 use Zend\ServiceManager\ServiceLocatorAwareInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 use Application\Entity\Template as TemplateEntity;
 use Application\Entity\Client as ClientEntity;
-use DataForm\Variable\VariableInterface;
-use DataForm\Document\Profile as ProfileDocument;
+use Application\Entity\Secret as SecretEntity;
+use DataForm\ParserFunction\ParserFunctionInterface;
 
 /**
- * $last_name variable
+ * $data_form_url variable
  *
  * @category    DataForm
- * @package     Variable
+ * @package     ParserFunction
  */
-class LastName implements ServiceLocatorAwareInterface,
-                          VariableInterface
+class DataFormUrl implements ServiceLocatorAwareInterface,
+                             ParserFunctionInterface
 {
     /**
      * Service Locator
@@ -74,7 +74,7 @@ class LastName implements ServiceLocatorAwareInterface,
      * Set current template
      *
      * @param TemplateEntity $template
-     * @return LastName
+     * @return Company
      */
     public function setTemplate(TemplateEntity $template)
     {
@@ -117,34 +117,49 @@ class LastName implements ServiceLocatorAwareInterface,
     /**
      * Execute the function
      *
-     * @param string $default
+     * @param string $formName
+     * @param string $linkText
      */
-    public function execute($default = '')
+    public function execute($formName = 'profile', $linkText = 'Profile')
     {
         $sl = $this->getServiceLocator();
-        $dm = $sl->get('doctrine.documentmanager.odm_default');
+        $em = $sl->get('Doctrine\ORM\EntityManager');
         $dfm = $sl->get('DataFormManager');
+        $config = $sl->get('Config');
 
-        $class = $dfm->getDocumentClass('profile');
-        if (!$class) {
-            echo $default;
-            return null;
-        }
+        if (!isset($config['corpnews']['server']['base_url']))
+            throw new \Exception('Base URL is not set');
+
+        $baseUrl = $config['corpnews']['server']['base_url'];
+
+        $template = $this->getTemplate();
+        if (!$template)
+            throw new \Exception('No template set');
 
         $client = $this->getClient();
-        if (!$client) {
-            echo $default;
-            return null;
+        if (!$client)
+            throw new \Exception('No client set');
+
+        $campaign = $template->getCampaign();
+        $secret = $em->getRepository('Application\Entity\Secret')
+                     ->findOneBy([ 'campaign' => $campaign, 'client' => $client ]);
+        if (!$secret) {
+            $secret = new SecretEntity();
+            $secret->setCampaign($campaign);
+            $secret->setClient($client);
+            $secret->setSecretKey(SecretEntity::generateSecretKey());
+            $secret->setDataForm($formName);
+
+            $em->persist($secret);
+            $em->flush();
         }
 
-        $doc = $dm->getRepository($class)
-                  ->find($client->getId());
-        if (!$doc) {
-            echo $default;
-            return null;
-        }
+        $url = $baseUrl . '/' . $dfm->getUrl($formName)
+            . '?key=' . $secret->getSecretKey();
+        $url = preg_replace('/([^:])\/{2,}/', '$1/', $url);
 
-        $value = $doc->getLastName();
-        echo strlen($value) == 0 ? $default : $value;
+        echo '<a href="' . $url . '">';
+        echo $linkText;
+        echo '</a>';
     }
 }

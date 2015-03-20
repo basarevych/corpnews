@@ -1,15 +1,15 @@
 <?php
 
-namespace DataFormTest\Variable;
+namespace DataFormTest\ParserFunction;
 
 use Zend\Json\Json;
 use Zend\Test\PHPUnit\Controller\AbstractHttpControllerTestCase;
 use Application\Entity\Template as TemplateEntity;
 use Application\Entity\Client as ClientEntity;
 use DataForm\Document\Profile as ProfileDocument;
-use DataForm\Variable\LastName as LastNameVariable;
+use DataForm\ParserFunction\Gender as GenderParserFunction;
 
-class LastNameTest extends AbstractHttpControllerTestCase
+class GenderTest extends AbstractHttpControllerTestCase
 {
     public function setUp()
     {
@@ -54,25 +54,34 @@ class LastNameTest extends AbstractHttpControllerTestCase
 
     public function testExecute()
     {
-        $var = new LastNameVariable();
+        $var = new GenderParserFunction();
         $var->setServiceLocator($this->sl);
         $var->setTemplate(new TemplateEntity());
         $var->setClient(new ClientEntity());
 
         ob_start();
-        $var->execute('foobar');
+        $var->execute('he', 'she', 'it');
         $output = ob_get_contents();
         ob_end_clean();
 
-        $this->assertEquals('foobar', $output);
+        $this->assertEquals('it', $output);
 
-        $this->doc->setLastName('last');
+        $this->doc->setGender('male');
 
         ob_start();
-        $var->execute();
+        $var->execute('he', 'she', 'it');
         $output = ob_get_contents();
         ob_end_clean();
 
-        $this->assertEquals('last', $output);
+        $this->assertEquals('he', $output);
+
+        $this->doc->setGender('female');
+
+        ob_start();
+        $var->execute('he', 'she', 'it');
+        $output = ob_get_contents();
+        ob_end_clean();
+
+        $this->assertEquals('she', $output);
     }
 }

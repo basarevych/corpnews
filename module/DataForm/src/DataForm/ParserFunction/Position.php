@@ -7,23 +7,23 @@
  * @license     http://choosealicense.com/licenses/mit/ MIT
  */
 
-namespace DataForm\Variable;
+namespace DataForm\ParserFunction;
 
 use Zend\ServiceManager\ServiceLocatorAwareInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 use Application\Entity\Template as TemplateEntity;
 use Application\Entity\Client as ClientEntity;
-use DataForm\Variable\VariableInterface;
+use DataForm\ParserFunction\ParserFunctionInterface;
 use DataForm\Document\Profile as ProfileDocument;
 
 /**
- * $middle_name variable
+ * $position variable
  *
  * @category    DataForm
- * @package     Variable
+ * @package     ParserFunction
  */
-class MiddleName implements ServiceLocatorAwareInterface,
-                            VariableInterface
+class Position implements ServiceLocatorAwareInterface,
+                          ParserFunctionInterface
 {
     /**
      * Service Locator
@@ -74,7 +74,7 @@ class MiddleName implements ServiceLocatorAwareInterface,
      * Set current template
      *
      * @param TemplateEntity $template
-     * @return MiddleName
+     * @return Position
      */
     public function setTemplate(TemplateEntity $template)
     {
@@ -144,7 +144,7 @@ class MiddleName implements ServiceLocatorAwareInterface,
             return null;
         }
 
-        $value = $doc->getMiddleName();
+        $value = $doc->getPosition();
         echo strlen($value) == 0 ? $default : $value;
     }
 }
