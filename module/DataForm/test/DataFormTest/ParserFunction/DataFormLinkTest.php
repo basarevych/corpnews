@@ -8,9 +8,9 @@ use Application\Entity\Campaign as CampaignEntity;
 use Application\Entity\Template as TemplateEntity;
 use Application\Entity\Client as ClientEntity;
 use DataForm\Document\Profile as ProfileDocument;
-use DataForm\ParserFunction\DataFormUrl as DataFormUrlParserFunction;
+use DataForm\ParserFunction\DataFormLink as DataFormLinkParserFunction;
 
-class DataFormUrlTest extends AbstractHttpControllerTestCase
+class DataFormLinkTest extends AbstractHttpControllerTestCase
 {
     public function setUp()
     {
@@ -73,7 +73,7 @@ class DataFormUrlTest extends AbstractHttpControllerTestCase
 
         $client = new ClientEntity();
 
-        $var = new DataFormUrlParserFunction();
+        $var = new DataFormLinkParserFunction();
         $var->setServiceLocator($this->sl);
         $var->setTemplate($template);
         $var->setClient($client);

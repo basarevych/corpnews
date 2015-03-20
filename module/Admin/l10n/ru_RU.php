@@ -177,6 +177,8 @@ return [
         . 'Печатает название компании или "Default string" (опционально), если оно неизвестно',
     'PARSER_POSITION_DESCR' => '<pre>{{ $position("Default string") }}</pre>'
         . 'Печатает должность клиента или "Default string" (опционально), если оно неизвестно',
+    'PARSER_DATA_FORM_LINK_DESCR' => '<pre>{{ $data_form_link("form_name", "Link text") }}</pre>'
+        . 'Печатает ссылку (&lt;a&gt;) на форму данных <strong>form_name</strong> для данного клиента.',
 
     // OutgoingController
     'Secret key' => 'Секретный ключ',

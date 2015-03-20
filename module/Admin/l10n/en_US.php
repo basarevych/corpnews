@@ -177,6 +177,8 @@ return [
         . 'Prints company name or "Default string" (optional) if it is not known',
     'PARSER_POSITION_DESCR' => '<pre>{{ $position("Default string") }}</pre>'
         . 'Prints client\'s position or "Default string" (optional) if it is not known',
+    'PARSER_DATA_FORM_LINK_DESCR' => '<pre>{{ $data_form_link("form_name", "Link text") }}</pre>'
+        . 'Prints link (&lt;a&gt;) to the <strong>form_name</strong> data form for the client.',
 
     // OutgoingController
     'Secret key' => 'Secret key',

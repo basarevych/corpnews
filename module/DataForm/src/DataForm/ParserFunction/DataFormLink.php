@@ -17,13 +17,13 @@ use Application\Entity\Secret as SecretEntity;
 use DataForm\ParserFunction\ParserFunctionInterface;
 
 /**
- * $data_form_url variable
+ * $data_form_link variable
  *
  * @category    DataForm
  * @package     ParserFunction
  */
-class DataFormUrl implements ServiceLocatorAwareInterface,
-                             ParserFunctionInterface
+class DataFormLink implements ServiceLocatorAwareInterface,
+                              ParserFunctionInterface
 {
     /**
      * Service Locator

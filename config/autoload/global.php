@@ -98,9 +98,9 @@ return [
                     'class'     => 'DataForm\ParserFunction\Position',
                     'html'      => false,
                 ],
-                'data_form_url' => [
-                    'descr'     => 'PARSER_DATA_FORM_URL_DESCR',
-                    'class'     => 'DataForm\ParserFunction\DataFormUrl',
+                'data_form_link' => [
+                    'descr'     => 'PARSER_DATA_FORM_LINK_DESCR',
+                    'class'     => 'DataForm\ParserFunction\DataFormLink',
                     'html'      => true,
                 ],
             ],
