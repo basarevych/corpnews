@@ -142,13 +142,18 @@ class DataFormUrl implements ServiceLocatorAwareInterface,
 
         $campaign = $template->getCampaign();
         $secret = $em->getRepository('Application\Entity\Secret')
-                     ->findOneBy([ 'campaign' => $campaign, 'client' => $client ]);
+                     ->findOneBy([
+                        'campaign' => $campaign,
+                        'client' => $client,
+                        'data_form' => $formName,
+                     ]);
         if (!$secret) {
             $secret = new SecretEntity();
             $secret->setCampaign($campaign);
             $secret->setClient($client);
-            $secret->setSecretKey(SecretEntity::generateSecretKey());
             $secret->setDataForm($formName);
+
+            $secret->setSecretKey(SecretEntity::generateSecretKey());
 
             $em->persist($secret);
             $em->flush();

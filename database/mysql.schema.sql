@@ -110,12 +110,13 @@ CREATE TABLE `secrets` (
     `id` int unsigned NOT NULL AUTO_INCREMENT,
     `campaign_id` int unsigned NOT NULL,
     `client_id` int unsigned NOT NULL,
+    `data_form` varchar(255) NOT NULL,
     `secret_key` varchar(255) NOT NULL,
     `when_opened` datetime NULL,
     `when_saved` datetime NULL,
-    `data_form` varchar(255) NULL,
     CONSTRAINT `secrets_pk` PRIMARY KEY (`id`),
-    CONSTRAINT `secrets_campaign_client_unique` UNIQUE (`campaign_id`, `client_id`),
+    CONSTRAINT `secrets_form_unique` UNIQUE (`campaign_id`, `client_id`, `data_form`),
+    CONSTRAINT `secrets_key_unique` UNIQUE (`secret_key`),
     CONSTRAINT `secrets_secret_key_unique` UNIQUE (`secret_key`),
     CONSTRAINT `secrets_campaign_fk` FOREIGN KEY (`campaign_id`)
         REFERENCES `campaigns` (`id`)

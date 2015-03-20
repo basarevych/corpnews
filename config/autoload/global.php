@@ -61,38 +61,47 @@ return [
                 'first_name' => [
                     'descr'     => 'PARSER_FIRST_NAME_DESCR',
                     'class'     => 'DataForm\ParserFunction\FirstName',
+                    'html'      => false,
                 ],
                 'middle_name' => [
                     'descr'     => 'PARSER_MIDDLE_NAME_DESCR',
                     'class'     => 'DataForm\ParserFunction\MiddleName',
+                    'html'      => false,
                 ],
                 'last_name' => [
                     'descr'     => 'PARSER_LAST_NAME_DESCR',
                     'class'     => 'DataForm\ParserFunction\LastName',
+                    'html'      => false,
                 ],
                 'short_full_name' => [
                     'descr'     => 'PARSER_SHORT_NAME_DESCR',
                     'class'     => 'DataForm\ParserFunction\ShortFullName',
+                    'html'      => false,
                 ],
                 'long_full_name' => [
                     'descr'     => 'PARSER_LONG_NAME_DESCR',
                     'class'     => 'DataForm\ParserFunction\LongFullName',
+                    'html'      => false,
                 ],
                 'gender' => [
                     'descr'     => 'PARSER_GENDER_DESCR',
                     'class'     => 'DataForm\ParserFunction\Gender',
+                    'html'      => false,
                 ],
                 'company' => [
                     'descr'     => 'PARSER_COMPANY_DESCR',
                     'class'     => 'DataForm\ParserFunction\Company',
+                    'html'      => false,
                 ],
                 'position' => [
                     'descr'     => 'PARSER_POSITION_DESCR',
                     'class'     => 'DataForm\ParserFunction\Position',
+                    'html'      => false,
                 ],
                 'data_form_url' => [
                     'descr'     => 'PARSER_DATA_FORM_URL_DESCR',
                     'class'     => 'DataForm\ParserFunction\DataFormUrl',
+                    'html'      => true,
                 ],
             ],
         ],

@@ -179,6 +179,20 @@ class Parser implements ServiceLocatorAwareInterface
     }
 
     /**
+     * Is function output is HTML
+     *
+     * @param string $name
+     * @return boolean
+     */
+    public function isHtmlFunction($name)
+    {
+        if (!isset($this->functions[$name]) || !isset($this->functions[$name]['html']))
+            return null;
+
+        return $this->functions[$name]['html'];
+    }
+
+    /**
      * Check syntax (parsed $output is HTML)
      *
      * @param string $msg
@@ -276,15 +290,25 @@ class Parser implements ServiceLocatorAwareInterface
     public function parse($msg, &$output, $htmlInput, $htmlOutput)
     {
         $__sl = $this->getServiceLocator();
-        $callback = function ($code) use ($__sl) {
+        $__html = $htmlOutput;
+        $callback = function ($code) use ($__sl, $__html) {
             foreach ($this->getFunctions() as $__func) {
-                $$__func = function ($param1 = '', $param2 = '', $param3 = '') use ($__func, $__sl) {
+                $$__func = function ($param1 = '', $param2 = '', $param3 = '') use ($__func, $__sl, $__html) {
                     $__class = $this->getFunctionClass($__func);
                     $__obj = new $__class();
                     $__obj->setServiceLocator($__sl);
                     $__obj->setTemplate($this->getTemplate());
                     $__obj->setClient($this->getClient());
+
+                    ob_start();
                     $__obj->execute($param1, $param2, $param3);
+                    $__output = ob_get_contents();
+                    ob_end_clean();
+
+                    if ($__html && !$this->isHtmlFunction($__func))
+                        $__output = htmlentities($__output, ENT_COMPAT | ENT_HTML401, 'UTF-8');
+
+                    echo $__output;
                 };
             }
 
@@ -359,10 +383,7 @@ class Parser implements ServiceLocatorAwareInterface
                     $result = ob_get_contents();
                     ob_end_clean();
 
-                    if ($htmlOutput)
-                        $output .= htmlentities($result, ENT_COMPAT | ENT_HTML401, 'UTF-8');
-                    else
-                        $output .= $result;
+                    $output .= $result;
 
                     $prevPos = $pos + $length;
                 }
