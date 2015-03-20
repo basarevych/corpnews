@@ -80,7 +80,7 @@ $groups = $form->get('groups');
                                 <?php if (!$valid): ?>
                                     <ul class="list-unstyled icon-list error-list">
                                     <?php foreach ($name->getMessages() as $msg): ?>
-                                        <li><?= $this->escapeHtml($this->translate($msg)) ?></li>
+                                        <li><?= $this->escapeHtml($msg) ?></li>
                                     <?php endforeach ?>
                                     </ul>
                                 <?php endif ?>
@@ -108,7 +108,7 @@ $groups = $form->get('groups');
                                 <?php if (!$valid): ?>
                                     <ul class="list-unstyled icon-list error-list">
                                     <?php foreach ($whenDeadline->getMessages() as $msg): ?>
-                                        <li><?= $this->escapeHtml($this->translate($msg)) ?></li>
+                                        <li><?= $this->escapeHtml($msg) ?></li>
                                     <?php endforeach ?>
                                     </ul>
                                 <?php endif ?>
@@ -147,7 +147,7 @@ $groups = $form->get('groups');
                                 <?php if (!$valid): ?>
                                     <ul class="list-unstyled icon-list error-list">
                                     <?php foreach ($groups->getMessages() as $msg): ?>
-                                        <li><?= $this->escapeHtml($this->translate($msg)) ?></li>
+                                        <li><?= $this->escapeHtml($msg) ?></li>
                                     <?php endforeach ?>
                                     </ul>
                                 <?php endif ?>

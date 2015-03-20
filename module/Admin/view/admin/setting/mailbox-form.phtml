@@ -46,7 +46,7 @@ $autodelete = $form->get('autodelete');
                 <?php if (!$valid): ?>
                     <ul class="list-unstyled icon-list error-list">
                     <?php foreach ($autodelete->getMessages() as $msg): ?>
-                        <li><?= $this->escapeHtml($this->translate($msg)) ?></li>
+                        <li><?= $this->escapeHtml($msg) ?></li>
                     <?php endforeach ?>
                     </ul>
                 <?php endif ?>

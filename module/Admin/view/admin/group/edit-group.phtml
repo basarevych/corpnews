@@ -62,7 +62,7 @@ $id = $form->has('id') ? $form->get('id') : null;
                     <?php if (!$valid): ?>
                         <ul class="list-unstyled icon-list error-list">
                         <?php foreach ($name->getMessages() as $msg): ?>
-                            <li><?= $this->escapeHtml($this->translate($msg)) ?></li>
+                            <li><?= $this->escapeHtml($msg) ?></li>
                         <?php endforeach ?>
                         </ul>
                     <?php endif ?>
