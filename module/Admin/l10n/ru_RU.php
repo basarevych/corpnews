@@ -67,7 +67,7 @@ return [
     'STATUS_PAUSED' => 'Поставлено на паузу',
     'STATUS_FINISHED' => 'Завершено',
     'Apply filter' => 'Применить фильтр',
-    'View template' => 'Показать шаблон',
+    'Templates' => 'Шаблоны',
     'Delete campaign' => 'Удалить кампанию',
     'Status' => 'Статус',
     'When deadline' => 'Когда крайний срок',

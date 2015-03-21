@@ -37,10 +37,6 @@
                         <h3 class="panel-title"><?= $this->translate('Table actions') ?></h3>
                     </div>
                     <div class="panel-body button-panel">
-                        <button id="template-button" class="btn btn-default disabled" disabled="disabled" onclick="viewTemplate()">
-                            <?= $this->translate('View template') ?>
-                        </button>
-                        <hr>
                         <button id="delete-button" class="btn btn-default disabled" disabled="disabled" onclick="deleteCampaign()">
                             <?= $this->translate('Delete campaign') ?>
                         </button>
@@ -111,15 +107,6 @@
         var table = $('#table-campaigns').data('dynamicTable');
         var selected = table.getSelected();
 
-        if (selected == 'all' || selected.length != 1) {
-            $('#template-button')
-                .attr('disabled', 'disabled')
-                .addClass('disabled');
-        } else {
-            $('#template-button')
-                .removeAttr('disabled')
-                .removeClass('disabled');
-        }
         if (selected == 'all' || selected.length) {
             $('#delete-button')
                 .removeAttr('disabled')
@@ -148,15 +135,6 @@
                 modal.find('.modal-body').html(html);
             }
         });
-    }
-
-    function viewTemplate() {
-        var table = $('#table-campaigns').data('dynamicTable');
-        var selected = table.getSelected();
-        if (selected == 'all' || selected.length != 1)
-            return;
-
-        openLetter({ template: selected[0] });
     }
 
     function deleteCampaign() {

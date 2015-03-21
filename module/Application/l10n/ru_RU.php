@@ -72,7 +72,7 @@ return [
     'File' => 'Файл',
     'Line' => 'Строка',
     'Stack trace' => 'Трассировка стека',
-    'ERROR_CREATE_FROM_TEMPLATE' => 'Не удалось создать письмо по шаблону (%id%)',
+    'ERROR_CREATE_FROM_TEMPLATE' => 'Не удалось создать письмо по шаблону (%source_id%)',
     'ERROR_SEND_LETTER' => 'Не удалось отправить письмо: %exception%',
 
     // Csrf validator

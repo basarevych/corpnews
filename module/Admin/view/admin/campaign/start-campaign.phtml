@@ -156,6 +156,21 @@ $groups = $form->get('groups');
                     </div>
 
                     <div class="form-group">
+                        <label class="col-sm-4 control-label">
+                            <?= $this->escapeHtml($this->translate('Templates')) ?>:
+                        </label>
+                        <div class="col-sm-8">
+                            <?php foreach ($this->templates as $template): ?>
+                                <p class="form-control-static">
+                                    <a href="javascript:void(0)" onclick="openLetter({ template: <?= $template->getId() ?> })">
+                                        <?= $this->escapeHtml($template->getSubject()) ?>
+                                    </a>
+                                </p>
+                            <?php endforeach ?>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
                         <div class="col-sm-offset-4 col-sm-8">
                             <button id="submit-button" type="button" class="btn btn-primary">
                                 <?= $this->translate('Start campaign') ?>

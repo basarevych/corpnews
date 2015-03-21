@@ -67,7 +67,7 @@ return [
     'STATUS_PAUSED' => 'On pause',
     'STATUS_FINISHED' => 'Finished',
     'Apply filter' => 'Apply filter',
-    'View template' => 'View template',
+    'Templates' => 'Templates',
     'Delete campaign' => 'Delete campaign',
     'Status' => 'Status',
     'When deadline' => 'When deadline',

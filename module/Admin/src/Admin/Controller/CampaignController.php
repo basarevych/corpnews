@@ -162,6 +162,9 @@ class CampaignController extends AbstractActionController
             ]);
         }
 
+        $templates = $em->getRepository('Application\Entity\Template')
+                      ->findByCampaign($campaign);
+
         $testers = $em->getRepository('Application\Entity\Client')
                       ->findByGroupName(GroupEntity::NAME_TESTERS);
 
@@ -178,6 +181,7 @@ class CampaignController extends AbstractActionController
             'script'    => $script,
             'form'      => $form,
             'messages'  => $messages,
+            'templates' => $templates,
             'testers'   => $testers,
             'dataForms' => $dataForms,
         ]);

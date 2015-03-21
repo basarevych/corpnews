@@ -72,7 +72,7 @@ return [
     'File' => 'File',
     'Line' => 'Line',
     'Stack trace' => 'Stack trace',
-    'ERROR_CREATE_FROM_TEMPLATE' => 'Could not create letter from template (%id%)',
+    'ERROR_CREATE_FROM_TEMPLATE' => 'Could not create letter from template (%source_id%)',
     'ERROR_SEND_LETTER' => 'Could not send letter: %exception%',
 
     // Csrf validator

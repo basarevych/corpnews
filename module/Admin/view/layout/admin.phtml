@@ -321,9 +321,6 @@
                         <button class="btn btn-default" data-dismiss="modal">
                             <?= $this->translate('Close') ?>
                         </button>
-                        <button id="check-letter-button" class="btn btn-primary">
-                            <?= $this->translate('Use as template') ?>
-                        </button>
                     </div>
                 </div>
             </div>
@@ -357,10 +354,6 @@
                             $('#parse-letter-status').html('<span class="text-danger"><?= $this->translate('Syntax error') ?></span>');
                         else
                             $('#parse-letter-status').html('<span class="text-success"><?= $this->translate('Success') ?></span>');
-
-                        $('#check-letter-button').off('click')
-                            .on('click', function () {
-                            });
                     }
                 );
             }
