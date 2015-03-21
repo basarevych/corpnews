@@ -15,6 +15,7 @@ use Zend\ServiceManager\ServiceLocatorAwareInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 use Application\Entity\Template as TemplateEntity;
 use Application\Entity\Client as ClientEntity;
+use Application\Entity\Secret as SecretEntity;
 
 /**
  * Parser service
@@ -312,7 +313,7 @@ class Parser implements ServiceLocatorAwareInterface
                 };
             }
 
-            eval($code);
+            @eval($code);
         };
 
         $scripts = [];
@@ -357,8 +358,10 @@ class Parser implements ServiceLocatorAwareInterface
                         $error = true;
                 }
 
-                if ($error)
+                if ($error) {
                     $success = false;
+                    continue;
+                }
 
                 $pos = strpos($msg, $script, $prevPos);
                 if ($pos === false) {
@@ -419,9 +422,20 @@ class Parser implements ServiceLocatorAwareInterface
      */
     protected function testCode($code)
     {
-        $oldReporting = error_reporting(0);
-        $success = @eval('return true;' . $code . ';');
-        error_reporting($oldReporting);
-        return $success === true;
+        $filename = '/tmp/corpnews.' . SecretEntity::generateSecretKey();
+        $file = fopen($filename, "w");
+        if (!$file)
+            return false;
+
+        fwrite($file, "<?php\n");
+        foreach ($this->getFunctions() as $func)
+            fwrite($file, "$" . $func . " = function () { return null; };\n");
+        fwrite($file, "\n" . $code . ";\n");
+        fclose($file);
+
+        exec('php ' . $filename, $output, $return);
+        unlink($filename);
+
+        return $return == 0;
     }
 }
