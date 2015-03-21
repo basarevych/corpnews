@@ -117,9 +117,9 @@ class FirstName implements ServiceLocatorAwareInterface,
     /**
      * Execute the function
      *
-     * @param string $default
+     * @param array $params
      */
-    public function execute($default = '')
+    public function execute($params)
     {
         $sl = $this->getServiceLocator();
         $dm = $sl->get('doctrine.documentmanager.odm_default');
@@ -132,6 +132,8 @@ class FirstName implements ServiceLocatorAwareInterface,
         $client = $this->getClient();
         if (!$client)
             throw new \Exception('No client set');
+
+        $default = count($params) > 0 ? $params[0] : '';
 
         $doc = $dm->getRepository($class)
                   ->find($client->getId());

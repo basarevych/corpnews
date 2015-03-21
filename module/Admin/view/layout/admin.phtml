@@ -262,49 +262,49 @@
                         <div role="tabpanel">
                             <ul class="nav nav-tabs" role="tablist">
                                 <li role="presentation" class="active">
-                                    <a href="#html" aria-controls="html" role="tab" data-toggle="tab">
+                                    <a href="#letter-html" aria-controls="letter-html" role="tab" data-toggle="tab">
                                         <?= $this->translate('HTML') ?>
                                     </a>
                                 </li>
                                 <li role="presentation">
-                                    <a href="#text" aria-controls="text" role="tab" data-toggle="tab">
+                                    <a href="#letter-text" aria-controls="letter-text" role="tab" data-toggle="tab">
                                         <?= $this->translate('Text') ?>
                                     </a>
                                 </li>
                                 <li role="presentation">
-                                    <a href="#attachments" aria-controls="attachments" role="tab" data-toggle="tab">
+                                    <a href="#letter-attachments" aria-controls="letter-attachments" role="tab" data-toggle="tab">
                                         <?= $this->translate('Attachments') ?>
                                     </a>
                                 </li>
                                 <li role="presentation">
-                                    <a href="#log" aria-controls="log" role="tab" data-toggle="tab">
+                                    <a href="#letter-log" aria-controls="letter-log" role="tab" data-toggle="tab">
                                         <?= $this->translate('Analysis log') ?>
                                     </a>
                                 </li>
                                 <li role="presentation">
-                                    <a href="#source" aria-controls="source" role="tab" data-toggle="tab">
+                                    <a href="#letter-source" aria-controls="letter-source" role="tab" data-toggle="tab">
                                         <?= $this->translate('Source') ?>
                                     </a>
                                 </li>
                             </ul>
                             <div class="tab-content">
-                                <div id="html" role="tabpanel" class="tab-pane active">
+                                <div id="letter-html" role="tabpanel" class="tab-pane active">
                                     <div class="tab-pane-loader"></div>
                                     <iframe class="letter-frame"></iframe>
                                 </div>
-                                <div id="text" role="tabpanel" class="tab-pane">
+                                <div id="letter-text" role="tabpanel" class="tab-pane">
                                     <div class="tab-pane-loader"></div>
                                     <div class="letter-frame"></div>
                                 </div>
-                                <div id="attachments" role="tabpanel" class="tab-pane">
+                                <div id="letter-attachments" role="tabpanel" class="tab-pane">
                                     <div class="tab-pane-loader"></div>
                                     <div class="letter-frame"></div>
                                 </div>
-                                <div id="log" role="tabpanel" class="tab-pane">
+                                <div id="letter-log" role="tabpanel" class="tab-pane">
                                     <div class="tab-pane-loader"></div>
                                     <div class="letter-frame"></div>
                                 </div>
-                                <div id="source" role="tabpanel" class="tab-pane">
+                                <div id="letter-source" role="tabpanel" class="tab-pane">
                                     <div class="tab-pane-loader"></div>
                                     <div class="letter-frame"></div>
                                 </div>
@@ -315,11 +315,14 @@
                         <div class="pull-left">
                             <strong>
                                 <?= $this->translate('Letter check status') ?>:
-                                <span id="parse-status"><?= $this->translate('Loading...') ?></span>
+                                <span id="parse-letter-status"><?= $this->translate('Loading...') ?></span>
                             </strong>
                         </div>
-                        <button class="btn btn-primary" data-dismiss="modal">
+                        <button class="btn btn-default" data-dismiss="modal">
                             <?= $this->translate('Close') ?>
+                        </button>
+                        <button id="check-letter-button" class="btn btn-primary">
+                            <?= $this->translate('Use as template') ?>
                         </button>
                     </div>
                 </div>
@@ -338,22 +341,26 @@
                     '<?= $this->basePath('/admin/letter/show-letter') ?>',
                     data,
                     function (data) {
-                        var iframeContext = $('#html iframe')[0].contentWindow.document;
+                        var iframeContext = $('#letter-html iframe')[0].contentWindow.document;
                         $('html', iframeContext).html(data.html);
-                        $('#text .letter-frame').html(data.text);
-                        $('#attachments .letter-frame').html(data.attachments);
-                        $('#log .letter-frame').html(data.log);
-                        $('#source .letter-frame').html(data.source);
-
+                        $('#letter-text .letter-frame').html(data.text);
+                        $('#letter-attachments .letter-frame').html(data.attachments);
+                        $('#letter-log .letter-frame').html(data.log);
+                        $('#letter-source .letter-frame').html(data.source);
                         $('#letter-modal .modal-title').html(data.subject);
-                        if (data.error === false)
-                            $('#parse-status').html('<span class="text-success"><?= $this->translate('Success') ?></span>');
-                        else if (data.error == 'analysis')
-                            $('#parse-status').html('<span class="text-danger"><?= $this->translate('Analysis error') ?></span>');
-                        else if (data.error == 'syntax')
-                            $('#parse-status').html('<span class="text-danger"><?= $this->translate('Syntax error') ?></span>');
                         $('#letter-modal .tab-pane-loader').hide();
                         $('#letter-modal .letter-frame').show();
+
+                        if (data.error == 'analysis')
+                            $('#parse-letter-status').html('<span class="text-danger"><?= $this->translate('Analysis error') ?></span>');
+                        else if (data.error == 'syntax')
+                            $('#parse-letter-status').html('<span class="text-danger"><?= $this->translate('Syntax error') ?></span>');
+                        else
+                            $('#parse-letter-status').html('<span class="text-success"><?= $this->translate('Success') ?></span>');
+
+                        $('#check-letter-button').off('click')
+                            .on('click', function () {
+                            });
                     }
                 );
             }

@@ -40,7 +40,7 @@ class ParserTest extends AbstractControllerTestCase
 
     public function testSyntaxValid()
     {
-        $msg = 'Hello {{ echo "Sir"; $last_name("default") }}';
+        $msg = 'Hello {{ last_name | default }}';
 
         $service = new Parser();
         $sl = $this->getApplicationServiceLocator();
@@ -54,7 +54,7 @@ class ParserTest extends AbstractControllerTestCase
 
     public function testSyntaxInvalid()
     {
-        $msg = '{{ echo 1; }} Hello  <<{{ echo %"Sir" }}>> {{ echo "Sir" }}  {{ xxx';
+        $msg = '{{ echo 1; }} Hello  <<{{ echo "Sir" }}>> {{ echo "Sir" }}  {{ xxx';
 
         $service = new Parser();
         $sl = $this->getApplicationServiceLocator();
@@ -68,7 +68,7 @@ class ParserTest extends AbstractControllerTestCase
 
     public function testParseWorks()
     {
-        $msg = 'Hello {{ echo "Sir-"; $first_name("foobar") }}';
+        $msg = 'Hello {{ first_name | foobar }}';
 
         $service = $this->getMockBuilder('Application\Service\Parser')
                         ->setMethods([ 'getVariableValue' ])
@@ -80,6 +80,6 @@ class ParserTest extends AbstractControllerTestCase
         $service->setClient(new ClientEntity());
 
         $valid = $service->parse($msg, $output, false, false);
-        $this->assertEquals('Hello Sir-foobar', $output, "Substitution error");
+        $this->assertEquals('Hello foobar', $output, "Substitution error");
     }
 }

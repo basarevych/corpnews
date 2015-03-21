@@ -77,15 +77,14 @@ class LetterController extends AbstractActionController
             $analysisSuccess = $model->load($letter->getHeaders(), $letter->getBody());
         }
 
-        $syntaxSuccess = $parser->checkSyntax($model->getHtmlMessage(), $output, true);
+        $subject = $model->getSubject();
+        $syntaxSuccess = $parser->checkSyntax($subject, $output, true);
+        $subject = $output;
+
+        if ($syntaxSuccess)
+                $syntaxSuccess = $parser->checkSyntax($model->getHtmlMessage(), $output, true);
         if ($syntaxSuccess)
             $syntaxSuccess = $parser->checkSyntax($model->getTextMessage(), $output, false);
-
-        $subject = $model->getSubject();
-        if ($syntaxSuccess) {
-            $syntaxSuccess = $parser->checkSyntax($subject, $output, true);
-            $subject = $output;
-        }
 
         if (!$analysisSuccess)
             $error = 'analysis';
@@ -324,9 +323,11 @@ class LetterController extends AbstractActionController
         $parser = $sl->get('Parser');
 
         $message = $letter->getTextMessage();
-        $parser->checkSyntax($message, $output, false);
 
-        $result = '<p>' . str_replace("\n", "<br>", $output) . '</p>';
+        $parser->checkSyntax($message, $output, false);
+        $message = $output;
+
+        $result = '<p>' . str_replace("\n", "<br>", $message) . '</p>';
 
         return $result;
     }

@@ -117,10 +117,9 @@ class DataFormLink implements ServiceLocatorAwareInterface,
     /**
      * Execute the function
      *
-     * @param string $formName
-     * @param string $linkText
+     * @param array $params
      */
-    public function execute($formName = 'profile', $linkText = 'Profile')
+    public function execute($params)
     {
         $sl = $this->getServiceLocator();
         $em = $sl->get('Doctrine\ORM\EntityManager');
@@ -139,6 +138,12 @@ class DataFormLink implements ServiceLocatorAwareInterface,
         $client = $this->getClient();
         if (!$client)
             throw new \Exception('No client set');
+
+        if (count($params) < 2)
+            throw new \Exception('Invalid params');
+
+        $formName = $params[0];
+        $linkText = $params[1];
 
         $campaign = $template->getCampaign();
         $secret = $em->getRepository('Application\Entity\Secret')

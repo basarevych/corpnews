@@ -115,9 +115,11 @@ class ProfileController extends AbstractActionController
             if ($form->isValid()) {
                 $data = $form->getData();
 
-                $secret->setWhenSaved(new \DateTime());
-                $em->persist($secret);
-                $em->flush();
+                if ($secret) {
+                    $secret->setWhenSaved(new \DateTime());
+                    $em->persist($secret);
+                    $em->flush();
+                }
 
                 $gender = null;
                 if (in_array($data['gender'], [ 'male', 'female' ]))
@@ -136,9 +138,11 @@ class ProfileController extends AbstractActionController
                 $success = true;
             }
         } else {
-            $secret->setWhenOpened(new \DateTime());
-            $em->persist($secret);
-            $em->flush();
+            if ($secret) {
+                $secret->setWhenOpened(new \DateTime());
+                $em->persist($secret);
+                $em->flush();
+            }
 
             $form->setData([
                 'first_name'    => $doc->getFirstName(),

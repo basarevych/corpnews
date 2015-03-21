@@ -117,11 +117,9 @@ class Gender implements ServiceLocatorAwareInterface,
     /**
      * Execute the function
      *
-     * @param string $male
-     * @param string $female
-     * @param string $default
+     * @param array $params
      */
-    public function execute($male = '', $female = '', $default = '')
+    public function execute($params)
     {
         $sl = $this->getServiceLocator();
         $dm = $sl->get('doctrine.documentmanager.odm_default');
@@ -134,6 +132,13 @@ class Gender implements ServiceLocatorAwareInterface,
         $client = $this->getClient();
         if (!$client)
             throw new \Exception('No client set');
+
+        if (count($params) < 2)
+            throw new \Exception('Invalid params');
+
+        $male = $params[0];
+        $female = $params[1];
+        $default = count($params) >= 3 ? $params[2] : '';
 
         $doc = $dm->getRepository($class)
                   ->find($client->getId());

@@ -237,7 +237,7 @@ class Parser implements ServiceLocatorAwareInterface
                     $error = true;
 
                 if (!$error) {
-                    $code = substr($script, 2, $length-4) . ';';
+                    $code = substr($script, 2, $length-4);
                     if ($htmlInput)
                         $code = html_entity_decode($code);
 
@@ -290,31 +290,7 @@ class Parser implements ServiceLocatorAwareInterface
      */
     public function parse($msg, &$output, $htmlInput, $htmlOutput)
     {
-        $__sl = $this->getServiceLocator();
-        $__html = $htmlOutput;
-        $callback = function ($code) use ($__sl, $__html) {
-            foreach ($this->getFunctions() as $__func) {
-                $$__func = function ($param1 = '', $param2 = '', $param3 = '') use ($__func, $__sl, $__html) {
-                    $__class = $this->getFunctionClass($__func);
-                    $__obj = new $__class();
-                    $__obj->setServiceLocator($__sl);
-                    $__obj->setTemplate($this->getTemplate());
-                    $__obj->setClient($this->getClient());
-
-                    ob_start();
-                    $__obj->execute($param1, $param2, $param3);
-                    $__output = ob_get_contents();
-                    ob_end_clean();
-
-                    if ($__html && !$this->isHtmlFunction($__func))
-                        $__output = htmlentities($__output, ENT_COMPAT | ENT_HTML401, 'UTF-8');
-
-                    echo $__output;
-                };
-            }
-
-            @eval($code);
-        };
+        $sl = $this->getServiceLocator();
 
         $scripts = [];
         $bracketCounter = 0;
@@ -350,7 +326,7 @@ class Parser implements ServiceLocatorAwareInterface
                     $error = true;
 
                 if (!$error) {
-                    $code = substr($script, 2, $length-4) . ';';
+                    $code = substr($script, 2, $length-4);
                     if ($htmlInput)
                         $code = html_entity_decode($code);
 
@@ -375,16 +351,31 @@ class Parser implements ServiceLocatorAwareInterface
                     else
                         $output .= htmlentities($originalChunk, ENT_COMPAT | ENT_HTML401, 'UTF-8');
 
+                    $parts = explode('|', $code);
+                    $func = trim($parts[0]);
+                    $params = [];
+                    for ($i = 1; $i < count($parts); $i++)
+                        $params[] = trim($parts[$i]);
+
                     ob_start();
 
                     try {
-                        $callback($code);
+                        $class = $this->getFunctionClass($func);
+                        $obj = new $class();
+                        $obj->setServiceLocator($sl);
+                        $obj->setTemplate($this->getTemplate());
+                        $obj->setClient($this->getClient());
+
+                        $obj->execute($params);
                     } catch (\Exception $e) {
                         $success = false;
                     }
 
                     $result = ob_get_contents();
                     ob_end_clean();
+
+                    if ($htmlOutput && !$this->isHtmlFunction($func))
+                        $result = htmlentities($result, ENT_COMPAT | ENT_HTML401, 'UTF-8');
 
                     $output .= $result;
 
@@ -422,20 +413,12 @@ class Parser implements ServiceLocatorAwareInterface
      */
     protected function testCode($code)
     {
-        $filename = '/tmp/corpnews.' . SecretEntity::generateSecretKey();
-        $file = fopen($filename, "w");
-        if (!$file)
+        $parts = explode('|', $code);
+
+        $func = trim($parts[0]);
+        if (!in_array($func, $this->getFunctions()))
             return false;
 
-        fwrite($file, "<?php\n");
-        foreach ($this->getFunctions() as $func)
-            fwrite($file, "$" . $func . " = function () { return null; };\n");
-        fwrite($file, "\n" . $code . ";\n");
-        fclose($file);
-
-        exec('php ' . $filename, $output, $return);
-        unlink($filename);
-
-        return $return == 0;
+        return true;
     }
 }

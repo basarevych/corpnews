@@ -60,7 +60,7 @@ class GenderTest extends AbstractHttpControllerTestCase
         $var->setClient(new ClientEntity());
 
         ob_start();
-        $var->execute('he', 'she', 'it');
+        $var->execute([ 'he', 'she', 'it' ]);
         $output = ob_get_contents();
         ob_end_clean();
 
@@ -69,7 +69,7 @@ class GenderTest extends AbstractHttpControllerTestCase
         $this->doc->setGender('male');
 
         ob_start();
-        $var->execute('he', 'she', 'it');
+        $var->execute([ 'he', 'she', 'it' ]);
         $output = ob_get_contents();
         ob_end_clean();
 
@@ -78,7 +78,7 @@ class GenderTest extends AbstractHttpControllerTestCase
         $this->doc->setGender('female');
 
         ob_start();
-        $var->execute('he', 'she', 'it');
+        $var->execute([ 'he', 'she', 'it' ]);
         $output = ob_get_contents();
         ob_end_clean();
 

@@ -60,7 +60,7 @@ class PositionTest extends AbstractHttpControllerTestCase
         $var->setClient(new ClientEntity());
 
         ob_start();
-        $var->execute('foobar');
+        $var->execute([ 'foobar' ]);
         $output = ob_get_contents();
         ob_end_clean();
 
@@ -69,7 +69,7 @@ class PositionTest extends AbstractHttpControllerTestCase
         $this->doc->setPosition('position');
 
         ob_start();
-        $var->execute();
+        $var->execute([]);
         $output = ob_get_contents();
         ob_end_clean();
 
