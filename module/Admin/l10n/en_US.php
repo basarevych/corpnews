@@ -148,38 +148,37 @@ return [
     'Message parser functions' => 'Message parser functions',
     'PARSER_SYNTAX_TITLE' => 'Parser syntax',
     'PARSER_SYNTAX_BODY' => '<p>General parser synatax is:'
-        . '<pre>{{ any_php_code }}</pre>'
-        . 'The parser will run <em>any_php_code</em> and replace {{ ... }} with the code output.'
+        . '<pre>{{ function_name }}</pre>'
+        . 'Or'
+        . '<pre>{{ function_name | arg1 | ... | argN }}</pre>'
+        . 'The parser will run <em>function_name</em> with the arguments and replace {{ ... }} with its output.'
         . '</p><p>'
-        . 'Some examples:'
-        . '<pre>40 + 2 = {{ echo 40 + 2 }}</pre>'
-        . 'Will be replaced with <strong>"40 + 2 = 42"</strong>.'
-        . '</p><p>'
-        . 'CorpNews Parser extends PHP with a number of functions. Name of these functions starts with a dollar sign:'
-        . '<pre>Hello, {{ $first_name("Dear friend") }}</pre>'
-        . 'Here we are calling function <strong>$first_name</strong> with parameter "Dear friend".'
-        . 'This particular function prints first name of the client we are writing to, the param is the string to print if the name is not known.'
+        . '<pre>Hello, {{ first_name | Dear friend }}</pre>'
+        . 'Here we are calling function <strong>first_name</strong> with the argument "Dear friend".'
+        . 'This particular function prints first name of the client we are writing to. The argument is the string to print if the name is not known.'
         . '</p><p>'
         . 'The code above will be replaced with <strong>Hello, John</strong> if the first name is "John" and <strong>Hello, Dear friend</strong> if the first name is not set.'
         . '</p>',
-    'PARSER_FIRST_NAME_DESCR' => '<pre>{{ $first_name("Default string") }}</pre>'
+    'PARSER_FIRST_NAME_DESCR' => '<pre>{{ first_name | Default string }}</pre>'
         . 'Prints first name of the client or "Default string" (optional) if it is not known',
-    'PARSER_MIDDLE_NAME_DESCR' => '<pre>{{ $middle_name("Default string") }}</pre>'
+    'PARSER_MIDDLE_NAME_DESCR' => '<pre>{{ middle_name | Default string }}</pre>'
         . 'Prints middle name of the client or "Default sring" (optional) if it is not known',
-    'PARSER_LAST_NAME_DESCR' => '<pre>{{ $last_name("Default string") }}</pre>'
+    'PARSER_LAST_NAME_DESCR' => '<pre>{{ last_name | Default string }}</pre>'
         . 'Prints last name of the client or "Default string" (optional) if it is not known',
-    'PARSER_SHORT_NAME_DESCR' => '<pre>{{ $short_full_name("Default string") }}</pre>'
+    'PARSER_SHORT_NAME_DESCR' => '<pre>{{ short_full_name | Default string }}</pre>'
         . 'Prints first and middle names concatenated if they are known or "Default string" (optional)',
-    'PARSER_LONG_NAME_DESCR' => '<pre>{{ $long_full_name("Default string") }}</pre>'
+    'PARSER_LONG_NAME_DESCR' => '<pre>{{ long_full_name | Default string }}</pre>'
         . 'Prints first, middle and last names concatenated if they are known or "Default string" (optional)',
-    'PARSER_GENDER_DESCR' => '<pre>{{ $gender("Male string", "Female string", "Default string") }}</pre>'
-        . 'Prints "Male string" if the gender of the client is male or "Female string" if it is female. Prints "Default string" if gender is not set',
-    'PARSER_COMPANY_DESCR' => '<pre>{{ $company("Default string") }}</pre>'
+    'PARSER_GENDER_DESCR' => '<pre>{{ gender | Male string | Female string | Default string }}</pre>'
+        . 'Prints "Male string" (required argument) if the gender of the client is male or "Female string" (required argument) if it is female. Prints "Default string" (otional) if gender is not set',
+    'PARSER_COMPANY_DESCR' => '<pre>{{ company | Default string }}</pre>'
         . 'Prints company name or "Default string" (optional) if it is not known',
-    'PARSER_POSITION_DESCR' => '<pre>{{ $position("Default string") }}</pre>'
+    'PARSER_POSITION_DESCR' => '<pre>{{ position | Default string }}</pre>'
         . 'Prints client\'s position or "Default string" (optional) if it is not known',
-    'PARSER_DATA_FORM_LINK_DESCR' => '<pre>{{ $data_form_link("form_name", "Link text") }}</pre>'
-        . 'Prints link (&lt;a&gt;) to the <strong>form_name</strong> data form for the client.',
+    'PARSER_DATA_FORM_LINK_DESCR' => '<pre>{{ data_form_link | form_name | Link text }}</pre>'
+        . 'Prints link (&lt;a&gt;) to the <strong>form_name</strong> data form for the client. Both arguments are required.',
+    'AVAILABLE_FORMS_TITLE' => 'Data forms',
+    'AVAILABLE_FORMS_BODY' => 'List of data forms available (to use as an argument to <strong>data_form_link</strong> function):',
 
     // OutgoingController
     'Secret key' => 'Secret key',

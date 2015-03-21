@@ -148,38 +148,37 @@ return [
     'Message parser functions' => 'Функции парсера сообщений',
     'PARSER_SYNTAX_TITLE' => 'Синтаксис парсера',
     'PARSER_SYNTAX_BODY' => '<p>Общий синтаксис парсера:'
-        . '<pre>{{ any_php_code }}</pre>'
-        . 'Парсер выполнит <em>any_php_code</em> и заменит {{ ... }} на текст вывода скрипта.'
+        . '<pre>{{ function_name }}</pre>'
+        . 'Или'
+        . '<pre>{{ function_name | arg1 | ... | argN }}</pre>'
+        . 'Парсер выполнит функцию <em>function_name</em> с аргументами и заменит {{ ... }} на текст ее вывода.'
         . '</p><p>'
-        . 'Немного примеров:'
-        . '<pre>40 + 2 = {{ echo 40 + 2 }}</pre>'
-        . 'Будет заменено на <strong>"40 + 2 = 42"</strong>.'
-        . '</p><p>'
-        . 'Парсер CorpNews расширяет PHP некоторым числом функций. Имена такий функций начинаются со знака доллара:'
-        . '<pre>Hello, {{ $first_name("Dear friend") }}</pre>'
-        . 'Здесь мы вызываем функцию <strong>$first_name</strong> с параметром "Dear friend".'
-        . 'Конкретно эта функция печатает имя клиента, которому мы пишем, параметр - это строка, которая будет напечатана, если имя неизвестно.'
+        . '<pre>Hello, {{ first_name | Dear friend }}</pre>'
+        . 'Здесь мы вызываем функцию <strong>first_name</strong> с аргументом "Dear friend".'
+        . 'Конкретно эта функция печатает имя клиента, которому мы пишем. Аргумент - это строка, которая будет напечатана, если имя неизвестно.'
         . '</p><p>'
         . 'Код, приведенный выше, будет заменен на <strong>Hello, John</strong>, если имя - "John", и <strong>Hello, Dear friend</strong>, если имя неизвестно.' 
         . '</p>',
-    'PARSER_FIRST_NAME_DESCR' => '<pre>{{ $first_name("Default string") }}</pre>'
+    'PARSER_FIRST_NAME_DESCR' => '<pre>{{ first_name | Default string }}</pre>'
         . 'Печатает имя клиента или "Default string" (опционально), если оно неизвестно',
-    'PARSER_MIDDLE_NAME_DESCR' => '<pre>{{ $middle_name("Default string") }}</pre>'
+    'PARSER_MIDDLE_NAME_DESCR' => '<pre>{{ middle_name | Default string }}</pre>'
         . 'Печатает отчество клиента или "Default sring" (опционально), если оно неизвестно',
-    'PARSER_LAST_NAME_DESCR' => '<pre>{{ $last_name("Default string") }}</pre>'
+    'PARSER_LAST_NAME_DESCR' => '<pre>{{ last_name | Default string }}</pre>'
         . 'Печатает фамилию клиента или "Default string" (опционально), если онa неизвестнa',
-    'PARSER_SHORT_NAME_DESCR' => '<pre>{{ $short_full_name("Default string") }}</pre>'
+    'PARSER_SHORT_NAME_DESCR' => '<pre>{{ short_full_name | Default string }}</pre>'
         . 'Печатает имя и отчество клиента, если они известны, или "Default string" (опционально)',
-    'PARSER_LONG_NAME_DESCR' => '<pre>{{ $long_full_name("Default string") }}</pre>'
+    'PARSER_LONG_NAME_DESCR' => '<pre>{{ long_full_name | Default string }}</pre>'
         . 'Печатает имя, отчество и фамилию клиента, если они известны, или "Default string" (опционально)',
-    'PARSER_GENDER_DESCR' => '<pre>{{ $gender("Male string", "Female string", "Default string") }}</pre>'
-        . 'Печатает "Male string", если пол клиента мужской, или "Female string", если он женский. Если пол неизвестен, печатает "Default string"',
-    'PARSER_COMPANY_DESCR' => '<pre>{{ $company("Default string") }}</pre>'
+    'PARSER_GENDER_DESCR' => '<pre>{{ gender | Male string | Female string | Default string }}</pre>'
+        . 'Печатает "Male string" (обязательный аргумент), если пол клиента мужской, или "Female string" (обязательный аргумент), если он женский. Если пол неизвестен, печатает "Default string" (опционально)',
+    'PARSER_COMPANY_DESCR' => '<pre>{{ company | Default string }}</pre>'
         . 'Печатает название компании или "Default string" (опционально), если оно неизвестно',
-    'PARSER_POSITION_DESCR' => '<pre>{{ $position("Default string") }}</pre>'
+    'PARSER_POSITION_DESCR' => '<pre>{{ position | Default string }}</pre>'
         . 'Печатает должность клиента или "Default string" (опционально), если оно неизвестно',
-    'PARSER_DATA_FORM_LINK_DESCR' => '<pre>{{ $data_form_link("form_name", "Link text") }}</pre>'
-        . 'Печатает ссылку (&lt;a&gt;) на форму данных <strong>form_name</strong> для данного клиента.',
+    'PARSER_DATA_FORM_LINK_DESCR' => '<pre>{{ data_form_link | form_name | Link text }}</pre>'
+        . 'Печатает ссылку (&lt;a&gt;) на форму данных <strong>form_name</strong> для данного клиента. Оба аргумента обязательны.',
+    'AVAILABLE_FORMS_TITLE' => 'Формы данных',
+    'AVAILABLE_FORMS_BODY' => 'Список доступных форм данных (для использования в качестве аргумента функции <strong>data_form_link</strong>):',
 
     // OutgoingController
     'Secret key' => 'Секретный ключ',

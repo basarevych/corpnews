@@ -119,7 +119,7 @@ class DataFormLink implements ServiceLocatorAwareInterface,
      *
      * @param array $params
      */
-    public function execute($params)
+    public function execute(array $params)
     {
         $sl = $this->getServiceLocator();
         $em = $sl->get('Doctrine\ORM\EntityManager');

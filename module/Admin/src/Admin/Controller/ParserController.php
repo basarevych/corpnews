@@ -28,6 +28,7 @@ class ParserController extends AbstractActionController
     public function indexAction()
     {
         $sl = $this->getServiceLocator();
+        $dfm = $sl->get('DataFormManager');
         $parser = $sl->get('Parser');
 
         $functions = [];
@@ -37,8 +38,16 @@ class ParserController extends AbstractActionController
             ];
         }
 
+        $dataForms = [];
+        foreach ($dfm->getNames() as $name) {
+            $dataForms[$name] = [
+                'title'     => $dfm->getTitle($name),
+            ];
+        }
+
         return new ViewModel([
             'functions' => $functions,
+            'dataForms' => $dataForms,
         ]);
     }
 

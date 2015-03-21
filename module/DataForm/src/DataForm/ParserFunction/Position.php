@@ -119,7 +119,7 @@ class Position implements ServiceLocatorAwareInterface,
      *
      * @param array $params
      */
-    public function execute($params)
+    public function execute(array $params)
     {
         $sl = $this->getServiceLocator();
         $dm = $sl->get('doctrine.documentmanager.odm_default');

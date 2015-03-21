@@ -55,5 +55,5 @@ interface ParserFunctionInterface
      *
      * @param array $params
      */
-    public function execute($params);
+    public function execute(array $params);
 }
