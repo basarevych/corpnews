@@ -48,10 +48,26 @@ class ProfileController extends AbstractActionController
         if ($email && !$admin)
             throw new AccessDeniedException('Admin access for not an admin denied');
 
-        $client = $em->getRepository('Application\Entity\Client')
-                     ->findOneByEmail($email);
-        if (!$client)
-            throw new NotFoundException("[" . self::DATA_FORM_NAME . "] Client '$email' not found");
+        $secret = null;
+        $key = $this->params()->fromQuery('key');
+        if ($key) {
+            $secret = $em->getRepository('Application\Entity\Secret')
+                         ->findOneBy([ 'secret_key' => $key ]);
+            if (!$secret)
+                throw new NotFoundException("[" . self::DATA_FORM_NAME . "] Secret '$key' not found");
+            if ($secret->getDataForm() != self::DATA_FORM_NAME)
+                throw new NotFoundException("[" . self::DATA_FORM_NAME . "] Secret '$key' is for " . $secret->getDataForm());
+            $client = $secret->getClient();
+            if (!$client)
+                throw new NotFoundException("[" . self::DATA_FORM_NAME . "] Secret '$key' has no client");
+        } else if ($email) {
+            $client = $em->getRepository('Application\Entity\Client')
+                         ->findOneByEmail($email);
+            if (!$client)
+                throw new NotFoundException("[" . self::DATA_FORM_NAME . "] Client '$email' not found");
+        } else {
+            throw new \Exception('Need key or email');
+        }
 
         $docClass = $dfm->getDocumentClass(self::DATA_FORM_NAME);
         $formClass = $dfm->getFormClass(self::DATA_FORM_NAME);
@@ -99,6 +115,10 @@ class ProfileController extends AbstractActionController
             if ($form->isValid()) {
                 $data = $form->getData();
 
+                $secret->setWhenSaved(new \DateTime());
+                $em->persist($secret);
+                $em->flush();
+
                 $gender = null;
                 if (in_array($data['gender'], [ 'male', 'female' ]))
                     $gender = $data['gender'];
@@ -116,6 +136,10 @@ class ProfileController extends AbstractActionController
                 $success = true;
             }
         } else {
+            $secret->setWhenOpened(new \DateTime());
+            $em->persist($secret);
+            $em->flush();
+
             $form->setData([
                 'first_name'    => $doc->getFirstName(),
                 'middle_name'   => $doc->getMiddleName(),
