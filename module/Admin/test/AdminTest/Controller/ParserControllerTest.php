@@ -44,6 +44,6 @@ class ParserControllerTest extends AbstractHttpControllerTestCase
         $this->assertResponseStatusCode(200);
 
         foreach ($keys as $key)
-            $this->assertQueryContentRegexAtLeastOnce('p.parser-function', '/^.*\$' . $key . '.*$/m');
+            $this->assertQueryContentRegexAtLeastOnce('p.parser-function', '/^.*' . $key . '.*$/m');
     }
 }

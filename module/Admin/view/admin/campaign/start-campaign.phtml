@@ -163,7 +163,9 @@ $groups = $form->get('groups');
                             <?php foreach ($this->templates as $template): ?>
                                 <p class="form-control-static">
                                     <a href="javascript:void(0)" onclick="openLetter({ template: <?= $template->getId() ?> })">
-                                        <?= $this->escapeHtml($template->getSubject()) ?>
+                                        <?= $this->escapeHtml(strlen($template->getSubject()) > 0
+                                                ? $template->getSubject()
+                                                : $this->translate('(No subject)')) ?>
                                     </a>
                                 </p>
                             <?php endforeach ?>

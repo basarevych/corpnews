@@ -122,12 +122,25 @@ class CampaignControllerTest extends AbstractHttpControllerTestCase
                                     return $this->client;
                           }));
 
+        $this->repoTemplates = $this->getMockBuilder('Application\Entity\TemplateRepository')
+                                    ->disableOriginalConstructor()
+                                    ->setMethods([ 'findByCampaign' ])
+                                    ->getMock();
+
+        $this->repoTemplates->expects($this->any())
+                            ->method('findByCampaign')
+                            ->will($this->returnCallback(function ($campaign) {
+                                if ($campaign == $this->campaign)
+                                    return $this->template;
+                            }));
+
         $this->em->expects($this->any())
                  ->method('getRepository')
                  ->will($this->returnValueMap([
                     [ 'Application\Entity\Campaign', $this->repoCampaigns ],
                     [ 'Application\Entity\Group', $this->repoGroups ],
                     [ 'Application\Entity\Client', $this->repoClients ],
+                    [ 'Application\Entity\Template', $this->repoTemplates ],
                  ]));
 
         $this->qb = $this->getMockBuilder('Doctrine\ORM\QueryBuilder')
