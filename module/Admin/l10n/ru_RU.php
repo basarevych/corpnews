@@ -68,6 +68,7 @@ return [
     'STATUS_FINISHED' => 'Завершено',
     'Apply filter' => 'Применить фильтр',
     'Templates' => 'Шаблоны',
+    'Edit campaign' => 'Редактировать кампанию',
     'Launch campaign' => 'Запустить кампанию',
     'Test campaign' => 'Тестировать кaмпанию',
     'Delete campaign' => 'Удалить кампанию',

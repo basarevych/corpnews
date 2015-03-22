@@ -1,0 +1,158 @@
+<?php
+
+if ($this->script) {    // Run script and return (no form is displayed)
+    echo "<script>" . PHP_EOL;
+    echo $this->script . PHP_EOL;
+    echo "</script>" . PHP_EOL;
+    return;
+}
+
+$form = $this->form;
+
+$security = $form->get('security');
+$id = $form->get('id');
+$name = $form->get('name');
+$whenDeadline = $form->get('when_deadline');
+$groups = $form->get('groups');
+
+?>
+
+<form class="form-horizontal" name="<?= $form->getName() ?>" onsubmit="return false"
+      method="<?= $form->getAttribute('method') ?>"
+      action="<?= $this->basePath('/admin/campaign/edit-campaign') ?>">
+
+    <input type="hidden"
+           name="<?= $security->getName() ?>"
+           value="<?= $security->getValue() ?>">
+
+    <input type="hidden"
+           name="<?= $id->getName() ?>"
+           value="<?= $id->getValue() ?>">
+
+    <?php foreach (array_merge($this->messages, $security->getMessages()) as $msg): ?>
+        <div class="alert alert-danger">
+            <center><?= $this->escapeHtml($this->translate($msg)) ?></center>
+        </div>
+    <?php endforeach ?>
+
+    <?php $valid = count($name->getMessages()) == 0 ?>
+    <div class="form-group <?= $valid ? '' : 'has-error' ?>">
+        <label class="col-sm-4 control-label" for="<?= $name->getName() ?>">
+            <?= $this->escapeHtml($this->translate($name->getLabel())) ?>:
+            <span class="required-marker text-danger">
+                <?= $this->translate('REQUIRED FIELD') ?>
+            </span>
+        </label>
+        <div class="col-sm-8">
+            <input type="text" class="form-control"
+                   name="<?= $name->getName() ?>"
+                   value="<?= $this->escapeHtml($name->getValue()) ?>"
+                   data-on-blur="validateFormField($('form [name=<?= $name->getName() ?>]'))"
+                   data-on-enter="$('#modal-form [name=<?= $whenDeadline->getName() ?>]').focus()">
+            <div class="help-block">
+                <?php if (!$valid): ?>
+                    <ul class="list-unstyled icon-list error-list">
+                    <?php foreach ($name->getMessages() as $msg): ?>
+                        <li><?= $this->escapeHtml($msg) ?></li>
+                    <?php endforeach ?>
+                    </ul>
+                <?php endif ?>
+            </div>
+        </div>
+    </div>
+
+    <?php $valid = count($whenDeadline->getMessages()) == 0 ?>
+    <div class="form-group <?= $valid ? '' : 'has-error' ?>">
+        <label class="col-sm-4 control-label" for="<?= $whenDeadline->getName() ?>">
+            <?= $this->escapeHtml($this->translate($whenDeadline->getLabel())) ?>:
+        </label>
+        <div class="col-sm-8">
+            <div class="input-group date" id="dt-<?= $whenDeadline->getName() ?>">
+                <input type="text" class="form-control"
+                       name="<?= $whenDeadline->getName() ?>"
+                       value="<?= $this->escapeHtml($whenDeadline->getValue()) ?>"
+                       data-on-blur="validateFormField($('form [name=<?= $whenDeadline->getName() ?>]'))"
+                       data-on-enter="$('#modal-form [type=checkbox]:first').focus()">
+                <span class="input-group-addon">
+                    <span class="glyphicon glyphicon-calendar"></span>
+                </span>
+            </div>
+            <div class="help-block">
+                <?php if (!$valid): ?>
+                    <ul class="list-unstyled icon-list error-list">
+                    <?php foreach ($whenDeadline->getMessages() as $msg): ?>
+                        <li><?= $this->escapeHtml($msg) ?></li>
+                    <?php endforeach ?>
+                    </ul>
+                <?php endif ?>
+            </div>
+            <script>
+                $('#dt-<?= $whenDeadline->getName() ?>').datetimepicker({
+                    format: "<?= $this->translate('GENERIC_MOMENT_FORMAT') ?>",
+                    locale: '<?= \Locale::getDefault() ?>'
+                });
+            </script>
+        </div>
+    </div>
+
+    <?php $valid = count($groups->getMessages()) == 0 ?>
+    <div class="form-group <?= $valid ? '' : 'has-error' ?>">
+        <label class="col-sm-4 control-label" for="<?= $groups->getName() ?>">
+            <?= $this->escapeHtml($this->translate($groups->getLabel())) ?>:
+            <span class="required-marker text-danger">
+                <?= $this->translate('REQUIRED FIELD') ?>
+            </span>
+        </label>
+        <div class="col-sm-8">
+            <?php foreach ($groups->getValueOptions() as $value => $label): ?>
+                <div class="checkbox">
+                    <label>
+                        <input type="checkbox"
+                               name="<?= $groups->getName() ?>[]"
+                               value="<?= $this->escapeHtml($value) ?>"
+                               <?= in_array($value, $groups->getValue()) ? 'checked="checked"' : '' ?>
+                               data-on-enter="$('#submit-button').focus().click()">
+                        <?= $this->translate($label) ?>
+                    </label>
+                </div>
+            <?php endforeach ?>
+            <div class="help-block">
+                <?php if (!$valid): ?>
+                    <ul class="list-unstyled icon-list error-list">
+                    <?php foreach ($groups->getMessages() as $msg): ?>
+                        <li><?= $this->escapeHtml($msg) ?></li>
+                    <?php endforeach ?>
+                    </ul>
+                <?php endif ?>
+            </div>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="col-sm-4 control-label">
+            <?= $this->escapeHtml($this->translate('Templates')) ?>:
+        </label>
+        <div class="col-sm-8">
+            <?php foreach ($this->templates as $template): ?>
+                <p class="form-control-static">
+                    <a href="javascript:void(0)" onclick="openLetter({ template: <?= $template->getId() ?> })">
+                        <?= $this->escapeHtml(strlen($template->getSubject()) > 0
+                                ? $template->getSubject()
+                                : $this->translate('(No subject)')) ?>
+                    </a>
+                </p>
+            <?php endforeach ?>
+        </div>
+    </div>
+</form>
+
+<script>
+    var modal = $('#modal-form');
+
+    initModalForm(modal);                   // See /js/app.js 
+
+    if (!modal.is(':visible'))
+        modal.modal('show');
+
+    setFormFocus(modal.find('form'));       // See /js/app.js
+</script>

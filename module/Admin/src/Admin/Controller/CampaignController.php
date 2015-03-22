@@ -20,7 +20,7 @@ use Application\Entity\Group as GroupEntity;
 use Application\Entity\Client as ClientEntity;
 use Application\Model\Letter;
 use Application\Form\Confirm as ConfirmForm;
-use Admin\Form\StartCampaign as StartCampaignForm;
+use Admin\Form\EditCampaign as EditCampaignForm;
 use Admin\Form\TestCampaign as TestCampaignForm;
 
 /**
@@ -68,14 +68,14 @@ class CampaignController extends AbstractActionController
     /**
      * Start/test campaign action
      */
-    public function startCampaignAction()
+    public function editCampaignAction()
     {
         $sl = $this->getServiceLocator();
         $em = $sl->get('Doctrine\ORM\EntityManager');
         $dfm = $sl->get('DataFormManager');
         $translate = $sl->get('viewhelpermanager')->get('translate');
 
-        $form = new StartCampaignForm($sl);
+        $form = new EditCampaignForm($sl);
         $messages = [];
         $script = "";
 
@@ -166,25 +166,12 @@ class CampaignController extends AbstractActionController
         $templates = $em->getRepository('Application\Entity\Template')
                       ->findByCampaign($campaign);
 
-        $testers = $em->getRepository('Application\Entity\Client')
-                      ->findByGroupName(GroupEntity::NAME_TESTERS);
-
-        $dataForms = [];
-        foreach ($dfm->getNames() as $name) {
-            $dataForms[] = [
-                'url'       => $dfm->getUrl($name),
-                'title'     => $dfm->getTitle($name),
-            ];
-        }
-
         $model = new ViewModel([
             'id'        => $id,
             'script'    => $script,
             'form'      => $form,
             'messages'  => $messages,
             'templates' => $templates,
-            'testers'   => $testers,
-            'dataForms' => $dataForms,
         ]);
         $model->setTerminal(true);
         return $model;

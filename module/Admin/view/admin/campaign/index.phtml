@@ -85,7 +85,7 @@
             loader_image: '<?= $this->basePath('/img/loader.gif') ?>',
             strings: dynamicTableStrings,
             mapper: function (row) {
-                row['name'] = '<a href="javascript:void(0)" onclick="startCampaign('
+                row['name'] = '<a href="javascript:void(0)" onclick="editCampaign('
                     + row['id'] + ')">' + row['name'] + '</a>';
 
                 if (row['when_created'] != null) {
@@ -147,15 +147,16 @@
         table.refresh();
     }
 
-    function startCampaign(id) {
+    function editCampaign(id) {
         $.ajax({
-            url: '<?= $this->basePath('/admin/campaign/start-campaign') ?>',
+            url: '<?= $this->basePath('/admin/campaign/edit-campaign') ?>',
             data: {
                 id: id
             },
             success: function (html) {
                 var modal = $('#modal-form');
-                modal.find('.modal-title').text('<?= $this->translate('Launch mail campaign') ?>');
+                modal.find('.modal-title').text('<?= $this->translate('Edit campaign') ?>');
+                modal.find('button[type=submit]').text('<?= $this->translate('Save changes') ?>');
                 modal.find('.modal-body').html(html);
             }
         });

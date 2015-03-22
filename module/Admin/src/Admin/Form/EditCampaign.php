@@ -19,12 +19,12 @@ use Zend\ServiceManager\ServiceLocatorInterface;
 use Doctrine\ORM\EntityManager;
 
 /**
- * Start campaign entity form
+ * Edit campaign entity form
  *
  * @category    Admin
  * @package     Form
  */
-class StartCampaign extends Form
+class EditCampaign extends Form
 {
     /**
      * The input filter

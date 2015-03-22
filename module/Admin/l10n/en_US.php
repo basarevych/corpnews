@@ -68,6 +68,7 @@ return [
     'STATUS_FINISHED' => 'Finished',
     'Apply filter' => 'Apply filter',
     'Templates' => 'Templates',
+    'Edit campaign' => 'Edit campaign',
     'Launch campaign' => 'Launch campaign',
     'Test campaign' => 'Test campaign',
     'Delete campaign' => 'Delete campaign',
