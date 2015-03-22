@@ -68,18 +68,16 @@ return [
     'STATUS_FINISHED' => 'Finished',
     'Apply filter' => 'Apply filter',
     'Templates' => 'Templates',
+    'Launch campaign' => 'Launch campaign',
+    'Test campaign' => 'Test campaign',
     'Delete campaign' => 'Delete campaign',
     'Status' => 'Status',
     'When deadline' => 'When deadline',
     'When created' => 'When created',
     'When started' => 'When started',
     'When finished' => 'When finished',
-    'Launch mail campaign' => 'Launch mail campaign',
-    'Test' => 'Test',
-    'Launch' => 'Launch',
     'Tester' => 'Tester',
     'Send to' => 'Send to',
-    'Variables' => 'Variables',
     'Send test letter' => 'Send test letter',
     'Letter has been sent' => 'Letter has been sent',
     'Variable substitution failed' => 'Variable substitution failed',
@@ -88,9 +86,7 @@ return [
     'CAMPAIGN_NO_TESTERS' => 'No testers found.'
         . '<br><br>'
         . 'Please add clients to "Testers" group',
-    'CAMPAIGN_TEST_FORMS' => 'Mail parser variables are set to the appropriate fields of data forms'
-        . '<br><br>'
-        . 'Edit selected user\'s data forms:',
+    'CAMPAIGN_TEST_FORMS' => 'Edit selected user\'s data forms:',
     'CONFIRM_DELETE_CAMPAIGN' => 'Delete selected campaign(s)?',
 
     // DocumentController

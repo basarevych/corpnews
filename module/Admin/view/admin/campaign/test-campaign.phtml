@@ -1,0 +1,150 @@
+<?php
+
+if ($this->script) {    // Run script and return (no form is displayed)
+    echo "<script>" . PHP_EOL;
+    echo $this->script . PHP_EOL;
+    echo "</script>" . PHP_EOL;
+    return;
+}
+
+$form = $this->form;
+
+$security = $form->get('security');
+$id = $form->get('id');
+$tester = $form->get('tester');
+$sendTo = $form->get('send_to');
+
+?>
+
+<?php if ($this->noTesters): ?>
+    <p><?= $this->translate('CAMPAIGN_NO_TESTERS') ?></p>
+<?php elseif ($this->result): ?>
+    <p><?= $result ?></p>
+<?php else: ?>
+    <form class="form-horizontal" name="<?= $form->getName() ?>" onsubmit="return false"
+          method="<?= $form->getAttribute('method') ?>"
+          action="<?= $this->basePath('/admin/campaign/test-campaign') ?>">
+
+        <input type="hidden"
+               name="<?= $security->getName() ?>"
+               value="<?= $security->getValue() ?>">
+
+        <input type="hidden"
+               name="<?= $id->getName() ?>"
+               value="<?= $id->getValue() ?>">
+
+        <?php foreach (array_merge($this->messages, $security->getMessages()) as $msg): ?>
+            <div class="alert alert-danger">
+                <center><?= $this->escapeHtml($this->translate($msg)) ?></center>
+            </div>
+        <?php endforeach ?>
+
+        <?php $valid = count($tester->getMessages()) == 0 ?>
+        <div class="form-group <?= $valid ? '' : 'has-error' ?>">
+            <label class="col-sm-4 control-label" for="<?= $tester->getName() ?>">
+                <?= $this->escapeHtml($this->translate($tester->getLabel())) ?>:
+                <span class="required-marker text-danger">
+                    <?= $this->translate('REQUIRED FIELD') ?>
+                </span>
+            </label>
+            <div class="col-sm-8">
+                <?php foreach ($tester->getValueOptions() as $value => $label): ?>
+                    <div class="radio">
+                        <label>
+                            <input type="radio"
+                                   name="<?= $tester->getName() ?>"
+                                   value="<?= $this->escapeHtml($value) ?>"
+                                   <?= $value == $tester->getValue() ? 'checked="checked"' : '' ?>
+                                   onchange="updateTesters()"
+                                   data-on-blur="validateFormField($('#modal-form [name=<?= $tester->getName() ?>]'))"
+                                   data-on-enter="$('#modal-form [name=send_to]').focus()">
+                            <?= $this->translate($label) ?>
+                        </label>
+                    </div>
+                <?php endforeach ?>
+                <div class="help-block">
+                    <?php if (!$valid): ?>
+                        <ul class="list-unstyled icon-list error-list">
+                        <?php foreach ($tester->getMessages() as $msg): ?>
+                            <li><?= $this->escapeHtml($msg) ?></li>
+                        <?php endforeach ?>
+                        </ul>
+                    <?php endif ?>
+                </div>
+            </div>
+        </div>
+
+        <?php $valid = count($sendTo->getMessages()) == 0 ?>
+        <div class="form-group <?= $valid ? '' : 'has-error' ?>">
+            <label class="col-sm-4 control-label" for="<?= $sendTo->getName() ?>">
+                <?= $this->escapeHtml($this->translate($sendTo->getLabel())) ?>:
+                <span class="required-marker text-danger">
+                    <?= $this->translate('REQUIRED FIELD') ?>
+                </span>
+            </label>
+            <div class="col-sm-8">
+                <input type="text" class="form-control"
+                       name="<?= $sendTo->getName() ?>"
+                       value="<?= $this->escapeHtml($sendTo->getValue()) ?>"
+                       data-on-blur="validateFormField($('#modal-form [name=<?= $sendTo->getName() ?>]'))"
+                       data-on-enter="$('#submit-button').focus().click()">
+                <div class="help-block">
+                    <?php if (!$valid): ?>
+                        <ul class="list-unstyled icon-list error-list">
+                        <?php foreach ($sendTo->getMessages() as $msg): ?>
+                            <li><?= $this->escapeHtml($msg) ?></li>
+                        <?php endforeach ?>
+                        </ul>
+                    <?php endif ?>
+                </div>
+            </div>
+        </div>
+
+        <div id="test-forms" class="form-group">
+            <label class="col-sm-4 control-label" for="test-clients">
+                <?= $this->escapeHtml($this->translate('Data forms')) ?>:
+            </label>
+            <div class="col-sm-8">
+                <p class="form-control-static"><?= $this->translate('CAMPAIGN_TEST_FORMS') ?>:</p>
+                <ul class="content"></ul>
+            </div>
+        </div>
+    </form>
+<?php endif ?>
+
+<script>
+    var modal = $('#modal-form');
+
+    <?php if ($this->noTesters || $this->result): ?>
+        modal.find('button[type="submit"]').hide();
+        modal.on('hide.bs.modal', function() {
+            modal.find('button[type="submit"]').show();
+        });
+    <?php endif ?>
+
+    function updateTesters() {
+        var email = $('#modal-form input[name="tester"]:checked').val();
+        $('#modal-form input[name="send_to"]').val(email);
+
+        var ul = $('<ul class="content"></ul>');
+        <?php foreach ($this->dataForms as $doc): ?>
+            var li = $('<li></li>');
+            li.html(
+                '<a target="_blank" href="<?= $this->basePath($doc['url']) ?>'
+                + '?email=' + email + '">'
+                + '<?= $this->escapeHtml($doc['title']) ?>'
+                + ' (' + email + ')'
+                + '</a>'
+            ).appendTo(ul);
+        <?php endforeach ?>
+        $('#test-forms .content').replaceWith(ul);
+    }
+    updateTesters();
+
+    initModalForm(modal);                   // See /js/app.js 
+
+    if (!modal.is(':visible'))
+        modal.modal('show');
+
+    setFormFocus(modal.find('form'));       // See /js/app.js
+</script>

@@ -21,6 +21,7 @@ use Application\Entity\Client as ClientEntity;
 use Application\Model\Letter;
 use Application\Form\Confirm as ConfirmForm;
 use Admin\Form\StartCampaign as StartCampaignForm;
+use Admin\Form\TestCampaign as TestCampaignForm;
 
 /**
  * Campaigns controller
@@ -184,6 +185,123 @@ class CampaignController extends AbstractActionController
             'templates' => $templates,
             'testers'   => $testers,
             'dataForms' => $dataForms,
+        ]);
+        $model->setTerminal(true);
+        return $model;
+    }
+
+    /**
+     * Test campaign action
+     */
+    public function testCampaignAction()
+    {
+        $sl = $this->getServiceLocator();
+        $em = $sl->get('Doctrine\ORM\EntityManager');
+        $dfm = $sl->get('DataFormManager');
+        $mail = $sl->get('Mail');
+        $translate = $sl->get('viewhelpermanager')->get('translate');
+
+        $form = new TestCampaignForm($sl);
+        $messages = [];
+        $script = "";
+
+        // Handle validate request
+        if ($this->params()->fromQuery('query') == 'validate') {
+            $field = $this->params()->fromQuery('field');
+            $data = $this->params()->fromQuery('form');
+
+            $form->setData($data);
+            $form->isValid();
+
+            $control = $form->get($field);
+            $messages = [];
+            foreach ($control->getMessages() as $msg)
+                $messages[] = $translate($msg);
+
+            return new JsonModel([
+                'valid'     => (count($messages) == 0),
+                'messages'  => $messages,
+            ]);
+        }
+
+        $id = $this->params()->fromQuery('id');
+        if (!$id)
+            $id = $this->params()->fromPost('id');
+        if (!$id)
+            throw new \Exception('No "id" parameter');
+
+        $campaign = $em->getRepository('Application\Entity\Campaign')
+                       ->find($id);
+        if (!$campaign)
+            throw new NotFoundException('Campaign not found');
+
+        $result = false;
+        $request = $this->getRequest();
+        if ($request->isPost()) {
+            $form->setData($request->getPost());
+
+            if ($form->isValid()) {
+                $data = $form->getData();
+
+                $client = $em->getRepository('Application\Entity\Client')
+                             ->findOneByEmail($data['tester']);
+                if (!$client)
+                    throw new NotFoundException('Client not found');
+
+                $letters = [];
+                foreach ($campaign->getTemplates() as $template) {
+                    $letter = $mail->createFromTemplate($template, $client, $data['send_to']);
+                    if ($letter === false) {
+                        $result = $translate('Variable substitution failed');
+                        break;
+                    }
+                    $letters[] = $letter;
+                }
+
+                if ($result === false) {
+                    foreach ($letters as $letter) {
+                        if (!$mail->sendLetter($letter))
+                            $result = $translate('Campaign test failed');
+                    }
+
+                    if ($result === false) {
+                        $result = $translate('Letter has been sent');
+
+                        $campaign->setStatus(CampaignEntity::STATUS_TESTED);
+                        $em->persist($campaign);
+                        $em->flush();
+                    }
+                }
+            }
+        } else {
+            $testers = $form->get('tester')->getValueOptions();
+            if (count($testers) > 0) {
+                $selected = array_shift($testers);
+                $form->setData([
+                    'id'            => $id,
+                    'tester'        => $selected,
+                    'send_to'       => $selected,
+                ]);
+            }
+        }
+
+        $noTesters = count($form->get('tester')->getValueOptions()) == 0;
+
+        $dataForms = [];
+        foreach ($dfm->getNames() as $name) {
+            $dataForms[] = [
+                'url'       => $dfm->getUrl($name),
+                'title'     => $dfm->getTitle($name),
+            ];
+        }
+
+        $model = new ViewModel([
+            'script'    => $script,
+            'form'      => $form,
+            'messages'  => $messages,
+            'noTesters' => $noTesters,
+            'dataForms' => $dataForms,
+            'result'    => $result,
         ]);
         $model->setTerminal(true);
         return $model;

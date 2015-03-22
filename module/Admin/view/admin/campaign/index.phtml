@@ -37,6 +37,14 @@
                         <h3 class="panel-title"><?= $this->translate('Table actions') ?></h3>
                     </div>
                     <div class="panel-body button-panel">
+                        <button id="launch-button" class="btn btn-default disabled" disabled="disabled" onclick="launchCampaign()">
+                            <?= $this->translate('Launch campaign') ?>
+                        </button>
+                        <hr>
+                        <button id="test-button" class="btn btn-default disabled" disabled="disabled" onclick="testCampaign()">
+                            <?= $this->translate('Test campaign') ?>
+                        </button>
+                        <hr>
                         <button id="delete-button" class="btn btn-default disabled" disabled="disabled" onclick="deleteCampaign()">
                             <?= $this->translate('Delete campaign') ?>
                         </button>
@@ -107,6 +115,22 @@
         var table = $('#table-campaigns').data('dynamicTable');
         var selected = table.getSelected();
 
+        if (selected != 'all' && selected.length == 1) {
+            $('#launch-button')
+                .removeAttr('disabled')
+                .removeClass('disabled');
+            $('#test-button')
+                .removeAttr('disabled')
+                .removeClass('disabled');
+        } else {
+            $('#launch-button')
+                .attr('disabled', 'disabled')
+                .addClass('disabled');
+            $('#test-button')
+                .attr('disabled', 'disabled')
+                .addClass('disabled');
+        }
+
         if (selected == 'all' || selected.length) {
             $('#delete-button')
                 .removeAttr('disabled')
@@ -132,6 +156,26 @@
             success: function (html) {
                 var modal = $('#modal-form');
                 modal.find('.modal-title').text('<?= $this->translate('Launch mail campaign') ?>');
+                modal.find('.modal-body').html(html);
+            }
+        });
+    }
+
+    function testCampaign() {
+        var table = $('#table-campaigns').data('dynamicTable');
+        var selected = table.getSelected();
+        if (selected.length == 0)
+            return;
+
+        $.ajax({
+            url: '<?= $this->basePath('/admin/campaign/test-campaign') ?>',
+            data: {
+                id: selected[0]
+            },
+            success: function (html) {
+                var modal = $('#modal-form');
+                modal.find('.modal-title').text('<?= $this->translate('Test campaign') ?>');
+                modal.find('button[type=submit]').text('<?= $this->translate('Send test letter') ?>');
                 modal.find('.modal-body').html(html);
             }
         });

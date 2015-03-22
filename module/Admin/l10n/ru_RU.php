@@ -68,18 +68,16 @@ return [
     'STATUS_FINISHED' => 'Завершено',
     'Apply filter' => 'Применить фильтр',
     'Templates' => 'Шаблоны',
+    'Launch campaign' => 'Запустить кампанию',
+    'Test campaign' => 'Тестировать кaмпанию',
     'Delete campaign' => 'Удалить кампанию',
     'Status' => 'Статус',
     'When deadline' => 'Когда крайний срок',
     'When created' => 'Когда создано',
     'When started' => 'Когда начато',
     'When finished' => 'Когда закончено',
-    'Launch mail campaign' => 'Запустить почтовую кампанию',
-    'Test' => 'Тестирование',
-    'Launch' => 'Запуск',
     'Tester' => 'Тестировщик',
     'Send to' => 'Кому отправить',
-    'Variables' => 'Переменные',
     'Send test letter' => 'Отправить тестовое письмо',
     'Letter has been sent' => 'Письмо было отправлено',
     'Variable substitution failed' => 'Замена переменных не удалась',
@@ -88,9 +86,7 @@ return [
     'CAMPAIGN_NO_TESTERS' => 'Тестеровщики не найдены.'
         . '<br><br>'
         . 'Пожалуйста, добавьте клиентов в группу "Testers"',
-    'CAMPAIGN_TEST_FORMS' => 'Переменные парсера почты соотвествуют полям форм данных'
-        . '<br><br>'
-        . 'Редактируйте формы данных выбранного пользователя:',
+    'CAMPAIGN_TEST_FORMS' => 'Редактируйте формы данных выбранного пользователя:',
     'CONFIRM_DELETE_CAMPAIGN' => 'Удалить выбранную кампанию (кампании)?',
 
     // DocumentController
