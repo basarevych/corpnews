@@ -37,7 +37,7 @@
                         <h3 class="panel-title"><?= $this->translate('Table actions') ?></h3>
                     </div>
                     <div class="panel-body button-panel">
-                        <button id="launch-button" class="btn btn-default disabled" disabled="disabled" onclick="launchCampaign()">
+                        <button id="launch-button" class="btn btn-primary disabled" disabled="disabled" onclick="launchCampaign()">
                             <?= $this->translate('Launch campaign') ?>
                         </button>
                         <hr>
@@ -145,6 +145,26 @@
     function reloadTable() {
         var table = $('#table-campaigns').data('dynamicTable');
         table.refresh();
+    }
+
+    function launchCampaign() {
+        var table = $('#table-campaigns').data('dynamicTable');
+        var selected = table.getSelected();
+        if (selected.length == 0)
+            return;
+
+        $.ajax({
+            url: '<?= $this->basePath('/admin/campaign/launch-campaign') ?>',
+            data: {
+                id: selected[0]
+            },
+            success: function (html) {
+                var modal = $('#modal-form');
+                modal.find('.modal-title').text('<?= $this->translate('Launch campaign') ?>');
+                modal.find('button[type=submit]').text('<?= $this->translate('Launch') ?>');
+                modal.find('.modal-body').html(html);
+            }
+        });
     }
 
     function editCampaign(id) {

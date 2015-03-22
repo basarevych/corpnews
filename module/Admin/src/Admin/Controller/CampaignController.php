@@ -66,7 +66,69 @@ class CampaignController extends AbstractActionController
     }
 
     /**
-     * Start/test campaign action
+     * Launch campaign form action
+     */
+    public function launchCampaignAction()
+    {
+        $id = $this->params()->fromQuery('id');
+        if (!$id)
+            $id = $this->params()->fromPost('id');
+        if (!$id)
+            throw new \Exception('No "id" parameter');
+
+        $sl = $this->getServiceLocator();
+        $em = $sl->get('Doctrine\ORM\EntityManager');
+        $repo = $em->getRepository('Application\Entity\Campaign');
+
+        $campaign = $repo->find($id);
+        if (!$campaign)
+            throw new NotFoundException('Campaign not found');
+
+        $script = null;
+        $form = new ConfirmForm();
+        $messages = [];
+        $ready = [
+            CampaignEntity::STATUS_CREATED,
+            CampaignEntity::STATUS_TESTED,
+            CampaignEntity::STATUS_FINISHED,
+        ];
+        $tested = [
+            CampaignEntity::STATUS_TESTED,
+            CampaignEntity::STATUS_FINISHED,
+        ];
+
+        $request = $this->getRequest();
+        if ($request->isPost()) {
+            $form->setData($request->getPost());
+
+            if ($form->isValid()) {
+                if (in_array($campaign->getStatus(), $ready)) {
+                    $campaign->setStatus(CampaignEntity::STATUS_QUEUED);
+                    $em->persist($campaign);
+                    $em->flush();
+                }
+
+                $script = "$('#modal-form').modal('hide'); reloadTable()";
+            }
+        } else {
+            $form->setData([
+                'id' => $id
+            ]);
+        }
+
+        $model = new ViewModel([
+            'script'    => $script,
+            'form'      => $form,
+            'messages'  => $messages,
+            'ready'     => in_array($campaign->getStatus(), $ready),
+            'tested'    => in_array($campaign->getStatus(), $tested),
+        ]);
+        $model->setTerminal(true);
+        return $model;
+    }
+
+    /**
+     * Edit campaign action
      */
     public function editCampaignAction()
     {

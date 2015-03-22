@@ -80,6 +80,7 @@ return [
     'Tester' => 'Tester',
     'Send to' => 'Send to',
     'Send test letter' => 'Send test letter',
+    'Launch' => 'Launch',
     'Letter has been sent' => 'Letter has been sent',
     'Variable substitution failed' => 'Variable substitution failed',
     'Campaign test failed' => 'Campaign test failed',
@@ -88,6 +89,9 @@ return [
         . '<br><br>'
         . 'Please add clients to "Testers" group',
     'CAMPAIGN_TEST_FORMS' => 'Edit selected user\'s data forms:',
+    'CONFIRM_START_CAMPAIGN' => 'Launch selected campaign?',
+    'ALERT_CAMPAIGN_NOT_TESTED' => 'Campaign has not been tested!',
+    'CAMPAIGN_ALREADY_LAUNCHED' => 'Campaign already launched',
     'CONFIRM_DELETE_CAMPAIGN' => 'Delete selected campaign(s)?',
 
     // DocumentController

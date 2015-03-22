@@ -1,0 +1,61 @@
+<?php
+
+if ($this->script) {    // Run script and return (no form is displayed)
+    echo "<script>" . PHP_EOL;
+    echo $this->script . PHP_EOL;
+    echo "</script>" . PHP_EOL;
+    return;
+}
+
+$form = $this->form;
+$security = $form->get('security');
+$id = $form->get('id');
+
+?>
+
+<?php if (!$this->ready): ?>
+    <p><?= $this->translate('CAMPAIGN_ALREADY_LAUNCHED') ?></p>
+<?php else: ?>
+    <form class="form-horizontal" name="<?= $form->getName() ?>" onsubmit="return false"
+          method="<?= $form->getAttribute('method') ?>"
+          action="<?= $this->basePath('/admin/campaign/launch-campaign') ?>">
+
+        <input type="hidden"
+               name="<?= $security->getName() ?>"
+               value="<?= $security->getValue() ?>">
+
+        <input type="hidden"
+               name="<?= $id->getName() ?>"
+               value="<?= $id->getValue() ?>">
+
+        <?php foreach (array_merge($this->messages, $security->getMessages()) as $msg): ?>
+            <div class="alert alert-danger">
+                <center><?= $this->escapeHtml($this->translate($msg)) ?></center>
+            </div>
+        <?php endforeach ?>
+
+        <?php if (!$this->tested): ?>
+            <p><strong><?= $this->translate('ALERT_CAMPAIGN_NOT_TESTED') ?></strong></p>
+        <?php endif ?>
+        <p><?= $this->translate('CONFIRM_START_CAMPAIGN') ?></p>
+    </form>
+<?php endif ?>
+
+<script>
+    var modal = $('#modal-form');
+
+    <?php if (!$this->ready): ?>
+        modal.find('button[type="submit"]').hide();
+        modal.on('hide.bs.modal', function() {
+            modal.find('button[type="submit"]').show();
+            reloadTable();
+        });
+    <?php endif ?>
+
+    initModalForm(modal);                   // See /js/app.js 
+
+    if (!modal.is(':visible'))
+        modal.modal('show');
+
+    setFormFocus(modal.find('form'));       // See /js/app.js
+</script>

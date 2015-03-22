@@ -80,6 +80,7 @@ return [
     'Tester' => 'Тестировщик',
     'Send to' => 'Кому отправить',
     'Send test letter' => 'Отправить тестовое письмо',
+    'Launch' => 'Запустить',
     'Letter has been sent' => 'Письмо было отправлено',
     'Variable substitution failed' => 'Замена переменных не удалась',
     'Campaign test failed' => 'Тестирование камании завершилось неудачно',
@@ -88,6 +89,9 @@ return [
         . '<br><br>'
         . 'Пожалуйста, добавьте клиентов в группу "Testers"',
     'CAMPAIGN_TEST_FORMS' => 'Редактируйте формы данных выбранного пользователя:',
+    'CONFIRM_START_CAMPAIGN' => 'Запустить выбранную кампанию?',
+    'ALERT_CAMPAIGN_NOT_TESTED' => 'Кампания не была протестирована!',
+    'CAMPAIGN_ALREADY_LAUNCHED' => 'Кампания уже запущена',
     'CONFIRM_DELETE_CAMPAIGN' => 'Удалить выбранную кампанию (кампании)?',
 
     // DocumentController

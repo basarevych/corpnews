@@ -114,7 +114,7 @@ class OutgoingController extends AbstractActionController
                 'type'      => Table::TYPE_STRING,
                 'filters'   => [ Table::FILTER_LIKE ],
                 'sortable'  => true,
-                'visible'   => true,
+                'visible'   => false,
             ],
             'from_address' => [
                 'title'     => $translate('From address'),
