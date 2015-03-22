@@ -59,7 +59,7 @@ class CampaignControllerTest extends AbstractHttpControllerTestCase
 
         $this->campaign = new CampaignEntity();
         $this->campaign->setName('foo');
-        $this->campaign->setStatus('bar');
+        $this->campaign->setStatus(CampaignEntity::STATUS_CREATED);
 
         $this->campaign->addTemplate($this->template);
         $this->template->setCampaign($this->campaign);
@@ -231,6 +231,47 @@ class CampaignControllerTest extends AbstractHttpControllerTestCase
 
         $this->assertEquals(true, isset($data['rows']) && count($data['rows']) == 1, "Invalid data returned");
         $this->assertEquals(1, $data['rows'][0]['id'], "Invalid ID");
+    }
+
+    public function testLaunchCampaignActionCanBeAccessed()
+    {
+        $this->dispatch('/admin/campaign/launch-campaign');
+
+        $this->assertModuleName('admin');
+        $this->assertControllerName('admin\controller\campaign');
+        $this->assertControllerClass('CampaignController');
+        $this->assertMatchedRouteName('admin');
+    }
+
+    public function testLaunchCampaignActionWorks()
+    {
+        $persisted = [];
+        $this->em->expects($this->any())
+                 ->method('persist')
+                 ->will($this->returnCallback(function ($entity) use (&$persisted) {
+                        $persisted[] = $entity;
+                 }));
+
+        $this->dispatch('/admin/campaign/launch-campaign', HttpRequest::METHOD_GET, [ 'id' => 42 ]);
+        $this->assertResponseStatusCode(200);
+
+        $response = $this->getResponse();
+        $dom = new Query($response->getContent());
+        $result = $dom->execute('input[name="security"]');
+        $security = count($result) ? $result[0]->getAttribute('value') : null;
+
+        $form = new EditCampaignForm($this->sl);
+        $dt = new \DateTime();
+        $format = $form->get('when_deadline')->getFormat();
+
+        $postParams = [
+            'security'  => $security,
+            'id' => 42,
+        ];
+        $this->dispatch('/admin/campaign/launch-campaign', HttpRequest::METHOD_POST, $postParams);
+        $this->assertResponseStatusCode(200);
+
+        $this->assertEquals(1, count($persisted), "One entity should have been persisted");
     }
 
     public function testEditCampaignActionCanBeAccessed()
