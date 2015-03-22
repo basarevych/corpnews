@@ -92,14 +92,6 @@ class OutgoingController extends AbstractActionController
                 'sortable'  => true,
                 'visible'   => false,
             ],
-            'secret_key' => [
-                'title'     => $translate('Secret key'),
-                'sql_id'    => 'l.secret_key',
-                'type'      => Table::TYPE_STRING,
-                'filters'   => [ Table::FILTER_LIKE ],
-                'sortable'  => true,
-                'visible'   => false,
-            ],
             'error' => [
                 'title'     => $translate('Error'),
                 'sql_id'    => 'l.error',
@@ -200,7 +192,6 @@ class OutgoingController extends AbstractActionController
 
             return [
                 'id'            => $row->getId(),
-                'secret_key'    => $row->getSecretKey(),
                 'error'         => $row->getError(),
                 'when_sent'     => $date,
                 'campaign'      => $row->getTemplate()->getCampaign()->getName(),

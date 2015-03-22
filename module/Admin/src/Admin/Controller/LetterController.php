@@ -47,6 +47,7 @@ class LetterController extends AbstractActionController
         $imap = $sl->get('ImapClient');
         $parser = $sl->get('Parser');
         $em = $sl->get('Doctrine\ORM\EntityManager');
+        $escapeHtml = $sl->get('viewhelpermanager')->get('escapeHtml');
 
         if ($box && $uid) {
             $model = $imap->getLetter($box, $uid);
@@ -95,7 +96,7 @@ class LetterController extends AbstractActionController
 
         return new JsonModel([
             'error'         => $error,
-            'subject'       => $subject,
+            'subject'       => $escapeHtml($subject),
             'html'          => $this->prepareHtml($model, $params),
             'attachments'   => $this->prepareAttachments($model, $params),
             'text'          => $this->prepareText($model),
