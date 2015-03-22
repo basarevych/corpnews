@@ -119,6 +119,7 @@ $sendTo = $form->get('send_to');
         modal.find('button[type="submit"]').hide();
         modal.on('hide.bs.modal', function() {
             modal.find('button[type="submit"]').show();
+            reloadTable();
         });
     <?php endif ?>
 

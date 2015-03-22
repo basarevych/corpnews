@@ -147,7 +147,7 @@ class Mail implements ServiceLocatorAwareInterface
         $parser->setClient($client);
 
         $error = false;
-        if (!$parser->parse($template->getSubject(), $subject, true, true))
+        if (!$parser->parse($template->getSubject(), $subject, false, false))
             $error = true;
 
         $model = new LetterModel(null);
