@@ -295,68 +295,6 @@ class CampaignController extends AbstractActionController
     }
 
     /**
-     * Send test letter action
-     */
-    public function testLetterAction()
-    {
-        $campaignId = $this->params()->fromQuery('campaign');
-        if (!$campaignId)
-            throw new \Exception('Campaign ID is required');
-
-        $email = $this->params()->fromQuery('email');
-        if (!$email)
-            throw new \Exception('Client email is required');
-
-        $sendTo = $this->params()->fromQuery('send_to');
-        if (!$sendTo)
-            throw new \Exception('Target email is required');
-
-        $sl = $this->getServiceLocator();
-        $em = $sl->get('Doctrine\ORM\EntityManager');
-        $mail = $sl->get('Mail');
-        $translate = $sl->get('viewhelpermanager')->get('translate');
-
-        $campaign = $em->getRepository('Application\Entity\Campaign')
-                       ->find($campaignId);
-        if (!$campaign)
-            throw new NotFoundException('Campaign not found');
-
-        $client = $em->getRepository('Application\Entity\Client')
-                     ->findOneByEmail($email);
-        if (!$client)
-            throw new NotFoundException('Client not found');
-
-        $result = true;
-
-        $letters = [];
-        foreach ($campaign->getTemplates() as $template) {
-            $letter = $mail->createFromTemplate($template, $client, $sendTo);
-            if ($letter === false) {
-                $result = $translate('Variable substitution failed');
-                break;
-            }
-            $letters[] = $letter;
-        }
-
-        if ($result === true) {
-            foreach ($letters as $letter) {
-                if (!$mail->sendLetter($letter))
-                    $result = $translate('Campaign test failed');
-            }
-
-            if ($result === true) {
-                $campaign->setStatus(CampaignEntity::STATUS_TESTED);
-                $em->persist($campaign);
-                $em->flush();
-            }
-        }
-
-        return new JsonModel([
-            'result' => $result === true ? $translate('Letter has been sent') : $result,
-        ]);
-    }
-
-    /**
      * Delete campaign form action
      */
     public function deleteCampaignAction()

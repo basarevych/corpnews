@@ -3,17 +3,11 @@
 namespace AdminTest\Form;
 
 use Zend\Test\PHPUnit\Controller\AbstractControllerTestCase;
-use Admin\Form\StartCampaign as StartCampaignForm;
+use Admin\Form\EditCampaign as EditCampaignForm;
 use Application\Entity\Campaign as CampaignEntity;
 use Application\Entity\Group as GroupEntity;
 
-class StartCampaignQueryMock {
-    public function getSingleScalarResult() {
-        return 0;
-    }
-}
-
-class StartCampaignTest extends AbstractControllerTestCase
+class EditCampaignTest extends AbstractControllerTestCase
 {
     public function setUp()
     {
@@ -49,19 +43,6 @@ class StartCampaignTest extends AbstractControllerTestCase
                     [ 'Application\Entity\Group', $this->repoGroups ],
                  ]));
 
-        $this->qb = $this->getMockBuilder('Doctrine\ORM\QueryBuilder')
-                         ->disableOriginalConstructor()
-                         ->setMethods([ 'setParameter', 'getQuery' ])
-                         ->getMock();
-
-        $this->em->expects($this->any())
-                 ->method('createQueryBuilder')
-                 ->will($this->returnValue($this->qb));
-
-        $this->qb->expects($this->any())
-                 ->method('getQuery')
-                 ->will($this->returnValue(new StartCampaignQueryMock()));
-
         $this->sl = $this->getApplicationServiceLocator();
         $this->sl->setAllowOverride(true);
         $this->sl->setService('Doctrine\ORM\EntityManager', $this->em);
@@ -69,7 +50,7 @@ class StartCampaignTest extends AbstractControllerTestCase
 
     public function testInvalidForm()
     {
-        $form = new StartCampaignForm($this->sl);
+        $form = new EditCampaignForm($this->sl);
 
         $input = [
         ];
@@ -86,7 +67,7 @@ class StartCampaignTest extends AbstractControllerTestCase
 
     public function testValidForm()
     {
-        $form = new StartCampaignForm($this->sl);
+        $form = new EditCampaignForm($this->sl);
         $dt = new \DateTime();
         $format = $form->get('when_deadline')->getFormat();
 

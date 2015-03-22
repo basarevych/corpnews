@@ -13,7 +13,8 @@ use Application\Entity\Group as GroupEntity;
 use Application\Entity\Client as ClientEntity;
 use Application\Entity\Template as TemplateEntity;
 use Application\Entity\Letter as LetterEntity;
-use Admin\Form\StartCampaign as StartCampaignForm;
+use Admin\Form\EditCampaign as EditCampaignForm;
+use Admin\Form\TestCampaign as TestCampaignForm;
 
 class CampaignControllerQueryMock {
     public function getSingleScalarResult() {
@@ -232,9 +233,9 @@ class CampaignControllerTest extends AbstractHttpControllerTestCase
         $this->assertEquals(1, $data['rows'][0]['id'], "Invalid ID");
     }
 
-    public function testStartCampaignActionCanBeAccessed()
+    public function testEditCampaignActionCanBeAccessed()
     {
-        $this->dispatch('/admin/campaign/start-campaign');
+        $this->dispatch('/admin/campaign/edit-campaign');
 
         $this->assertModuleName('admin');
         $this->assertControllerName('admin\controller\campaign');
@@ -242,16 +243,9 @@ class CampaignControllerTest extends AbstractHttpControllerTestCase
         $this->assertMatchedRouteName('admin');
     }
 
-    public function testStartCampaignActionDisplaysTesters()
+    public function testEditCampaignActionWorks()
     {
-        $this->dispatch('/admin/campaign/start-campaign', HttpRequest::METHOD_GET, [ 'id' => 42 ]);
-
-        $this->assertQuery('input[type="radio"][value="foo@bar"]');
-    }
-
-    public function testStartCampaignActionUpdatesCampaign()
-    {
-        $this->dispatch('/admin/campaign/start-campaign', HttpRequest::METHOD_GET, [ 'id' => 42 ]);
+        $this->dispatch('/admin/campaign/edit-campaign', HttpRequest::METHOD_GET, [ 'id' => 42 ]);
         $this->assertResponseStatusCode(200);
 
         $response = $this->getResponse();
@@ -259,7 +253,7 @@ class CampaignControllerTest extends AbstractHttpControllerTestCase
         $result = $dom->execute('input[name="security"]');
         $security = count($result) ? $result[0]->getAttribute('value') : null;
 
-        $form = new StartCampaignForm($this->sl);
+        $form = new EditCampaignForm($this->sl);
         $dt = new \DateTime();
         $format = $form->get('when_deadline')->getFormat();
 
@@ -270,7 +264,7 @@ class CampaignControllerTest extends AbstractHttpControllerTestCase
             'when_deadline' => $dt->format($format),
             'groups' => [ 9000 ],
         ];
-        $this->dispatch('/admin/campaign/start-campaign', HttpRequest::METHOD_POST, $postParams);
+        $this->dispatch('/admin/campaign/edit-campaign', HttpRequest::METHOD_POST, $postParams);
         $this->assertResponseStatusCode(200);
 
         $groups = array_values($this->campaign->getGroups()->toArray());
@@ -279,9 +273,9 @@ class CampaignControllerTest extends AbstractHttpControllerTestCase
         $this->assertEquals(9000, $groups[0]->getId(), "Group ID is wrong");
     }
 
-    public function testTestLetterActionCanBeAccessed()
+    public function testTestCampaignActionCanBeAccessed()
     {
-        $this->dispatch('/admin/campaign/test-letter');
+        $this->dispatch('/admin/campaign/test-campaign');
 
         $this->assertModuleName('admin');
         $this->assertControllerName('admin\controller\campaign');
@@ -289,7 +283,7 @@ class CampaignControllerTest extends AbstractHttpControllerTestCase
         $this->assertMatchedRouteName('admin');
     }
 
-    public function testTestLetterActionWorks()
+    public function testTestCampaignActionWorks()
     {
         $passedTemplate = null;
         $passedClient = null;
@@ -317,12 +311,25 @@ class CampaignControllerTest extends AbstractHttpControllerTestCase
                         $persisted[] = $entity;
                  }));
 
-        $getParams = [
-            'campaign' => 42,
-            'email' => 'foo@bar',
+        $this->dispatch('/admin/campaign/test-campaign', HttpRequest::METHOD_GET, [ 'id' => 42 ]);
+        $this->assertResponseStatusCode(200);
+
+        $response = $this->getResponse();
+        $dom = new Query($response->getContent());
+        $result = $dom->execute('input[name="security"]');
+        $security = count($result) ? $result[0]->getAttribute('value') : null;
+
+        $form = new TestCampaignForm($this->sl);
+
+        $postParams = [
+            'security'  => $security,
+            'id' => 42,
+            'tester' => 'foo@bar',
             'send_to' => 'foo@bar'
         ];
-        $this->dispatch('/admin/campaign/test-letter', HttpRequest::METHOD_GET, $getParams);
+
+        $this->dispatch('/admin/campaign/test-campaign', HttpRequest::METHOD_POST, $postParams);
+        $this->assertResponseStatusCode(200);
 
         $this->assertEquals($this->template, $passedTemplate, "Wrong template used");
         $this->assertEquals($this->client, $passedClient, "Wrong client used");

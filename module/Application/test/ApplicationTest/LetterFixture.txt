@@ -1,55 +1,57 @@
 Return-path: <www@daemon-notes.com>
 Envelope-to: newsletter@daemon-notes.com
-Delivery-date: Sun, 15 Mar 2015 18:18:38 +0200
+Delivery-date: Sat, 21 Mar 2015 12:07:34 +0200
 Received: from www by coffin.daemon-notes.com with local (Exim 4.85 (FreeBSD))
 	(envelope-from <www@daemon-notes.com>)
-	id 1YXBFO-00053d-B0
-	for newsletter@daemon-notes.com; Sun, 15 Mar 2015 18:18:38 +0200
+	id 1YZGJa-00079w-CO
+	for newsletter@daemon-notes.com; Sat, 21 Mar 2015 12:07:34 +0200
 To: newsletter@daemon-notes.com
-Subject: Test for {{ echo =?UTF-8?Q?=24last=5Fname=20=7D=7D?=
+Subject: ATTN {{ =?UTF-8?Q?short=5Ffull=5Fname=20=7C=20Customer=20=7D=7D?=
 X-PHP-Originating-Script: 0:rcube.php
 MIME-Version: 1.0
 Content-Type: multipart/alternative;
- boundary="=_a734d1e0902df601ee53aa74d187b13e"
-Date: Sun, 15 Mar 2015 18:18:38 +0200
+ boundary="=_5817048d62aba1baf30e9d7f7ed4fea7"
+Date: Sat, 21 Mar 2015 12:07:34 +0200
 From: ross@daemon-notes.com
-Message-ID: <6245890ac4761b496248f30e9d976fa1@daemon-notes.com>
+Message-ID: <c0e315e052431d35aa91ad67cfaa2a84@daemon-notes.com>
 X-Sender: ross@daemon-notes.com
 User-Agent: Roundcube Webmail/1.1.0
 Sender: World Wide Web Owner <www@daemon-notes.com>
 
 
 
---=_a734d1e0902df601ee53aa74d187b13e
+--=_5817048d62aba1baf30e9d7f7ed4fea7
 Content-Transfer-Encoding: 7bit
 Content-Type: text/plain; charset=US-ASCII
 
  
 
-hello {{ echo $first_name }} 
+Hello {{ first_name }} 
 
-DONE! 
---=_a734d1e0902df601ee53aa74d187b13e
+Gender: {{ gender | He | She | It }} 
+
+Link: {{ data_form_link | profile | Click here }} 
+--=_5817048d62aba1baf30e9d7f7ed4fea7
 Content-Type: multipart/related;
- boundary="=_f29f4f28197ef2fdd2f8909e7ce22ca3"
+ boundary="=_d7d2f02450c9a241625ffb6eccb27b3f"
 
---=_f29f4f28197ef2fdd2f8909e7ce22ca3
+--=_d7d2f02450c9a241625ffb6eccb27b3f
 Content-Transfer-Encoding: quoted-printable
 Content-Type: text/html; charset=UTF-8
 
 <html><head><meta http-equiv=3D"Content-Type" content=3D"text/html; charset=
 =3DUTF-8" /></head><body style=3D'font-size: 10pt; font-family: Verdana,Gen=
 eva,sans-serif'>
-<p><img src=3D"cid:14264363185505b0de44de0312429133@daemon-notes.com" alt=
+<p><img src=3D"cid:1426932454550d42e64390b857942754@daemon-notes.com" alt=
 =3D"" width=3D"168" height=3D"236" /></p>
-<p>hello {{ echo $first_name }}</p>
-<p>&nbsp;</p>
-<p>DONE!</p>
+<p>Hello {{ first_name }}</p>
+<p>Gender: {{ gender | He | She | It }}</p>
+<p>Link: {{ data_form_link | profile | Click here }}</p>
 </body></html>
 
---=_f29f4f28197ef2fdd2f8909e7ce22ca3
+--=_d7d2f02450c9a241625ffb6eccb27b3f
 Content-Transfer-Encoding: base64
-Content-ID: <14264363185505b0de44de0312429133@daemon-notes.com>
+Content-ID: <1426932454550d42e64390b857942754@daemon-notes.com>
 Content-Type: image/png;
  name="demo epub.epub.png"
 Content-Disposition: inline;
@@ -609,7 +611,7 @@ e4LoGL61tGUs9gywzQEU27hUe6DVV5H2dBEPUgzQ8gUALfYD9GoXQF0CUPcfAVr9+XHzjtiOT/xU
 kaWaesuTZCYqrzwfkv3cjqbfhenLxwF0cbQGdUcD1IJvmdGYGhxYgC6PnCxii4FXZhaSBQEXYmuF
 kIuuiyrVfVFxYHhbjLStmHeBVkZ7hnvkmuDKTNNaZvqHBi1GC0agwi5OaoIlHSQJdC8ShdOaJy+V
 ET73+IWkEim9PBnBPXDc2Yj4oBsT/xdwMZCC6w20PQAAAABJRU5ErkJggg==
---=_f29f4f28197ef2fdd2f8909e7ce22ca3--
+--=_d7d2f02450c9a241625ffb6eccb27b3f--
 
---=_a734d1e0902df601ee53aa74d187b13e--
+--=_5817048d62aba1baf30e9d7f7ed4fea7--
 
