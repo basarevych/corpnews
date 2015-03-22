@@ -100,6 +100,14 @@ class OutgoingController extends AbstractActionController
                 'sortable'  => true,
                 'visible'   => false,
             ],
+            'when_created' => [
+                'title'     => $translate('When created'),
+                'sql_id'    => 'l.when_created',
+                'type'      => Table::TYPE_DATETIME,
+                'filters'   => [ Table::FILTER_BETWEEN, Table::FILTER_NULL ],
+                'sortable'  => true,
+                'visible'   => true,
+            ],
             'when_sent' => [
                 'title'     => $translate('When sent'),
                 'sql_id'    => 'l.when_sent',

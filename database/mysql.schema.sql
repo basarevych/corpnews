@@ -90,6 +90,7 @@ CREATE TABLE `letters` (
     `id` int unsigned NOT NULL AUTO_INCREMENT,
     `template_id` int unsigned NOT NULL,
     `client_id` int unsigned NOT NULL,
+    `when_created` datetime NOT NULL DEFAULT 0,
     `when_sent` datetime NULL,
     `error` varchar(255) NULL,
     `from_address` text NOT NULL,

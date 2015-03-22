@@ -37,6 +37,15 @@ class Letter
     protected $id;
 
     /**
+     * When created
+     *
+     * @var DateTime
+     * 
+     * @ORM\Column(type="utcdatetime")
+     */
+    protected $when_created;
+
+    /**
      * When sent
      *
      * @var DateTime
@@ -126,10 +135,12 @@ class Letter
      */
     public function toArray()
     {
+        $whenCreated = $this->getWhenCreated();
         $whenSent = $this->getWhenSent();
 
         return [
             'id'            => $this->getId(),
+            'when_sent'     => $whenCreated ? $whenCreated->getTimestamp() : null,
             'when_sent'     => $whenSent ? $whenSent->getTimestamp() : null,
             'error'         => $this->getError(),
             'from_address'  => $this->getFromAddress(),
@@ -151,9 +162,32 @@ class Letter
     }
 
     /**
+     * Set when_created
+     *
+     * @param \DateTime $whenCreated
+     * @return Letter
+     */
+    public function setWhenCreated($whenCreated)
+    {
+        $this->when_created = $whenCreated;
+
+        return $this;
+    }
+
+    /**
+     * Get when_created
+     *
+     * @return \DateTime
+     */
+    public function getWhenCreated()
+    {
+        return $this->when_created;
+    }
+
+    /**
      * Set when_sent
      *
-     * @param utcdatetime $whenSent
+     * @param \DateTime $whenSent
      * @return Letter
      */
     public function setWhenSent($whenSent)
@@ -166,7 +200,7 @@ class Letter
     /**
      * Get when_sent
      *
-     * @return utcdatetime 
+     * @return \DateTime
      */
     public function getWhenSent()
     {

@@ -184,6 +184,7 @@ return [
     // OutgoingController
     'Secret key' => 'Секретный ключ',
     'Error' => 'Ошибка',
+    'When created' => 'Когда создано',
     'When sent' => 'Когда отправлено',
     'From address' => 'Адрес "От кого"',
     'To address' => 'Адрес "Кому"',

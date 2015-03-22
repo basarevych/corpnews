@@ -6,6 +6,9 @@ use Zend\Test\PHPUnit\Controller\AbstractConsoleControllerTestCase;
 use Application\Entity\Setting as SettingEntity;
 use Application\Entity\Client as ClientEntity;
 use Application\Entity\Group as GroupEntity;
+use Application\Entity\Campaign as CampaignEntity;
+use Application\Entity\Letter as LetterEntity;
+use Application\Entity\Template as TemplateEntity;
 use Application\Model\Mailbox;
 use Application\Model\Letter;
 use DataForm\Document\Profile as ProfileDocument;
@@ -30,13 +33,51 @@ class ConsoleControllerTest extends AbstractConsoleControllerTestCase
 
         $this->repoClient = $this->getMockBuilder('Application\Client\ClientRepository')
                                  ->disableOriginalConstructor()
-                                 ->setMethods([ 'find', 'findAll' ])
+                                 ->setMethods([ 'find', 'findAll', 'findWithoutLetters', 'findWithFailedLetters' ])
                                  ->getMock();
+
+        $a = new ClientEntity();
+        $a->setEmail('foo@bar');
+
+        $this->repoClient->expects($this->any())
+                         ->method('findWithoutLetters')
+                         ->will($this->returnValue([ $a ]));
+
+        $b = new ClientEntity();
+        $b->setEmail('baz@bar');
+
+        $this->repoClient->expects($this->any())
+                         ->method('findWithFailedLetters')
+                         ->will($this->returnValue([ $b ]));
 
         $this->repoGroup = $this->getMockBuilder('Application\Client\GroupRepository')
                                 ->disableOriginalConstructor()
                                 ->setMethods([ 'findOneByName' ])
                                 ->getMock();
+
+        $this->repoCampaign = $this->getMockBuilder('Application\Client\CampaignRepository')
+                                   ->disableOriginalConstructor()
+                                   ->setMethods([ 'findBy' ])
+                                   ->getMock();
+
+        $template = new TemplateEntity();
+        $template->setMessageId('mid');
+        $template->setSubject('subject');
+        $template->setHeaders('header: foo');
+        $template->setBody('body');
+        $this->setProp($template, 'id', 42);
+
+        $campaign = new CampaignEntity();
+        $campaign->setName('foobar');
+        $campaign->setStatus(CampaignEntity::STATUS_CREATED);
+        $this->setProp($campaign, 'id', 42);
+
+        $campaign->addTemplate($template);
+        $template->setCampaign($campaign);
+
+        $this->repoCampaign->expects($this->any())
+                           ->method('findBy')
+                           ->will($this->returnValue([ $campaign ]));
 
         $this->autodelete = 30;
         $this->repoSetting->expects($this->any())
@@ -49,6 +90,7 @@ class ConsoleControllerTest extends AbstractConsoleControllerTestCase
                     [ 'Application\Entity\Setting', $this->repoSetting ],
                     [ 'Application\Entity\Client', $this->repoClient ],
                     [ 'Application\Entity\Group', $this->repoGroup ],
+                    [ 'Application\Entity\Campaign', $this->repoCampaign ],
                 ]));
 
         $this->dm = $this->getMockBuilder('Doctrine\ODM\MongoDB\DocumentManager')
@@ -80,11 +122,7 @@ class ConsoleControllerTest extends AbstractConsoleControllerTestCase
                    ->will($this->returnValue([ $box ]));
 
         $letterMock = new Letter(42);
-        $class = new \ReflectionClass(get_class($letterMock));
-
-        $property = $class->getProperty('subject');
-        $property->setAccessible(true);
-        $property->setValue($letterMock, 'subject');
+        $this->setProp($letterMock, 'subject', 'subject');
 
         $this->imap->expects($this->any())
                    ->method('getLetter')
@@ -217,6 +255,23 @@ class ConsoleControllerTest extends AbstractConsoleControllerTestCase
         $this->assertEquals(Mailbox::NAME_INCOMING, $movedTo, "Destination box of moved message is wrong");
     }
 
+    public function testCronActionFindsNewLetters()
+    {
+        $persisted = [];
+        $this->em->expects($this->any())
+                 ->method('persist')
+                 ->will($this->returnCallback(function ($entity) use (&$persisted) {
+                    $persisted[] = $entity;
+                 }));
+
+        $this->dispatch('cron');
+        $this->assertResponseStatusCode(0);
+
+        $this->assertEquals(2, count($persisted), "Two entities should have been persisted");
+        $this->assertEquals('foo@bar', $persisted[0]->getToAddress(), "Email is wrong");
+        $this->assertEquals('baz@bar', $persisted[1]->getToAddress(), "Email is wrong");
+    }
+ 
     public function testPopulateDbActionCanBeAccessed()
     {
         $this->dispatch('populate-db');
@@ -359,5 +414,14 @@ class ConsoleControllerTest extends AbstractConsoleControllerTestCase
         $this->assertResponseStatusCode(0);
 
         $this->assertEquals('foo', $doc->getClientEmail(), "Incorrect email was set");
+    }
+
+    protected function setProp($object, $property, $value)
+    {
+        $class = new \ReflectionClass(get_class($object));
+
+        $property = $class->getProperty($property);
+        $property->setAccessible(true);
+        $property->setValue($object, $value);
     }
 }

@@ -74,6 +74,7 @@ return [
     'Stack trace' => 'Stack trace',
     'ERROR_CREATE_FROM_TEMPLATE' => 'Could not create letter from template (%source_id%)',
     'ERROR_SEND_LETTER' => 'Could not send letter: %exception%',
+    'ERROR_CAMPAIGN_PAUSED' => 'Campaign (%source_id%) paused due to errors',
 
     // Csrf validator
     'The form submitted did not originate from the expected site' => 'The form submitted did not originate from the expected site',

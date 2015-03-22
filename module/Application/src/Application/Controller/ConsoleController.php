@@ -12,6 +12,8 @@ namespace Application\Controller;
 use Zend\Mvc\Controller\AbstractConsoleController;
 use Application\Entity\Setting as SettingEntity;
 use Application\Entity\Group as GroupEntity;
+use Application\Entity\Campaign as CampaignEntity;
+use Application\Document\Syslog as SyslogDocument;
 use Application\Model\Mailbox;
 
 /**
@@ -23,10 +25,8 @@ use Application\Model\Mailbox;
 class ConsoleController extends AbstractConsoleController
 {
     /**
-     * @const ITEMS_LIMIT
      * @const CRON_DURATION
      */
-    const ITEMS_LIMIT = 100;
     const CRON_DURATION = 50;
 
     /**
@@ -56,6 +56,8 @@ class ConsoleController extends AbstractConsoleController
 
         $sl = $this->getServiceLocator();
         $imap = $sl->get('ImapClient');
+        $mail = $sl->get('Mail');
+        $logger = $sl->get('Logger');
         $em = $sl->get('Doctrine\ORM\EntityManager');
 
         $boxes = $imap->getMailboxes();
@@ -137,31 +139,26 @@ class ConsoleController extends AbstractConsoleController
 
             $messages = $imap->search($box->getName(), 0, 0, 'BEFORE "' . $oldDate . '"');
             if (count($messages)) {
-                $toDo = min(count($messages), self::ITEMS_LIMIT);
-                if ($verbose) {
-                    $console->writeLine('   Processing ' . $toDo . ' out of ' . count($messages) . ' found letter(s)');
-                    $console->writeLine();
-                }
-                for ($i = 0; $i < $toDo; $i++) {
+                foreach ($messages as $uid) {
                     if ($verbose) {
-                        $letter = $imap->getLetter($box->getName(), $messages[$i]);
+                        $letter = $imap->getLetter($box->getName(), $uid);
                         $console->writeLine('* ' . $letter->getSubject());
                         $console->writeLine();
                     }
                     if (!$dryRun)
-                        $imap->deleteLetter($box->getName(), $messages[$i]);
+                        $imap->deleteLetter($box->getName(), $uid);
+
+                    if (time() - $startTime >= self::CRON_DURATION) {
+                        if ($verbose)
+                            $console->writeLine('===> Time limit reached - exiting');
+                        return;
+                    }
                 }
             } else {
                 if ($verbose) {
                     $console->writeLine('   Nothing found');
                     $console->writeLine();
                 }
-            }
-
-            if (time() - $startTime >= self::CRON_DURATION) {
-                if ($verbose)
-                    $console->writeLine('===> Time limit reached - exiting');
-                return;
             }
         }
 
@@ -176,19 +173,20 @@ class ConsoleController extends AbstractConsoleController
 
             $messages = $imap->search($box->getName(), 0, 0, 'SINCE "' . $oldDate . '"');
             if (count($messages)) {
-                $toDo = min(count($messages), self::ITEMS_LIMIT);
-                if ($verbose) {
-                    $console->writeLine('   Processing ' . $toDo . ' out of ' . count($messages) . ' found letter(s)');
-                    $console->writeLine();
-                }
-                for ($i = 0; $i < $toDo; $i++) {
+                foreach ($messages as $uid) {
                     if ($verbose) {
-                        $letter = $imap->getLetter($box->getName(), $messages[$i]);
+                        $letter = $imap->getLetter($box->getName(), $uid);
                         $console->writeLine('* ' . $letter->getSubject());
                         $console->writeLine();
                     }
                     if (!$dryRun)
-                        $imap->moveLetter($messages[$i], $box->getName(), Mailbox::NAME_INCOMING);
+                        $imap->moveLetter($uid, $box->getName(), Mailbox::NAME_INCOMING);
+
+                    if (time() - $startTime >= self::CRON_DURATION) {
+                        if ($verbose)
+                            $console->writeLine('===> Time limit reached - exiting');
+                        return;
+                    }
                 }
             } else {
                 if ($verbose) {
@@ -196,13 +194,121 @@ class ConsoleController extends AbstractConsoleController
                     $console->writeLine();
                 }
             }
+        }
 
-            if (time() - $startTime >= self::CRON_DURATION) {
-                if ($verbose)
-                    $console->writeLine('===> Time limit reached - exiting');
-                return;
+        if ($verbose) {
+            $console->writeLine('===> Creating letters');
+            $console->writeLine();
+        }
+
+        $campaigns = $em->getRepository('Application\Entity\Campaign')
+                        ->findBy([ 'status' => CampaignEntity::STATUS_QUEUED ]);
+
+        if (count($campaigns) > 0) {
+            foreach ($campaigns as $campaign) {
+                if ($verbose) {
+                    $console->writeLine('=> Processing campaign: ' . $campaign->getName());
+                    $console->writeLine();
+                }
+                foreach ($campaign->getTemplates() as $template) {
+                    if ($verbose)
+                        $console->writeLine('=> Processing template: ' . $template->getSubject());
+
+                    $clients = $em->getRepository('Application\Entity\Client')
+                                  ->findWithoutLetters($template);
+
+                    foreach ($clients as $client) {
+                        if ($verbose)
+                            $console->writeLine('*  No letter for: ' . $client->getEmail() . ' - creating');
+
+                        if (!$dryRun) {
+                            $letter = $mail->createFromTemplate($template, $client);
+                            if ($letter === false) {
+                                if ($verbose)
+                                    $console->writeLine('*  createFromTemplate() failed for: ' . $client->getEmail());
+
+                                $campaign->setStatus(CampaignEntity::STATUS_PAUSED);
+                                $em->persist($campaign);
+                                $em->flush();
+
+                                $logger->log(
+                                    SyslogDocument::LEVEL_CRITICAL,
+                                    'ERROR_CAMPAIGN_PAUSED',
+                                    [
+                                        'source_name' => get_class($campaign),
+                                        'source_id' => $campaign->getId()
+                                    ]
+                                );
+
+                                break 2;
+                            }
+
+                            $em->persist($letter);
+                            $em->flush();
+                        }
+
+                        if (time() - $startTime >= self::CRON_DURATION) {
+                            if ($verbose) {
+                                $console->writeLine();
+                                $console->writeLine('===> Time limit reached - exiting');
+                            }
+                            return;
+                        }
+                    }
+
+                    $clients = $em->getRepository('Application\Entity\Client')
+                                  ->findWithFailedLetters($template);
+
+                    foreach ($clients as $client) {
+                        if ($verbose)
+                            $console->writeLine('*  Restarting failed letter for: ' . $client->getEmail() . ' - creating');
+
+                        if (!$dryRun) {
+                            $letter = $mail->createFromTemplate($template, $client);
+                            if ($letter === false) {
+                                if ($verbose)
+                                    $console->writeLine('*  createFromTemplate() failed for: ' . $client->getEmail());
+
+                                $campaign->setStatus(CampaignEntity::STATUS_PAUSED);
+                                $em->persist($campaign);
+                                $em->flush();
+
+                                $logger->log(
+                                    SyslogDocument::LEVEL_CRITICAL,
+                                    'ERROR_CAMPAIGN_PAUSED',
+                                    [
+                                        'source_name' => get_class($campaign),
+                                        'source_id' => $campaign->getId()
+                                    ]
+                                );
+
+                                break 2;
+                            }
+
+                            $em->persist($letter);
+                            $em->flush();
+                        }
+
+                        if (time() - $startTime >= self::CRON_DURATION) {
+                            if ($verbose) {
+                                $console->writeLine();
+                                $console->writeLine('===> Time limit reached - exiting');
+                            }
+                            return;
+                        }
+                    }
+
+                    if ($verbose)
+                        $console->writeLine();
+                }
+            }
+        } else {
+            if ($verbose) {
+                $console->writeLine('   Nothing found');
+                $console->writeLine();
             }
         }
+
 
         if ($verbose)
             $console->writeLine('===> All done');

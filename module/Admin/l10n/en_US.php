@@ -184,6 +184,7 @@ return [
     // OutgoingController
     'Secret key' => 'Secret key',
     'Error' => 'Error',
+    'When created' => 'When created',
     'When sent' => 'When sent',
     'From address' => 'From address',
     'To address' => 'To address',
