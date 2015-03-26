@@ -29,6 +29,8 @@ class QueuedCampaign extends ZfTask
         $data = $this->getData();
         $sl = $this->getServiceLocator();
         $em = $sl->get('Doctrine\ORM\EntityManager');
+        $mail = $sl->get('Mail');
+        $logger = $sl->get('Logger');
 
         $em->getConnection()->close();
         $em->getConnection()->connect();
