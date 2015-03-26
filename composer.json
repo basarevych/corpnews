@@ -18,7 +18,8 @@
         "doctrine/doctrine-orm-module": "0.8.*",
         "doctrine/doctrine-mongo-odm-module": "0.8.*",
         "ezyang/htmlpurifier": "4.6.*",
-        "basarevych/dynamic-table": "dev-master"
+        "basarevych/dynamic-table": "dev-master",
+        "basarevych/task-daemon": "dev-master"
     },
     "require-dev": {
         "phpunit/phpunit": "@stable",

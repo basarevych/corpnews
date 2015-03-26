@@ -162,6 +162,27 @@ fi
 input="none"
 echo
 while [ "$input" != "y" -a "$input" != "n" -a "$input" != "" ]; do
+    read -p "* Will you be using Gearman? [y]/n: " input
+done
+
+if [ "$input" != "n" ]; then
+    run_command cp gearman.local.php.dist gearman.local.php
+
+    read -p "  Gearman name (alphanumeric only)? [$project]: " input
+    if [ "$input" = "" ]; then
+        input="$project"
+    fi
+
+    run_command perl -pi -e "s/(\s*'namespace'\s*=>\s*')(CorpNews)('.*)/\${1}$input\${3}/" "gearman.local.php"
+
+    echo
+    echo "  File config/autoload/gearman.local.php created"
+    echo "  You can change Gearman host and port in the file"
+fi
+
+input="none"
+echo
+while [ "$input" != "y" -a "$input" != "n" -a "$input" != "" ]; do
     read -p "* Do you need Doctrine SQL ORM? [y]/n: " input
 done
 

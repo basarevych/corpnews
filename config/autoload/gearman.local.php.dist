@@ -1,0 +1,9 @@
+<?php
+
+return [
+    'gearman' => [
+        'namespace' => 'CorpNews',
+        'host'      => '127.0.0.1',
+        'port'      => 4730
+    ],
+];
