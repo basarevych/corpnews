@@ -72,6 +72,12 @@ return [
     'File' => 'File',
     'Line' => 'Line',
     'Stack trace' => 'Stack trace',
+
+    // Logger
+    'INFO_MAILBOX_CREATED' => 'Created mailbox (%source_name%)',
+    'INFO_LETTER_AUTODELETED' => 'Old letter autodeleted (%source_id%)',
+    'INFO_LETTER_PROCESSED' => 'New letter processed (%source_id%)',
+    'INFO_CAMPAIGN_STARTED' => 'Campaign processed and started (%source_id%)',
     'ERROR_CREATE_FROM_TEMPLATE' => 'Could not create letter from template (%source_id%)',
     'ERROR_SEND_LETTER' => 'Could not send letter: %exception%',
     'ERROR_CAMPAIGN_PAUSED' => 'Campaign (%source_id%) paused due to errors',

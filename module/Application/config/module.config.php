@@ -47,6 +47,15 @@ return [
                         ]
                     ]
                 ],
+                'stop-daemon' => [
+                    'options' => [
+                        'route'    => 'stop-daemon',
+                        'defaults' => [
+                            'controller' => 'Application\Controller\Console',
+                            'action'     => 'stop-daemon'
+                        ]
+                    ]
+                ],
                 'populate-db' => [
                     'options' => [
                         'route'    => 'populate-db',

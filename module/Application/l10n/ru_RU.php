@@ -72,6 +72,12 @@ return [
     'File' => 'Файл',
     'Line' => 'Строка',
     'Stack trace' => 'Трассировка стека',
+
+    // Logger
+    'INFO_MAILBOX_CREATED' => 'Создан почтовый ящик %source_name%',
+    'INFO_LETTER_AUTODELETED' => 'Старое письмо автоудалено (%source_id%)',
+    'INFO_LETTER_PROCESSED' => 'Новое письмо обработано (%source_id%)',
+    'INFO_CAMPAIGN_STARTED' => 'Campaign processed and started (%source_id%)',
     'ERROR_CREATE_FROM_TEMPLATE' => 'Не удалось создать письмо по шаблону (%source_id%)',
     'ERROR_SEND_LETTER' => 'Не удалось отправить письмо: %exception%',
     'ERROR_CAMPAIGN_PAUSED' => 'Кампания (%source_id%) поставлена на паузу из-за ошибок',

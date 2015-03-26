@@ -10,6 +10,7 @@ return [
             'DataFormManager'   => 'Application\Service\DataFormManager',
             'Parser'            => 'Application\Service\Parser',
             'Logger'            => 'Application\Service\Logger',
+            'TaskDaemon'        => 'Application\Service\TaskDaemon',
         ],
 
         'abstract_factories' => [
@@ -103,6 +104,13 @@ return [
                     'class'     => 'DataForm\ParserFunction\DataFormLink',
                     'html'      => true,
                 ],
+            ],
+        ],
+        'task_daemon' => [
+            'tasks' => [
+                'check_email'           => 'Application\TaskDaemon\CheckEmail',
+                'queued_campaign'       => 'Application\TaskDaemon\QueuedCampaign',
+                'all_queued_campaigns'  => 'Application\TaskDaemon\AllQueuedCampaigns',
             ],
         ],
     ],

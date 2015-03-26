@@ -113,6 +113,9 @@ class Module
             [ '--verbose',  'Enabled verbose mode' ],
             [ '--dry-run',  'Don\'t do anything actually' ],
 
+            'stop-daemon' => '',
+            [ PHP_EOL, 'Stop the task daemon' ],
+
             'populate-db' => '',
             [ PHP_EOL, 'Populate the database' ],
 
