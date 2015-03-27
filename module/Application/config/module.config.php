@@ -40,10 +40,19 @@ return [
             'routes' => [
                 'cron' => [
                     'options' => [
-                        'route'    => 'cron [--verbose] [--dry-run]',
+                        'route'    => 'cron',
                         'defaults' => [
                             'controller' => 'Application\Controller\Console',
                             'action'     => 'cron'
+                        ]
+                    ]
+                ],
+                'run-task' => [
+                    'options' => [
+                        'route'    => 'run-task <name> [<data>]',
+                        'defaults' => [
+                            'controller' => 'Application\Controller\Console',
+                            'action'     => 'run-task'
                         ]
                     ]
                 ],

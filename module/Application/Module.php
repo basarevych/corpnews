@@ -108,10 +108,11 @@ class Module
     public function getConsoleUsage(AdapterInterface $console)
     {
         return [
-            'cron [--verbose] [--dry-run]' => '',
+            'cron' => '',
             [ PHP_EOL, 'Run cron job' ],
-            [ '--verbose',  'Enabled verbose mode' ],
-            [ '--dry-run',  'Don\'t do anything actually' ],
+
+            'run-task <name> [<data>]' => '',
+            [ PHP_EOL, 'Ask task daemon to run the task' ],
 
             'stop-daemon' => '',
             [ PHP_EOL, 'Stop the task daemon' ],

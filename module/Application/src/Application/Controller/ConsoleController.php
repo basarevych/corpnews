@@ -34,18 +34,43 @@ class ConsoleController extends AbstractConsoleController
      */
     public function cronAction()
     {
-/*
         // Ensure there is only one cron script running at a time.
         $fpSingleton = fopen(__FILE__, "r") or die("Could not open " . __FILE__);
         if (!flock($fpSingleton, LOCK_EX | LOCK_NB)) {
             fclose($fpSingleton);
             return "Another cron job is running" . PHP_EOL;
         }
-*/
+    }
+
+    /**
+     * Run background task
+     */
+    public function runTaskAction()
+    {
+        $request = $this->getRequest();
+        $name = $request->getParam('name');
+        $data = $request->getParam('data');
+
         $sl = $this->getServiceLocator();
+        $config = $sl->get('Config');
+
+        $found = false;
+        foreach ($config['corpnews']['task_daemon']['tasks'] as $task => $class) {
+            if ($task == $name) {
+                $found = true;
+                break;
+            }
+        }
+
+        if (!$found) {
+            $console = $this->getConsole();
+            $console->writeLine("Unknown task");
+            return;
+        }
+
         $task = $sl->get('TaskDaemon');
         $task->getDaemon()->start();
-        $task->getDaemon()->runTask('check_email');
+        $task->getDaemon()->runTask($name, $data);
     }
 
     /**
