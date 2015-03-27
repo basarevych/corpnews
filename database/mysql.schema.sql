@@ -3,8 +3,10 @@ DROP TABLE IF EXISTS `letters`;
 DROP TABLE IF EXISTS `templates`;
 DROP TABLE IF EXISTS `campaign_groups`;
 DROP TABLE IF EXISTS `campaigns`;
+DROP TABLE IF EXISTS `client_tags`;
 DROP TABLE IF EXISTS `client_groups`;
 DROP TABLE IF EXISTS `clients`;
+DROP TABLE IF EXISTS `tags`;
 DROP TABLE IF EXISTS `groups`;
 DROP TABLE IF EXISTS `settings`;
 
@@ -28,9 +30,17 @@ CREATE TABLE `groups` (
     CONSTRAINT `groups_name_unique` UNIQUE (`name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1;
 
+CREATE TABLE `tags` (
+    `id` int unsigned NOT NULL AUTO_INCREMENT,
+    `name` varchar(255) NOT NULL,
+    CONSTRAINT `groups_pk` PRIMARY KEY (`id`),
+    CONSTRAINT `groups_name_unique` UNIQUE (`name`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1;
+
 CREATE TABLE `clients` (
     `id` int unsigned NOT NULL AUTO_INCREMENT,
     `email` varchar(255) NOT NULL,
+    `when_unsubscribed` datetime NULL,
     `when_bounced` datetime NULL,
     CONSTRAINT `clients_pk` PRIMARY KEY (`id`),
     CONSTRAINT `clients_email_unique` UNIQUE (`email`)
@@ -46,6 +56,19 @@ CREATE TABLE `client_groups` (
         ON UPDATE CASCADE ON DELETE CASCADE,
     CONSTRAINT `client_groups_group_fk` FOREIGN KEY (`group_id`)
         REFERENCES `groups` (`id`)
+        ON UPDATE CASCADE ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1;
+
+CREATE TABLE `client_tags` (
+    `id` int unsigned NOT NULL AUTO_INCREMENT,
+    `client_id` int unsigned NOT NULL,
+    `tag_id` int unsigned NOT NULL,
+    CONSTRAINT `client_tags_pk` PRIMARY KEY (`id`),
+    CONSTRAINT `client_tags_client_fk` FOREIGN KEY (`client_id`)
+        REFERENCES `clients` (`id`)
+        ON UPDATE CASCADE ON DELETE CASCADE,
+    CONSTRAINT `client_tags_tag_fk` FOREIGN KEY (`tag_id`)
+        REFERENCES `tags` (`id`)
         ON UPDATE CASCADE ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1;
 

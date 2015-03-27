@@ -52,6 +52,7 @@ return [
     'Edit client' => 'Редактировать клиента',
     'Delete client' => 'Удалить клиента',
     'Email address' => 'Электронная почта',
+    'Unsubscribed from any' => 'Отменил подписку на все',
     'Email bounced' => 'Письмо возвратилось',
     'Groups' => 'Группы',
     'CONFIRM_DELETE_CLIENT' => 'Удалить выбранного клиента (клиентов)?',

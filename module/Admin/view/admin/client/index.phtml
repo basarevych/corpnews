@@ -41,6 +41,10 @@
                     loader_image: '<?= $this->basePath('/img/loader.gif') ?>',
                     strings: dynamicTableStrings,
                     mapper: function (row) {
+                        if (row['when_unsubscribed'] != null) {
+                            var m = moment.unix(row['when_unsubscribed']).local();
+                            row['when_unsubscribed'] = m.format('<?= $this->translate('GENERIC_MOMENT_FORMAT') ?>');
+                        }
                         if (row['when_bounced'] != null) {
                             var m = moment.unix(row['when_bounced']).local();
                             row['when_bounced'] = m.format('<?= $this->translate('GENERIC_MOMENT_FORMAT') ?>');

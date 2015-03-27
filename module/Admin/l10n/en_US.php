@@ -51,6 +51,7 @@ return [
     'Edit client' => 'Edit client',
     'Delete client' => 'Delete client',
     'Email address' => 'Email address',
+    'Unsubscribed from any' => 'Unsubscribed from any',
     'Email bounced' => 'Email bounced',
     'Groups' => 'Groups',
     'CANNOT_EDIT_SYSTEM_GROUP' => 'Can not edit system group',

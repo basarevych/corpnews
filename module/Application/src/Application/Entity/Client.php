@@ -47,9 +47,18 @@ class Client
     protected $email;
 
     /**
+     * When unsubscribed
+     *
+     * @var \DateTime
+     * 
+     * @ORM\Column(type="utcdatetime", nullable=true)
+     */
+    protected $when_unsubscribed;
+
+    /**
      * When bounced
      *
-     * @var DateTime
+     * @var \DateTime
      * 
      * @ORM\Column(type="utcdatetime", nullable=true)
      */
@@ -100,12 +109,14 @@ class Client
      */
     public function toArray()
     {
-        $whenBounced = $this->getWhenBounced();
+        $unsubscribed = $this->getWhenUnsubscribed();
+        $bounced = $this->getWhenBounced();
 
         return [
             'id'                => $this->getId(),
             'email'             => $this->getEmail(),
-            'when_bounced'      => $whenBounced ? $whenBounced->getTimestamp() : null,
+            'when_unsubscribed' => $unsubscribed ? $unsubscribed->getTimestamp() : null,
+            'when_bounced'      => $bounced ? $bounced->getTimestamp() : null,
             'groups'            => $this->getGroups()->toArray(),
         ];
     }
@@ -144,9 +155,32 @@ class Client
     }
 
     /**
+     * Set when_unsubscribed
+     *
+     * @param \DatTime $whenUnsubscribed
+     * @return Client
+     */
+    public function setWhenUnsubscribed($whenUnsubscribed)
+    {
+        $this->when_unsubscribed = $whenUnsubscribed;
+
+        return $this;
+    }
+
+    /**
+     * Get when_unsubscribed
+     *
+     * @return \DateTime
+     */
+    public function getWhenUnsubscribed()
+    {
+        return $this->when_unsubscribed;
+    }
+
+    /**
      * Set when_bounced
      *
-     * @param utcdatetime $whenBounced
+     * @param \DateTime $whenBounced
      * @return Client
      */
     public function setWhenBounced($whenBounced)
@@ -159,7 +193,7 @@ class Client
     /**
      * Get when_bounced
      *
-     * @return utcdatetime 
+     * @return \DateTime
      */
     public function getWhenBounced()
     {

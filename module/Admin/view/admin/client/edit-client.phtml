@@ -12,6 +12,7 @@ $form = $this->form;
 $security = $form->get('security');
 $id = $form->has('id') ? $form->get('id') : null;
 $email = $form->get('email');
+$whenUnsubscribed = $form->get('when_unsubscribed');
 $whenBounced = $form->get('when_bounced');
 $groups = $form->get('groups');
 
@@ -60,6 +61,40 @@ $groups = $form->get('groups');
                     </ul>
                 <?php endif ?>
             </div>
+        </div>
+    </div>
+
+    <?php $valid = count($whenUnsubscribed->getMessages()) == 0 ?>
+    <div class="form-group <?= $valid ? '' : 'has-error' ?>">
+        <label class="col-sm-4 control-label" for="<?= $whenUnsubscribed->getName() ?>">
+            <?= $this->escapeHtml($this->translate($whenUnsubscribed->getLabel())) ?>:
+        </label>
+        <div class="col-sm-8">
+            <div class="input-group date" id="dt-<?= $whenUnsubscribed->getName() ?>">
+                <input type="text" class="form-control"
+                       name="<?= $whenUnsubscribed->getName() ?>"
+                       value="<?= $this->escapeHtml($whenUnsubscribed->getValue()) ?>"
+                       data-on-blur="validateFormField($('#modal-form [name=<?= $whenUnsubscribed->getName() ?>]'))"
+                       data-on-enter="$('#modal-form [name=<?= $whenBounced->getName() ?>]').focus()">
+                <span class="input-group-addon">
+                    <span class="glyphicon glyphicon-calendar"></span>
+                </span>
+            </div>
+            <div class="help-block">
+                <?php if (!$valid): ?>
+                    <ul class="list-unstyled icon-list error-list">
+                    <?php foreach ($whenUnsubscribed->getMessages() as $msg): ?>
+                        <li><?= $this->escapeHtml($msg) ?></li>
+                    <?php endforeach ?>
+                    </ul>
+                <?php endif ?>
+            </div>
+            <script>
+                $('#dt-<?= $whenUnsubscribed->getName() ?>').datetimepicker({
+                    format: "<?= $this->translate('GENERIC_MOMENT_FORMAT') ?>",
+                    locale: '<?= \Locale::getDefault() ?>'
+                });
+            </script>
         </div>
     </div>
 

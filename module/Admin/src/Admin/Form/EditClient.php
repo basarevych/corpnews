@@ -78,6 +78,12 @@ class EditClient extends Form
 
         $translate = $sl->get('viewhelpermanager')->get('translate');
 
+        $whenUnsubscribed = new Element\DateTime('when_unsubscribed');
+        $whenUnsubscribed->setLabel('Unsubscribed from any');
+        $whenUnsubscribed->setFormat($translate('GENERIC_DATETIME_FORMAT'));
+        $whenUnsubscribed->setAttribute('step', 'any');
+        $this->add($whenUnsubscribed);
+
         $whenBounced = new Element\DateTime('when_bounced');
         $whenBounced->setLabel('Email bounced');
         $whenBounced->setFormat($translate('GENERIC_DATETIME_FORMAT'));
@@ -141,6 +147,19 @@ class EditClient extends Form
               ->attach(new Validator\EmailAddress($emailParams))
               ->attach(new EntityNotExists($entityParams));
         $filter->add($email);
+
+        $params = [
+            'format' => $this->get('when_unsubscribed')->getFormat()
+        ];
+
+        $whenUnsubscribed = new Input('when_unsubscribed');
+        $whenUnsubscribed->setRequired(false)
+                         ->setBreakOnFailure(false)
+                         ->getFilterChain()
+                         ->attach(new Filter\StringTrim());
+        $whenUnsubscribed->getValidatorChain()
+                         ->attach(new Validator\Date($params));
+        $filter->add($whenUnsubscribed);
 
         $params = [
             'format' => $this->get('when_bounced')->getFormat()
