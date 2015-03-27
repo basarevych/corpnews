@@ -4,7 +4,7 @@
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "748bdb19588f0ab730b002e2acf4a088",
+    "hash": "4e3e68a70e46c2033f13296b18ef0458",
     "packages": [
         {
             "name": "basarevych/dynamic-table",
@@ -54,7 +54,7 @@
         },
         {
             "name": "basarevych/task-daemon",
-            "version": "v0.1.1",
+            "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "https://github.com/basarevych/task-daemon.git",
@@ -2304,6 +2304,7 @@
     "minimum-stability": "alpha",
     "stability-flags": {
         "basarevych/dynamic-table": 20,
+        "basarevych/task-daemon": 20,
         "phpunit/phpunit": 0,
         "webfactory/doctrine-orm-test-infrastructure": 0
     },

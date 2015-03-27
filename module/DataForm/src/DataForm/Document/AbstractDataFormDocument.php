@@ -51,8 +51,8 @@ abstract class AbstractDataFormDocument
     /**
      * Set id
      *
-     * @param custom_id $id
-     * @return self
+     * @param mixed $id
+     * @return AbstractDataFormDocument
      */
     public function setId($id)
     {
@@ -63,7 +63,7 @@ abstract class AbstractDataFormDocument
     /**
      * Get id
      *
-     * @return custom_id $id
+     * @return mixed
      */
     public function getId()
     {
@@ -71,10 +71,10 @@ abstract class AbstractDataFormDocument
     }
 
     /**
-     * Set clientEmail
+     * Set client_email
      *
      * @param string $clientEmail
-     * @return self
+     * @return AbstractDataFormDocument
      */
     public function setClientEmail($clientEmail)
     {
@@ -83,9 +83,9 @@ abstract class AbstractDataFormDocument
     }
 
     /**
-     * Get clientEmail
+     * Get client_email
      *
-     * @return string $clientEmail
+     * @return string
      */
     public function getClientEmail()
     {
@@ -93,10 +93,10 @@ abstract class AbstractDataFormDocument
     }
 
     /**
-     * Set whenUpdated
+     * Set when_updated
      *
-     * @param date $whenUpdated
-     * @return self
+     * @param \DateTime $whenUpdated
+     * @return AbstractDataFormDocument
      */
     public function setWhenUpdated($whenUpdated)
     {
@@ -105,9 +105,9 @@ abstract class AbstractDataFormDocument
     }
 
     /**
-     * Get whenUpdated
+     * Get when_updated
      *
-     * @return date $whenUpdated
+     * @return \DateTime
      */
     public function getWhenUpdated()
     {

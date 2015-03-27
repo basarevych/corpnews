@@ -83,11 +83,12 @@ class Profile extends AbstractDataFormDocument
      */
     public function toArray()
     {
-        $dt = $this->getValueDatetime();
+        $whenUpdated = $this->getWhenUpdated();
+
         return array(
             'id'                => $this->getId(),
             'client_email'      => $this->getClientEmail(),
-            'when_updated'      => $this->getWhenUpdated(),
+            'when_updated'      => $whenUpdated ? $whenUpdated->getTimestamp() : null,
             'first_name'        => $this->getFisrtName(),
             'middle_name'       => $this->getMiddleName(),
             'last_name'         => $this->getLastName(),
@@ -98,10 +99,10 @@ class Profile extends AbstractDataFormDocument
     }
 
     /**
-     * Set firstName
+     * Set first_name
      *
      * @param string $firstName
-     * @return self
+     * @return Profile
      */
     public function setFirstName($firstName)
     {
@@ -110,9 +111,9 @@ class Profile extends AbstractDataFormDocument
     }
 
     /**
-     * Get firstName
+     * Get first_name
      *
-     * @return string $firstName
+     * @return string
      */
     public function getFirstName()
     {
@@ -120,10 +121,10 @@ class Profile extends AbstractDataFormDocument
     }
 
     /**
-     * Set middleName
+     * Set middle_name
      *
      * @param string $middleName
-     * @return self
+     * @return Profile
      */
     public function setMiddleName($middleName)
     {
@@ -132,9 +133,9 @@ class Profile extends AbstractDataFormDocument
     }
 
     /**
-     * Get middleName
+     * Get middle_name
      *
-     * @return string $middleName
+     * @return string
      */
     public function getMiddleName()
     {
@@ -142,10 +143,10 @@ class Profile extends AbstractDataFormDocument
     }
 
     /**
-     * Set lastName
+     * Set last_name
      *
      * @param string $lastName
-     * @return self
+     * @return Profile
      */
     public function setLastName($lastName)
     {
@@ -154,9 +155,9 @@ class Profile extends AbstractDataFormDocument
     }
 
     /**
-     * Get lastName
+     * Get last_name
      *
-     * @return string $lastName
+     * @return string
      */
     public function getLastName()
     {
@@ -166,8 +167,8 @@ class Profile extends AbstractDataFormDocument
     /**
      * Set gender
      *
-     * @param boolean $gender
-     * @return self
+     * @param string $gender
+     * @return Profile
      */
     public function setGender($gender)
     {
@@ -178,7 +179,7 @@ class Profile extends AbstractDataFormDocument
     /**
      * Get gender
      *
-     * @return boolean $gender
+     * @return string
      */
     public function getGender()
     {
@@ -189,7 +190,7 @@ class Profile extends AbstractDataFormDocument
      * Set company
      *
      * @param string $company
-     * @return self
+     * @return Profile
      */
     public function setCompany($company)
     {
@@ -200,7 +201,7 @@ class Profile extends AbstractDataFormDocument
     /**
      * Get company
      *
-     * @return string $company
+     * @return string
      */
     public function getCompany()
     {
@@ -211,7 +212,7 @@ class Profile extends AbstractDataFormDocument
      * Set position
      *
      * @param string $position
-     * @return self
+     * @return Profile
      */
     public function setPosition($position)
     {
@@ -222,7 +223,7 @@ class Profile extends AbstractDataFormDocument
     /**
      * Get position
      *
-     * @return string $position
+     * @return string
      */
     public function getPosition()
     {
