@@ -19,12 +19,12 @@ use Doctrine\ORM\EntityManager;
 use Application\Validator\EntityNotExists;
 
 /**
- * Create/Edit group entity form
+ * Create/Edit tag entity form
  *
  * @category    Admin
  * @package     Form
  */
-class EditGroup extends Form
+class EditTag extends Form
 {
     /**
      * The input filter
@@ -55,7 +55,7 @@ class EditGroup extends Form
      * @param null|int|string  $name        Optional name
      * @param array            $options     Optional options
      */
-    public function __construct($em, $id = null, $name = 'edit-group', $options = array())
+    public function __construct($em, $id = null, $name = 'edit-tag', $options = array())
     {
         $this->em = $em;
         $this->id = $id;
@@ -74,6 +74,10 @@ class EditGroup extends Form
         $name = new Element\Text('name');
         $name->setLabel('Name');
         $this->add($name);
+
+        $descr = new Element\Textarea('descr');
+        $descr->setLabel('Description');
+        $this->add($descr);
     }
 
     /**
@@ -102,7 +106,7 @@ class EditGroup extends Form
 
         $entityParams = [
             'entityManager' => $this->em,
-            'entity'        => 'Application\Entity\Group',
+            'entity'        => 'Application\Entity\Tag',
             'property'      => 'name',
         ];
         if ($this->id)
@@ -116,6 +120,13 @@ class EditGroup extends Form
         $name->getValidatorChain()
              ->attach(new EntityNotExists($entityParams));
         $filter->add($name);
+
+        $descr = new Input('descr');
+        $descr->setRequired(false)
+              ->setBreakOnFailure(false)
+              ->getFilterChain()
+              ->attach(new Filter\StringTrim());
+        $filter->add($descr);
 
         $this->inputFilter = $filter;
         return $filter;
