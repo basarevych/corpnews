@@ -1,0 +1,125 @@
+<?php
+
+    $this->layout()->activePage = 'tag';
+
+?>
+<div class="container">
+    <div class="row">
+        <div class="col-sm-offset-3 col-sm-9">
+            <h1><span id="page-title"><?= $this->translate('Campaign tags') ?></span></h1>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-sm-3">
+            <div data-sidebar="sm">
+                <div id="actions-panel" class="panel panel-default">
+                    <div class="panel-heading">
+                        <h3 class="panel-title"><?= $this->translate('Table actions') ?></h3>
+                    </div>
+                    <div class="panel-body button-panel">
+                        <button id="create-button" class="btn btn-primary" onclick="createTag()">
+                            <?= $this->translate('Create tag') ?>
+                        </button>
+                        <hr>
+                        <button id="delete-button" class="btn btn-default disabled" disabled="disabled" onclick="deleteTag()">
+                            <?= $this->translate('Delete tag') ?>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-sm-9">
+            <div id="table-tags"></div>
+            <script>
+                $('#table-tags').dynamicTable({
+                    url: '<?= $this->basePath('/admin/tag/tag-table') ?>',
+                    row_id_column: 'id',
+                    sort_column: 'name',
+                    sort_dir: 'asc',
+                    loader_image: '<?= $this->basePath('/img/loader.gif') ?>',
+                    strings: dynamicTableStrings,
+                    mapper: function (row) {
+                        return row;
+                    },
+                });
+                $('#table-tags').on('dt.selected', function () {
+                    updateActions();
+                });
+                $('#table-tags').on('dt.deselected', function () {
+                    updateActions();
+                });
+            </script>
+        <div>
+    </div>
+</div>
+
+<script>
+    function updateActions() {
+        var table = $('#table-tags').data('dynamicTable');
+        var selected = table.getSelected();
+
+        if (selected == 'all' || selected.length) {
+            $('#delete-button')
+                .removeAttr('disabled')
+                .removeClass('disabled');
+        } else {
+            $('#delete-button')
+                .attr('disabled', 'disabled')
+                .addClass('disabled');
+        }
+    }
+
+    function reloadTable() {
+        var table = $('#table-tags').data('dynamicTable');
+        table.refresh();
+    }
+
+    function createTag() {
+        $.ajax({
+            url: '<?= $this->basePath('/admin/tag/edit-tag') ?>',
+            success: function (html) {
+                var modal = $('#modal-form');
+                modal.find('.modal-title').text('<?= $this->translate('Create tag') ?>');
+                modal.find('button[type=submit]').text('<?= $this->translate('Create') ?>');
+                modal.find('.modal-body').html(html);
+            }
+        });
+    }
+
+    function editTag(id) {
+        $.ajax({
+            url: '<?= $this->basePath('/admin/tag/edit-tag') ?>',
+            data: {
+                id: id
+            },
+            success: function (html) {
+                var modal = $('#modal-form');
+                modal.find('.modal-title').text('<?= $this->translate('Edit tag') ?>');
+                modal.find('button[type=submit]').text('<?= $this->translate('Save changes') ?>');
+                modal.find('.modal-body').html(html);
+            }
+        });
+    }
+
+    function deleteTag() {
+        var table = $('#table-tags').data('dynamicTable');
+        var selected = table.getSelected();
+        if (selected.length == 0)
+            return;
+
+        $.ajax({
+            url: '<?= $this->basePath('/admin/tag/delete-tag') ?>',
+            data: {
+                id: selected == 'all' ? '_all' : selected.join(',')
+            },
+            success: function (html) {
+                var modal = $('#modal-form');
+                modal.find('.modal-title').text('<?= $this->translate('Delete tag') ?>');
+                modal.find('button[type=submit]').text('<?= $this->translate('Delete') ?>');
+                modal.find('.modal-body').html(html);
+            }
+        });
+    }
+</script>

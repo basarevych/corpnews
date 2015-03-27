@@ -15,6 +15,7 @@ return [
             'Admin\Controller\Outgoing' => 'Admin\Controller\OutgoingController',
             'Admin\Controller\Setting' => 'Admin\Controller\SettingController',
             'Admin\Controller\Syslog' => 'Admin\Controller\SyslogController',
+            'Admin\Controller\Tag' => 'Admin\Controller\TagController',
         ],
     ],
 
