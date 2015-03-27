@@ -37,7 +37,7 @@ $descr = $form->get('descr');
     <?php endforeach ?>
 
     <?php $valid = count($name->getMessages()) == 0 ?>
-    <div class="form-tag <?= $valid ? '' : 'has-error' ?>">
+    <div class="form-group <?= $valid ? '' : 'has-error' ?>">
         <label class="col-sm-4 control-label" for="<?= $name->getName() ?>">
             <?= $this->escapeHtml($this->translate($name->getLabel())) ?>:
             <span class="required-marker text-danger">
@@ -63,7 +63,7 @@ $descr = $form->get('descr');
     </div>
 
     <?php $valid = count($descr->getMessages()) == 0 ?>
-    <div class="form-tag <?= $valid ? '' : 'has-error' ?>">
+    <div class="form-group <?= $valid ? '' : 'has-error' ?>">
         <label class="col-sm-4 control-label" for="<?= $descr->getName() ?>">
             <?= $this->escapeHtml($this->translate($descr->getLabel())) ?>:
         </label>
