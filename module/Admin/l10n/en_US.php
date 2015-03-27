@@ -9,6 +9,7 @@ return [
     'Campaign' => 'Campaign',
     'Client groups' => 'Client groups',
     'Clients' => 'Clients',
+    'Campaign tags' => 'Campaign tags',
     'Mail campaigns' => 'Mail campaigns',
     'Data forms' => 'Data forms',
     'System log' => 'System log',
@@ -95,6 +96,12 @@ return [
     'ALERT_CAMPAIGN_NOT_TESTED' => 'Campaign has not been tested!',
     'CAMPAIGN_ALREADY_LAUNCHED' => 'Campaign already launched',
     'CONFIRM_DELETE_CAMPAIGN' => 'Delete selected campaign(s)?',
+
+    // TagController
+    'Description' => 'Description',
+    'Create tag' => 'Create tag',
+    'Delete tag' => 'Delete tag',
+    'CONFIRM_DELETE_TAG' => 'Delete selected tag(s)?',
 
     // DocumentController
     'Available data forms' => 'Available data forms',

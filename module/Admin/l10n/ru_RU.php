@@ -9,6 +9,7 @@ return [
     'Campaign' => 'Кампания',
     'Client groups' => 'Группы клиентов',
     'Clients' => 'Клиенты',
+    'Campaign tags' => 'Теги кампаний',
     'Mail campaigns' => 'Почтовые кампании',
     'Data forms' => 'Формы данных',
     'System log' => 'Системный журнал',
@@ -95,6 +96,12 @@ return [
     'ALERT_CAMPAIGN_NOT_TESTED' => 'Кампания не была протестирована!',
     'CAMPAIGN_ALREADY_LAUNCHED' => 'Кампания уже запущена',
     'CONFIRM_DELETE_CAMPAIGN' => 'Удалить выбранную кампанию (кампании)?',
+
+    // TagController
+    'Description' => 'Описание',
+    'Create tag' => 'Создать тег',
+    'Delete tag' => 'Удалить тег',
+    'CONFIRM_DELETE_TAG' => 'Удалить выбранный тег (теги)?',
 
     // DocumentController
     'Available data forms' => 'Доступные формы данных',
