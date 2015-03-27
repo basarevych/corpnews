@@ -93,6 +93,16 @@ class Client
     protected $secrets;
 
     /**
+     * Ignored tag entities
+     *
+     * @var ArrayCollection
+     *
+     * @ORM\ManyToMany(targetEntity="Tag", inversedBy="clients")
+     * @ORM\JoinTable(name="client_ignored_tags")
+     */
+    protected $ignored_tags;
+
+    /**
      * Constructor
      */
     public function __construct()
@@ -100,6 +110,7 @@ class Client
         $this->groups = new ArrayCollection();
         $this->letters = new ArrayCollection();
         $this->secrets = new ArrayCollection();
+        $this->ignored_tags = new ArrayCollection();
     }
 
     /**
@@ -306,5 +317,42 @@ class Client
     public function getSecrets()
     {
         return $this->secrets;
+    }
+
+    /**
+     * Add ignored tag
+     *
+     * @param Tag $ignoredTag
+     *
+     * @return Client
+     */
+    public function addIgnoredTag(Tag $ignoredTag)
+    {
+        $this->ignored_tags[] = $ignoredTag;
+
+        return $this;
+    }
+
+    /**
+     * Remove ignored tag
+     *
+     * @param Tag $ignoredTag
+     * @return Client
+     */
+    public function removeIgnoredTag(Tag $ignoredTag)
+    {
+        $this->ignored_tags->removeElement($ignoredTag);
+
+        return this;
+    }
+
+    /**
+     * Get ignored tags
+     *
+     * @return ArrayCollection
+     */
+    public function getIgnoredTags()
+    {
+        return $this->ignored_tags;
     }
 }
