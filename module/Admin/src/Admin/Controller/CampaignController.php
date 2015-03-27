@@ -79,6 +79,7 @@ class CampaignController extends AbstractActionController
         $sl = $this->getServiceLocator();
         $em = $sl->get('Doctrine\ORM\EntityManager');
         $repo = $em->getRepository('Application\Entity\Campaign');
+        $task = $sl->get('TaskDaemon');
 
         $campaign = $repo->find($id);
         if (!$campaign)
@@ -106,6 +107,8 @@ class CampaignController extends AbstractActionController
                     $campaign->setStatus(CampaignEntity::STATUS_QUEUED);
                     $em->persist($campaign);
                     $em->flush();
+
+                    $task->getDaemon()->runTask('queued_campaign', $campaign->getId());
                 }
 
                 $script = "$('#modal-form').modal('hide'); reloadTable()";
@@ -120,6 +123,7 @@ class CampaignController extends AbstractActionController
             'script'    => $script,
             'form'      => $form,
             'messages'  => $messages,
+            'noGroups'  => count($campaign->getGroups()) == 0,
             'ready'     => in_array($campaign->getStatus(), $ready),
             'tested'    => in_array($campaign->getStatus(), $tested),
         ]);

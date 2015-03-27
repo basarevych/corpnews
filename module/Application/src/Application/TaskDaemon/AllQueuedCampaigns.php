@@ -36,6 +36,6 @@ class AllQueuedCampaigns extends ZfTask
                         ->findBy([ 'status' => CampaignEntity::STATUS_QUEUED ]);
 
         foreach ($campaigns as $campaign)
-            $daemon->runTask('queued_campaign', $campaign->getId(), true);
+            $daemon->runTask('queued_campaign', $campaign->getId());
      }
 }

@@ -40,6 +40,9 @@ class QueuedCampaign extends ZfTask
         if (!$campaign)
             return;
 
+        if ($campaign->getStatus() != CampaignEntity::STATUS_QUEUED)
+            return;
+
         $error = false;
         foreach ($campaign->getTemplates() as $template) {
             $clients = $em->getRepository('Application\Entity\Client')
@@ -98,6 +101,10 @@ class QueuedCampaign extends ZfTask
         }
 
         if (!$error) {
+            $campaign->setStatus(CampaignEntity::STATUS_STARTED);
+            $em->persist($campaign);
+            $em->flush();
+
             $logger->log(
                 SyslogDocument::LEVEL_INFO,
                 'INFO_CAMPAIGN_STARTED',

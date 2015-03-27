@@ -84,6 +84,9 @@ class CampaignControllerTest extends AbstractHttpControllerTestCase
         $this->group = new GroupEntity();
         $this->group->setName('group');
 
+        $this->campaign->addGroup($this->group);
+        $this->group->addCampaign($this->campaign);
+
         $reflection = new \ReflectionClass(get_class($this->group));
         $property = $reflection->getProperty('id');
         $property->setAccessible(true);

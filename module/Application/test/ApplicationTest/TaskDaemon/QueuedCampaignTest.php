@@ -71,7 +71,7 @@ class QueuedCampaignTest extends AbstractControllerTestCase
 
         $campaign = new CampaignEntity();
         $campaign->setName('foobar');
-        $campaign->setStatus(CampaignEntity::STATUS_CREATED);
+        $campaign->setStatus(CampaignEntity::STATUS_QUEUED);
         $this->setProp($campaign, 'id', 42);
 
         $campaign->addTemplate($template);
@@ -99,7 +99,7 @@ class QueuedCampaignTest extends AbstractControllerTestCase
         $this->sl->setService('Logger', $this->logger);
     }
 
-    public function testTaskFindsNewLetters()
+    public function testTaskFindsNewLettersAndStarts()
     {
         $persisted = [];
         $this->em->expects($this->any())
@@ -112,9 +112,10 @@ class QueuedCampaignTest extends AbstractControllerTestCase
         $task->setServiceLocator($this->sl);
         $task->run();
 
-        $this->assertEquals(2, count($persisted), "Two entities should have been persisted");
+        $this->assertEquals(3, count($persisted), "Two entities should have been persisted");
         $this->assertEquals('foo@bar', $persisted[0]->getToAddress(), "Email is wrong");
         $this->assertEquals('baz@bar', $persisted[1]->getToAddress(), "Email is wrong");
+        $this->assertEquals(CampaignEntity::STATUS_STARTED, $persisted[2]->getStatus(), "Campaign was not launched");
     }
 
     protected function setProp($object, $property, $value)

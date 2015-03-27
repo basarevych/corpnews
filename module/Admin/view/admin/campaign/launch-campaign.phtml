@@ -13,7 +13,9 @@ $id = $form->get('id');
 
 ?>
 
-<?php if (!$this->ready): ?>
+<?php if ($this->noGroups): ?>
+    <p><?= $this->translate('CAMPAIGN_NO_GROUPS') ?></p>
+<?php elseif (!$this->ready): ?>
     <p><?= $this->translate('CAMPAIGN_ALREADY_LAUNCHED') ?></p>
 <?php else: ?>
     <form class="form-horizontal" name="<?= $form->getName() ?>" onsubmit="return false"
@@ -44,7 +46,7 @@ $id = $form->get('id');
 <script>
     var modal = $('#modal-form');
 
-    <?php if (!$this->ready): ?>
+    <?php if ($this->noGroups || !$this->ready): ?>
         modal.find('button[type="submit"]').hide();
         modal.on('hide.bs.modal', function() {
             modal.find('button[type="submit"]').show();

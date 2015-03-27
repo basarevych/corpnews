@@ -58,12 +58,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/basarevych/task-daemon.git",
-                "reference": "03335aa22df361214c573a1463a715261fefce76"
+                "reference": "d1c675d577725956e3d1be32527f645dc04c953b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/basarevych/task-daemon/zipball/03335aa22df361214c573a1463a715261fefce76",
-                "reference": "03335aa22df361214c573a1463a715261fefce76",
+                "url": "https://api.github.com/repos/basarevych/task-daemon/zipball/d1c675d577725956e3d1be32527f645dc04c953b",
+                "reference": "d1c675d577725956e3d1be32527f645dc04c953b",
                 "shasum": ""
             },
             "require": {
@@ -95,7 +95,7 @@
                 "daemon",
                 "php"
             ],
-            "time": "2015-03-26 03:12:09"
+            "time": "2015-03-27 04:28:23"
         },
         {
             "name": "doctrine/annotations",
