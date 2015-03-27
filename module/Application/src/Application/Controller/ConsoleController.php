@@ -40,6 +40,11 @@ class ConsoleController extends AbstractConsoleController
             fclose($fpSingleton);
             return "Another cron job is running" . PHP_EOL;
         }
+
+        $sl = $this->getServiceLocator();
+        $task = $sl->get('TaskDaemon');
+        $task->getDaemon()->start();
+        $task->getDaemon()->runTask('check_email');
     }
 
     /**
