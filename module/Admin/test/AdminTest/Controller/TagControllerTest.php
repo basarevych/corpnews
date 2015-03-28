@@ -200,13 +200,15 @@ class TagControllerTest extends AbstractHttpControllerTestCase
         $postParams = [
             'security' => $security,
             'id' => 42,
-            'name' => 'test'
+            'name' => ' test ',
+            'descr' => ' descr ',
         ];
 
         $this->dispatch('/admin/tag/edit-tag', HttpRequest::METHOD_POST, $postParams);
         $this->assertResponseStatusCode(200);
 
         $this->assertEquals('test', $persisted->getName(), "Name is incorrect");
+        $this->assertEquals('descr', $persisted->getDescr(), "Descr is incorrect");
     }
 
     public function testDeleteTagActionCanBeAccessed()

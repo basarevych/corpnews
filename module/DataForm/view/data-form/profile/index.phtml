@@ -12,6 +12,8 @@
     $position = $form->get('position');
     $submit = $form->get('submit');
 
+    $this->layout()->email = $this->email;
+
 ?>
 
 <form role="form" class="form-horizontal"
@@ -26,12 +28,6 @@
         </div>
         <div class="col-sm-8">
             <h3><?= $this->translate($this->title) ?></h3>
-        </div>
-    </div>
-
-    <div class="form-group">
-        <div class="col-sm-8 col-sm-offset-4">
-            <em><?= $this->escapeHtml($this->email) ?></em>
         </div>
     </div>
 
@@ -64,7 +60,7 @@
                 <?php if (!$valid): ?>
                     <ul class="list-unstyled icon-list error-list">
                     <?php foreach ($firstName->getMessages() as $msg): ?>
-                        <li><?= $this->escapeHtml($this->translate($msg)) ?></li>
+                        <li><?= $this->escapeHtml($msg) ?></li>
                     <?php endforeach ?>
                     </ul>
                 <?php endif ?>
@@ -88,7 +84,7 @@
                 <?php if (!$valid): ?>
                     <ul class="list-unstyled icon-list error-list">
                     <?php foreach ($middleName->getMessages() as $msg): ?>
-                        <li><?= $this->escapeHtml($this->translate($msg)) ?></li>
+                        <li><?= $this->escapeHtml($msg) ?></li>
                     <?php endforeach ?>
                     </ul>
                 <?php endif ?>
@@ -112,7 +108,7 @@
                 <?php if (!$valid): ?>
                     <ul class="list-unstyled icon-list error-list">
                     <?php foreach ($lastName->getMessages() as $msg): ?>
-                        <li><?= $this->escapeHtml($this->translate($msg)) ?></li>
+                        <li><?= $this->escapeHtml($msg) ?></li>
                     <?php endforeach ?>
                     </ul>
                 <?php endif ?>
@@ -143,7 +139,7 @@
                 <?php if (!$valid): ?>
                     <ul class="list-unstyled icon-list error-list">
                     <?php foreach ($gender->getMessages() as $msg): ?>
-                        <li><?= $this->escapeHtml($this->translate($msg)) ?></li>
+                        <li><?= $this->escapeHtml($msg) ?></li>
                     <?php endforeach ?>
                     </ul>
                 <?php endif ?>
@@ -167,7 +163,7 @@
                 <?php if (!$valid): ?>
                     <ul class="list-unstyled icon-list error-list">
                     <?php foreach ($company->getMessages() as $msg): ?>
-                        <li><?= $this->escapeHtml($this->translate($msg)) ?></li>
+                        <li><?= $this->escapeHtml($msg) ?></li>
                     <?php endforeach ?>
                     </ul>
                 <?php endif ?>
@@ -191,7 +187,7 @@
                 <?php if (!$valid): ?>
                     <ul class="list-unstyled icon-list error-list">
                     <?php foreach ($position->getMessages() as $msg): ?>
-                        <li><?= $this->escapeHtml($this->translate($msg)) ?></li>
+                        <li><?= $this->escapeHtml($msg) ?></li>
                     <?php endforeach ?>
                     </ul>
                 <?php endif ?>

@@ -66,6 +66,9 @@ $descr = $form->get('descr');
     <div class="form-group <?= $valid ? '' : 'has-error' ?>">
         <label class="col-sm-4 control-label" for="<?= $descr->getName() ?>">
             <?= $this->escapeHtml($this->translate($descr->getLabel())) ?>:
+            <span class="required-marker text-danger">
+                <?= $this->translate('REQUIRED FIELD') ?>
+            </span>
         </label>
         <div class="col-sm-8">
             <textarea class="form-control"
@@ -73,6 +76,7 @@ $descr = $form->get('descr');
                    data-on-blur="validateFormField($('#modal-form [name=<?= $descr->getName() ?>]'))"
                    ><?= $this->escapeHtml($descr->getValue()) ?></textarea>
             <div class="help-block">
+                <p><?= $this->translate('TAG_DESCRIPTION_HELP') ?></p>
                 <?php if (!$valid): ?>
                     <ul class="list-unstyled icon-list error-list">
                     <?php foreach ($descr->getMessages() as $msg): ?>

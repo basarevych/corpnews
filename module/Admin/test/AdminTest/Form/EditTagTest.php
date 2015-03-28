@@ -56,6 +56,7 @@ class EditTagTest extends AbstractControllerTestCase
         $this->assertGreaterThan(0, count($form->get('security')->getMessages()), "Security should have errors");
         $this->assertGreaterThan(0, count($form->get('id')->getMessages()), "ID should have errors");
         $this->assertGreaterThan(0, count($form->get('name')->getMessages()), "Name should have errors");
+        $this->assertGreaterThan(0, count($form->get('descr')->getMessages()), "Descr should have errors");
     }
 
     public function testValidForm()
@@ -65,7 +66,8 @@ class EditTagTest extends AbstractControllerTestCase
         $input = [
             'security' => $form->get('security')->getValue(),
             'id' => 42,
-            'name' => ' example '
+            'name' => ' example ',
+            'descr' => ' descr ',
         ];
 
         $form->setData($input);
@@ -74,5 +76,6 @@ class EditTagTest extends AbstractControllerTestCase
 
         $this->assertEquals(true, $valid, "Form should be reported as valid");
         $this->assertEquals('example', $output['name'], "Name should be trimmed");
+        $this->assertEquals('descr', $output['descr'], "Descr should be trimmed");
     }
 }

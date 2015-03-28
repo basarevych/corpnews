@@ -122,7 +122,7 @@ class EditTag extends Form
         $filter->add($name);
 
         $descr = new Input('descr');
-        $descr->setRequired(false)
+        $descr->setRequired(true)
               ->setBreakOnFailure(false)
               ->getFilterChain()
               ->attach(new Filter\StringTrim());

@@ -290,7 +290,7 @@ class ClientController extends AbstractActionController
                 'visible'   => true,
             ],
             'when_unsubscribed' => [
-                'title'     => $translate('Unsubscribed from any'),
+                'title'     => $translate('Unsubscribed'),
                 'sql_id'    => 'c.when_unsubscribed',
                 'type'      => Table::TYPE_DATETIME,
                 'filters'   => [ Table::FILTER_BETWEEN, Table::FILTER_NULL ],

@@ -1,0 +1,136 @@
+<?php
+
+    $form = $this->form;
+    $form->prepare();
+
+    $security = $form->get('security');
+    $subscribe = $form->get('subscribe');
+    $list = $form->has('list') ? $form->get('list') : null;
+    $tags = $form->has('tags') ? $form->get('tags') : null;
+    $submit = $form->get('submit');
+
+    $this->layout()->email = $this->email;
+?>
+
+<form role="form" class="form-horizontal"
+      method="<?= $form->getAttribute('method') ?>">
+
+    <input type="hidden"
+           name="<?= $security->getName() ?>"
+           value="<?= $security->getValue() ?>">
+
+    <?php if ($list): ?>
+        <input type="hidden"
+               name="<?= $list->getName() ?>"
+               value="<?= $list->getValue() ?>">
+    <?php endif ?>
+
+    <div class="form-group page-header">
+        <div class="col-sm-4">
+        </div>
+        <div class="col-sm-8">
+            <h3><?= $this->translate($this->title) ?></h3>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <?php foreach (array_merge($this->messages, $security->getMessages()) as $msg): ?>
+            <div class="alert alert-danger">
+                <?= $this->escapeHtml($this->translate($msg)) ?>
+            </div>
+        <?php endforeach ?>
+        <?php if ($this->success): ?>
+            <div class="alert alert-success">
+                <?= $this->escapeHtml($this->translate('Data saved')) ?>
+            </div>
+        <?php endif ?>
+    </div>
+
+    <?php $valid = count($subscribe->getMessages()) == 0 ?>
+    <div class="form-group <?= $valid ?: 'has-error' ?>">
+            <label class="col-sm-4 control-label"
+                   for="<?= $subscribe->getName() ?>">
+            <?= $this->escapeHtml($this->translate($subscribe->getLabel())) ?>:
+        </label>
+        <div class="col-sm-8">
+            <?php foreach ($subscribe->getValueOptions() as $value => $label): ?>
+                <div class="checkbox">
+                    <label>
+                        <input type="checkbox"
+                               name="<?= $subscribe->getName() ?>[]"
+                               value="<?= $this->escapeHtml($value) ?>"
+                               <?= in_array($value, $subscribe->getValue()) ? 'checked="checked"' : '' ?>
+                            <?php if ($tags): ?>
+                               data-on-enter="$('input[name=<?= $tags->getName() ?>]').focus()"
+                            <?php else: ?>
+                               data-on-enter="$('form').submit()"
+                            <?php endif ?>
+                               >
+                        <?= $this->translate($label) ?>
+                    </label>
+                </div>
+            <?php endforeach ?>
+            <div class="help-block">
+                <?php if (!$valid): ?>
+                    <ul class="list-unstyled icon-list error-list">
+                    <?php foreach ($subscribe->getMessages() as $msg): ?>
+                        <li><?= $this->escapeHtml($msg) ?></li>
+                    <?php endforeach ?>
+                    </ul>
+                <?php endif ?>
+            </div>
+        </div>
+    </div>
+
+    <?php if ($tags): ?>
+        <?php $valid = count($tags->getMessages()) == 0 ?>
+        <div class="form-group <?= $valid ?: 'has-error' ?>">
+                <label class="col-sm-4 control-label"
+                       for="<?= $tags->getName() ?>">
+                <?= $this->escapeHtml($this->translate($tags->getLabel())) ?>:
+            </label>
+            <div class="col-sm-8">
+                <?php foreach ($tags->getValueOptions() as $value => $label): ?>
+                    <div class="checkbox">
+                        <label>
+                            <input type="checkbox"
+                                   name="<?= $tags->getName() ?>[]"
+                                   value="<?= $this->escapeHtml($value) ?>"
+                                   <?= in_array($value, $tags->getValue()) ? 'checked="checked"' : '' ?>
+                                   data-on-enter="$('form').submit()">
+                            <?= $this->translate($label) ?>
+                        </label>
+                    </div>
+                <?php endforeach ?>
+                <div class="help-block">
+                    <?php if (!$valid): ?>
+                        <ul class="list-unstyled icon-list error-list">
+                        <?php foreach ($tags->getMessages() as $msg): ?>
+                            <li><?= $this->escapeHtml($msg) ?></li>
+                        <?php endforeach ?>
+                        </ul>
+                    <?php endif ?>
+                </div>
+            </div>
+        </div>
+    <?php endif ?>
+
+    <div class="form-group">
+        <div class="col-sm-offset-4 col-sm-8">
+            <button class="btn btn-default" type="submit">
+                <?= $this->escapeHtml($this->translate($submit->getLabel())) ?>
+            </button>
+        </div>
+    </div>
+</form>
+
+<script>
+    $(document).ready(function () {
+        var errors = $('form .form-group.has-error input');
+        var all = $('form .form-group input:not(.disabled)');
+        if (errors.length > 0)
+            errors[0].focus();
+        else if (all.length > 0)
+            all[0].focus();
+    });
+</script>

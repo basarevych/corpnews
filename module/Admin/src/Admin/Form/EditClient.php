@@ -79,7 +79,7 @@ class EditClient extends Form
         $translate = $sl->get('viewhelpermanager')->get('translate');
 
         $whenUnsubscribed = new Element\DateTime('when_unsubscribed');
-        $whenUnsubscribed->setLabel('Unsubscribed from any');
+        $whenUnsubscribed->setLabel('Unsubscribed');
         $whenUnsubscribed->setFormat($translate('GENERIC_DATETIME_FORMAT'));
         $whenUnsubscribed->setAttribute('step', 'any');
         $this->add($whenUnsubscribed);

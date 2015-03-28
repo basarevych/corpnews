@@ -89,6 +89,11 @@ body.form {
     text-align: center;
 }
 
+.form-email {
+    position: absolute;
+    top: 15px;
+    left: 25px;
+}
 .form-locale {
     position: absolute;
     top: 15px;

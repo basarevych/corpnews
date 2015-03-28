@@ -52,7 +52,7 @@ return [
     'Edit client' => 'Edit client',
     'Delete client' => 'Delete client',
     'Email address' => 'Email address',
-    'Unsubscribed from any' => 'Unsubscribed from any',
+    'Unsubscribed' => 'Unsubscribed',
     'Email bounced' => 'Email bounced',
     'Groups' => 'Groups',
     'CANNOT_EDIT_SYSTEM_GROUP' => 'Can not edit system group',
@@ -101,6 +101,7 @@ return [
     'Description' => 'Description',
     'Create tag' => 'Create tag',
     'Delete tag' => 'Delete tag',
+    'TAG_DESCRIPTION_HELP' => 'This is what client will see when unsubscribing',
     'CONFIRM_DELETE_TAG' => 'Delete selected tag(s)?',
 
     // DocumentController

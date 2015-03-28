@@ -4,7 +4,7 @@ return [
     'controllers' => [
         'invokables' => [
             'DataForm\Controller\Profile' => 'DataForm\Controller\ProfileController',
-            'DataForm\Controller\Unsubscribe' => 'DataForm\Controller\UnsubscribeController',
+            'DataForm\Controller\Subscription' => 'DataForm\Controller\SubscriptionController',
         ],
     ],
 

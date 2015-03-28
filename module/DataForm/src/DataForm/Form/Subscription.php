@@ -66,20 +66,21 @@ class Subscription extends Form
         $subscribe = new Element\MultiCheckbox('subscribe');
         $subscribe->setLabel('Subscribe');
         $subscribe->setValueOptions([ 'all' => 'UNSUBSCRIBE_WANT_TO_RECEIVE' ]);
-        $subscribe->setValue([ 'all' ]);
         $this->add($subscribe);
 
         if (count($options)) {
             $list = new Element\Hidden('list');
-            $list->setValue(join(',', array_keys($options)));
             $this->add($list);
 
             $tags = new Element\MultiCheckbox('tags');
             $tags->setLabel('Themes');
             $tags->setValueOptions($options);
-            $tags->setValue(array_keys($options));
             $this->add($tags);
         }
+
+        $submit = new Element\Submit('submit');
+        $submit->setLabel('Save changes');
+        $this->add($submit);
     }
 
     /**
