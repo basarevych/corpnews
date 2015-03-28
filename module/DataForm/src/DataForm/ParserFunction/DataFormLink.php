@@ -145,6 +145,9 @@ class DataFormLink implements ServiceLocatorAwareInterface,
         $formName = $params[0];
         $linkText = $params[1];
 
+        if (!in_array($formName, $dfm->getNames()))
+            throw new \Exception('Invalid form name');
+
         $campaign = $template->getCampaign();
         $secret = $em->getRepository('Application\Entity\Secret')
                      ->findOneBy([

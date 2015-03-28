@@ -18,6 +18,24 @@ class DataFormLinkTest extends AbstractHttpControllerTestCase
 
         parent::setUp();
 
+        $this->sl = $this->getApplicationServiceLocator();
+
+        $config = $this->sl->get('Config');
+        $config['corpnews'] = [
+            'server' => [
+                'base_url' => 'https://some.server:8000/some/path',
+            ],
+            'data_forms' => [
+                'profile' => [
+                    'title'     => 'Profile',
+                    'url'       => '/data-form/profile',
+                    'document'  => 'DataForm\Document\Profile',
+                    'form'      => 'DataForm\Form\Profile',
+                    'table'     => 'DataForm\Table\Profile',
+                ],
+            ],
+        ];
+
         $this->doc = new ProfileDocument();
 
         $this->em = $this->getMockBuilder('Doctrine\ORM\EntityManager')
@@ -40,20 +58,20 @@ class DataFormLinkTest extends AbstractHttpControllerTestCase
 
         $this->dfm = $this->getMockBuilder('Application\Service\DataFormManager')
                           ->disableOriginalConstructor()
-                          ->setMethods([ 'getUrl' ])
+                          ->setMethods([ 'getNames', 'getUrl' ])
                           ->getMock();
 
         $this->dfm->expects($this->any())
-                  ->method('getUrl')
-                  ->will($this->returnValue('/data-form/foobar'));
+                  ->method('getNames')
+                  ->will($this->returnValue([ 'profile' ]));
 
-        $this->sl = $this->getApplicationServiceLocator();
+        $this->dfm->expects($this->any())
+                  ->method('getUrl')
+                  ->will($this->returnValue('/data-form/profile'));
+
         $this->sl->setAllowOverride(true);
         $this->sl->setService('Doctrine\ORM\EntityManager', $this->em);
         $this->sl->setService('DataFormManager', $this->dfm);
-
-        $config = $this->sl->get('Config');
-        $config['corpnews']['server']['base_url'] = 'https://some.server:8000/some/path';
         $this->sl->setService('Config', $config);
     }
 
@@ -79,14 +97,14 @@ class DataFormLinkTest extends AbstractHttpControllerTestCase
         $var->setClient($client);
 
         ob_start();
-        $var->execute([ 'dataform', 'link text' ]);
+        $var->execute([ 'profile', 'link text' ]);
         $output = ob_get_contents();
         ob_end_clean();
 
         $this->assertEquals($campaign, $persisted->getCampaign(), "Campaign is wrong");
         $this->assertEquals($client, $persisted->getClient(), "Client is wrong");
-        $this->assertEquals('dataform', $persisted->getDataForm(), "Data form is wrong");
+        $this->assertEquals('profile', $persisted->getDataForm(), "Data form is wrong");
 
-        $this->assertEquals('<a href="https://some.server:8000/some/path/data-form/foobar?key=' . $persisted->getSecretKey() . '">link text</a>', $output);
+        $this->assertEquals('<a href="https://some.server:8000/some/path/data-form/profile?key=' . $persisted->getSecretKey() . '">link text</a>', $output);
     }
 }
