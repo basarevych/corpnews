@@ -19,7 +19,7 @@
                     </div>
                     <div class="list-group">
                         <?php foreach ($this->dataForms as $name => $title): ?>
-                            <a href="<?= $this->basePath('/form/' . $name) ?>"
+                            <a href="<?= $this->basePath('/admin/document?name=' . $name) ?>"
                                 class="list-group-item <?= $name == $this->current ? 'active' : '' ?>">
                                 <?= $this->translate($title) ?>
                             </a>

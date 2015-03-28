@@ -18,9 +18,6 @@ return [
     'GENERIC_DATETIME_FORMAT' => 'Y-m-d H:i:s P',
     'GENERIC_MOMENT_FORMAT' => 'YYYY-MM-DD HH:mm:ss Z',
 
-    // Data forms
-    'Profile' => 'Профиль',
-
     // Help tours
     'TOUR_TEMPLATE' => '<div class="popover help-tour">'
         . '<div class="arrow"></div>'

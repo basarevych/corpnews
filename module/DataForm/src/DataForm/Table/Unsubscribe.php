@@ -70,8 +70,8 @@ class Unsubscribe extends Table
                 'field_name'    => 'ignored_tags',
                 'type'          => Table::TYPE_STRING,
                 'filters'       => [ Table::FILTER_LIKE, Table::FILTER_NULL ],
-                'sortable'      => true,
-                'visible'       => false,
+                'sortable'      => false,
+                'visible'       => true,
             ],
         ]);
 
