@@ -13,14 +13,14 @@ use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM;
 use DataForm\Document\AbstractDataFormDocument;
 
 /**
- * User unsubscribe document
+ * User subscription document
  * 
  * @category    DataForm
  * @package     Document
  * 
- * @ODM\Document(repositoryClass="DataForm\Document\UnsubscribeRepository")
+ * @ODM\Document(repositoryClass="DataForm\Document\SubscriptionRepository")
  */
-class Unsubscribe extends AbstractDataFormDocument
+class Subscription extends AbstractDataFormDocument
 {
     /**
      * Ignored tags
@@ -52,7 +52,7 @@ class Unsubscribe extends AbstractDataFormDocument
      * Set ignored_tags
      *
      * @param array $ignoredTags
-     * @return Unsubscribe
+     * @return Subscription
      */
     public function setIgnoredTags($ignoredTags)
     {

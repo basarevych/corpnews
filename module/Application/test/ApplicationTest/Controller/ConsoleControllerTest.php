@@ -7,7 +7,7 @@ use Application\Entity\Setting as SettingEntity;
 use Application\Entity\Client as ClientEntity;
 use Application\Entity\Group as GroupEntity;
 use DataForm\Document\Profile as ProfileDocument;
-use DataForm\Document\Unsubscribe as UnsubscribeDocument;
+use DataForm\Document\Subscription as SubscriptionDocument;
 
 class ConsoleDaemonMock
 {
@@ -66,7 +66,7 @@ class ConsoleControllerTest extends AbstractConsoleControllerTestCase
                                   ->setMethods([ 'find', 'findAll' ])
                                   ->getMock();
 
-        $this->repoUnsubscribe = $this->getMockBuilder('DataForm\Document\UnsubscribeRepository')
+        $this->repoSubscription = $this->getMockBuilder('DataForm\Document\SubscriptionRepository')
                                       ->disableOriginalConstructor()
                                       ->setMethods([ 'find', 'findAll' ])
                                       ->getMock();
@@ -75,7 +75,7 @@ class ConsoleControllerTest extends AbstractConsoleControllerTestCase
                  ->method('getRepository')
                  ->will($this->returnValueMap([
                     [ 'DataForm\Document\Profile', $this->repoProfile ],
-                    [ 'DataForm\Document\Unsubscribe', $this->repoUnsubscribe ],
+                    [ 'DataForm\Document\Subscription', $this->repoSubscription ],
                 ]));
 
         $this->task = $this->getMockBuilder('Application\Service\TaskDaemon')
@@ -187,12 +187,12 @@ class ConsoleControllerTest extends AbstractConsoleControllerTestCase
                           ->method('findAll')
                           ->will($this->returnValue([ $docProfile ]));
 
-        $docUnsubscribe = new UnsubscribeDocument();
-        $docUnsubscribe->setId(9000);
+        $docSubscription = new SubscriptionDocument();
+        $docSubscription->setId(9000);
 
-        $this->repoUnsubscribe->expects($this->any())
+        $this->repoSubscription->expects($this->any())
                               ->method('findAll')
-                              ->will($this->returnValue([ $docUnsubscribe ]));
+                              ->will($this->returnValue([ $docSubscription ]));
 
         $createdDocs = [];
         $this->dm->expects($this->any())
@@ -216,13 +216,13 @@ class ConsoleControllerTest extends AbstractConsoleControllerTestCase
         $this->assertEquals(2, count($createdDocs), "One document should have been created");
         $this->assertEquals(true, $createdDocs[0] instanceof ProfileDocument, "Profile is not created");
         $this->assertEquals(42, $createdDocs[0]->getId(), "Incorrect created doc id");
-        $this->assertEquals(true, $createdDocs[1] instanceof UnsubscribeDocument, "Unsubscribe is not created");
+        $this->assertEquals(true, $createdDocs[1] instanceof SubscriptionDocument, "Subscription is not created");
         $this->assertEquals(42, $createdDocs[1]->getId(), "Incorrect created doc id");
 
         $this->assertEquals(2, count($removedDocs), "One document should have been created");
         $this->assertEquals(true, $removedDocs[0] instanceof ProfileDocument, "Profile is not removed");
         $this->assertEquals(9000, $removedDocs[0]->getId(), "Incorrect removed doc id");
-        $this->assertEquals(true, $removedDocs[1] instanceof UnsubscribeDocument, "Unsubscribe is not removed");
+        $this->assertEquals(true, $removedDocs[1] instanceof SubscriptionDocument, "Subscription is not removed");
         $this->assertEquals(9000, $removedDocs[1]->getId(), "Incorrect removed doc id");
     }
 
@@ -252,15 +252,15 @@ class ConsoleControllerTest extends AbstractConsoleControllerTestCase
                           ->method('findAll')
                           ->will($this->returnValue([]));
 
-        $docUnsubscribe = new UnsubscribeDocument();
-        $docUnsubscribe->setId(42);
-        $docUnsubscribe->setClientEmail('bar');
+        $docSubscription = new SubscriptionDocument();
+        $docSubscription->setId(42);
+        $docSubscription->setClientEmail('bar');
 
-        $this->repoUnsubscribe->expects($this->any())
+        $this->repoSubscription->expects($this->any())
                               ->method('find')
-                              ->will($this->returnValue($docUnsubscribe));
+                              ->will($this->returnValue($docSubscription));
 
-        $this->repoUnsubscribe->expects($this->any())
+        $this->repoSubscription->expects($this->any())
                               ->method('findAll')
                               ->will($this->returnValue([]));
 
@@ -270,7 +270,7 @@ class ConsoleControllerTest extends AbstractConsoleControllerTestCase
         $this->assertResponseStatusCode(0);
 
         $this->assertEquals('foo', $docProfile->getClientEmail(), "Incorrect email was set");
-        $this->assertEquals('foo', $docUnsubscribe->getClientEmail(), "Incorrect email was set");
+        $this->assertEquals('foo', $docSubscription->getClientEmail(), "Incorrect email was set");
     }
 
     protected function setProp($object, $property, $value)

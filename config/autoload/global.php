@@ -56,12 +56,12 @@ return [
                 'form'      => 'DataForm\Form\Profile',
                 'table'     => 'DataForm\Table\Profile',
             ],
-            'unsubscribe' => [
-                'title'     => 'Unsubscribe',
-                'url'       => '/data-form/unsubscribe',
-                'document'  => 'DataForm\Document\Unsubscribe',
-                'form'      => 'DataForm\Form\Unsubscribe',
-                'table'     => 'DataForm\Table\Unsubscribe',
+            'subscription' => [
+                'title'     => 'Subscription',
+                'url'       => '/data-form/subscription',
+                'document'  => 'DataForm\Document\Subscription',
+                'form'      => 'DataForm\Form\Subscription',
+                'table'     => 'DataForm\Table\Subscription',
             ],
         ],
         'parser' => [

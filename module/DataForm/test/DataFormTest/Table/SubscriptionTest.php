@@ -5,9 +5,9 @@ namespace DataFormTest\Table;
 use Zend\Json\Json;
 use Zend\Test\PHPUnit\Controller\AbstractHttpControllerTestCase;
 use Application\Entity\Tag as TagEntity;
-use DataForm\Document\Unsubscribe as UnsubscribeDocument;
+use DataForm\Document\Subscription as SubscriptionDocument;
 
-class UnsubscribeQueryMock {
+class SubscriptionQueryMock {
     protected $cursor;
 
     public function __construct($cursor) {
@@ -19,7 +19,7 @@ class UnsubscribeQueryMock {
     }
 }
 
-class UnsubscribeTest extends AbstractHttpControllerTestCase
+class SubscriptionTest extends AbstractHttpControllerTestCase
 {
     public function setUp()
     {
@@ -32,12 +32,12 @@ class UnsubscribeTest extends AbstractHttpControllerTestCase
         $config = $sl->get('Config');
         $config['corpnews'] = [
             'data_forms' => [
-                'unsubscribe' => [
-                    'title'     => 'Unsubscribe',
-                    'url'       => '/data-form/unsubscribe',
-                    'document'  => 'DataForm\Document\Unsubscribe',
-                    'form'      => 'DataForm\Form\Unsubscribe',
-                    'table'     => 'DataForm\Table\Unsubscribe',
+                'subscription' => [
+                    'title'     => 'Subscription',
+                    'url'       => '/data-form/subscription',
+                    'document'  => 'DataForm\Document\Subscription',
+                    'form'      => 'DataForm\Form\Subscription',
+                    'table'     => 'DataForm\Table\Subscription',
                 ],
             ],
         ];
@@ -82,7 +82,7 @@ class UnsubscribeTest extends AbstractHttpControllerTestCase
                     return new \Doctrine\ODM\MongoDB\Mapping\ClassMetadata($name);
                  }));
 
-        $this->repo = $this->getMockBuilder('DataForm\Document\UnsubscribeRepository')
+        $this->repo = $this->getMockBuilder('DataForm\Document\SubscriptionRepository')
                            ->disableOriginalConstructor()
                            ->getMock();
 
@@ -129,7 +129,7 @@ class UnsubscribeTest extends AbstractHttpControllerTestCase
         $sl->setService('Config', $config);
         $sl->setService('doctrine.documentmanager.odm_default', $this->dm);
 
-        $this->table = new \DataForm\Table\Unsubscribe($sl);
+        $this->table = new \DataForm\Table\Subscription($sl);
     }
 
     public function testTableSendsDescription()
@@ -141,7 +141,7 @@ class UnsubscribeTest extends AbstractHttpControllerTestCase
 
     public function testTableSendsData()
     {
-        $doc = new UnsubscribeDocument();
+        $doc = new SubscriptionDocument();
         $doc->setId(42);
         $fixture = [ $doc ];
 

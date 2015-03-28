@@ -10,16 +10,16 @@
 namespace DataForm\Document;
 
 use Doctrine\ODM\MongoDB\DocumentRepository;
-use DataForm\Document\Unsubscribe as UnsubscribeDocument;
+use DataForm\Document\Subscription as SubscriptionDocument;
 
 /**
- * Unsubscribe document repository
+ * Subscription document repository
  * 
  * @category    DataForm
  * @package     Document
  */
-class UnsubscribeRepository extends DocumentRepository
-                            implements DataFormRepositoryInterface
+class SubscriptionRepository extends DocumentRepository
+                             implements DataFormRepositoryInterface
 {
     /**
      * Remove all documents
@@ -29,7 +29,7 @@ class UnsubscribeRepository extends DocumentRepository
         $dm = $this->getDocumentManager();
 
         $qb = $dm->createQueryBuilder();
-        $qb->remove('DataForm\Document\Unsubscribe')
+        $qb->remove('DataForm\Document\Subscription')
            ->getQuery()
            ->execute();
     }

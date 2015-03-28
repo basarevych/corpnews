@@ -81,7 +81,7 @@ class DocumentControllerTest extends AbstractHttpControllerTestCase
     {
         $this->dispatch('/admin/document');
 
-        $this->assertQueryContentRegexAtLeastOnce('a[href="/form/profile"]', '/^.*Profile.*$/m');
+        $this->assertQueryContentRegexAtLeastOnce('a[href="/admin/document?name=profile"]', '/^.*Profile.*$/m');
     }
 
     public function testDocumentTableActionCanBeAccessed()

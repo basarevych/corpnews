@@ -4,9 +4,9 @@ namespace DataFormTest\Form;
 
 use Zend\Test\PHPUnit\Controller\AbstractControllerTestCase;
 use Application\Entity\Tag as TagEntity;
-use DataForm\Form\Unsubscribe as UnsubscribeForm;
+use DataForm\Form\Subscription as SubscriptionForm;
 
-class UnsubscribeTest extends AbstractControllerTestCase
+class SubscriptionTest extends AbstractControllerTestCase
 {
     public function setUp()
     {
@@ -50,7 +50,7 @@ class UnsubscribeTest extends AbstractControllerTestCase
                        ->method('findBy')
                        ->will($this->returnValue([ $this->tag ]));
 
-        $form = new UnsubscribeForm($this->sl);
+        $form = new SubscriptionForm($this->sl);
 
         $input = [
         ];
@@ -69,7 +69,7 @@ class UnsubscribeTest extends AbstractControllerTestCase
                        ->method('findBy')
                        ->will($this->returnValue([]));
 
-        $form = new UnsubscribeForm($this->sl);
+        $form = new SubscriptionForm($this->sl);
 
         $input = [
             'security' => $form->get('security')->getValue(),
@@ -90,7 +90,7 @@ class UnsubscribeTest extends AbstractControllerTestCase
                        ->method('findBy')
                        ->will($this->returnValue([ $this->tag ]));
 
-        $form = new UnsubscribeForm($this->sl);
+        $form = new SubscriptionForm($this->sl);
 
         $input = [
             'security' => $form->get('security')->getValue(),

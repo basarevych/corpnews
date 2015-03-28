@@ -3,13 +3,13 @@
 return [
     // Data forms
     'Profile' => 'Profile',
-    'Unsubscribe' => 'Unsubscribe',
+    'Subscription' => 'Subscription',
 
     // Profile
     'Not specified' => 'Not specified',
     'Data saved' => 'Data saved',
 
-    // Unsubscribe
+    // Subscription
     'Ignored tags' => 'Ignored tags',
     'UNSUBSCRIBE_WANT_TO_RECEIVE' => 'I want to receive newsletter',
 ];

@@ -14,17 +14,17 @@ use DynamicTable\Table;
 use DynamicTable\Adapter\DoctrineMongoODMAdapter;
 
 /**
- * Unsubscribe table
+ * Subscription table
  *
  * @category    Admin
  * @package     Controller
  */
-class Unsubscribe extends Table
+class Subscription extends Table
 {
     /**
      * @const NAME      DataForm name
      */
-    const NAME = 'unsubscribe';
+    const NAME = 'subscription';
 
     /**
      * Constructor

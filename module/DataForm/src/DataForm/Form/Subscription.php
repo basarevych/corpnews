@@ -19,12 +19,12 @@ use Zend\ServiceManager\ServiceLocatorInterface;
 use Doctrine\ORM\EntityManager;
 
 /**
- * Unsubscribe data form
+ * Subscription data form
  *
  * @category    Admin
  * @package     Form
  */
-class Unsubscribe extends Form
+class Subscription extends Form
 {
     /**
      * The input filter
@@ -47,7 +47,7 @@ class Unsubscribe extends Form
      * @param null|int|string         $name      Optional name
      * @param array                   $options   Optional options
      */
-    public function __construct(ServiceLocatorInterface $sl, $name = 'unsubscribe', $options = array())
+    public function __construct(ServiceLocatorInterface $sl, $name = 'subscription', $options = array())
     {
         $this->em = $sl->get('Doctrine\ORM\EntityManager');
 
