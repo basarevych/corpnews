@@ -56,22 +56,8 @@ class DataFormLinkTest extends AbstractHttpControllerTestCase
                  ->method('getRepository')
                  ->will($this->returnValue($this->repo));
 
-        $this->dfm = $this->getMockBuilder('Application\Service\DataFormManager')
-                          ->disableOriginalConstructor()
-                          ->setMethods([ 'getNames', 'getUrl' ])
-                          ->getMock();
-
-        $this->dfm->expects($this->any())
-                  ->method('getNames')
-                  ->will($this->returnValue([ 'profile' ]));
-
-        $this->dfm->expects($this->any())
-                  ->method('getUrl')
-                  ->will($this->returnValue('/data-form/profile'));
-
         $this->sl->setAllowOverride(true);
         $this->sl->setService('Doctrine\ORM\EntityManager', $this->em);
-        $this->sl->setService('DataFormManager', $this->dfm);
         $this->sl->setService('Config', $config);
     }
 
