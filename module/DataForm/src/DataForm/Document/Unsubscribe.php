@@ -27,7 +27,7 @@ class Unsubscribe extends AbstractDataFormDocument
      *
      * @var array
      * 
-     * @ODM\Hash
+     * @ODM\Collection
      */
     protected $ignored_tags;
 

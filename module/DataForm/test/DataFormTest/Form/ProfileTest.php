@@ -14,7 +14,7 @@ class ProfileTest extends AbstractControllerTestCase
         parent::setUp();
     }
 
-    public function testInvalidConfirmForm()
+    public function testInvalidForm()
     {
         $form = new ProfileForm();
 
@@ -28,7 +28,7 @@ class ProfileTest extends AbstractControllerTestCase
         $this->assertGreaterThan(0, count($form->get('security')->getMessages()), "Security should have errors");
     }
 
-    public function testValidConfirmForm()
+    public function testValidForm()
     {
         $form = new ProfileForm();
 
