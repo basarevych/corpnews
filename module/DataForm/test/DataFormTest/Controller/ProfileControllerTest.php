@@ -8,6 +8,7 @@ use Zend\Json\Json;
 use Zend\Dom\Query;
 use DataForm\Document\Profile as ProfileDocument;
 use Application\Entity\Client as ClientEntity;
+use Application\Entity\Secret as SecretEntity;
 
 class ProfileControllerTest extends AbstractHttpControllerTestCase
 {
@@ -38,7 +39,7 @@ class ProfileControllerTest extends AbstractHttpControllerTestCase
 
         $this->em = $this->getMockBuilder('Doctrine\ORM\EntityManager')
                          ->disableOriginalConstructor()
-                         ->setMethods([ 'getRepository' ])
+                         ->setMethods([ 'getRepository', 'persist', 'flush' ])
                          ->getMock();
 
         $this->clientEntityRepo = $this->getMockBuilder('Application\Entity\ClientRepository')
@@ -46,29 +47,53 @@ class ProfileControllerTest extends AbstractHttpControllerTestCase
                                        ->setMethods([ 'findOneByEmail' ])
                                        ->getMock();
 
-        $client1 = new ClientEntity();
-        $client1->setEmail('test@example.com');
-        $client2 = new ClientEntity();
-        $client2->setEmail('new@example.com');
+        $this->client1 = new ClientEntity();
+        $this->client1->setEmail('test@example.com');
+        $this->client2 = new ClientEntity();
+        $this->client2->setEmail('new@example.com');
 
-        $reflection = new \ReflectionClass(get_class($client1));
+        $reflection = new \ReflectionClass(get_class($this->client1));
         $property = $reflection->getProperty('id');
         $property->setAccessible(true);
-        $property->setValue($client1, 42);
-        $property->setValue($client2, 9000);
+        $property->setValue($this->client1, 42);
+        $property->setValue($this->client2, 9000);
 
         $this->clientEntityRepo->expects($this->any())
                                ->method('findOneByEmail')
-                               ->will($this->returnCallback(function ($email) use ($client1, $client2) {
-                                    if ($client1->getEmail() == $email)
-                                        return $client1;
-                                    if ($client2->getEmail() == $email)
-                                        return $client2;
+                               ->will($this->returnCallback(function ($email) {
+                                    if ($this->client1->getEmail() == $email)
+                                        return $this->client1;
+                                    if ($this->client2->getEmail() == $email)
+                                        return $this->client2;
+                               }));
+
+        $this->secretEntityRepo = $this->getMockBuilder('Application\Entity\SecretRepository')
+                                       ->disableOriginalConstructor()
+                                       ->setMethods([ 'findOneBy' ])
+                                       ->getMock();
+
+        $this->secret = new SecretEntity();
+        $this->secret->setDataForm('profile');
+
+        $this->secretEntityRepo->expects($this->any())
+                               ->method('findOneBy')
+                               ->will($this->returnCallback(function ($params) {
+                                    if ($params['secret_key'] == 'client1') {
+                                        $this->secret->setClient($this->client1);
+                                        return $this->secret;
+                                    }
+                                    if ($params['secret_key'] == 'client2') {
+                                        $this->secret->setClient($this->client2);
+                                        return $this->secret;
+                                    }
                                }));
 
         $this->em->expects($this->any())
                  ->method('getRepository')
-                 ->will($this->returnValue($this->clientEntityRepo));
+                 ->will($this->returnValueMap([
+                    [ 'Application\Entity\Client', $this->clientEntityRepo ],
+                    [ 'Application\Entity\Secret', $this->secretEntityRepo ],
+                 ]));
 
         $this->dm = $this->getMockBuilder('Doctrine\ODM\MongoDB\DocumentManager')
                          ->disableOriginalConstructor()
@@ -149,12 +174,16 @@ class ProfileControllerTest extends AbstractHttpControllerTestCase
         $this->assertResponseStatusCode(200);
     }
 
+    public function testIndexActionClientAccess()
+    {
+        $this->dispatch('/data-form/profile', HttpRequest::METHOD_GET, [ 'key' => 'client1' ]);
+        $this->assertResponseStatusCode(200);
+    }
+
     public function testIndexActionValidates()
     {
-        $this->setUpAdminAccess();
-
         $getParams = [
-            'email' => 'test@example.com',
+            'key' => 'client1',
             'query' => 'validate',
             'field' => 'security',
             'form' => [ 'security' => 'foobar' ]
@@ -171,17 +200,13 @@ class ProfileControllerTest extends AbstractHttpControllerTestCase
 
     public function testIndexActionCreatesMissingDocuments()
     {
-        $this->setUpAdminAccess();
-
-        $this->dispatch('/data-form/profile', HttpRequest::METHOD_GET, [ 'email' => 'new@example.com' ]);
+        $this->dispatch('/data-form/profile', HttpRequest::METHOD_GET, [ 'key' => 'client2' ]);
         $this->assertResponseStatusCode(200);
     }
 
     public function testIndexActionPrintsFields()
     {
-        $this->setUpAdminAccess();
-
-        $this->dispatch('/data-form/profile', HttpRequest::METHOD_GET, [ 'email' => 'test@example.com' ]);
+        $this->dispatch('/data-form/profile', HttpRequest::METHOD_GET, [ 'key' => 'client1' ]);
         $this->assertResponseStatusCode(200);
 
         $this->assertQueryContentRegexAtLeastOnce('input[name="first_name"][value="first-name"]', '/^$/m');
@@ -194,9 +219,9 @@ class ProfileControllerTest extends AbstractHttpControllerTestCase
 
     public function testIndexActionUpdatesDocument()
     {
-        $this->setUpAdminAccess();
+        $this->dispatch('/data-form/profile', HttpRequest::METHOD_GET, [ 'key' => 'client1' ]);
 
-        $this->dispatch('/data-form/profile', HttpRequest::METHOD_GET, [ 'email' => 'test@example.com' ]);
+        $this->assertNotEquals(null, $this->secret->getWhenOpened(), "WhenOpened must be set");
 
         $response = $this->getResponse();
         $dom = new Query($response->getContent());
@@ -206,9 +231,8 @@ class ProfileControllerTest extends AbstractHttpControllerTestCase
         $this->reset();
 
         $this->setUp();
-        $this->setUpAdminAccess();
 
-        $this->prg('/data-form/profile?email=' . urlencode('test@example.com'), [
+        $this->prg('/data-form/profile?key=client1', [
             'security'  => $security,
             'first_name' => 'new first name',
             'middle_name' => 'new middle name',
@@ -217,6 +241,8 @@ class ProfileControllerTest extends AbstractHttpControllerTestCase
             'company' => 'new company',
             'position' => 'new position',
         ]);
+
+        $this->assertNotEquals(null, $this->secret->getWhenSaved(), "WhenSaved must be set");
 
         $this->assertEquals('new first name', $this->document->getFirstName(), "First name is wrong");
         $this->assertEquals('new middle name', $this->document->getMiddleName(), "Middle name is wrong");

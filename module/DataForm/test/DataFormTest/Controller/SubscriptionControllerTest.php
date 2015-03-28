@@ -9,6 +9,7 @@ use Zend\Dom\Query;
 use DataForm\Document\Subscription as SubscriptionDocument;
 use Application\Entity\Client as ClientEntity;
 use Application\Entity\Tag as TagEntity;
+use Application\Entity\Secret as SecretEntity;
 
 class SubscriptionControllerTest extends AbstractHttpControllerTestCase
 {
@@ -86,11 +87,33 @@ class SubscriptionControllerTest extends AbstractHttpControllerTestCase
                             ->method('findBy')
                             ->will($this->returnValue([ $this->tag ]));
 
+        $this->secretEntityRepo = $this->getMockBuilder('Application\Entity\SecretRepository')
+                                       ->disableOriginalConstructor()
+                                       ->setMethods([ 'findOneBy' ])
+                                       ->getMock();
+
+        $this->secret = new SecretEntity();
+        $this->secret->setDataForm('subscription');
+
+        $this->secretEntityRepo->expects($this->any())
+                               ->method('findOneBy')
+                               ->will($this->returnCallback(function ($params) {
+                                    if ($params['secret_key'] == 'client1') {
+                                        $this->secret->setClient($this->client1);
+                                        return $this->secret;
+                                    }
+                                    if ($params['secret_key'] == 'client2') {
+                                        $this->secret->setClient($this->client2);
+                                        return $this->secret;
+                                    }
+                               }));
+
         $this->em->expects($this->any())
                  ->method('getRepository')
                  ->will($this->returnValueMap([
                     [ 'Application\Entity\Client', $this->clientEntityRepo ],
                     [ 'Application\Entity\Tag', $this->tagEntityRepo ],
+                    [ 'Application\Entity\Secret', $this->secretEntityRepo ],
                  ]));
 
         $this->dm = $this->getMockBuilder('Doctrine\ODM\MongoDB\DocumentManager')
@@ -168,10 +191,8 @@ class SubscriptionControllerTest extends AbstractHttpControllerTestCase
 
     public function testIndexActionValidates()
     {
-        $this->setUpAdminAccess();
-
         $getParams = [
-            'email' => 'test@example.com',
+            'key' => 'client1',
             'query' => 'validate',
             'field' => 'security',
             'form' => [ 'security' => 'foobar' ]
@@ -188,17 +209,13 @@ class SubscriptionControllerTest extends AbstractHttpControllerTestCase
 
     public function testIndexActionCreatesMissingDocuments()
     {
-        $this->setUpAdminAccess();
-
-        $this->dispatch('/data-form/subscription', HttpRequest::METHOD_GET, [ 'email' => 'new@example.com' ]);
+        $this->dispatch('/data-form/subscription', HttpRequest::METHOD_GET, [ 'key' => 'client2' ]);
         $this->assertResponseStatusCode(200);
     }
 
     public function testIndexActionPrintsFields()
     {
-        $this->setUpAdminAccess();
-
-        $this->dispatch('/data-form/subscription', HttpRequest::METHOD_GET, [ 'email' => 'test@example.com' ]);
+        $this->dispatch('/data-form/subscription', HttpRequest::METHOD_GET, [ 'key' => 'client1' ]);
         $this->assertResponseStatusCode(200);
 
         $this->assertQueryContentRegexAtLeastOnce('input[name="subscribe[]"][value="all"]', '/^$/m');
@@ -208,9 +225,9 @@ class SubscriptionControllerTest extends AbstractHttpControllerTestCase
 
     public function testIndexActionUpdatesDocumentAndClient()
     {
-        $this->setUpAdminAccess();
+        $this->dispatch('/data-form/subscription', HttpRequest::METHOD_GET, [ 'key' => 'client1' ]);
 
-        $this->dispatch('/data-form/subscription', HttpRequest::METHOD_GET, [ 'email' => 'test@example.com' ]);
+        $this->assertNotEquals(null, $this->secret->getWhenOpened(), "WhenOpened must be set");
 
         $response = $this->getResponse();
         $dom = new Query($response->getContent());
@@ -222,15 +239,16 @@ class SubscriptionControllerTest extends AbstractHttpControllerTestCase
         $this->setUp();
         $this->setUpAdminAccess();
 
-        $this->prg('/data-form/subscription?email=' . urlencode('test@example.com'), [
+        $this->prg('/data-form/subscription?key=client1', [
             'security'  => $security,
-            'subscribe' => [ ],
+            'subscribe' => [ 'all' ],
             'list' => '123',
             'tags' => [ ],
         ]);
 
-        $this->assertNotEquals(null, $this->client1->getWhenUnsubscribed(), "Client did not unsubscribe");
+        $this->assertNotEquals(null, $this->secret->getWhenSaved(), "WhenSaved must be set");
+
         $this->assertEquals([ 123 ], $this->document->getIgnoredTags(), "Ignored tags are wrong");
-        $this->assertNotEquals(null, $this->client1->getWhenUnsubscribed(), "Unsubscribed is wrong");
+        $this->assertEquals(null, $this->client1->getWhenUnsubscribed(), "Unsubscribed is wrong");
     }
 }
