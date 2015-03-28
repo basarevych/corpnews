@@ -214,6 +214,8 @@ return [
     'LEVEL_ERROR' => 'LEVEL_ERROR',
     'LEVEL_CRITICAL' => 'LEVEL_CRITICAL',
     'When happened' => 'Когда произошло',
+    'Source name' => 'Имя источника',
+    'Source ID' => 'ID источника',
     'Level' => 'Уровень',
     'Clear log' => 'Очистить журнал',
     'CONFIRM_CLEAR_SYSLOG' => 'Удалить все записи системного журнала?',

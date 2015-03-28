@@ -214,6 +214,8 @@ return [
     'LEVEL_ERROR' => 'LEVEL_ERROR',
     'LEVEL_CRITICAL' => 'LEVEL_CRITICAL',
     'When happened' => 'When happened',
+    'Source name' => 'Source name',
+    'Source ID' => 'Source ID',
     'Level' => 'Level',
     'Clear log' => 'Clear log',
     'CONFIRM_CLEAR_SYSLOG' => 'Delete all entries of system log?',

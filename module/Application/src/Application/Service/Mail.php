@@ -209,7 +209,9 @@ class Mail implements ServiceLocatorAwareInterface
                 SyslogDocument::LEVEL_ERROR,
                 'ERROR_SEND_LETTER',
                 [
-                    'exception' => $e->getMessage()
+                    'exception' => $e->getMessage(),
+                    'source_name' => get_class($letter),
+                    'source_id' => $letter->getId(),
                 ]
             );
 

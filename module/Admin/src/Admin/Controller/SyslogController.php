@@ -133,13 +133,29 @@ class SyslogController extends AbstractActionController
                 'sortable'      => true,
                 'visible'       => true,
             ],
+            'source_name' => [
+                'title'         => $translate('Source name'),
+                'field_name'    => 'source_name',
+                'type'          => Table::TYPE_STRING,
+                'filters'       => [ Table::FILTER_LIKE ],
+                'sortable'      => true,
+                'visible'       => true,
+            ],
+            'source_id' => [
+                'title'         => $translate('Source ID'),
+                'field_name'    => 'source_id',
+                'type'          => Table::TYPE_STRING,
+                'filters'       => [ Table::FILTER_LIKE ],
+                'sortable'      => true,
+                'visible'       => true,
+            ],
             'level' => [
                 'title'         => $translate('Level'),
                 'field_name'    => 'level',
                 'type'          => Table::TYPE_STRING,
                 'filters'       => [],
                 'sortable'      => false,
-                'visible'       => true,
+                'visible'       => false,
             ],
             'message' => [
                 'title'         => $translate('Message'),
@@ -177,6 +193,8 @@ class SyslogController extends AbstractActionController
             return [
                 'id'            => $row->getId(),
                 'when_happened' => $row->getWhenHappened()->getTimestamp(),
+                'source_name'   => $escapeHtml($row->getSourceName()),
+                'source_id'     => $escapeHtml($row->getSourceId()),
                 'level'         => $translate('LEVEL_' . strtoupper($row->getLevel())),
                 'message'       => $escapeHtml($logger->prepareMessage($row)),
             ];

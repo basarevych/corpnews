@@ -56,34 +56,37 @@ class CheckEmail extends ZfTask
         }
 
         if (!$incoming) {
+            $incoming = $imap->createMailbox(Mailbox::NAME_INCOMING);
             $logger->log(
                 SyslogDocument::LEVEL_INFO,
                 'INFO_MAILBOX_CREATED',
                 [
-                    'source_name' => Mailbox::NAME_INCOMING,
+                    'source_name' => get_class($incoming),
+                    'source_id' => Mailbox::NAME_INCOMING,
                 ]
             );
-            $incoming = $imap->createMailbox(Mailbox::NAME_INCOMING);
         }
         if (!$replies) {
+            $replies = $imap->createMailbox(Mailbox::NAME_REPLIES);
             $logger->log(
                 SyslogDocument::LEVEL_INFO,
                 'INFO_MAILBOX_CREATED',
                 [
-                    'source_name' => Mailbox::NAME_REPLIES,
+                    'source_name' => get_class($replies),
+                    'source_id' => Mailbox::NAME_REPLIES,
                 ]
             );
-            $replies = $imap->createMailbox(Mailbox::NAME_REPLIES);
         }
         if (!$bounces) {
+            $bounces = $imap->createMailbox(Mailbox::NAME_BOUNCES);
             $logger->log(
                 SyslogDocument::LEVEL_INFO,
                 'INFO_MAILBOX_CREATED',
                 [
-                    'source_name' => Mailbox::NAME_BOUNCES,
+                    'source_name' => get_class($bounces),
+                    'source_id' => Mailbox::NAME_BOUNCES,
                 ]
             );
-            $bounces = $imap->createMailbox(Mailbox::NAME_BOUNCES);
         }
 
         $autodelete = $em->getRepository('Application\Entity\Setting')
@@ -106,6 +109,7 @@ class CheckEmail extends ZfTask
                         SyslogDocument::LEVEL_INFO,
                         'INFO_LETTER_AUTODELETED',
                         [
+                            'source_name' => get_class($letter),
                             'source_id' => $uid,
                         ]
                     );
@@ -123,6 +127,7 @@ class CheckEmail extends ZfTask
                         SyslogDocument::LEVEL_INFO,
                         'INFO_LETTER_PROCESSED',
                         [
+                            'source_name' => get_class($letter),
                             'source_id' => $uid
                         ]
                     );
