@@ -36,6 +36,7 @@
 
         <div class="col-sm-9">
             <div role="tabpanel">
+                <p><?= $this->translate('System email address') ?>: <strong><?= $this->ourEmail ?></strong></p>
                 <ul class="nav nav-tabs" role="tablist">
                     <?php $first = true; ?>
                     <?php foreach ($this->mailboxes as $box): ?>
@@ -202,12 +203,6 @@
         name: 'mailbox',
         template: '<?= $this->translate('TOUR_TEMPLATE') ?>',
         steps: [
-            {
-                element: "#mailbox-navbar",
-                placement: "bottom",
-                title: "<?= str_replace('"', "'", $this->translate('Mailbox')) ?>",
-                content: "<?= str_replace('"', "'", $this->translate('TOUR_MAILBOX_INTRO')) ?>"
-            },
             {
                 element: "#incoming-tab",
                 placement: "bottom",

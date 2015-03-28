@@ -221,4 +221,24 @@
             }
         });
     }
+
+    var tour = new Tour({
+        name: 'campaigns',
+        template: '<?= $this->translate('TOUR_TEMPLATE') ?>',
+        steps: [
+            {
+                element: "#table-campaigns",
+                placement: "left",
+                title: "<?= str_replace('"', "'", $this->translate('Campaigns')) ?>",
+                content: "<?= str_replace('"', "'", $this->translate('TOUR_CAMPAIGNS_INTRO')) ?>"
+            },
+        ]
+    });
+
+    $(document).ready(function () {
+        tour.init().start();
+        $('#tour-button')
+            .on('click', function () { tour.restart(); })
+            .parent().show();
+    });
 </script>

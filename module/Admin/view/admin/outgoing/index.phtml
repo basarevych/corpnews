@@ -86,5 +86,25 @@
             },
         });
     }
-    applyFilter();
+
+    var tour = new Tour({
+        name: 'outgoing',
+        template: '<?= $this->translate('TOUR_TEMPLATE') ?>',
+        steps: [
+            {
+                element: "#table-outgoing",
+                placement: "left",
+                title: "<?= str_replace('"', "'", $this->translate('Outgoing')) ?>",
+                content: "<?= str_replace('"', "'", $this->translate('TOUR_OUTGOING_INTRO')) ?>"
+            },
+        ],
+    });
+
+    $(document).ready(function () {
+        applyFilter();
+        tour.init().start();
+        $('#tour-button')
+            .on('click', function () { tour.restart(); })
+            .parent().show();
+    });
 </script>

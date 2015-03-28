@@ -33,6 +33,9 @@ class MailboxController extends AbstractActionController
      */
     public function indexAction()
     {
+        $sl = $this->getServiceLocator();
+        $config = $sl->get('Config');
+
         $boxes = [
             [
                 'name'  => Mailbox::NAME_INCOMING,
@@ -50,6 +53,7 @@ class MailboxController extends AbstractActionController
 
         return new ViewModel([
             'mailboxes' => $boxes,
+            'ourEmail' => $config['corpnews']['server']['address'],
         ]);
     }
 

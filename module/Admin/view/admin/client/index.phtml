@@ -145,7 +145,7 @@
         ]
     });
 
-    $('#table-clients').on('dt.loaded', function () {
+    $(document).ready(function () {
         tour.init().start();
         $('#tour-button')
             .on('click', function () { tour.restart(); })

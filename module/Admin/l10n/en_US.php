@@ -57,8 +57,6 @@ return [
     'Groups' => 'Groups',
     'CANNOT_EDIT_SYSTEM_GROUP' => 'Can not edit system group',
     'CONFIRM_DELETE_CLIENT' => 'Delete selected client(s)?',
-    'TOUR_CLIENTS_EDIT_CLIENT' => '<p>Click any client\'s email to edit the client'
-        . '<p><p>Or click a form in "Filled forms" to open the form of the client in admin mode</p>',
 
     // CampaignController
     'Status filter' => 'Status filter',
@@ -119,6 +117,7 @@ return [
     'TOUR_DATA_FORMS_SWITCH' => '<p>You can switch current data form here</p>',
 
     // MailboxController
+    'System email address' => 'System email address',
     'Incoming' => 'Incoming',
     'Replies' => 'Replies',
     'Bounces' => 'Bounces',
@@ -221,9 +220,25 @@ return [
     'CONFIRM_CLEAR_SYSLOG' => 'Delete all entries of system log?',
 
     // Tours
-    'TOUR_MAILBOX_INTRO' => '<p>Start working with CorpNews by sending newsletter template as an email to the application mailbox</p>',
+    'Parser' => 'Parser',
+    'TOUR_PARSER_INTRO' => '<p>Email templates can include dynamic statements which will be replaced with the appropriate text</p>',
+    'TOUR_PARSER_MAIL' => '<p>Start working with CorpNews by sending newsletter template as an email to the application mailbox</p>',
     'TOUR_MAILBOX_INCOMING' => '<p><strong>Incoming</strong> is the folder new mail will go to.</p>',
     'TOUR_MAILBOX_REPLIES' => '<p><strong>Replies</strong> contains client replies to the campaign letters</p>',
     'TOUR_MAILBOX_BOUNCES' => '<p><strong>Bounces</strong> is the delivery failure notifications folder</p>',
     'TOUR_MAILBOX_TEMPLATE' => '<p>When template is received select it in the table and click this button in order to create new mail campaign</p>',
+    'Outgoing' => 'Outgoing',
+    'TOUR_OUTGOING_INTRO' => '<p>All email sent by the system is in this table.</p>'
+        . '<p>Some letters here are only planned to be sent (for new mail campaigns)</p>',
+    'TOUR_GROUPS_INTRO' => '<p>Email campaign sends letters to a number of client groups.</p>'
+        . '<p>You can define these groups here</p>',
+    'TOUR_CLIENTS_EDIT_CLIENT' => '<p>Click any client\'s email to edit the client'
+        . '<p><p>Or click a form in "Filled forms" to open the form of the client in admin mode</p>',
+    'Tags' => 'Tags',
+    'TOUR_TAGS_INTRO' => '<p>Email campaign could be assigned a number of tags.</p>'
+        . '<p>The client can open their Subscription form and choose which tags (themes) they want to receive.</p>'
+        . '<p>By default all clients are subscribed to the tags you create</p>',
+    'Campaigns' => 'Campaigns',
+    'TOUR_CAMPAIGNS_INTRO' => '<p>You can control your email campaigns here.</p>'
+        . '<p>Please, do not forget to test your campaigns before launching the mass mailing</p>',
 ];

@@ -122,4 +122,24 @@
             }
         });
     }
+
+    var tour = new Tour({
+        name: 'tags',
+        template: '<?= $this->translate('TOUR_TEMPLATE') ?>',
+        steps: [
+            {
+                element: "#table-tags",
+                placement: "left",
+                title: "<?= str_replace('"', "'", $this->translate('Tags')) ?>",
+                content: "<?= str_replace('"', "'", $this->translate('TOUR_TAGS_INTRO')) ?>"
+            },
+        ]
+    });
+
+    $(document).ready(function () {
+        tour.init().start();
+        $('#tour-button')
+            .on('click', function () { tour.restart(); })
+            .parent().show();
+    });
 </script>

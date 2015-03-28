@@ -6,7 +6,7 @@
 <div class="container">
     <div class="row">
         <div class="col-sm-12">
-            <h3><span id="page-title"><?= $this->translate('Message parser variables') ?></span></h3>
+            <h3><span id="page-title"><?= $this->translate('Message parser functions') ?></span></h3>
         </div>
     </div>
 
@@ -30,7 +30,7 @@
         <div class="col-sm-5">
             <div class="panel panel-default">
                 <div class="panel-heading">
-                    <h3 class="panel-title">
+                    <h3 id="syntax-title" class="panel-title">
                         <?= $this->translate('PARSER_SYNTAX_TITLE') ?>
                     </h3>
                 </div>
@@ -60,3 +60,31 @@
         </div>
     </div>
 </div>
+
+<script>
+    var tour = new Tour({
+        name: 'parser',
+        template: '<?= $this->translate('TOUR_TEMPLATE') ?>',
+        steps: [
+            {
+                element: "#syntax-title",
+                placement: "left",
+                title: "<?= str_replace('"', "'", $this->translate('Parser')) ?>",
+                content: "<?= str_replace('"', "'", $this->translate('TOUR_PARSER_INTRO')) ?>"
+            },
+            {
+                element: "#mailbox-navbar",
+                placement: "bottom",
+                title: "<?= str_replace('"', "'", $this->translate('Parser')) ?>",
+                content: "<?= str_replace('"', "'", $this->translate('TOUR_PARSER_MAIL')) ?>"
+            },
+        ],
+    });
+
+    $(document).ready(function () {
+        tour.init().start();
+        $('#tour-button')
+            .on('click', function () { tour.restart(); })
+            .parent().show();
+    });
+</script>

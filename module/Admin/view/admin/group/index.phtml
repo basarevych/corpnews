@@ -124,19 +124,19 @@
     }
 
     var tour = new Tour({
-        name: 'clients',
+        name: 'groups',
         template: '<?= $this->translate('TOUR_TEMPLATE') ?>',
         steps: [
             {
-                element: "#table-clients",
+                element: "#table-groups",
                 placement: "left",
-                title: "<?= str_replace('"', "'", $this->translate('Clients')) ?>",
-                content: "<?= str_replace('"', "'", $this->translate('TOUR_CLIENTS_EDIT_CLIENT')) ?>"
+                title: "<?= str_replace('"', "'", $this->translate('Groups')) ?>",
+                content: "<?= str_replace('"', "'", $this->translate('TOUR_GROUPS_INTRO')) ?>"
             },
         ]
     });
 
-    $('#table-clients').on('dt.loaded', function () {
+    $(document).ready(function () {
         tour.init().start();
         $('#tour-button')
             .on('click', function () { tour.restart(); })
