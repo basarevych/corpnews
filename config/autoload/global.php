@@ -56,6 +56,13 @@ return [
                 'form'      => 'DataForm\Form\Profile',
                 'table'     => 'DataForm\Table\Profile',
             ],
+            'unsubscribe' => [
+                'title'     => 'Unsubscribe',
+                'url'       => '/data-form/unsubscribe',
+                'document'  => 'DataForm\Document\Unsubscribe',
+                'form'      => 'DataForm\Form\Unsubscribe',
+                'table'     => 'DataForm\Table\Unsubscribe',
+            ],
         ],
         'parser' => [
             'functions' => [
