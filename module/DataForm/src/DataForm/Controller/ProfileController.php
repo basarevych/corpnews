@@ -143,16 +143,16 @@ class ProfileController extends AbstractActionController
                 $em->persist($secret);
                 $em->flush();
             }
-
-            $form->setData([
-                'first_name'    => $doc->getFirstName(),
-                'middle_name'   => $doc->getMiddleName(),
-                'last_name'     => $doc->getLastName(),
-                'gender'        => $doc->getGender(),
-                'company'       => $doc->getCompany(),
-                'position'      => $doc->getPosition(),
-            ]);
         }
+
+        $form->setData([
+            'first_name'    => $doc->getFirstName(),
+            'middle_name'   => $doc->getMiddleName(),
+            'last_name'     => $doc->getLastName(),
+            'gender'        => $doc->getGender(),
+            'company'       => $doc->getCompany(),
+            'position'      => $doc->getPosition(),
+        ]);
 
         return new ViewModel([
             'title'     => $dfm->getTitle(self::DATA_FORM_NAME),

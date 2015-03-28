@@ -60,6 +60,7 @@
                                name="<?= $subscribe->getName() ?>[]"
                                value="<?= $this->escapeHtml($value) ?>"
                                <?= in_array($value, $subscribe->getValue()) ? 'checked="checked"' : '' ?>
+                               onchange="updateTags()"
                             <?php if ($tags): ?>
                                data-on-enter="$('input[name=<?= $tags->getName() ?>]').focus()"
                             <?php else: ?>
@@ -125,6 +126,19 @@
 </form>
 
 <script>
+    function updateTags() {
+        var subscribed = $('input[name="subscribe[]"]').prop('checked');
+        if (subscribed) {
+            $('input[name="tags[]"]')
+                .removeAttr('disabled')
+                .removeClass('disabled');
+        } else {
+            $('input[name="tags[]"]')
+                .attr('disabled', 'disabled')
+                .addClass('disabled');
+        }
+    }
+
     $(document).ready(function () {
         var errors = $('form .form-group.has-error input');
         var all = $('form .form-group input:not(.disabled)');
@@ -132,5 +146,7 @@
             errors[0].focus();
         else if (all.length > 0)
             all[0].focus();
+
+        updateTags();
     });
 </script>

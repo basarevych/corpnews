@@ -130,7 +130,7 @@ class SubscriptionController extends AbstractActionController
                 $em->flush();
 
                 $ignoredTags = [];
-                if ($form->has('tags')) {
+                if (!$client->getWhenUnsubscribed() && $form->has('tags')) {
                     foreach (explode(',', $data['list']) as $id) {
                         if (is_array($data['tags']) && in_array($id, $data['tags']))
                             continue;
@@ -151,25 +151,25 @@ class SubscriptionController extends AbstractActionController
                 $em->persist($secret);
                 $em->flush();
             }
-
-            $tags = [];
-            $ignored = [];
-            if ($form->has('tags')) {
-                $options = $form->get('tags')->getValueOptions();
-                foreach ($options as $id => $descr) {
-                    $tags[] = $id;
-                    if (is_array($doc->getIgnoredTags()) && in_array($id, $doc->getIgnoredTags()))
-                        continue;
-                    $ignored[] = $id;
-                }
-            }
-
-            $form->setData([
-                'subscribe' => $client->getWhenUnsubscribed() ? [] : [ 'all' ],
-                'list'      => join(',', $tags),
-                'tags'      => $ignored,
-            ]);
         }
+
+        $tags = [];
+        $ignored = [];
+        if ($form->has('tags')) {
+            $options = $form->get('tags')->getValueOptions();
+            foreach ($options as $id => $descr) {
+                $tags[] = $id;
+                if (is_array($doc->getIgnoredTags()) && in_array($id, $doc->getIgnoredTags()))
+                    continue;
+                $ignored[] = $id;
+            }
+        }
+
+        $form->setData([
+            'subscribe' => $client->getWhenUnsubscribed() ? [] : [ 'all' ],
+            'list'      => join(',', $tags),
+            'tags'      => $ignored,
+        ]);
 
         return new ViewModel([
             'title'     => $dfm->getTitle(self::DATA_FORM_NAME),
