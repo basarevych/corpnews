@@ -115,7 +115,7 @@ class TagController extends AbstractActionController
                         $entity = new TagEntity();
 
                     $entity->setName($data['name']);
-                    $entity->setDescr(strlen($data['descr']) > 0 ? $data['descr'] : null);
+                    $entity->setDescr($data['descr']);
 
                     $em->persist($entity);
                     $em->flush();

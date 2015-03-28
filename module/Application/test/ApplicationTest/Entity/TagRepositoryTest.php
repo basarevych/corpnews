@@ -23,6 +23,7 @@ class TagRepositoryTest extends AbstractControllerTestCase
 
         $tag = new TagEntity();
         $tag->setName('foobar');
+        $tag->setDescr('Description');
 
         $this->infrastructure->import([ $tag ]);
 

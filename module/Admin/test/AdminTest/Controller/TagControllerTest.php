@@ -109,6 +109,7 @@ class TagControllerTest extends AbstractHttpControllerTestCase
 
         $a = new TagEntity();
         $a->setName('foobar');
+        $a->setDescr('Description');
 
         $this->infrastructure->import([ $a ]);
 
@@ -152,13 +153,15 @@ class TagControllerTest extends AbstractHttpControllerTestCase
 
         $postParams = [
             'security' => $security,
-            'name' => 'test'
+            'name' => 'test',
+            'descr' => 'descr',
         ];
 
         $this->dispatch('/admin/tag/edit-tag', HttpRequest::METHOD_POST, $postParams);
         $this->assertResponseStatusCode(200);
 
         $this->assertEquals('test', $persisted->getName(), "Name is incorrect");
+        $this->assertEquals('descr', $persisted->getDescr(), "Description is wrong");
     }
 
     public function testEditTagActionUpdatesTag()
