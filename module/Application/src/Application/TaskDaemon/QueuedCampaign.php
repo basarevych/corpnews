@@ -45,64 +45,72 @@ class QueuedCampaign extends ZfTask
 
         $error = false;
         foreach ($campaign->getTemplates() as $template) {
-            $clients = $em->getRepository('Application\Entity\Client')
-                          ->findWithoutLetters($template, 100);
+            while (!$exitRequested) {
+                $clients = $em->getRepository('Application\Entity\Client')
+                              ->findWithoutLetters($template, 100);
+                if (count($clients) == 0)
+                    break;
 
-            foreach ($clients as $client) {
-                if ($exitRequested)
-                    break 2;
+                foreach ($clients as $client) {
+                    if ($exitRequested)
+                        break 3;
 
-                $letter = $mail->createFromTemplate($template, $client);
-                if ($letter === false) {
-                    $campaign->setStatus(CampaignEntity::STATUS_PAUSED);
-                    $em->persist($campaign);
+                    $letter = $mail->createFromTemplate($template, $client);
+                    if ($letter === false) {
+                        $campaign->setStatus(CampaignEntity::STATUS_PAUSED);
+                        $em->persist($campaign);
+                        $em->flush();
+
+                        $logger->log(
+                            SyslogDocument::LEVEL_CRITICAL,
+                            'ERROR_CAMPAIGN_PAUSED',
+                            [
+                                'source_name' => get_class($campaign),
+                                'source_id' => $campaign->getId()
+                            ]
+                        );
+
+                        $error = true;
+                        break 2;
+                    }
+
+                    $em->persist($letter);
                     $em->flush();
-
-                    $logger->log(
-                        SyslogDocument::LEVEL_CRITICAL,
-                        'ERROR_CAMPAIGN_PAUSED',
-                        [
-                            'source_name' => get_class($campaign),
-                            'source_id' => $campaign->getId()
-                        ]
-                    );
-
-                    $error = true;
-                    break 2;
                 }
-
-                $em->persist($letter);
-                $em->flush();
             }
 
-            $clients = $em->getRepository('Application\Entity\Client')
-                          ->findWithFailedLetters($template, 100);
+            while (!$exitRequested) {
+                $clients = $em->getRepository('Application\Entity\Client')
+                              ->findWithFailedLetters($template, 100);
+                if (count($clients) == 0)
+                    break;
 
-            foreach ($clients as $client) {
-                if ($exitRequested)
-                    break 2;
+                foreach ($clients as $client) {
+                    if ($exitRequested)
+                        break 3;
 
-                $letter = $mail->createFromTemplate($template, $client);
-                if ($letter === false) {
-                    $campaign->setStatus(CampaignEntity::STATUS_PAUSED);
-                    $em->persist($campaign);
+                    $letter = $mail->createFromTemplate($template, $client);
+                    if ($letter === false) {
+                        $campaign->setStatus(CampaignEntity::STATUS_PAUSED);
+                        $em->persist($campaign);
+                        $em->flush();
+
+                        $logger->log(
+                            SyslogDocument::LEVEL_CRITICAL,
+                            'ERROR_CAMPAIGN_PAUSED',
+                            [
+                                'source_name' => get_class($campaign),
+                                'source_id' => $campaign->getId()
+                            ]
+                        );
+
+                        $error = true;
+                        break 2;
+                    }
+
+                    $em->persist($letter);
                     $em->flush();
-
-                    $logger->log(
-                        SyslogDocument::LEVEL_CRITICAL,
-                        'ERROR_CAMPAIGN_PAUSED',
-                        [
-                            'source_name' => get_class($campaign),
-                            'source_id' => $campaign->getId()
-                        ]
-                    );
-
-                    $error = true;
-                    break 2;
                 }
-
-                $em->persist($letter);
-                $em->flush();
             }
         }
 

@@ -34,7 +34,7 @@ class AllQueuedCampaigns extends ZfTask
 
         while (!$exitRequested) {
             $campaigns = $em->getRepository('Application\Entity\Campaign')
-                            ->findBy([ 'status' => CampaignEntity::STATUS_QUEUED ], [], 10);
+                            ->findBy([ 'status' => CampaignEntity::STATUS_QUEUED ], [], 3);
             if (count($campaigns) == 0)
                 break;
 
