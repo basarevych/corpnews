@@ -79,7 +79,7 @@ class LetterController extends AbstractActionController
         }
 
         $subject = $model->getSubject();
-        $syntaxSuccess = $parser->checkSyntax($subject, $output, true);
+        $syntaxSuccess = $parser->checkSyntax($subject, $output, false);
         $subject = $output;
 
         if ($syntaxSuccess)
@@ -96,7 +96,7 @@ class LetterController extends AbstractActionController
 
         return new JsonModel([
             'error'         => $error,
-            'subject'       => $escapeHtml($subject),
+            'subject'       => $subject,
             'html'          => $this->prepareHtml($model, $params),
             'attachments'   => $this->prepareAttachments($model, $params),
             'text'          => $this->prepareText($model),
