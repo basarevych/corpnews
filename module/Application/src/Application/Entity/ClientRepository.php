@@ -46,9 +46,10 @@ class ClientRepository extends EntityRepository
      * Find all clients that does not have a letter
      *
      * @param TemplateEntity $template
+     * @param integer $limit
      * @return array
      */
-    public function findWithoutLetters($template)
+    public function findWithoutLetters($template, $limit = null)
     {
         $campaign = $template->getCampaign();
         $groups = [];
@@ -74,6 +75,9 @@ class ClientRepository extends EntityRepository
                   ->setParameter('group_ids', $groups)
                   ->setParameter('template_id', $template->getId());
 
+        if ($limit)
+            $qbClients->setMaxResults($limit);
+
         return $qbClients->getQuery()->getResult();
     }
 
@@ -81,9 +85,10 @@ class ClientRepository extends EntityRepository
      * Find all clients that have a failed letter
      *
      * @param TemplateEntity $template
+     * @param integer $limit
      * @return array
      */
-    public function findWithFailedLetters($template)
+    public function findWithFailedLetters($template, $limit = null)
     {
         $campaign = $template->getCampaign();
         $groups = [];
@@ -112,6 +117,9 @@ class ClientRepository extends EntityRepository
                   ->andWhere($qbClients->expr()->eq('l1.when_created', '(' . $qbMaxDate->getDql() . ')'))
                   ->setParameter('group_ids', $groups)
                   ->setParameter('template_id', $template->getId());
+
+        if ($limit)
+            $qbClients->setMaxResults($limit);
 
         return $qbClients->getQuery()->getResult();
     }

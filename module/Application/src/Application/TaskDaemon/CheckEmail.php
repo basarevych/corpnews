@@ -24,7 +24,7 @@ class CheckEmail extends ZfTask
     /**
      * Do the job
      */
-    public function run()
+    public function run(&$exitRequested)
     {
         $sl = $this->getServiceLocator();
         $imap = $sl->get('ImapClient');
@@ -104,6 +104,9 @@ class CheckEmail extends ZfTask
             $messages = $imap->search($box->getName(), 0, 0, 'BEFORE "' . $oldDate . '"');
             if (count($messages)) {
                 foreach ($messages as $uid) {
+                    if ($exitRequested)
+                        break 2;
+
                     $letter = $imap->getLetter($box->getName(), $uid);
                     $logger->log(
                         SyslogDocument::LEVEL_INFO,
@@ -117,11 +120,16 @@ class CheckEmail extends ZfTask
                 }
             }
         }
+        if ($exitRequested)
+            return;
 
         foreach ($toSearch as $box) {
             $messages = $imap->search($box->getName(), 0, 0, 'SINCE "' . $oldDate . '"');
             if (count($messages)) {
                 foreach ($messages as $uid) {
+                    if ($exitRequested)
+                        break 2;
+
                     $letter = $imap->getLetter($box->getName(), $uid);
                     $logger->log(
                         SyslogDocument::LEVEL_INFO,
@@ -135,5 +143,7 @@ class CheckEmail extends ZfTask
                 }
             }
         }
+        if ($exitRequested)
+            return;
     }
 }

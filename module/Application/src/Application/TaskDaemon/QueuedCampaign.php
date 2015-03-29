@@ -24,7 +24,7 @@ class QueuedCampaign extends ZfTask
     /**
      * Do the job
      */
-    public function run()
+    public function run(&$exitRequested)
     {
         $data = $this->getData();
         $sl = $this->getServiceLocator();
@@ -46,9 +46,12 @@ class QueuedCampaign extends ZfTask
         $error = false;
         foreach ($campaign->getTemplates() as $template) {
             $clients = $em->getRepository('Application\Entity\Client')
-                          ->findWithoutLetters($template);
+                          ->findWithoutLetters($template, 100);
 
             foreach ($clients as $client) {
+                if ($exitRequested)
+                    break 2;
+
                 $letter = $mail->createFromTemplate($template, $client);
                 if ($letter === false) {
                     $campaign->setStatus(CampaignEntity::STATUS_PAUSED);
@@ -73,9 +76,12 @@ class QueuedCampaign extends ZfTask
             }
 
             $clients = $em->getRepository('Application\Entity\Client')
-                          ->findWithFailedLetters($template);
+                          ->findWithFailedLetters($template, 100);
 
             foreach ($clients as $client) {
+                if ($exitRequested)
+                    break 2;
+
                 $letter = $mail->createFromTemplate($template, $client);
                 if ($letter === false) {
                     $campaign->setStatus(CampaignEntity::STATUS_PAUSED);

@@ -23,7 +23,7 @@ class AllQueuedCampaigns extends ZfTask
     /**
      * Do the job
      */
-    public function run()
+    public function run(&$exitRequested)
     {
         $daemon = $this->getDaemon();
         $sl = $this->getServiceLocator();
@@ -32,10 +32,14 @@ class AllQueuedCampaigns extends ZfTask
         $em->getConnection()->close();
         $em->getConnection()->connect();
 
-        $campaigns = $em->getRepository('Application\Entity\Campaign')
-                        ->findBy([ 'status' => CampaignEntity::STATUS_QUEUED ]);
+        while (!$exitRequested) {
+            $campaigns = $em->getRepository('Application\Entity\Campaign')
+                            ->findBy([ 'status' => CampaignEntity::STATUS_QUEUED ], [], 10);
+            if (count($campaigns) == 0)
+                break;
 
-        foreach ($campaigns as $campaign)
-            $daemon->runTask('queued_campaign', $campaign->getId());
-     }
+            foreach ($campaigns as $campaign)
+                $daemon->runTask('queued_campaign', $campaign->getId());
+        }
+    }
 }
