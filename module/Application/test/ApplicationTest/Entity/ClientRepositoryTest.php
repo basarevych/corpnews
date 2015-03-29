@@ -211,7 +211,6 @@ class ClientRepositoryTest extends AbstractControllerTestCase
         $this->assertEquals($correctClient->getId(), $result[0]->getId(), "Wrong entity found");
     }
 
-
     public function testRemoveAll()
     {
         $client = new ClientEntity();

@@ -85,7 +85,7 @@ class AllQueuedCampaignsTest extends AbstractControllerTestCase
         $task = new AllQueuedCampaignsTask();
         $task->setDaemon($this->daemon);
         $task->setServiceLocator($this->sl);
-        $task->run();
+        $task->run($exit);
 
         $this->assertEquals('queued_campaign', $taskName, "Task name is wrong");
         $this->assertEquals(42, $taskData, "Task data is wrong");

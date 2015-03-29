@@ -492,7 +492,7 @@ class CampaignController extends AbstractActionController
                 'visible'   => false,
             ],
             'status' => [
-                'title'     => $translate('Status'),
+                'title'     => $translate('Status & statistics'),
                 'sql_id'    => 'c.status',
                 'type'      => Table::TYPE_STRING,
                 'filters'   => [ ],
@@ -541,9 +541,8 @@ class CampaignController extends AbstractActionController
         $adapter->setQueryBuilder($qb);
 
         $mapper = function ($row) use ($escapeHtml, $basePath, $translate) {
-            $name = $escapeHtml($row->getName()) . '</a>';
-            if (in_array($row->getStatus(), [ CampaignEntity::STATUS_STARTED, CampaignEntity::STATUS_PAUSED, CampaignEntity::STATUS_FINISHED ]))
-                $name = '<a href="' . $basePath('/admin/stats?id=') . $row->getId(). '">' . $name . '</a>';
+            $name = $escapeHtml($row->getName());
+            $name = '<a href="javascript:void(0)" onclick="editCampaign(' . $row->getId() . ')">' . $name . '</a>';
 
             $groups = [];
             foreach ($row->getGroups() as $group)
@@ -554,15 +553,26 @@ class CampaignController extends AbstractActionController
             $whenStarted = $row->getWhenStarted();
             $whenFinished = $row->getWhenFinished();
 
+            $percents = [
+                CampaignEntity::STATUS_STARTED,
+                CampaignEntity::STATUS_PAUSED,
+                CampaignEntity::STATUS_FINISHED,
+            ];
+            $status = '<button type="button" class="btn btn-default btn-xs" onclick="statCampaign(' . $row->getId() . ')">';
+            $status .= $translate('STATUS_' . strtoupper($row->getStatus()));
+            if (in_array($row->getStatus(), $percents))
+                $status .= ': 0%';
+            $status .= '</button>';
+
             return [
                 'id'            => $row->getId(),
                 'name'          => $name,
-                'status'        => $translate('STATUS_' . strtoupper($row->getStatus())),
-                'groups'        => join(', ', $groups),
                 'when_created'  => $whenCreated ? $whenCreated->getTimestamp() : null,
                 'when_started'  => $whenStarted ? $whenStarted->getTimestamp() : null,
                 'when_deadline' => $whenDeadline? $whenDeadline->getTimestamp() : null,
                 'when_finished' => $whenFinished ? $whenFinished->getTimestamp() : null,
+                'groups'        => join(', ', $groups),
+                'status'        => $status,
             ];
         };
 

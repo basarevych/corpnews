@@ -85,9 +85,6 @@
             loader_image: '<?= $this->basePath('/img/loader.gif') ?>',
             strings: dynamicTableStrings,
             mapper: function (row) {
-                row['name'] = '<a href="javascript:void(0)" onclick="editCampaign('
-                    + row['id'] + ')">' + row['name'] + '</a>';
-
                 if (row['when_created'] != null) {
                     var m = moment.unix(row['when_created']).local();
                     row['when_created'] = m.format('<?= $this->translate('GENERIC_MOMENT_FORMAT') ?>');

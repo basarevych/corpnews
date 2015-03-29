@@ -103,7 +103,7 @@ class CheckEmailTest extends AbstractControllerTestCase
 
         $task = new CheckEmailTask();
         $task->setServiceLocator($this->sl);
-        $task->run();
+        $task->run($exit);
 
         $incoming = false;
         $replies = false;
@@ -168,7 +168,7 @@ class CheckEmailTest extends AbstractControllerTestCase
 
         $task = new CheckEmailTask();
         $task->setServiceLocator($this->sl);
-        $task->run();
+        $task->run($exit);
 
         $this->assertEquals(2, count($searched), "Wrong number of search request was made");
         $this->assertEquals(

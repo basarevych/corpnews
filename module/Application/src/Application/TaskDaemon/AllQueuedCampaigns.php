@@ -32,14 +32,10 @@ class AllQueuedCampaigns extends ZfTask
         $em->getConnection()->close();
         $em->getConnection()->connect();
 
-        while (!$exitRequested) {
-            $campaigns = $em->getRepository('Application\Entity\Campaign')
-                            ->findBy([ 'status' => CampaignEntity::STATUS_QUEUED ], [], 3);
-            if (count($campaigns) == 0)
-                break;
+        $campaigns = $em->getRepository('Application\Entity\Campaign')
+                        ->findBy([ 'status' => CampaignEntity::STATUS_QUEUED ], []);
 
-            foreach ($campaigns as $campaign)
-                $daemon->runTask('queued_campaign', $campaign->getId());
-        }
+        foreach ($campaigns as $campaign)
+            $daemon->runTask('queued_campaign', $campaign->getId());
     }
 }

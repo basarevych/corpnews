@@ -46,16 +46,30 @@ class QueuedCampaignTest extends AbstractControllerTestCase
         $a = new ClientEntity();
         $a->setEmail('foo@bar');
 
+        $withoutLettersFirstRun = true;
         $this->repoClient->expects($this->any())
                          ->method('findWithoutLetters')
-                         ->will($this->returnValue([ $a ]));
+                         ->will($this->returnCallback(function () use (&$withoutLettersFirstRun, $a) {
+                            if ($withoutLettersFirstRun) {
+                                $withoutLettersFirstRun = false;
+                                return [ $a ];
+                            }
+                            return [];
+                         }));
 
         $b = new ClientEntity();
         $b->setEmail('baz@bar');
 
+        $withFailedLettersFirstRun = true;
         $this->repoClient->expects($this->any())
                          ->method('findWithFailedLetters')
-                         ->will($this->returnValue([ $b ]));
+                         ->will($this->returnCallback(function () use (&$withFailedLettersFirstRun, $b) {
+                            if ($withFailedLettersFirstRun) {
+                                $withFailedLettersFirstRun = false;
+                                return [ $b ];
+                            }
+                            return [];
+                         }));
 
         $this->repoCampaign = $this->getMockBuilder('Application\Entity\CampaignRepository')
                                    ->disableOriginalConstructor()
@@ -110,7 +124,7 @@ class QueuedCampaignTest extends AbstractControllerTestCase
 
         $task = new QueuedCampaignTask();
         $task->setServiceLocator($this->sl);
-        $task->run();
+        $task->run($exit);
 
         $this->assertEquals(3, count($persisted), "Two entities should have been persisted");
         $this->assertEquals('foo@bar', $persisted[0]->getToAddress(), "Email is wrong");

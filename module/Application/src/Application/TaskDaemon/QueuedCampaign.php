@@ -43,13 +43,26 @@ class QueuedCampaign extends ZfTask
         if ($campaign->getStatus() != CampaignEntity::STATUS_QUEUED)
             return;
 
+        $logger->log(
+            SyslogDocument::LEVEL_INFO,
+            'INFO_CAMPAIGN_BEING_PROCESSED',
+            [
+                'source_name' => get_class($campaign),
+                'source_id' => $campaign->getId()
+            ]
+        );
+
         $error = false;
+        $noNewLetters = false;
+        $noFailedLetters = false;
         foreach ($campaign->getTemplates() as $template) {
             while (!$exitRequested) {
                 $clients = $em->getRepository('Application\Entity\Client')
                               ->findWithoutLetters($template, 100);
-                if (count($clients) == 0)
+                if (count($clients) == 0) {
+                    $noNewLetters = true;
                     break;
+                }
 
                 foreach ($clients as $client) {
                     if ($exitRequested)
@@ -82,8 +95,10 @@ class QueuedCampaign extends ZfTask
             while (!$exitRequested) {
                 $clients = $em->getRepository('Application\Entity\Client')
                               ->findWithFailedLetters($template, 100);
-                if (count($clients) == 0)
+                if (count($clients) == 0) {
+                    $noFailedLetters = true;
                     break;
+                }
 
                 foreach ($clients as $client) {
                     if ($exitRequested)
@@ -114,8 +129,9 @@ class QueuedCampaign extends ZfTask
             }
         }
 
-        if (!$error) {
+        if (!$error && $noNewLetters && $noFailedLetters) {
             $campaign->setStatus(CampaignEntity::STATUS_STARTED);
+            $campaign->setWhenStarted(new \DateTime());
             $em->persist($campaign);
             $em->flush();
 
