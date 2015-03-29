@@ -173,7 +173,7 @@ class SubscriptionController extends AbstractActionController
 
         return new ViewModel([
             'title'     => $dfm->getTitle(self::DATA_FORM_NAME),
-            'email'     => $email,
+            'email'     => $client->getEmail(),
             'form'      => $form,
             'messages'  => $messages,
             'success'   => $success,

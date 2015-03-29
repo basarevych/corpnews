@@ -34,13 +34,14 @@ class ConsoleController extends AbstractConsoleController
      */
     public function cronAction()
     {
+/*
         // Ensure there is only one cron script running at a time.
         $fpSingleton = fopen(__FILE__, "r") or die("Could not open " . __FILE__);
         if (!flock($fpSingleton, LOCK_EX | LOCK_NB)) {
             fclose($fpSingleton);
             return "Another cron job is running" . PHP_EOL;
         }
-
+*/
         $sl = $this->getServiceLocator();
         $task = $sl->get('TaskDaemon');
         $task->getDaemon()->start();
