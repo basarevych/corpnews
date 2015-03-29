@@ -272,6 +272,7 @@ class LetterController extends AbstractActionController
 
         $purifier = new HTMLPurifier($config);
         $result = $purifier->purify($message);
+        $result = str_replace('<a', '<a target="_blank"', $result);
         return $result;
     }
 
