@@ -34,6 +34,106 @@ class ClientRepositoryTest extends AbstractControllerTestCase
         $sl->setService('Doctrine\ORM\EntityManager', $this->em);
     }
 
+    public function setUpLetters()
+    {
+        $this->campaign = new CampaignEntity();
+        $this->campaign->setName('campaign');
+        $this->campaign->setStatus(CampaignEntity::STATUS_STARTED);
+
+        $this->template = new TemplateEntity();
+        $this->template->setMessageId('mid');
+        $this->template->setSubject('subject');
+        $this->template->setHeaders('headers');
+        $this->template->setBody('body');
+
+        $this->campaign->addTemplate($this->template);
+        $this->template->setCampaign($this->campaign);
+
+        $this->clientA = new ClientEntity();
+        $this->clientA->setEmail('foo');
+
+        $this->clientB = new ClientEntity();
+        $this->clientB->setEmail('bar');
+
+        $this->clientC = new ClientEntity();
+        $this->clientC->setEmail('new');
+
+        $this->group = new GroupEntity();
+        $this->group->setName('group');
+
+        $this->group->addClient($this->clientA);
+        $this->clientA->addGroup($this->group);
+        $this->group->addClient($this->clientB);
+        $this->clientB->addGroup($this->group);
+        $this->group->addClient($this->clientC);
+        $this->clientC->addGroup($this->group);
+
+        $this->group->addCampaign($this->campaign);
+        $this->campaign->addGroup($this->group);
+
+        $this->a1 = new LetterEntity();
+        $this->a1->setWhenCreated(new \DateTime());
+        $this->a1->setFromAddress('foo');
+        $this->a1->setToAddress('bar');
+        $this->a1->setSubject('subject');
+        $this->a1->setHeaders('headers');
+        $this->a1->setBody('body');
+
+        $this->a1->setTemplate($this->template);
+        $this->template->addLetter($this->a1);
+        $this->a1->setClient($this->clientA);
+        $this->clientA->addLetter($this->a1);
+
+        $this->a2 = new LetterEntity();
+        $this->a2->setWhenCreated(new \DateTime());
+        $this->a2->setWhenSent(new \DateTime());
+        $this->a2->setError('error');
+        $this->a2->setFromAddress('foo');
+        $this->a2->setToAddress('bar');
+        $this->a2->setSubject('subject');
+        $this->a2->setHeaders('headers');
+        $this->a2->setBody('body');
+
+        $this->a2->setTemplate($this->template);
+        $this->template->addLetter($this->a2);
+        $this->a2->setClient($this->clientA);
+        $this->clientA->addLetter($this->a2);
+
+        $this->b1 = new LetterEntity();
+        $this->b1->setWhenCreated(new \DateTime());
+        $this->b1->setWhenSent(new \DateTime());
+        $this->b1->setError('error');
+        $this->b1->setFromAddress('foo');
+        $this->b1->setToAddress('bar');
+        $this->b1->setSubject('subject');
+        $this->b1->setHeaders('headers');
+        $this->b1->setBody('body');
+
+        $this->b1->setTemplate($this->template);
+        $this->template->addLetter($this->b1);
+        $this->b1->setClient($this->clientB);
+        $this->clientB->addLetter($this->b1);
+
+        $this->b2 = new LetterEntity();
+        $this->b2->setWhenCreated(new \DateTime());
+        $this->b2->setFromAddress('foo');
+        $this->b2->setToAddress('bar');
+        $this->b2->setSubject('subject');
+        $this->b2->setHeaders('headers');
+        $this->b2->setBody('body');
+
+        $this->b2->setTemplate($this->template);
+        $this->template->addLetter($this->b2);
+        $this->b2->setClient($this->clientB);
+        $this->clientB->addLetter($this->b2);
+
+        $this->infrastructure->import([
+            $this->campaign, $this->group, $this->template,
+            $this->clientA, $this->clientB, $this->clientC,
+            $this->a1, $this->a2, $this->b1, $this->b2
+        ]);
+    }
+
     public function testFindByGroupName()
     {
         $group = new GroupEntity();
@@ -57,168 +157,46 @@ class ClientRepositoryTest extends AbstractControllerTestCase
 
     public function testFindWithoutLetters()
     {
-        $campaign = new CampaignEntity();
-        $campaign->setName('campaign');
-        $campaign->setStatus(CampaignEntity::STATUS_CREATED);
+        $this->setUpLetters();
 
-        $group = new GroupEntity();
-        $group->setName('group');
-
-        $campaign->addGroup($group);
-        $group->addCampaign($campaign);
-
-        $template = new TemplateEntity();
-        $template->setMessageId('mid');
-        $template->setSubject('subject');
-        $template->setHeaders('headers');
-        $template->setBody('body');
-
-        $campaign->addTemplate($template);
-        $template->setCampaign($campaign);
-
-        $correctClient = new ClientEntity();
-        $correctClient->setEmail('correct');
-
-        $correctClient->addGroup($group);
-        $group->addClient($correctClient);
-
-        $wrongClient = new ClientEntity();
-        $wrongClient->setEmail('wrong');
-
-        $wrongClient->addGroup($group);
-        $group->addClient($wrongClient);
-
-        $letter = new LetterEntity();
-        $letter->setWhenCreated(new \DateTime());
-        $letter->setFromAddress('foo');
-        $letter->setToAddress('bar');
-        $letter->setSubject('subject');
-        $letter->setHeaders('headers');
-        $letter->setBody('body');
-
-        $letter->setTemplate($template);
-        $template->addLetter($letter);
-        $letter->setClient($wrongClient);
-        $wrongClient->addLetter($letter);
-
-        $this->infrastructure->import([ $campaign, $group, $template, $correctClient, $wrongClient, $letter ]);
-
-        $result = $this->repo->findWithoutLetters($template);
+        $result = $this->repo->findWithoutLetters($this->template);
         $this->assertEquals(1, count($result), "Only one item should be found");
-        $this->assertEquals($correctClient->getId(), $result[0]->getId(), "Wrong entity found");
+        $this->assertEquals($this->clientC->getId(), $result[0]->getId(), "Wrong entity found");
     }
 
     public function testFindWithFailedLetters()
     {
-        $campaign = new CampaignEntity();
-        $campaign->setName('campaign');
-        $campaign->setStatus(CampaignEntity::STATUS_CREATED);
+        $this->setUpLetters();
 
-        $group = new GroupEntity();
-        $group->setName('group');
-
-        $campaign->addGroup($group);
-        $group->addCampaign($campaign);
-
-        $template = new TemplateEntity();
-        $template->setMessageId('mid');
-        $template->setSubject('subject');
-        $template->setHeaders('headers');
-        $template->setBody('body');
-
-        $campaign->addTemplate($template);
-        $template->setCampaign($campaign);
-
-        $correctClient = new ClientEntity();
-        $correctClient->setEmail('correct');
-
-        $correctClient->addGroup($group);
-        $group->addClient($correctClient);
-
-        $wrongClient1 = new ClientEntity();
-        $wrongClient1->setEmail('wrong 1');
-
-        $wrongClient1->addGroup($group);
-        $group->addClient($wrongClient1);
-
-        $wrongClient2 = new ClientEntity();
-        $wrongClient2->setEmail('wrong 2');
-
-        $wrongClient2->addGroup($group);
-        $group->addClient($wrongClient2);
-
-        $letterWrong1 = new LetterEntity();
-        $letterWrong1->setWhenCreated(new \DateTime('@100'));
-        $letterWrong1->setError('error');
-        $letterWrong1->setFromAddress('foo');
-        $letterWrong1->setToAddress('bar');
-        $letterWrong1->setSubject('subject');
-        $letterWrong1->setHeaders('headers');
-        $letterWrong1->setBody('body');
-
-        $letterWrong1->setTemplate($template);
-        $template->addLetter($letterWrong1);
-        $letterWrong1->setClient($wrongClient1);
-        $wrongClient1->addLetter($letterWrong1);
-
-        $letterWrong2 = new LetterEntity();
-        $letterWrong2->setWhenCreated(new \DateTime('@200'));
-        $letterWrong2->setFromAddress('foo');
-        $letterWrong2->setToAddress('bar');
-        $letterWrong2->setSubject('subject');
-        $letterWrong2->setHeaders('headers');
-        $letterWrong2->setBody('body');
-
-        $letterWrong2->setTemplate($template);
-        $template->addLetter($letterWrong2);
-        $letterWrong2->setClient($wrongClient1);
-        $wrongClient1->addLetter($letterWrong2);
-
-        $letterCorrect1 = new LetterEntity();
-        $letterCorrect1->setWhenCreated(new \DateTime('@100'));
-        $letterCorrect1->setFromAddress('foo');
-        $letterCorrect1->setToAddress('bar');
-        $letterCorrect1->setSubject('subject');
-        $letterCorrect1->setHeaders('headers');
-        $letterCorrect1->setBody('body');
-
-        $letterCorrect1->setTemplate($template);
-        $template->addLetter($letterCorrect1);
-        $letterCorrect1->setClient($correctClient);
-        $correctClient->addLetter($letterCorrect1);
-
-        $letterCorrect2 = new LetterEntity();
-        $letterCorrect2->setWhenCreated(new \DateTime('@200'));
-        $letterCorrect2->setError('error');
-        $letterCorrect2->setFromAddress('foo');
-        $letterCorrect2->setToAddress('bar');
-        $letterCorrect2->setSubject('subject');
-        $letterCorrect2->setHeaders('headers');
-        $letterCorrect2->setBody('body');
-
-        $letterCorrect2->setTemplate($template);
-        $template->addLetter($letterCorrect2);
-        $letterCorrect2->setClient($correctClient);
-        $correctClient->addLetter($letterCorrect2);
-
-        $this->infrastructure->import([
-            $campaign, $group, $template, $correctClient, $wrongClient1, $wrongClient2,
-            $letterWrong1, $letterWrong2, $letterCorrect1, $letterCorrect2
-        ]);
-
-        $result = $this->repo->findWithFailedLetters($template);
+        $result = $this->repo->findWithFailedLetters($this->template);
         $this->assertEquals(1, count($result), "Only one item should be found");
-        $this->assertEquals($correctClient->getId(), $result[0]->getId(), "Wrong entity found");
+        $this->assertEquals($this->clientA->getId(), $result[0]->getId(), "Wrong entity found");
+    }
+
+    public function testCountCreated()
+    {
+        $this->setUpLetters();
+
+        $count = $this->repo->countCreated($this->template);
+
+        $this->assertEquals(2, $count);
+    }
+
+    public function testCountPending()
+    {
+        $this->setUpLetters();
+
+        $count = $this->repo->countPending($this->template);
+
+        $this->assertEquals(1, $count);
     }
 
     public function testRemoveAll()
     {
-        $client = new ClientEntity();
-        $client->setEmail('foobar');
+        $this->setUpLetters();
 
-        $this->infrastructure->import([ $client ]);
         $data = $this->repo->findAll();
-        $this->assertEquals(1, count($data), "One item should have been returned");
+        $this->assertEquals(3, count($data), "One item should have been returned");
 
         $this->repo->removeAll();
         $data = $this->repo->findAll();

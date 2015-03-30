@@ -540,7 +540,9 @@ class CampaignController extends AbstractActionController
         $adapter = new DoctrineORMAdapter();
         $adapter->setQueryBuilder($qb);
 
-        $mapper = function ($row) use ($escapeHtml, $basePath, $translate) {
+        $repoClients = $em->getRepository('Application\Entity\Client');
+
+        $mapper = function ($row) use ($escapeHtml, $basePath, $translate, $repoClients) {
             $name = $escapeHtml($row->getName());
             $name = '<a href="javascript:void(0)" onclick="editCampaign(' . $row->getId() . ')">' . $name . '</a>';
 
@@ -560,8 +562,16 @@ class CampaignController extends AbstractActionController
             ];
             $status = '<button type="button" class="btn btn-default btn-xs" onclick="statCampaign(' . $row->getId() . ')">';
             $status .= $translate('STATUS_' . strtoupper($row->getStatus()));
-            if (in_array($row->getStatus(), $percents))
-                $status .= ': 0%';
+            if (in_array($row->getStatus(), $percents)) {
+                $all = 0;
+                $pending = 0;
+                foreach ($row->getTemplates() as $template) {
+                    $all += $repoClients->countCreated($template);
+                    $pending += $repoClients->countPending($template);
+                }
+                $percentDone = ($all == 0) ? 0 : ($all - $pending) / $all;
+                $status .= ': ' . round($percentDone * 100, 1) . '%';
+            }
             $status .= '</button>';
 
             return [

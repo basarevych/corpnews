@@ -21,6 +21,13 @@ class LetterRepositoryTest extends AbstractControllerTestCase
         $this->em = $this->infrastructure->getEntityManager();
         $this->repo = $this->em->getRepository('Application\Entity\Letter');
 
+        $sl = $this->getApplicationServiceLocator();
+        $sl->setAllowOverride(true);
+        $sl->setService('Doctrine\ORM\EntityManager', $this->em);
+    }
+
+    public function testRemoveAll()
+    {
         $letter = new LetterEntity();
         $letter->setWhenCreated(new \DateTime());
         $letter->setFromAddress('foo');
@@ -31,13 +38,6 @@ class LetterRepositoryTest extends AbstractControllerTestCase
 
         $this->infrastructure->import([ $letter ]);
 
-        $sl = $this->getApplicationServiceLocator();
-        $sl->setAllowOverride(true);
-        $sl->setService('Doctrine\ORM\EntityManager', $this->em);
-    }
-
-    public function testRemoveAll()
-    {
         $data = $this->repo->findAll();
         $this->assertEquals(1, count($data), "One item should have been returned");
 

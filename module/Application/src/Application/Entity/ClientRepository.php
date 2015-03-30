@@ -11,6 +11,8 @@ namespace Application\Entity;
 
 use Exception;
 use Doctrine\ORM\EntityRepository;
+use Application\Entity\Campaign as CampaignEntity;
+use Application\Entity\Template as TemplateEntity;
 use Application\Entity\Client as ClientEntity;
 
 /**
@@ -49,30 +51,26 @@ class ClientRepository extends EntityRepository
      * @param integer $limit
      * @return array
      */
-    public function findWithoutLetters($template, $limit = null)
+    public function findWithoutLetters(TemplateEntity $template, $limit = null)
     {
-        $campaign = $template->getCampaign();
-        $groups = [];
-        foreach ($campaign->getGroups() as $group)
-            $groups[] = $group->getId();
-
         $em = $this->getEntityManager();
 
         $qbLetters = $em->createQueryBuilder();
         $qbLetters->select('l')
                   ->from('Application\Entity\Letter', 'l')
                   ->join('l.client', 'c2')
-                  ->join('l.template', 't')
+                  ->join('l.template', 't2')
                   ->andWhere('c2.id = c1.id')
-                  ->andWhere('t.id = :template_id');
+                  ->andWhere('t2.id = t1.id');
 
         $qbClients = $em->createQueryBuilder();
         $qbClients->select('c1')
                   ->from('Application\Entity\Client', 'c1')
                   ->join('c1.groups', 'g')
-                  ->andWhere('g.id IN (:group_ids)')
+                  ->join('g.campaigns', 'ca')
+                  ->join('ca.templates', 't1')
+                  ->andWhere('t1.id = :template_id')
                   ->andWhere($qbClients->expr()->not($qbClients->expr()->exists($qbLetters->getDql())))
-                  ->setParameter('group_ids', $groups)
                   ->setParameter('template_id', $template->getId());
 
         if ($limit)
@@ -88,7 +86,7 @@ class ClientRepository extends EntityRepository
      * @param integer $limit
      * @return array
      */
-    public function findWithFailedLetters($template, $limit = null)
+    public function findWithFailedLetters(TemplateEntity $template, $limit = null)
     {
         $campaign = $template->getCampaign();
         $groups = [];
@@ -98,30 +96,82 @@ class ClientRepository extends EntityRepository
         $em = $this->getEntityManager();
 
         $qbMaxDate = $em->createQueryBuilder();
-        $qbMaxDate->select('MAX(l2.when_created)')
+        $qbMaxDate->select('MAX(l2.id)')
                   ->from('Application\Entity\Letter', 'l2')
-                  ->join('l2.template', 't2')
                   ->join('l2.client', 'c2')
-                  ->andWhere('t2.id = t1.id')
-                  ->andWhere('c2.id = c1.id');
+                  ->join('l2.template', 't2')
+                  ->andWhere('c2.id = c1.id')
+                  ->andWhere('t2.id = t1.id');
 
         $qbClients = $em->createQueryBuilder();
         $qbClients->select('c1')
                   ->from('Application\Entity\Client', 'c1')
                   ->join('c1.groups', 'g')
+                  ->join('g.campaigns', 'ca')
+                  ->join('ca.templates', 't1')
                   ->join('c1.letters', 'l1')
-                  ->join('l1.template', 't1')
-                  ->andWhere('g.id IN (:group_ids)')
+                  ->andWhere('l1.when_sent IS NOT NULL')
                   ->andWhere('l1.error IS NOT NULL')
                   ->andWhere('t1.id = :template_id')
-                  ->andWhere($qbClients->expr()->eq('l1.when_created', '(' . $qbMaxDate->getDql() . ')'))
-                  ->setParameter('group_ids', $groups)
+                  ->andWhere($qbClients->expr()->eq('l1.id', '(' . $qbMaxDate->getDql() . ')'))
                   ->setParameter('template_id', $template->getId());
 
         if ($limit)
             $qbClients->setMaxResults($limit);
 
         return $qbClients->getQuery()->getResult();
+    }
+
+    /**
+     * Count all clients of a campaign
+     *
+     * @param TemplateEntity $template
+     * @return integer
+     */
+    public function countCreated(TemplateEntity $template)
+    {
+        $em = $this->getEntityManager();
+
+        $qb = $em->createQueryBuilder();
+        $qb->select('COUNT(DISTINCT cl)')
+           ->from('Application\Entity\Client', 'cl')
+           ->leftJoin('cl.letters', 'l')
+           ->join('l.template', 't')
+           ->andWhere('t.id = :template_id')
+           ->setParameter('template_id', $template->getId());
+
+        return $qb->getQuery()->getSingleScalarResult();
+    }
+
+    /**
+     * Count clients awaiting letters of a campaign
+     *
+     * @param TemplateEntity $template
+     * @return integer
+     */
+    public function countPending(TemplateEntity $template)
+    {
+        $em = $this->getEntityManager();
+
+        $qbMaxDate = $em->createQueryBuilder();
+        $qbMaxDate->select('MAX(l2.id)')
+                  ->from('Application\Entity\Letter', 'l2')
+                  ->join('l2.client', 'c2')
+                  ->join('l2.template', 't2')
+                  ->andWhere('c2.id = c1.id')
+                  ->andWhere('t2.id = t1.id');
+
+        $qbClients = $em->createQueryBuilder();
+        $qbClients->select('COUNT(c1)')
+                  ->from('Application\Entity\Client', 'c1')
+                  ->join('c1.letters', 'l1')
+                  ->join('l1.template', 't1')
+                  ->andWhere('l1.when_sent IS NULL')
+                  ->andWhere('t1.id = :template_id')
+                  ->andWhere($qbClients->expr()->eq('l1.id', '(' . $qbMaxDate->getDql() . ')'))
+                  ->setParameter('template_id', $template->getId());
+
+        return $qbClients->getQuery()->getSingleScalarResult();
     }
 
     /**
