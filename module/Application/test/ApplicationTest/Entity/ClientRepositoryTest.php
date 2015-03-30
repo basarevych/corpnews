@@ -173,20 +173,20 @@ class ClientRepositoryTest extends AbstractControllerTestCase
         $this->assertEquals($this->clientA->getId(), $result[0]->getId(), "Wrong entity found");
     }
 
-    public function testCountCreated()
+    public function testCountWithExistingLetters()
     {
         $this->setUpLetters();
 
-        $count = $this->repo->countCreated($this->template);
+        $count = $this->repo->countWithExistingLetters($this->template);
 
         $this->assertEquals(2, $count);
     }
 
-    public function testCountPending()
+    public function testCountWithPendingLetters()
     {
         $this->setUpLetters();
 
-        $count = $this->repo->countPending($this->template);
+        $count = $this->repo->countWithPendingLetters($this->template);
 
         $this->assertEquals(1, $count);
     }

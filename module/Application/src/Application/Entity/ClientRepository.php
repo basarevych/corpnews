@@ -123,12 +123,12 @@ class ClientRepository extends EntityRepository
     }
 
     /**
-     * Count all clients of a campaign
+     * Count clients which have letters
      *
      * @param TemplateEntity $template
      * @return integer
      */
-    public function countCreated(TemplateEntity $template)
+    public function countWithExistingLetters(TemplateEntity $template)
     {
         $em = $this->getEntityManager();
 
@@ -144,12 +144,12 @@ class ClientRepository extends EntityRepository
     }
 
     /**
-     * Count clients awaiting letters of a campaign
+     * Count clients awaiting their letters
      *
      * @param TemplateEntity $template
      * @return integer
      */
-    public function countPending(TemplateEntity $template)
+    public function countWithPendingLetters(TemplateEntity $template)
     {
         $em = $this->getEntityManager();
 

@@ -566,8 +566,8 @@ class CampaignController extends AbstractActionController
                 $all = 0;
                 $pending = 0;
                 foreach ($row->getTemplates() as $template) {
-                    $all += $repoClients->countCreated($template);
-                    $pending += $repoClients->countPending($template);
+                    $all += $repoClients->countWithExistingLetters($template);
+                    $pending += $repoClients->countWithPendingLetters($template);
                 }
                 $percentDone = ($all == 0) ? 0 : ($all - $pending) / $all;
                 $status .= ': ' . round($percentDone * 100, 1) . '%';
