@@ -108,17 +108,7 @@
         var table = $('#table-' + id).data('dynamicTable');
         var selected = table.getSelected();
 
-        if (selected == 'all' || selected.length > 1) {
-            $('#template-button')
-                .attr('disabled', 'disabled')
-                .addClass('disabled');
-            $('#delete-button')
-                .removeAttr('disabled')
-                .removeClass('disabled');
-            $('#reanalyze-button')
-                .removeAttr('disabled')
-                .removeClass('disabled');
-        } else if (selected.length) {
+        if (selected.length) {
             $('#actions-panel').find('button')
                 .removeAttr('disabled')
                 .removeClass('disabled');

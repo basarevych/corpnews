@@ -141,15 +141,12 @@ class CampaignController extends AbstractActionController
         $dfm = $sl->get('DataFormManager');
         $translate = $sl->get('viewhelpermanager')->get('translate');
 
-        $form = new EditCampaignForm($sl);
-        $messages = [];
-        $script = "";
-
         // Handle validate request
         if ($this->params()->fromQuery('query') == 'validate') {
             $field = $this->params()->fromQuery('field');
             $data = $this->params()->fromQuery('form');
 
+            $form = new EditCampaignForm($sl, $data['id']);
             $form->setData($data);
             $form->isValid();
 
@@ -175,6 +172,10 @@ class CampaignController extends AbstractActionController
         if (!$campaign)
             throw new NotFoundException('Campaign not found');
 
+        $form = new EditCampaignForm($sl, $id);
+        $messages = [];
+        $script = "";
+
         $request = $this->getRequest();
         if ($request->isPost()) {
             $form->setData($request->getPost());
@@ -191,18 +192,20 @@ class CampaignController extends AbstractActionController
                 $campaign->setName($data['name']);
                 $campaign->setWhenDeadline($date);
 
-                foreach ($campaign->getGroups() as $group) {
-                    $campaign->removeGroup($group);
-                    $group->removeCampaign($campaign);
-                }
-                foreach ($data['groups'] as $groupId) {
-                    $group = $em->getRepository('Application\Entity\Group')
-                                ->find($groupId);
-                    if (!$group)
-                        continue;
-                    $campaign->addGroup($group);
-                    $group->addCampaign($campaign);
-                    $em->persist($group);
+                if ($form->get('groups')->getAttribute('disabled') != 'disabled') {
+                    foreach ($campaign->getGroups() as $group) {
+                        $campaign->removeGroup($group);
+                        $group->removeCampaign($campaign);
+                    }
+                    foreach ($data['groups'] as $groupId) {
+                        $group = $em->getRepository('Application\Entity\Group')
+                                    ->find($groupId);
+                        if (!$group)
+                            continue;
+                        $campaign->addGroup($group);
+                        $group->addCampaign($campaign);
+                        $em->persist($group);
+                    }
                 }
 
                 $em->persist($campaign);
@@ -210,6 +213,11 @@ class CampaignController extends AbstractActionController
 
                 $script = "$('#modal-form').modal('hide'); reloadTable()";
             }
+
+            $groups = [];
+            foreach ($campaign->getGroups() as $group)
+                $groups[] = $group->getId();
+            $form->get('groups')->setValue($groups);
         } else {
             $date = "";
             if (($dt = $campaign->getWhenDeadline()) !== null) {

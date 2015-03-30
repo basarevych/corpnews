@@ -263,10 +263,6 @@ class CampaignControllerTest extends AbstractHttpControllerTestCase
         $result = $dom->execute('input[name="security"]');
         $security = count($result) ? $result[0]->getAttribute('value') : null;
 
-        $form = new EditCampaignForm($this->sl);
-        $dt = new \DateTime();
-        $format = $form->get('when_deadline')->getFormat();
-
         $postParams = [
             'security'  => $security,
             'id' => 42,
@@ -297,7 +293,7 @@ class CampaignControllerTest extends AbstractHttpControllerTestCase
         $result = $dom->execute('input[name="security"]');
         $security = count($result) ? $result[0]->getAttribute('value') : null;
 
-        $form = new EditCampaignForm($this->sl);
+        $form = new EditCampaignForm($this->sl, 42);
         $dt = new \DateTime();
         $format = $form->get('when_deadline')->getFormat();
 

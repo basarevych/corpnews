@@ -37,10 +37,24 @@ class EditCampaignTest extends AbstractControllerTestCase
                          ->method('findBy')
                          ->will($this->returnValue([ $this->group ]));
 
+        $this->repoCampaigns = $this->getMockBuilder('Application\Entity\CampaignRepository')
+                                    ->disableOriginalConstructor()
+                                    ->setMethods([ 'find' ])
+                                    ->getMock();
+
+        $this->campaign = new CampaignEntity();
+        $this->campaign->setName('campaign');
+        $this->campaign->setStatus(CampaignEntity::STATUS_CREATED);
+
+        $this->repoCampaigns->expects($this->any())
+                            ->method('find')
+                            ->will($this->returnValue($this->campaign));
+
         $this->em->expects($this->any())
                  ->method('getRepository')
                  ->will($this->returnValueMap([
                     [ 'Application\Entity\Group', $this->repoGroups ],
+                    [ 'Application\Entity\Campaign', $this->repoCampaigns ],
                  ]));
 
         $this->sl = $this->getApplicationServiceLocator();
@@ -50,7 +64,7 @@ class EditCampaignTest extends AbstractControllerTestCase
 
     public function testInvalidForm()
     {
-        $form = new EditCampaignForm($this->sl);
+        $form = new EditCampaignForm($this->sl, 42);
 
         $input = [
         ];
@@ -67,7 +81,7 @@ class EditCampaignTest extends AbstractControllerTestCase
 
     public function testValidForm()
     {
-        $form = new EditCampaignForm($this->sl);
+        $form = new EditCampaignForm($this->sl, 42);
         $dt = new \DateTime();
         $format = $form->get('when_deadline')->getFormat();
 

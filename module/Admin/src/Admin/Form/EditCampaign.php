@@ -17,6 +17,8 @@ use Zend\Filter;
 use Zend\Validator;
 use Zend\ServiceManager\ServiceLocatorInterface;
 use Doctrine\ORM\EntityManager;
+use Application\Exception\NotFoundException;
+use Application\Entity\Campaign as CampaignEntity;
 
 /**
  * Edit campaign entity form
@@ -41,18 +43,38 @@ class EditCampaign extends Form
     protected $em = null;
 
     /**
+     * Enable editing groups?
+     *
+     * @var boolean
+     */
+    protected $enableGroups = true;
+
+    /**
      * Constructor
      *
      * @param ServiceLocatorInterface $em        Service locator
+     * @param integer                 $id        Campaign ID
      * @param null|int|string         $name      Optional name
      * @param array                   $options   Optional options
      */
-    public function __construct(ServiceLocatorInterface $sl, $name = 'edit-campaign', $options = array())
+    public function __construct(ServiceLocatorInterface $sl, $id, $name = 'edit-campaign', $options = array())
     {
         $this->em = $sl->get('Doctrine\ORM\EntityManager');
 
         parent::__construct($name, $options);
         $this->setAttribute('method', 'post');
+
+        $campaign = $this->em->getRepository('Application\Entity\Campaign')
+                             ->find($id);
+        if (!$campaign)
+            throw new NotFoundException('Campaign not found');
+
+        $newGroup = [
+            CampaignEntity::STATUS_CREATED,
+            CampaignEntity::STATUS_TESTED,
+        ];
+
+        $this->enableGroups = in_array($campaign->getStatus(), $newGroup);
 
         $csrf = new Element\Csrf('security');
         $this->add($csrf);
@@ -82,6 +104,8 @@ class EditCampaign extends Form
         $groups->setLabel('Groups');
         $groups->setValueOptions($options);
         $groups->setValue([]);
+        if (!$this->enableGroups)
+            $groups->setAttribute('disabled', 'disabled');
         $this->add($groups);
     }
 
@@ -128,7 +152,7 @@ class EditCampaign extends Form
         $filter->add($whenDeadline);
 
         $groups = new Input('groups');
-        $groups->setRequired(true)
+        $groups->setRequired($this->enableGroups)
                ->setBreakOnFailure(false);
         $filter->add($groups);
 

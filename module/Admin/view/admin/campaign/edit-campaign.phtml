@@ -15,6 +15,8 @@ $name = $form->get('name');
 $whenDeadline = $form->get('when_deadline');
 $groups = $form->get('groups');
 
+$editGroups = $groups->getAttribute('disabled') != 'disabled';
+
 ?>
 
 <form class="form-horizontal" name="<?= $form->getName() ?>" onsubmit="return false"
@@ -99,9 +101,11 @@ $groups = $form->get('groups');
     <div class="form-group <?= $valid ? '' : 'has-error' ?>">
         <label class="col-sm-4 control-label" for="<?= $groups->getName() ?>">
             <?= $this->escapeHtml($this->translate($groups->getLabel())) ?>:
-            <span class="required-marker text-danger">
-                <?= $this->translate('REQUIRED FIELD') ?>
-            </span>
+            <?php if ($editGroups): ?>
+                <span class="required-marker text-danger">
+                    <?= $this->translate('REQUIRED FIELD') ?>
+                </span>
+            <?php endif ?>
         </label>
         <div class="col-sm-8">
             <?php foreach ($groups->getValueOptions() as $value => $label): ?>
@@ -111,6 +115,7 @@ $groups = $form->get('groups');
                                name="<?= $groups->getName() ?>[]"
                                value="<?= $this->escapeHtml($value) ?>"
                                <?= in_array($value, $groups->getValue()) ? 'checked="checked"' : '' ?>
+                               <?= $editGroups ? '' : 'disabled="disabled"' ?>
                                data-on-enter="$('#submit-button').focus().click()">
                         <?= $this->translate($label) ?>
                     </label>
