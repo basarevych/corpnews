@@ -72,6 +72,7 @@ class EditCampaign extends Form
         $newGroup = [
             CampaignEntity::STATUS_CREATED,
             CampaignEntity::STATUS_TESTED,
+            CampaignEntity::STATUS_FINISHED,
         ];
 
         $this->enableGroups = in_array($campaign->getStatus(), $newGroup);

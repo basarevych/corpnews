@@ -46,6 +46,7 @@ class ConsoleController extends AbstractConsoleController
         $task = $sl->get('TaskDaemon');
         $task->getDaemon()->start();
         $task->getDaemon()->runTask('check_email');
+        $task->getDaemon()->runTask('send_email');
     }
 
     /**

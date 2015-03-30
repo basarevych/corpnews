@@ -4,9 +4,9 @@ namespace ApplicationTest\TaskDaemon;
 
 use Zend\Test\PHPUnit\Controller\AbstractControllerTestCase;
 use Application\Entity\Campaign as CampaignEntity;
-use Application\TaskDaemon\AllQueuedCampaigns as AllQueuedCampaignsTask;
+use Application\TaskDaemon\SendEmail as SendEmailTask;
 
-class AllQueuedCampaignsConnectionMock
+class SendEmailConnectionMock
 {
     public function close()
     {
@@ -17,7 +17,7 @@ class AllQueuedCampaignsConnectionMock
     }
 }
 
-class AllQueuedCampaignsTest extends AbstractControllerTestCase
+class SendEmailTest extends AbstractControllerTestCase
 {
     public function setUp()
     {
@@ -29,36 +29,32 @@ class AllQueuedCampaignsTest extends AbstractControllerTestCase
 
         $this->em = $this->getMockBuilder('Doctrine\ORM\EntityManager')
                          ->disableOriginalConstructor()
-                         ->setMethods([ 'getConnection', 'getRepository' ])
+                         ->setMethods([ 'getConnection', 'getRepository', 'persist', 'flush' ])
                          ->getMock();
 
         $this->em->expects($this->any())
                  ->method('getConnection')
-                 ->will($this->returnValue(new AllQueuedCampaignsConnectionMock()));
+                 ->will($this->returnValue(new SendEmailConnectionMock()));
 
         $this->repoCampaign = $this->getMockBuilder('Application\Entity\CampaignRepository')
                                    ->disableOriginalConstructor()
                                    ->setMethods([ 'findByStatus' ])
                                    ->getMock();
 
-        $campaign = new CampaignEntity();
-        $campaign->setName('foobar');
-        $campaign->setStatus(CampaignEntity::STATUS_QUEUED);
-        $this->setProp($campaign, 'id', 42);
+        $this->campaign = new CampaignEntity();
+        $this->campaign->setName('foobar');
+        $this->campaign->setStatus(CampaignEntity::STATUS_STARTED);
+        $this->setProp($this->campaign, 'id', 42);
 
         $this->repoCampaign->expects($this->any())
                            ->method('findByStatus')
-                           ->will($this->returnValue([ $campaign ]));
+                           ->will($this->returnValue([ $this->campaign ]));
 
         $this->em->expects($this->any())
                  ->method('getRepository')
                  ->will($this->returnValueMap([
                     [ 'Application\Entity\Campaign', $this->repoCampaign ],
                 ]));
-
-        $this->daemon = $this->getMockBuilder('Application\Service\TaskDaemon')
-                             ->setMethods([ 'runTask' ])
-                             ->getMock();
 
         $this->logger = $this->getMockBuilder('Application\Service\Logger')
                              ->disableOriginalConstructor()
@@ -71,24 +67,17 @@ class AllQueuedCampaignsTest extends AbstractControllerTestCase
         $this->sl->setService('Logger', $this->logger);
     }
 
-    public function testTaskFindsNewLetters()
+    public function testDeadline()
     {
-        $taskName = null;
-        $taskData = null;
-        $this->daemon->expects($this->any())
-                     ->method('runTask')
-                     ->will($this->returnCallback(function ($name, $data) use (&$taskName, &$taskData) {
-                        $taskName = $name;
-                        $taskData = $data;
-                      }));
+        $dt = new \DateTime();
+        $dt->sub(new \DateInterval('P1D'));
+        $this->campaign->setWhenDeadline($dt);
 
-        $task = new AllQueuedCampaignsTask();
-        $task->setDaemon($this->daemon);
+        $task = new SendEmailTask();
         $task->setServiceLocator($this->sl);
         $task->run($exit);
 
-        $this->assertEquals('queued_campaign', $taskName, "Task name is wrong");
-        $this->assertEquals(42, $taskData, "Task data is wrong");
+        $this->assertEquals(CampaignEntity::STATUS_FINISHED, $this->campaign->getStatus());
     }
 
     protected function setProp($object, $property, $value)

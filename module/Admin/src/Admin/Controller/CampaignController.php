@@ -500,8 +500,16 @@ class CampaignController extends AbstractActionController
                 'visible'   => false,
             ],
             'status' => [
-                'title'     => $translate('Status & statistics'),
+                'title'     => $translate('Status'),
                 'sql_id'    => 'c.status',
+                'type'      => Table::TYPE_STRING,
+                'filters'   => [ ],
+                'sortable'  => false,
+                'visible'   => true,
+            ],
+            'percent' => [
+                'title'     => $translate('Percent'),
+                'sql_id'    => 'none',
                 'type'      => Table::TYPE_STRING,
                 'filters'   => [ ],
                 'sortable'  => false,
@@ -563,13 +571,12 @@ class CampaignController extends AbstractActionController
             $whenStarted = $row->getWhenStarted();
             $whenFinished = $row->getWhenFinished();
 
+            $percent = '';
             $percents = [
                 CampaignEntity::STATUS_STARTED,
                 CampaignEntity::STATUS_PAUSED,
                 CampaignEntity::STATUS_FINISHED,
             ];
-            $status = '<button type="button" class="btn btn-default btn-xs" onclick="statCampaign(' . $row->getId() . ')">';
-            $status .= $translate('STATUS_' . strtoupper($row->getStatus()));
             if (in_array($row->getStatus(), $percents)) {
                 $all = 0;
                 $pending = 0;
@@ -578,9 +585,11 @@ class CampaignController extends AbstractActionController
                     $pending += $repoClients->countWithPendingLetters($template);
                 }
                 $percentDone = ($all == 0) ? 0 : ($all - $pending) / $all;
-                $status .= ': ' . round($percentDone * 100, 1) . '%';
+
+                $percent = '<button type="button" class="btn btn-default btn-xs" onclick="statCampaign(' . $row->getId() . ')">';
+                $percent .= round($percentDone * 100, 2) . '%';
+                $percent .= '</button>';
             }
-            $status .= '</button>';
 
             return [
                 'id'            => $row->getId(),
@@ -590,7 +599,8 @@ class CampaignController extends AbstractActionController
                 'when_deadline' => $whenDeadline? $whenDeadline->getTimestamp() : null,
                 'when_finished' => $whenFinished ? $whenFinished->getTimestamp() : null,
                 'groups'        => join(', ', $groups),
-                'status'        => $status,
+                'status'        => $translate('STATUS_' . strtoupper($row->getStatus())),
+                'percent'       => $percent,
             ];
         };
 

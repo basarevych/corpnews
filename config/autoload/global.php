@@ -118,6 +118,7 @@ return [
                 'check_email'           => 'Application\TaskDaemon\CheckEmail',
                 'queued_campaign'       => 'Application\TaskDaemon\QueuedCampaign',
                 'all_queued_campaigns'  => 'Application\TaskDaemon\AllQueuedCampaigns',
+                'send_email'            => 'Application\TaskDaemon\SendEmail',
             ],
         ],
     ],

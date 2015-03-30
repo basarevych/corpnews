@@ -33,7 +33,7 @@ class AllQueuedCampaigns extends ZfTask
         $em->getConnection()->connect();
 
         $campaigns = $em->getRepository('Application\Entity\Campaign')
-                        ->findBy([ 'status' => CampaignEntity::STATUS_QUEUED ], []);
+                        ->findByStatus(CampaignEntity::STATUS_QUEUED);
 
         foreach ($campaigns as $campaign)
             $daemon->runTask('queued_campaign', $campaign->getId());
