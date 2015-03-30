@@ -71,9 +71,9 @@ return [
     'Stack trace' => 'Stack trace',
 
     // Logger
-    'INFO_MAILBOX_CREATED' => 'Created mailbox (%source_name%)',
-    'INFO_LETTER_AUTODELETED' => 'Old letter autodeleted (%source_id%)',
-    'INFO_LETTER_PROCESSED' => 'New letter processed (%source_id%)',
+    'INFO_MAILBOX_CREATED' => 'Mailbox created',
+    'INFO_LETTER_AUTODELETED' => 'Old letter autodeleted',
+    'INFO_LETTER_PROCESSED' => 'New letter received and processed',
     'INFO_CAMPAIGN_BEING_PROCESSED' => 'Campaign is being processed',
     'INFO_CAMPAIGN_STARTED' => 'Campaign processed and started',
     'ERROR_CREATE_FROM_TEMPLATE' => 'Could not create letter from template',

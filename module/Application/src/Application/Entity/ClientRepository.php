@@ -151,27 +151,24 @@ class ClientRepository extends EntityRepository
      */
     public function countWithPendingLetters(TemplateEntity $template)
     {
-        $em = $this->getEntityManager();
-
-        $qbMaxDate = $em->createQueryBuilder();
-        $qbMaxDate->select('MAX(l2.id)')
-                  ->from('Application\Entity\Letter', 'l2')
-                  ->join('l2.client', 'c2')
-                  ->join('l2.template', 't2')
-                  ->andWhere('c2.id = c1.id')
-                  ->andWhere('t2.id = t1.id');
-
-        $qbClients = $em->createQueryBuilder();
-        $qbClients->select('COUNT(c1)')
-                  ->from('Application\Entity\Client', 'c1')
-                  ->join('c1.letters', 'l1')
-                  ->join('l1.template', 't1')
-                  ->andWhere('l1.when_sent IS NULL')
-                  ->andWhere('t1.id = :template_id')
-                  ->andWhere($qbClients->expr()->eq('l1.id', '(' . $qbMaxDate->getDql() . ')'))
-                  ->setParameter('template_id', $template->getId());
+        $qbClients = $this->queryWithPendingLetters($template);
+        $qbClients->select('COUNT(c1)');
 
         return $qbClients->getQuery()->getSingleScalarResult();
+    }
+
+    /**
+     * Find clients awaiting their letters
+     *
+     * @param TemplateEntity $template
+     * @return integer
+     */
+    public function findWithPendingLetters(TemplateEntity $template)
+    {
+        $qbClients = $this->queryWithPendingLetters($template);
+        $qbClients->select('c1');
+
+        return $qbClients->getQuery()->getResult();
     }
 
     /**
@@ -185,5 +182,35 @@ class ClientRepository extends EntityRepository
             'DELETE Application\Entity\Client c'
         );
         $query->getResult();
+    }
+
+    /**
+     * Query for pending letters
+     *
+     * @param TemplateEntity $template
+     * @return integer
+     */
+    protected function queryWithPendingLetters(TemplateEntity $template)
+    {
+        $em = $this->getEntityManager();
+
+        $qbMaxDate = $em->createQueryBuilder();
+        $qbMaxDate->select('MAX(l2.id)')
+                  ->from('Application\Entity\Letter', 'l2')
+                  ->join('l2.client', 'c2')
+                  ->join('l2.template', 't2')
+                  ->andWhere('c2.id = c1.id')
+                  ->andWhere('t2.id = t1.id');
+
+        $qbClients = $em->createQueryBuilder();
+        $qbClients->from('Application\Entity\Client', 'c1')
+                  ->join('c1.letters', 'l1')
+                  ->join('l1.template', 't1')
+                  ->andWhere('l1.when_sent IS NULL')
+                  ->andWhere('t1.id = :template_id')
+                  ->andWhere($qbClients->expr()->eq('l1.id', '(' . $qbMaxDate->getDql() . ')'))
+                  ->setParameter('template_id', $template->getId());
+
+        return $qbClients;
     }
 }

@@ -191,6 +191,16 @@ class ClientRepositoryTest extends AbstractControllerTestCase
         $this->assertEquals(1, $count);
     }
 
+    public function testFindWithPendingLetters()
+    {
+        $this->setUpLetters();
+
+        $result = $this->repo->findWithPendingLetters($this->template);
+
+        $this->assertEquals(1, count($result), "Only one entity should be found");
+        $this->assertEquals($this->clientB->getId(), $result[0]->getId(), "Client B should be returned");
+    }
+
     public function testRemoveAll()
     {
         $this->setUpLetters();
