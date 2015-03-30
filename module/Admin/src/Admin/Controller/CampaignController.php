@@ -585,9 +585,11 @@ class CampaignController extends AbstractActionController
                     $pending += $repoClients->countWithPendingLetters($template);
                 }
                 $percentDone = ($all == 0) ? 0 : ($all - $pending) / $all;
+                $percentDone = round($percentDone * 100, 2);
+                $percentDone = \Application\Tool\Number::localeFormat($percentDone);
 
                 $percent = '<button type="button" class="btn btn-default btn-xs" onclick="statCampaign(' . $row->getId() . ')">';
-                $percent .= round($percentDone * 100, 2) . '%';
+                $percent .= $percentDone . '%';
                 $percent .= '</button>';
             }
 

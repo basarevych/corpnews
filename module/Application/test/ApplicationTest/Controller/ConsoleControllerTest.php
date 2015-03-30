@@ -139,16 +139,22 @@ class ConsoleControllerTest extends AbstractConsoleControllerTestCase
 
         $this->dispatch('populate-db');
 
-        $this->assertEquals(1, count($persistedSettings), "One Setting should have been saved");
+        $this->assertEquals(2, count($persistedSettings), "Two Setting should have been saved");
 
         $autodelete = false;
+        $mailInterval = false;
         foreach ($persistedSettings as $setting) {
             if ($setting->getName() == 'MailboxAutodelete'
                     && $setting->getType() == SettingEntity::TYPE_INTEGER) {
                 $autodelete = true;
             }
+            if ($setting->getName() == 'MailInterval'
+                    && $setting->getType() == SettingEntity::TYPE_INTEGER) {
+                $mailInterval = true;
+            }
         }
         $this->assertEquals(true, $autodelete, "MailboxAutodelete was not created");
+        $this->assertEquals(true, $mailInterval, "MailInterval was not created");
 
         $this->assertEquals(true, count($persistedGroups) == count(GroupEntity::getSystemNames()), "All system Groups should have been saved");
 

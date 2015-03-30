@@ -11,6 +11,7 @@ namespace Application\Entity;
 
 use Exception;
 use Doctrine\ORM\EntityRepository;
+use Application\Entity\Template as TemplateEntity;
 use Application\Entity\Letter as LetterEntity;
 
 /**
@@ -21,6 +22,28 @@ use Application\Entity\Letter as LetterEntity;
  */
 class LetterRepository extends EntityRepository
 {
+    /**
+     * Find letters to send
+     *
+     * @param TemplateEntity $template
+     * @param integer $limit
+     * @return array
+     */
+    public function findPending(TemplateEntity $template, $limit = null)
+    {
+        $em = $this->getEntityManager();
+
+        $qb = $em->createQueryBuilder();
+        $qb->select('l')
+           ->from('Application\Entity\Letter', 'l')
+           ->join('l.template', 't')
+           ->andWhere('l.when_sent IS NULL')
+           ->andWhere('t.id = :template_id')
+           ->setParameter('template_id', $template->getId());
+
+        return $qb->getQuery()->getResult();
+    }
+
     /**
      * Remove all the table content
      */

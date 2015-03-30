@@ -110,6 +110,18 @@ class ConsoleController extends AbstractConsoleController
             $em->flush();
         }
 
+        $mailInterval = $em->getRepository('Application\Entity\Setting')
+                           ->findOneByName('MailInterval');
+        if (!$mailInterval) {
+            $mailInterval = new SettingEntity();
+            $mailInterval->setName('MailInterval');
+            $mailInterval->setType(SettingEntity::TYPE_INTEGER);
+            $mailInterval->setValueInteger(5);
+
+            $em->persist($mailInterval);
+            $em->flush();
+        }
+
         foreach (GroupEntity::getSystemNames() as $name) {
             $group = $em->getRepository('Application\Entity\Group')
                         ->findOneByName($name);
