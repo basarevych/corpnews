@@ -18,33 +18,14 @@
                         <h3 class="panel-title"><?= $this->translate('Outgoing filter') ?></h3>
                     </div>
                     <div class="panel-body button-panel">
-                        <div class="radio">
-                            <label>
-                                <input type="radio" name="status" value="planned"
-                                       onclick="$(this).closest('.button-panel').find('.checkbox').hide()">
-                                <?= $this->translate('OUTGOING_PLANNED_FILTER') ?>
-                            </label>
-                        </div>
-                        <div class="radio">
-                            <label>
-                                <input type="radio" name="status" value="processed" checked="checked"
-                                       onclick="$(this).closest('.button-panel').find('.checkbox').show()">
-                                <?= $this->translate('OUTGOING_PROCESSED_FILTER') ?>
-
-                                <div class="checkbox">
-                                    <label>
-                                        <input type="checkbox" name="successful" value="1" checked="checked">
-                                        <?= $this->translate('OUTGOING_SUCCESSFUL_FILTER') ?>
-                                    </label>
-                                </div>
-                                <div class="checkbox">
-                                    <label>
-                                        <input type="checkbox" name="erroneous" value="1" checked="checked">
-                                        <?= $this->translate('OUTGOING_ERRONEOUS_FILTER') ?>
-                                    </label>
-                                </div>
-                            </label>
-                        </div>
+                        <?php foreach ($this->statuses as $status): ?>
+                            <div class="checkbox">
+                                <label>
+                                    <input type="checkbox" name="status-<?= $status ?>" value="1" checked="checked">
+                                    <?= $this->translate('STATUS_' . strtoupper($status)) ?>
+                                </label>
+                            </div>
+                        <?php endforeach ?>
                         <button class="btn btn-default" onclick="applyFilter()">
                             <?= $this->translate('Apply filter') ?>
                         </button>
@@ -61,13 +42,13 @@
 
 <script>
     function applyFilter() {
-        var filters = [
-            'status=' + $('.button-panel input[name="status"]:checked').val(),
-            'successful=' + ($('.button-panel input[name="successful"]').prop('checked') ? 1 : 0),
-            'erroneous=' + ($('.button-panel input[name="erroneous"]').prop('checked') ? 1 : 0),
+        var statuses = [
+            <?php foreach ($this->statuses as $status): ?>
+                '<?= $status ?>=' + ($('.button-panel input[name="status-<?= $status ?>"]').prop('checked') ? 1 : 0),
+            <?php endforeach ?>
         ];
         var url = '<?= $this->basePath('/admin/outgoing/outgoing-table') ?>'
-            + '?' + filters.join('&');
+            + '?' + statuses.join('&');
 
         $('#table-outgoing').dynamicTable({
             url: url,
@@ -77,9 +58,13 @@
             loader_image: '<?= $this->basePath('/img/loader.gif') ?>',
             strings: dynamicTableStrings,
             mapper: function (row) {
-                if (row['when_sent'] != null) {
-                    var m = moment.unix(row['when_sent']).local();
-                    row['when_sent'] = m.format('<?= $this->translate('GENERIC_MOMENT_FORMAT') ?>');
+                if (row['when_created'] != null) {
+                    var m = moment.unix(row['when_created']).local();
+                    row['when_created'] = m.format('<?= $this->translate('GENERIC_MOMENT_FORMAT') ?>');
+                }
+                if (row['when_processed'] != null) {
+                    var m = moment.unix(row['when_processed']).local();
+                    row['when_processed'] = m.format('<?= $this->translate('GENERIC_MOMENT_FORMAT') ?>');
                 }
 
                 return row;

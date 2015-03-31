@@ -37,8 +37,9 @@ class LetterRepository extends EntityRepository
         $qb->select('l')
            ->from('Application\Entity\Letter', 'l')
            ->join('l.template', 't')
-           ->andWhere('l.when_sent IS NULL')
+           ->andWhere('l.status = :status')
            ->andWhere('t.id = :template_id')
+           ->setParameter('status', LetterEntity::STATUS_CREATED)
            ->setParameter('template_id', $template->getId());
 
         return $qb->getQuery()->getResult();

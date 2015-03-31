@@ -37,8 +37,9 @@ class LetterRepositoryTest extends AbstractControllerTestCase
         $template->setBody('body');
 
         $letter1 = new LetterEntity();
+        $letter1->setStatus(LetterEntity::STATUS_SENT);
         $letter1->setWhenCreated(new \DateTime());
-        $letter1->setWhenSent(new \DateTime());
+        $letter1->setWhenProcessed(new \DateTime());
         $letter1->setFromAddress('foo');
         $letter1->setToAddress('bar');
         $letter1->setSubject('subject');

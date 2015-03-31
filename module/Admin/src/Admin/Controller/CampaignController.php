@@ -544,13 +544,6 @@ class CampaignController extends AbstractActionController
         $basePath = $sl->get('viewhelpermanager')->get('basePath');
         $translate = $sl->get('viewhelpermanager')->get('translate');
 
-        $createdFilter = $this->params()->fromQuery('created', 1);
-        $testedFilter = $this->params()->fromQuery('tested', 1);
-        $queuedFilter = $this->params()->fromQuery('queued', 1);
-        $startedFilter = $this->params()->fromQuery('started', 1);
-        $pausedFilter = $this->params()->fromQuery('paused', 1);
-        $finishedFilter = $this->params()->fromQuery('finished', 1);
-
         $filter = [];
         foreach (CampaignEntity::getStatuses() as $status) {
             if ($this->params()->fromQuery($status, 1))

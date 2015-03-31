@@ -142,6 +142,7 @@ class Campaign
      */
     public function __construct()
     {
+        $this->status = self::STATUS_CREATED;
         $this->groups = new ArrayCollection();
         $this->templates = new ArrayCollection();
         $this->secrets = new ArrayCollection();

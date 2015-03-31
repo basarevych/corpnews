@@ -12,6 +12,7 @@ namespace Application\TaskDaemon;
 use Exception;
 use Application\Document\Syslog as SyslogDocument;
 use Application\Entity\Campaign as CampaignEntity;
+use Application\Entity\Letter as LetterEntity;
 
 /**
  * SendEmail task
@@ -100,7 +101,10 @@ class SendEmail extends ZfTask
                             break 4;
 
                         if ($letter->getClient()->getWhenBounced()) {
-                        } if (!$mail->sendLetter($letter)) {
+                            $letter->setStatus(LetterEntity::STATUS_SKIPPED);
+                            $em->persist($letter);
+                            $em->flush();
+                        } else if (!$mail->sendLetter($letter)) {
                             $campaign->setStatus(CampaignEntity::STATUS_PAUSED);
                             $em->persist($campaign);
                             $em->flush();

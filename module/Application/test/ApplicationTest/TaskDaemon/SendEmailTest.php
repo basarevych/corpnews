@@ -164,6 +164,8 @@ class SendEmailTest extends AbstractControllerTestCase
         $this->mail->expects($this->any())
                    ->method('sendLetter')
                    ->will($this->returnCallback(function ($letter) use (&$letterSent) {
+                        $letter->setStatus(LetterEntity::STATUS_SENT);
+                        $letter->setWhenProcessed(new \DateTime());
                         $letterSent = $letter;
                         return true;
                    }));
@@ -172,8 +174,9 @@ class SendEmailTest extends AbstractControllerTestCase
         $task->setServiceLocator($this->sl);
         $task->run($exit);
 
-        $this->assertEquals($this->letter, $letterSent, "The letter was not sent");
-        $this->assertEquals(CampaignEntity::STATUS_FINISHED, $this->campaign->getStatus(), "Campaign was not finishe");
+        $this->assertEquals($this->letter, $letterSent, "Wrong letter was sent");
+        $this->assertEquals(LetterEntity::STATUS_SENT, $this->letter->getStatus(), "Letter was not marked sent");
+        $this->assertEquals(CampaignEntity::STATUS_FINISHED, $this->campaign->getStatus(), "Campaign was not finished");
     }
 
     public function testSendChecksClientBounced()
@@ -195,6 +198,8 @@ class SendEmailTest extends AbstractControllerTestCase
         $this->mail->expects($this->any())
                    ->method('sendLetter')
                    ->will($this->returnCallback(function ($letter) use (&$letterSent) {
+                        $letter->setStatus(LetterEntity::STATUS_SENT);
+                        $letter->setWhenProcessed(new \DateTime());
                         $letterSent = $letter;
                         return true;
                    }));
@@ -203,8 +208,9 @@ class SendEmailTest extends AbstractControllerTestCase
         $task->setServiceLocator($this->sl);
         $task->run($exit);
 
-        $this->assertEquals(null, $letterSent, "The letter should not be sent");
-        $this->assertEquals(CampaignEntity::STATUS_FINISHED, $this->campaign->getStatus(), "Campaign was not finishe");
+        $this->assertEquals(null, $letterSent, "Letter should not get send");
+        $this->assertEquals(LetterEntity::STATUS_SKIPPED, $this->letter->getStatus(), "Letter was not marked skipped");
+        $this->assertEquals(CampaignEntity::STATUS_FINISHED, $this->campaign->getStatus(), "Campaign was not finished");
     }
 
     protected function setProp($object, $property, $value)

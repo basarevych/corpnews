@@ -199,10 +199,6 @@ return [
     'From address' => 'From address',
     'To address' => 'To address',
     'Outgoing filter' => 'Outgoing filter',
-    'OUTGOING_PLANNED_FILTER' => 'Planned messages',
-    'OUTGOING_PROCESSED_FILTER' => 'Processed messages',
-    'OUTGOING_SUCCESSFUL_FILTER' => 'Successfuly sent messages',
-    'OUTGOING_ERRONEOUS_FILTER' => 'Failed to send messages',
 
     // SettingController
     'Save' => 'Save',

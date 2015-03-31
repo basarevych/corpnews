@@ -26,6 +26,17 @@ use Application\Entity\Client;
 class Letter
 {
     /**
+     * @const STATUS_CREATED
+     * @const STATUS_SENT
+     * @const STATUS_SKIPPED
+     * @const STATUS_FAILED
+     */
+    const STATUS_CREATED = 'created';
+    const STATUS_SENT = 'sent';
+    const STATUS_SKIPPED = 'skipped';
+    const STATUS_FAILED = 'failed';
+
+    /**
      * Row ID
      *
      * @var integer
@@ -37,6 +48,15 @@ class Letter
     protected $id;
 
     /**
+     * Letter status
+     *
+     * @var string
+     *
+     * @ORM\Column(type="string")
+     */
+    protected $status;
+
+    /**
      * When created
      *
      * @var DateTime
@@ -46,22 +66,13 @@ class Letter
     protected $when_created;
 
     /**
-     * When sent
+     * When processed
      *
      * @var DateTime
      * 
      * @ORM\Column(type="utcdatetime", nullable=true)
      */
-    protected $when_sent;
-
-    /**
-     * Error message or NULL if success
-     *
-     * @var string
-     *
-     * @ORM\Column(type="string", nullable=true)
-     */
-    protected $error;
+    protected $when_processed;
 
     /**
      * From address
@@ -129,6 +140,14 @@ class Letter
     protected $client;
 
     /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        $this->status = self::STATUS_CREATED;
+    }
+
+    /**
      * Converts this object to array
      *
      * @return array
@@ -136,18 +155,18 @@ class Letter
     public function toArray()
     {
         $whenCreated = $this->getWhenCreated();
-        $whenSent = $this->getWhenSent();
+        $whenProcessed = $this->getWhenProcessed();
 
         return [
-            'id'            => $this->getId(),
-            'when_sent'     => $whenCreated ? $whenCreated->getTimestamp() : null,
-            'when_sent'     => $whenSent ? $whenSent->getTimestamp() : null,
-            'error'         => $this->getError(),
-            'from_address'  => $this->getFromAddress(),
-            'to_address'    => $this->getToAddresss(),
-            'subject'       => $this->getSubject(),
-            'headers'       => $this->getHeaders(),
-            'body'          => $this->getBody(),
+            'id'                => $this->getId(),
+            'status'            => $this->getStatus(),
+            'when_created'      => $whenCreated ? $whenCreated->getTimestamp() : null,
+            'when_processed'    => $whenProcessed ? $whenProcessed->getTimestamp() : null,
+            'from_address'      => $this->getFromAddress(),
+            'to_address'        => $this->getToAddresss(),
+            'subject'           => $this->getSubject(),
+            'headers'           => $this->getHeaders(),
+            'body'              => $this->getBody(),
         ];
     }
 
@@ -159,6 +178,29 @@ class Letter
     public function getId()
     {
         return $this->id;
+    }
+
+    /**
+     * Set status
+     *
+     * @param string $status
+     * @return Letter
+     */
+    public function setStatus($status)
+    {
+        $this->status = $status;
+
+        return $this;
+    }
+
+    /**
+     * Get status
+     *
+     * @return string 
+     */
+    public function getStatus()
+    {
+        return $this->status;
     }
 
     /**
@@ -185,49 +227,26 @@ class Letter
     }
 
     /**
-     * Set when_sent
+     * Set when_processed
      *
-     * @param \DateTime $whenSent
+     * @param \DateTime $whenProcessed
      * @return Letter
      */
-    public function setWhenSent($whenSent)
+    public function setWhenProcessed($whenProcessed)
     {
-        $this->when_sent = $whenSent;
+        $this->when_processed = $whenProcessed;
 
         return $this;
     }
 
     /**
-     * Get when_sent
+     * Get when_processed
      *
      * @return \DateTime
      */
-    public function getWhenSent()
+    public function getWhenProcessed()
     {
-        return $this->when_sent;
-    }
-
-    /**
-     * Set error
-     *
-     * @param string $error
-     * @return Letter
-     */
-    public function setError($error)
-    {
-        $this->error = $error;
-
-        return $this;
-    }
-
-    /**
-     * Get error
-     *
-     * @return string 
-     */
-    public function getError()
-    {
-        return $this->error;
+        return $this->when_processed;
     }
 
     /**
@@ -389,5 +408,20 @@ class Letter
     public function getClient()
     {
         return $this->client;
+    }
+
+    /**
+     * Get all statuses
+     *
+     * @return array
+     */
+    public static function getStatuses()
+    {
+        return [
+            self::STATUS_CREATED,
+            self::STATUS_SENT,
+            self::STATUS_SKIPPED,
+            self::STATUS_FAILED,
+        ];
     }
 }

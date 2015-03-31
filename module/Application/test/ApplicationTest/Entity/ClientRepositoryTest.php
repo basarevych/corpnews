@@ -85,9 +85,9 @@ class ClientRepositoryTest extends AbstractControllerTestCase
         $this->clientA->addLetter($this->a1);
 
         $this->a2 = new LetterEntity();
+        $this->a2->setStatus(LetterEntity::STATUS_FAILED);
         $this->a2->setWhenCreated(new \DateTime());
-        $this->a2->setWhenSent(new \DateTime());
-        $this->a2->setError('error');
+        $this->a2->setWhenProcessed(new \DateTime());
         $this->a2->setFromAddress('foo');
         $this->a2->setToAddress('bar');
         $this->a2->setSubject('subject');
@@ -100,9 +100,9 @@ class ClientRepositoryTest extends AbstractControllerTestCase
         $this->clientA->addLetter($this->a2);
 
         $this->b1 = new LetterEntity();
+        $this->b1->setStatus(LetterEntity::STATUS_FAILED);
         $this->b1->setWhenCreated(new \DateTime());
-        $this->b1->setWhenSent(new \DateTime());
-        $this->b1->setError('error');
+        $this->b1->setWhenProcessed(new \DateTime());
         $this->b1->setFromAddress('foo');
         $this->b1->setToAddress('bar');
         $this->b1->setSubject('subject');

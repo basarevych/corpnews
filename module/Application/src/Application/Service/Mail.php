@@ -195,8 +195,8 @@ class Mail implements ServiceLocatorAwareInterface
         $sl = $this->getServiceLocator();
         $em = $sl->get('Doctrine\ORM\EntityManager');
 
-        $letter->setWhenSent(new \DateTime());
-        $letter->setError(null);
+        $letter->setStatus(LetterEntity::STATUS_SENT);
+        $letter->setWhenProcessed(new \DateTime());
         $em->persist($letter);
         $em->flush();
 
@@ -215,11 +215,11 @@ class Mail implements ServiceLocatorAwareInterface
                 ]
             );
 
-            $letter->setError($e->getMessage());
+            $letter->setStatus(STATUS_FAILED);
             $em->persist($letter);
             $em->flush();
         }
 
-        return ($letter->getError() === null);
+        return ($letter->getStatus() === LetterEntity::STATUS_SENT);
     }
 }

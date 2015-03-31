@@ -125,7 +125,6 @@ class OutgoingControllerTest extends AbstractHttpControllerTestCase
         $a = new LetterEntity();
         $a->setTemplate($t);
         $a->setWhenCreated(new \DateTime());
-        $a->setError('foobar');
         $a->setFromAddress('from');
         $a->setToAddress('to');
         $a->setSubject('subject');

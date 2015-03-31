@@ -30,7 +30,9 @@ class OutgoingController extends AbstractActionController
      */
     public function indexAction()
     {
-        return new ViewModel();
+        return new ViewModel([
+            'statuses' => LetterEntity::getStatuses(),
+        ]);
     }
 
     /**
@@ -38,14 +40,8 @@ class OutgoingController extends AbstractActionController
      */
     public function outgoingTableAction()
     {
-        $filter = [
-            'status'        => $this->params()->fromQuery('status'),
-            'successful'    => $this->params()->fromQuery('successful'),
-            'erroneous'     => $this->params()->fromQuery('erroneous'),
-        ];
-
         $table = $this->createTable();
-        $this->connectTableData($table, $filter);
+        $this->connectTableData($table);
 
         $query = $this->params()->fromQuery('query');
         switch ($query) {
@@ -92,12 +88,12 @@ class OutgoingController extends AbstractActionController
                 'sortable'  => true,
                 'visible'   => false,
             ],
-            'error' => [
-                'title'     => $translate('Error'),
-                'sql_id'    => 'l.error',
+            'status' => [
+                'title'     => $translate('Status'),
+                'sql_id'    => 'l.status',
                 'type'      => Table::TYPE_STRING,
-                'filters'   => [ Table::FILTER_LIKE, Table::FILTER_NULL ],
-                'sortable'  => true,
+                'filters'   => [],
+                'sortable'  => false,
                 'visible'   => false,
             ],
             'when_created' => [
@@ -108,9 +104,9 @@ class OutgoingController extends AbstractActionController
                 'sortable'  => true,
                 'visible'   => true,
             ],
-            'when_sent' => [
-                'title'     => $translate('When sent'),
-                'sql_id'    => 'l.when_sent',
+            'when_processed' => [
+                'title'     => $translate('When processed'),
+                'sql_id'    => 'l.when_processed',
                 'type'      => Table::TYPE_DATETIME,
                 'filters'   => [ Table::FILTER_BETWEEN, Table::FILTER_NULL ],
                 'sortable'  => true,
@@ -157,40 +153,39 @@ class OutgoingController extends AbstractActionController
      * Create adapter and mapper
      *
      * @param Table $table
-     * @param array $filter
      */
-    protected function connectTableData($table, $filter)
+    protected function connectTableData($table)
     {
         $sl = $this->getServiceLocator();
         $em = $sl->get('Doctrine\ORM\EntityManager');
         $escapeHtml = $sl->get('viewhelpermanager')->get('escapeHtml');
         $translate = $sl->get('viewhelpermanager')->get('translate');
 
+        $filter = [];
+        foreach (LetterEntity::getStatuses() as $status) {
+            if ($this->params()->fromQuery($status, 1))
+                $filter[] = $status;
+        }
+
         $qb = $em->createQueryBuilder();
         $qb->select('l')
            ->from('Application\Entity\Letter', 'l')
            ->leftJoin('l.template', 't')
-           ->leftJoin('t.campaign', 'c');
-
-        if ($filter['status'] == 'processed') {
-            $qb->andWhere('l.when_sent IS NOT NULL');
-            if ($filter['successful'] && !$filter['erroneous'])
-                $qb->andWhere('l.error IS NULL');
-            else if (!$filter['successful'] && $filter['erroneous'])
-                $qb->andWhere('l.error IS NOT NULL');
-            else if (!$filter['successful'] && !$filter['erroneous'])
-                $qb->andWhere('l.error = 0');
-        } else if ($filter['status'] == 'planned') {
-            $qb->andWhere('l.when_sent IS NULL');
-        }
+           ->leftJoin('t.campaign', 'c')
+           ->andWhere('l.status IN (:status_filter)')
+           ->setParameter('status_filter', $filter);
 
         $adapter = new DoctrineORMAdapter();
         $adapter->setQueryBuilder($qb);
 
         $mapper = function ($row) use ($escapeHtml, $translate) {
-            $date = $row->getWhenSent();
-            if ($date !== null)
-                $date = $date->getTimestamp();
+            $dateCreated = $row->getWhenCreated();
+            if ($dateCreated !== null)
+                $dateCreated = $dateCreated->getTimestamp();
+
+            $dateProcessed = $row->getWhenProcessed();
+            if ($dateProcessed !== null)
+                $dateProcessed = $dateProcessed->getTimestamp();
 
             $subject = $row->getSubject();
             if (!$subject)
@@ -199,13 +194,14 @@ class OutgoingController extends AbstractActionController
                 . $row->getId() . ' })">' . $escapeHtml($subject) . '</a>';
 
             return [
-                'id'            => $row->getId(),
-                'error'         => $row->getError(),
-                'when_sent'     => $date,
-                'campaign'      => $row->getTemplate()->getCampaign()->getName(),
-                'from_address'  => $row->getFromAddress(),
-                'to_address'    => $row->getToAddress(),
-                'subject'       => $subject,
+                'id'                => $row->getId(),
+                'status'            => $translate('STATUS_' . $row->getStatus()),
+                'when_created'      => $dateCreated,
+                'when_processed'    => $dateProcessed,
+                'campaign'          => $row->getTemplate()->getCampaign()->getName(),
+                'from_address'      => $row->getFromAddress(),
+                'to_address'        => $row->getToAddress(),
+                'subject'           => $subject,
             ];
         };
 

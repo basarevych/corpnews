@@ -14,6 +14,7 @@ use Doctrine\ORM\EntityRepository;
 use Application\Entity\Campaign as CampaignEntity;
 use Application\Entity\Template as TemplateEntity;
 use Application\Entity\Client as ClientEntity;
+use Application\Entity\Letter as LetterEntity;
 
 /**
  * Repository for Client entity
@@ -110,10 +111,10 @@ class ClientRepository extends EntityRepository
                   ->join('g.campaigns', 'ca')
                   ->join('ca.templates', 't1')
                   ->join('c1.letters', 'l1')
-                  ->andWhere('l1.when_sent IS NOT NULL')
-                  ->andWhere('l1.error IS NOT NULL')
+                  ->andWhere('l1.status IN(:status)')
                   ->andWhere('t1.id = :template_id')
                   ->andWhere($qbClients->expr()->eq('l1.id', '(' . $qbMaxDate->getDql() . ')'))
+                  ->setParameter('status', [ LetterEntity::STATUS_SKIPPED, LetterEntity::STATUS_FAILED ])
                   ->setParameter('template_id', $template->getId());
 
         if ($limit)
@@ -166,9 +167,10 @@ class ClientRepository extends EntityRepository
                   ->from('Application\Entity\Client', 'c1')
                   ->join('c1.letters', 'l1')
                   ->join('l1.template', 't1')
-                  ->andWhere('l1.when_sent IS NULL')
+                  ->andWhere('l1.status = :status')
                   ->andWhere('t1.id = :template_id')
                   ->andWhere($qbClients->expr()->eq('l1.id', '(' . $qbMaxDate->getDql() . ')'))
+                  ->setParameter('status', LetterEntity::STATUS_CREATED)
                   ->setParameter('template_id', $template->getId());
 
         return $qbClients->getQuery()->getSingleScalarResult();
