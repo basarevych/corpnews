@@ -68,56 +68,75 @@ class SendEmail extends ZfTask
                 continue;
             }
 
-            $error = false;
-            $totalPending = 0;
-            foreach ($campaign->getTemplates() as $template) {
-                if ($exitRequested)
-                    break 2;
-
-                $letters = $em->getRepository('Application\Entity\Letter')
-                              ->findPending($template, 100);
-                $totalPending += count($letters);
-
-                foreach ($letters as $letter) {
-                    if ($exitRequested)
-                        break 3;
-
-                    if (!$mail->sendLetter($letter)) {
-                        $campaign->setStatus(CampaignEntity::STATUS_PAUSED);
-                        $em->persist($campaign);
-                        $em->flush();
-
-                        $logger->log(
-                            SyslogDocument::LEVEL_CRITICAL,
-                            'ERROR_CAMPAIGN_PAUSED',
-                            [
-                                'source_name' => get_class($campaign),
-                                'source_id' => $campaign->getId()
-                            ]
-                        );
-
-                        $error = true;
-                        break 2;
-                    }
-
-                    sleep($mailInterval);
-                }
-            }
-
-            if (!$error && $totalPending == 0) {
-                $campaign->setStatus(CampaignEntity::STATUS_FINISHED);
-                $campaign->setWhenFinished(new \DateTime());
+            if (count($campaign->getTemplates()) == 0) {
+                $campaign->setStatus(CampaignEntity::STATUS_PAUSED);
                 $em->persist($campaign);
                 $em->flush();
 
                 $logger->log(
-                    SyslogDocument::LEVEL_INFO,
-                    'INFO_CAMPAIGN_DONE',
+                    SyslogDocument::LEVEL_CRITICAL,
+                    'ERROR_CAMPAIGN_NO_TEMPLATES',
                     [
                         'source_name' => get_class($campaign),
                         'source_id' => $campaign->getId()
                     ]
                 );
+                continue;
+            }
+
+            while (!$exitRequested) {
+                $totalPending = 0;
+
+                foreach ($campaign->getTemplates() as $template) {
+                    if ($exitRequested)
+                        break 3;
+
+                    $letters = $em->getRepository('Application\Entity\Letter')
+                                  ->findPending($template, 100);
+                    $totalPending += count($letters);
+
+                    foreach ($letters as $letter) {
+                        if ($exitRequested)
+                            break 4;
+
+                        if (!$mail->sendLetter($letter)) {
+                            $campaign->setStatus(CampaignEntity::STATUS_PAUSED);
+                            $em->persist($campaign);
+                            $em->flush();
+
+                            $logger->log(
+                                SyslogDocument::LEVEL_CRITICAL,
+                                'ERROR_CAMPAIGN_PAUSED',
+                                [
+                                    'source_name' => get_class($campaign),
+                                    'source_id' => $campaign->getId()
+                                ]
+                            );
+
+                            return;
+                        }
+
+                        sleep($mailInterval);
+                    }
+                }
+
+                if ($totalPending == 0) {
+                    $campaign->setStatus(CampaignEntity::STATUS_FINISHED);
+                    $campaign->setWhenFinished(new \DateTime());
+                    $em->persist($campaign);
+                    $em->flush();
+
+                    $logger->log(
+                        SyslogDocument::LEVEL_INFO,
+                        'INFO_CAMPAIGN_DONE',
+                        [
+                            'source_name' => get_class($campaign),
+                            'source_id' => $campaign->getId()
+                        ]
+                    );
+
+                    return;
+                }
             }
         }
     }

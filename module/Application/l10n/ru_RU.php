@@ -80,6 +80,7 @@ return [
     'INFO_CAMPAIGN_DONE' => 'Кампания успешно завершена',
     'ERROR_CREATE_FROM_TEMPLATE' => 'Не удалось создать письмо по шаблону',
     'ERROR_SEND_LETTER' => 'Не удалось отправить письмо: %exception%',
+    'ERROR_CAMPAIGN_NO_TEMPLATES' => 'Отсутствуют шаблоны кампании',
     'ERROR_CAMPAIGN_PAUSED' => 'Кампания поставлена на паузу из-за ошибок',
 
     // Csrf validator
