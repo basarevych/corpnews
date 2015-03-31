@@ -40,20 +40,9 @@ class SettingControllerTest extends AbstractHttpControllerTestCase
         $sl->setService('Doctrine\ORM\EntityManager', $this->em);
     }
 
-
     public function testMailboxFormActionCanBeAccessed()
     {
-        $setting = new SettingEntity();
-        $setting->setName('MailboxAutodelete');
-        $setting->setType(SettingEntity::TYPE_INTEGER);
-        $setting->setValueInteger(1);
-
-        $this->repoSetting->expects($this->any())
-                          ->method('findOneByName')
-                          ->will($this->returnValue($setting));
-
         $this->dispatch('/admin/setting/mailbox-form');
-        $this->assertResponseStatusCode(200);
 
         $this->assertModuleName('admin');
         $this->assertControllerName('admin\controller\setting');
@@ -61,7 +50,7 @@ class SettingControllerTest extends AbstractHttpControllerTestCase
         $this->assertMatchedRouteName('admin');
     }
 
-    public function testMailboxFormActionCreatesEntity()
+    public function testMailboxFormActionUpdatesEntity()
     {
         $setting = new SettingEntity();
         $setting->setName('MailboxAutodelete');
@@ -86,18 +75,50 @@ class SettingControllerTest extends AbstractHttpControllerTestCase
             'autodelete' => 123,
         ];
 
-        $persisted = null;
-        $this->em->expects($this->any())
-                 ->method('persist')
-                 ->will($this->returnCallback(function ($entity) use (&$persisted) {
-                    $persisted = $entity;
-                 }));
-
         $this->dispatch('/admin/setting/mailbox-form', HttpRequest::METHOD_POST, $postParams);
         $this->assertResponseStatusCode(200);
 
-        $this->assertEquals(true, $persisted instanceof SettingEntity, "Setting entity was not created");
-        $this->assertEquals('MailboxAutodelete', $persisted->getName(), "MailboxAutodelete was not created");
-        $this->assertEquals(123, $persisted->getValueInteger(), "MailboxAutodelete has incorrect value");
+        $this->assertEquals(123, $setting->getValueInteger(), "MailboxAutodelete has incorrect value");
+    }
+
+    public function testEmailSenderFormActionCanBeAccessed()
+    {
+        $this->dispatch('/admin/setting/email-sender-form');
+
+        $this->assertModuleName('admin');
+        $this->assertControllerName('admin\controller\setting');
+        $this->assertControllerClass('SettingController');
+        $this->assertMatchedRouteName('admin');
+    }
+
+    public function testEmailSenderFormActionUpdatesEntity()
+    {
+        $setting = new SettingEntity();
+        $setting->setName('MailInterval');
+        $setting->setType(SettingEntity::TYPE_INTEGER);
+        $setting->setValueInteger(1);
+
+        $this->repoSetting->expects($this->any())
+                          ->method('findOneByName')
+                          ->will($this->returnValue($setting));
+
+        $this->dispatch('/admin/setting/email-sender-form');
+        $this->assertResponseStatusCode(200);
+
+        $response = $this->getResponse();
+        $dom = new Query($response->getContent());
+        $result = $dom->execute('input[name="security"]');
+        $security = count($result) ? $result[0]->getAttribute('value') : null;
+
+        $dt = new \DateTime();
+        $postParams = [
+            'security' => $security,
+            'interval' => 123,
+        ];
+
+        $this->dispatch('/admin/setting/email-sender-form', HttpRequest::METHOD_POST, $postParams);
+        $this->assertResponseStatusCode(200);
+
+        $this->assertEquals(123, $setting->getValueInteger(), "MailInterval has incorrect value");
     }
 }

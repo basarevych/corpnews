@@ -14,7 +14,7 @@ return [
     'Data forms' => 'Формы данных',
     'System log' => 'Системный журнал',
     'Settings' => 'Настройки',
-    'Mailbox settings' => 'Настройки почтового ящика',
+    'Email sender' => 'Отправка почты',
 
     // IndexController
     'MESSAGE_PARSER_HELP' => 'Эта страница содержит перечень функций парсера почты.'
@@ -205,8 +205,13 @@ return [
     'OUTGOING_ERRONEOUS_FILTER' => 'Сообщения, которые не удалось отправить',
 
     // SettingController
+    'Save' => 'Сохранить',
+    'Mailbox settings' => 'Настройки почтового ящика',
     'Autodelete' => 'Автоудаление',
     'Days' => 'Дни',
+    'Email sender settings' => 'Настройки отправки почты',
+    'Send interval' => 'Интервал отправки',
+    'Seconds' => 'Секунды',
 
     // SyslogController
     'Log level filter' => 'Фильтр уровня записи',

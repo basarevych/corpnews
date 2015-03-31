@@ -14,7 +14,7 @@ return [
     'Data forms' => 'Data forms',
     'System log' => 'System log',
     'Settings' => 'Settings',
-    'Mailbox settings' => 'Mailbox settings',
+    'Email sender' => 'Email sender',
 
     // IndexController
     'MESSAGE_PARSER_HELP' => 'This page lists all the parser functions with their descriptions.'
@@ -205,8 +205,13 @@ return [
     'OUTGOING_ERRONEOUS_FILTER' => 'Failed to send messages',
 
     // SettingController
+    'Save' => 'Save',
+    'Mailbox settings' => 'Mailbox settings',
     'Autodelete' => 'Autodelete',
     'Days' => 'Days',
+    'Email sender settings' => 'Email sender settings',
+    'Send interval' => 'Send interval',
+    'Seconds' => 'Seconds',
 
     // SyslogController
     'Log level filter' => 'Log level filter',

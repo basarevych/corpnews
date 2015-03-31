@@ -138,15 +138,17 @@ $editGroups = $groups->getAttribute('disabled') != 'disabled';
             <?= $this->escapeHtml($this->translate('Templates')) ?>:
         </label>
         <div class="col-sm-8">
-            <?php foreach ($this->templates as $template): ?>
-                <p class="form-control-static">
-                    <a href="javascript:void(0)" onclick="openLetter({ template: <?= $template->getId() ?> })">
-                        <?= $this->escapeHtml(strlen($template->getSubject()) > 0
-                                ? $template->getSubject()
-                                : $this->translate('(No subject)')) ?>
-                    </a>
-                </p>
-            <?php endforeach ?>
+            <ul class="form-control-static">
+                <?php foreach ($this->templates as $template): ?>
+                    <li>
+                        <a href="javascript:void(0)" onclick="openLetter({ template: <?= $template->getId() ?> })">
+                            <?= $this->escapeHtml(strlen($template->getSubject()) > 0
+                                    ? $template->getSubject()
+                                    : $this->translate('(No subject)')) ?>
+                        </a>
+                    </li>
+                <?php endforeach ?>
+            </ul>
         </div>
     </div>
 </form>
