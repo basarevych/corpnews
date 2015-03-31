@@ -181,7 +181,7 @@ class SendEmailTest extends AbstractControllerTestCase
 
     public function testSendChecksClientBounced()
     {
-        $this->client->setWhenBounced(new \DateTime());
+        $this->client->setBounced(true);
 
         $first = true;
         $this->repoLetter->expects($this->any())

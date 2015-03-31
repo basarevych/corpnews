@@ -76,19 +76,11 @@ class EditClient extends Form
         $email->setLabel('Email address');
         $this->add($email);
 
-        $translate = $sl->get('viewhelpermanager')->get('translate');
-
-        $whenUnsubscribed = new Element\DateTime('when_unsubscribed');
-        $whenUnsubscribed->setLabel('Unsubscribed');
-        $whenUnsubscribed->setFormat($translate('GENERIC_DATETIME_FORMAT'));
-        $whenUnsubscribed->setAttribute('step', 'any');
-        $this->add($whenUnsubscribed);
-
-        $whenBounced = new Element\DateTime('when_bounced');
-        $whenBounced->setLabel('Email bounced');
-        $whenBounced->setFormat($translate('GENERIC_DATETIME_FORMAT'));
-        $whenBounced->setAttribute('step', 'any');
-        $this->add($whenBounced);
+        $bounced = new Element\MultiCheckbox('bounced');
+        $bounced->setLabel('Errors');
+        $bounced->setValueOptions([ 1 => 'Email bounced' ]);
+        $bounced->setValue([]);
+        $this->add($bounced);
 
         $entities = $this->em->getRepository('Application\Entity\Group')
                              ->findBy([], [ 'name' => 'ASC' ]);
@@ -148,31 +140,10 @@ class EditClient extends Form
               ->attach(new EntityNotExists($entityParams));
         $filter->add($email);
 
-        $params = [
-            'format' => $this->get('when_unsubscribed')->getFormat()
-        ];
-
-        $whenUnsubscribed = new Input('when_unsubscribed');
-        $whenUnsubscribed->setRequired(false)
-                         ->setBreakOnFailure(false)
-                         ->getFilterChain()
-                         ->attach(new Filter\StringTrim());
-        $whenUnsubscribed->getValidatorChain()
-                         ->attach(new Validator\Date($params));
-        $filter->add($whenUnsubscribed);
-
-        $params = [
-            'format' => $this->get('when_bounced')->getFormat()
-        ];
-
-        $whenBounced = new Input('when_bounced');
-        $whenBounced->setRequired(false)
-                    ->setBreakOnFailure(false)
-                    ->getFilterChain()
-                    ->attach(new Filter\StringTrim());
-        $whenBounced->getValidatorChain()
-                    ->attach(new Validator\Date($params));
-        $filter->add($whenBounced);
+        $bounced = new Input('bounced');
+        $bounced->setRequired(false)
+                ->setBreakOnFailure(false);
+        $filter->add($bounced);
 
         $groups = new Input('groups');
         $groups->setRequired(false)

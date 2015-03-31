@@ -83,14 +83,12 @@ class EditClientTest extends AbstractControllerTestCase
     public function testValidForm()
     {
         $form = new EditClientForm($this->sl, 42);
-        $dt = new \DateTime();
-        $format = $form->get('when_bounced')->getFormat();
 
         $input = [
             'security' => $form->get('security')->getValue(),
             'id' => 42,
             'email' => ' email@example.com ',
-            'when_bounced' => " " . $dt->format($format),
+            'bounced' => 1
         ];
 
         $form->setData($input);
@@ -99,6 +97,5 @@ class EditClientTest extends AbstractControllerTestCase
 
         $this->assertEquals(true, $valid, "Form should be reported as valid");
         $this->assertEquals('email@example.com', $output['email'], "Email should be trimmed");
-        $this->assertEquals($dt->format($format), $output['when_bounced'], "WhenBounced should be trimmed and converted");
     }
 }

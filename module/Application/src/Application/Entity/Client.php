@@ -47,22 +47,13 @@ class Client
     protected $email;
 
     /**
-     * When unsubscribed
+     * Is bounced
      *
      * @var \DateTime
      * 
-     * @ORM\Column(type="utcdatetime", nullable=true)
+     * @ORM\Column(type="boolean")
      */
-    protected $when_unsubscribed;
-
-    /**
-     * When bounced
-     *
-     * @var \DateTime
-     * 
-     * @ORM\Column(type="utcdatetime", nullable=true)
-     */
-    protected $when_bounced;
+    protected $bounced;
 
     /**
      * Group entities
@@ -107,6 +98,7 @@ class Client
      */
     public function __construct()
     {
+        $this->bounced = false;
         $this->groups = new ArrayCollection();
         $this->letters = new ArrayCollection();
         $this->secrets = new ArrayCollection();
@@ -120,15 +112,11 @@ class Client
      */
     public function toArray()
     {
-        $unsubscribed = $this->getWhenUnsubscribed();
-        $bounced = $this->getWhenBounced();
-
         return [
-            'id'                => $this->getId(),
-            'email'             => $this->getEmail(),
-            'when_unsubscribed' => $unsubscribed ? $unsubscribed->getTimestamp() : null,
-            'when_bounced'      => $bounced ? $bounced->getTimestamp() : null,
-            'groups'            => $this->getGroups()->toArray(),
+            'id'        => $this->getId(),
+            'email'     => $this->getEmail(),
+            'bounced'   => $this->getBounced(),
+            'groups'    => $this->getGroups()->toArray(),
         ];
     }
 
@@ -166,49 +154,26 @@ class Client
     }
 
     /**
-     * Set when_unsubscribed
+     * Set bounced
      *
-     * @param \DatTime $whenUnsubscribed
+     * @param boolean $bounced
      * @return Client
      */
-    public function setWhenUnsubscribed($whenUnsubscribed)
+    public function setBounced($bounced)
     {
-        $this->when_unsubscribed = $whenUnsubscribed;
+        $this->bounced = $bounced;
 
         return $this;
     }
 
     /**
-     * Get when_unsubscribed
+     * Get bounced
      *
-     * @return \DateTime
+     * @return boolean
      */
-    public function getWhenUnsubscribed()
+    public function getBounced()
     {
-        return $this->when_unsubscribed;
-    }
-
-    /**
-     * Set when_bounced
-     *
-     * @param \DateTime $whenBounced
-     * @return Client
-     */
-    public function setWhenBounced($whenBounced)
-    {
-        $this->when_bounced = $whenBounced;
-
-        return $this;
-    }
-
-    /**
-     * Get when_bounced
-     *
-     * @return \DateTime
-     */
-    public function getWhenBounced()
-    {
-        return $this->when_bounced;
+        return $this->bounced;
     }
 
     /**

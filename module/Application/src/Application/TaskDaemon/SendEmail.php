@@ -100,7 +100,11 @@ class SendEmail extends ZfTask
                         if ($exitRequested)
                             break 4;
 
-                        if ($letter->getClient()->getWhenBounced()) {
+                        $skip = false;
+                        if ($letter->getClient()->getBounced())
+                            $skip = true;
+
+                        if ($skip) {
                             $letter->setStatus(LetterEntity::STATUS_SKIPPED);
                             $em->persist($letter);
                             $em->flush();

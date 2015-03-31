@@ -145,6 +145,7 @@ class Letter
     public function __construct()
     {
         $this->status = self::STATUS_CREATED;
+        $this->when_created = new \DateTime();
     }
 
     /**

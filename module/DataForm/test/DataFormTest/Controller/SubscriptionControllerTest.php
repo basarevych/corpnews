@@ -248,7 +248,7 @@ class SubscriptionControllerTest extends AbstractHttpControllerTestCase
 
         $this->assertNotEquals(null, $this->secret->getWhenSaved(), "WhenSaved must be set");
 
+        $this->assertEquals(false, $this->document->getUnsubscribed(), "Unsubscribed is wrong");
         $this->assertEquals([ 123 ], $this->document->getIgnoredTags(), "Ignored tags are wrong");
-        $this->assertEquals(null, $this->client1->getWhenUnsubscribed(), "Unsubscribed is wrong");
     }
 }

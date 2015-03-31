@@ -121,16 +121,10 @@ class SubscriptionController extends AbstractActionController
                     $em->flush();
                 }
 
-                $client->setWhenUnsubscribed(
-                    is_array($data['subscribe']) && in_array('all', $data['subscribe'])
-                        ? null
-                        : new \DateTime()
-                );
-                $em->persist($client);
-                $em->flush();
+                $unsubscribed = !is_array($data['subscribe']) || !in_array('all', $data['subscribe']);
 
                 $ignoredTags = [];
-                if (!$client->getWhenUnsubscribed() && $form->has('tags')) {
+                if (!$unsubscribed && $form->has('tags')) {
                     foreach (explode(',', $data['list']) as $id) {
                         if (is_array($data['tags']) && in_array($id, $data['tags']))
                             continue;
@@ -139,6 +133,7 @@ class SubscriptionController extends AbstractActionController
                 }
 
                 $doc->setWhenUpdated(new \DateTime());
+                $doc->setUnsubscribed($unsubscribed);
                 $doc->setIgnoredTags($ignoredTags);
                 $dm->persist($doc);
                 $dm->flush();
@@ -166,7 +161,7 @@ class SubscriptionController extends AbstractActionController
         }
 
         $form->setData([
-            'subscribe' => $client->getWhenUnsubscribed() ? [] : [ 'all' ],
+            'subscribe' => $doc->getUnsubscribed() ? [] : [ 'all' ],
             'list'      => join(',', $tags),
             'tags'      => $ignored,
         ]);

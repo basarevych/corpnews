@@ -23,6 +23,15 @@ use DataForm\Document\AbstractDataFormDocument;
 class Subscription extends AbstractDataFormDocument
 {
     /**
+     * Unsubscribed flag
+     *
+     * @var boolean
+     *
+     * @ODM\Boolean
+     */
+    protected $unsubscribed;
+
+    /**
      * Ignored tags
      *
      * @var array
@@ -44,8 +53,31 @@ class Subscription extends AbstractDataFormDocument
             'id'                => $this->getId(),
             'client_email'      => $this->getClientEmail(),
             'when_updated'      => $whenUpdated ? $whenUpdated->getTimestamp() : null,
+            'unsubscribed'      => $this->getUnsubscribed(),
             'ignored_tags'      => $this->getIgnoredTags(),
         );
+    }
+
+    /**
+     * Set unsubscribed
+     *
+     * @param boolean $unsubscribed
+     * @return Subscription
+     */
+    public function setUnsubscribed($unsubscribed)
+    {
+        $this->unsubscribed = $unsubscribed;
+        return $this;
+    }
+
+    /**
+     * Get unsubscribed
+     *
+     * @return boolean
+     */
+    public function getUnsubscribed()
+    {
+        return $this->unsubscribed;
     }
 
     /**

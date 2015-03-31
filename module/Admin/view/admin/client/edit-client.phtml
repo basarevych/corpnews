@@ -12,8 +12,7 @@ $form = $this->form;
 $security = $form->get('security');
 $id = $form->has('id') ? $form->get('id') : null;
 $email = $form->get('email');
-$whenUnsubscribed = $form->get('when_unsubscribed');
-$whenBounced = $form->get('when_bounced');
+$bounced = $form->get('bounced');
 $groups = $form->get('groups');
 
 ?>
@@ -51,7 +50,7 @@ $groups = $form->get('groups');
                    name="<?= $email->getName() ?>"
                    value="<?= $this->escapeHtml($email->getValue()) ?>"
                    data-on-blur="validateFormField($('#modal-form [name=<?= $email->getName() ?>]'))"
-                   data-on-enter="$('#modal-form [name=<?= $whenBounced->getName() ?>]').focus()">
+                   data-on-enter="$('#modal-form [name=<?= $bounced->getName() ?>]').focus()">
             <div class="help-block">
                 <?php if (!$valid): ?>
                     <ul class="list-unstyled icon-list error-list">
@@ -64,71 +63,33 @@ $groups = $form->get('groups');
         </div>
     </div>
 
-    <?php $valid = count($whenUnsubscribed->getMessages()) == 0 ?>
+    <?php $valid = count($bounced->getMessages()) == 0 ?>
     <div class="form-group <?= $valid ? '' : 'has-error' ?>">
-        <label class="col-sm-4 control-label" for="<?= $whenUnsubscribed->getName() ?>">
-            <?= $this->escapeHtml($this->translate($whenUnsubscribed->getLabel())) ?>:
+        <label class="col-sm-4 control-label" for="<?= $bounced->getName() ?>">
+            <?= $this->escapeHtml($this->translate($bounced->getLabel())) ?>:
         </label>
         <div class="col-sm-8">
-            <div class="input-group date" id="dt-<?= $whenUnsubscribed->getName() ?>">
-                <input type="text" class="form-control"
-                       name="<?= $whenUnsubscribed->getName() ?>"
-                       value="<?= $this->escapeHtml($whenUnsubscribed->getValue()) ?>"
-                       data-on-blur="validateFormField($('#modal-form [name=<?= $whenUnsubscribed->getName() ?>]'))"
-                       data-on-enter="$('#modal-form [name=<?= $whenBounced->getName() ?>]').focus()">
-                <span class="input-group-addon">
-                    <span class="glyphicon glyphicon-calendar"></span>
-                </span>
-            </div>
+            <?php foreach ($bounced->getValueOptions() as $value => $label): ?>
+                <div class="checkbox">
+                    <label>
+                        <input type="checkbox"
+                               name="<?= $bounced->getName() ?>[]"
+                               value="<?= $this->escapeHtml($value) ?>"
+                               <?= in_array($value, $bounced->getValue()) ? 'checked="checked"' : '' ?>
+                               data-on-enter="$('#modal-form [name=<?= $groups->getName() ?>]').focus()">
+                        <?= $this->translate($label) ?>
+                    </label>
+                </div>
+            <?php endforeach ?>
             <div class="help-block">
                 <?php if (!$valid): ?>
                     <ul class="list-unstyled icon-list error-list">
-                    <?php foreach ($whenUnsubscribed->getMessages() as $msg): ?>
+                    <?php foreach ($bounced->getMessages() as $msg): ?>
                         <li><?= $this->escapeHtml($msg) ?></li>
                     <?php endforeach ?>
                     </ul>
                 <?php endif ?>
             </div>
-            <script>
-                $('#dt-<?= $whenUnsubscribed->getName() ?>').datetimepicker({
-                    format: "<?= $this->translate('GENERIC_MOMENT_FORMAT') ?>",
-                    locale: '<?= \Locale::getDefault() ?>'
-                });
-            </script>
-        </div>
-    </div>
-
-    <?php $valid = count($whenBounced->getMessages()) == 0 ?>
-    <div class="form-group <?= $valid ? '' : 'has-error' ?>">
-        <label class="col-sm-4 control-label" for="<?= $whenBounced->getName() ?>">
-            <?= $this->escapeHtml($this->translate($whenBounced->getLabel())) ?>:
-        </label>
-        <div class="col-sm-8">
-            <div class="input-group date" id="dt-<?= $whenBounced->getName() ?>">
-                <input type="text" class="form-control"
-                       name="<?= $whenBounced->getName() ?>"
-                       value="<?= $this->escapeHtml($whenBounced->getValue()) ?>"
-                       data-on-blur="validateFormField($('#modal-form [name=<?= $whenBounced->getName() ?>]'))"
-                       data-on-enter="$('#modal-form [name=<?= $groups->getName() ?>]').focus()">
-                <span class="input-group-addon">
-                    <span class="glyphicon glyphicon-calendar"></span>
-                </span>
-            </div>
-            <div class="help-block">
-                <?php if (!$valid): ?>
-                    <ul class="list-unstyled icon-list error-list">
-                    <?php foreach ($whenBounced->getMessages() as $msg): ?>
-                        <li><?= $this->escapeHtml($msg) ?></li>
-                    <?php endforeach ?>
-                    </ul>
-                <?php endif ?>
-            </div>
-            <script>
-                $('#dt-<?= $whenBounced->getName() ?>').datetimepicker({
-                    format: "<?= $this->translate('GENERIC_MOMENT_FORMAT') ?>",
-                    locale: '<?= \Locale::getDefault() ?>'
-                });
-            </script>
         </div>
     </div>
 

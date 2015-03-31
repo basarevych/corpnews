@@ -41,8 +41,7 @@ CREATE TABLE `tags` (
 CREATE TABLE `clients` (
     `id` int unsigned NOT NULL AUTO_INCREMENT,
     `email` varchar(255) NOT NULL,
-    `when_unsubscribed` datetime NULL,
-    `when_bounced` datetime NULL,
+    `bounced` tinyint(1) NOT NULL,
     CONSTRAINT `clients_pk` PRIMARY KEY (`id`),
     CONSTRAINT `clients_email_unique` UNIQUE (`email`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1;

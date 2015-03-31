@@ -111,26 +111,13 @@ class ClientController extends AbstractActionController
             if ($form->isValid()) {
                 $data = $form->getData();
 
-                $dateUnsubscribed = null;
-                if (!empty($data['when_unsubscribed'])) {
-                    $format = $form->get('when_unsubscribed')->getFormat();
-                    $dateUnsubscribed= \DateTime::createFromFormat($format, $data['when_unsubscribed']);
-                }
-
-                $dateBounced = null;
-                if (!empty($data['when_bounced'])) {
-                    $format = $form->get('when_bounced')->getFormat();
-                    $dateBounced = \DateTime::createFromFormat($format, $data['when_bounced']);
-                }
-
                 if (!$entity)
                     $entity = new ClientEntity();
 
                 try {
                     $oldEmail = $entity->getEmail();
                     $entity->setEmail($data['email']);
-                    $entity->setWhenUnsubscribed($dateUnsubscribed);
-                    $entity->setWhenBounced($dateBounced);
+                    $entity->setBounced((boolean)@$data['bounced']);
 
                     foreach ($entity->getGroups() as $group) {
                         $entity->removeGroup($group);
@@ -162,27 +149,15 @@ class ClientController extends AbstractActionController
                 $script = "$('#modal-form').modal('hide'); reloadTable()";
             }
         } else if ($entity) {       // Load initial form values
-            $dateUnsubscribed= "";
-            if (($dt = $entity->getWhenUnsubscribed()) !== null) {
-                $format = $form->get('when_unsubscribed')->getFormat();
-                $dateUnsubscribed = $dt->format($format);
-            }
-            $dateBounced = "";
-            if (($dt = $entity->getWhenBounced()) !== null) {
-                $format = $form->get('when_bounced')->getFormat();
-                $dateBounced = $dt->format($format);
-            }
-
             $groups = [];
             foreach ($entity->getGroups() as $group)
                 $groups[] = $group->getId();
 
             $form->setData([
-                'id'                => $entity->getId(),
-                'email'             => $entity->getEmail(),
-                'when_unsubscribed' => $dateUnsubscribed,
-                'when_bounced'      => $dateBounced,
-                'groups'            => $groups,
+                'id'        => $entity->getId(),
+                'email'     => $entity->getEmail(),
+                'bounced'   => $entity->getBounced() ? [ 1 ] : [],
+                'groups'    => $groups,
             ]);
         }
 
@@ -289,19 +264,11 @@ class ClientController extends AbstractActionController
                 'sortable'  => true,
                 'visible'   => true,
             ],
-            'when_unsubscribed' => [
-                'title'     => $translate('Unsubscribed'),
-                'sql_id'    => 'c.when_unsubscribed',
-                'type'      => Table::TYPE_DATETIME,
-                'filters'   => [ Table::FILTER_BETWEEN, Table::FILTER_NULL ],
-                'sortable'  => true,
-                'visible'   => false,
-            ],
-            'when_bounced' => [
+            'bounced' => [
                 'title'     => $translate('Email bounced'),
-                'sql_id'    => 'c.when_bounced',
-                'type'      => Table::TYPE_DATETIME,
-                'filters'   => [ Table::FILTER_BETWEEN, Table::FILTER_NULL ],
+                'sql_id'    => 'c.bounced',
+                'type'      => Table::TYPE_BOOLEAN,
+                'filters'   => [ Table::FILTER_EQUAL ],
                 'sortable'  => true,
                 'visible'   => false,
             ],
@@ -353,14 +320,6 @@ class ClientController extends AbstractActionController
             $email = '<a href="javascript:void(0)" onclick="editClient('
                 . $row->getId() . ')">' . $escapeHtml($row->getEmail()) . '</a>';
 
-            $whenUnsubscribed = $row->getWhenUnsubscribed();
-            if ($whenUnsubscribed !== null)
-                $whenUnsubscribed = $whenUnsubscribed->getTimestamp();
-
-            $whenBounced = $row->getWhenBounced();
-            if ($whenBounced !== null)
-                $whenBounced = $whenBounced->getTimestamp();
-
             $groups = [];
             foreach ($row->getGroups() as $group) {
                 if (in_array($group->getName(), $groups))
@@ -382,12 +341,11 @@ class ClientController extends AbstractActionController
             }
 
             return [
-                'id'                => $row->getId(),
-                'email'             => $email,
-                'when_unsubscribed' => $whenUnsubscribed,
-                'when_bounced'      => $whenBounced,
-                'groups'            => join(', ', $groups),
-                'forms'             => join(', ', $filledForms),
+                'id'        => $row->getId(),
+                'email'     => $email,
+                'bounced'   => $translate($row->getBounced() ? 'Yes' : 'No'),
+                'groups'    => join(', ', $groups),
+                'forms'     => join(', ', $filledForms),
             ];
         };
 
