@@ -65,6 +65,14 @@ class Subscription extends Table
                 'sortable'      => true,
                 'visible'       => true,
             ],
+            'unsubscribed' => [
+                'title'         => $translate('Unsubscribed'),
+                'field_name'    => 'unsubscribed',
+                'type'          => Table::TYPE_BOOLEAN,
+                'filters'       => [ Table::FILTER_EQUAL, Table::FILTER_NULL ],
+                'sortable'      => true,
+                'visible'       => true,
+            ],
             'ignored_tags' => [
                 'title'         => $translate('Ignored tags'),
                 'field_name'    => 'ignored_tags',
@@ -110,6 +118,7 @@ class Subscription extends Table
                 'id'            => $row->getId(),
                 'client_email'  => $email,
                 'when_updated'  => $whenUpdated,
+                'unsubscribed'  => $translate($row->getUnsubscribed() ? 'Yes' : 'No'),
                 'ignored_tags'  => $escapeHtml(join(', ', $ignoredTags)),
             ];
         };
