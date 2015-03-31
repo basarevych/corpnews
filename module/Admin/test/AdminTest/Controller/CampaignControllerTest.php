@@ -28,6 +28,18 @@ class CampaignControllerTransportMock {
     }
 }
 
+class CampaignControllerDaemonMock
+{
+    public function start()
+    {
+    }
+
+    public function runTask()
+    {
+    }
+}
+
+
 class CampaignControllerTest extends AbstractHttpControllerTestCase
 {
     public function setUp()
@@ -168,11 +180,20 @@ class CampaignControllerTest extends AbstractHttpControllerTestCase
                    ->method('getTransport')
                    ->will($this->returnValue(new CampaignControllerTransportMock()));
 
+        $this->task = $this->getMockBuilder('Application\Service\TaskDaemon')
+                           ->setMethods([ 'getDaemon' ])
+                           ->getMock();
+
+        $this->task->expects($this->any())
+                   ->method('getDaemon')
+                   ->will($this->returnValue(new CampaignControllerDaemonMock()));
+
         $this->mail->setServiceLocator($this->sl);
 
         $this->sl->setAllowOverride(true);
         $this->sl->setService('Doctrine\ORM\EntityManager', $this->em);
         $this->sl->setService('Mail', $this->mail);
+        $this->sl->setService('TaskDaemon', $this->task);
     }
 
     public function testIndexActionCanBeAccessed()

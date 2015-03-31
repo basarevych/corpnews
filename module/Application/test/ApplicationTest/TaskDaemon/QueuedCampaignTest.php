@@ -102,6 +102,10 @@ class QueuedCampaignTest extends AbstractControllerTestCase
                     [ 'Application\Entity\Client', $this->repoClient ],
                 ]));
 
+        $this->daemon = $this->getMockBuilder('Application\Service\TaskDaemon')
+                             ->setMethods([ 'runTask' ])
+                             ->getMock();
+
         $this->logger = $this->getMockBuilder('Application\Service\Logger')
                              ->disableOriginalConstructor()
                              ->setMethods([ 'log' ])
@@ -123,6 +127,7 @@ class QueuedCampaignTest extends AbstractControllerTestCase
                  }));
 
         $task = new QueuedCampaignTask();
+        $task->setDaemon($this->daemon);
         $task->setServiceLocator($this->sl);
         $task->run($exit);
 

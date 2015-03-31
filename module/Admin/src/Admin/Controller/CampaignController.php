@@ -88,10 +88,13 @@ class CampaignController extends AbstractActionController
         $script = null;
         $form = new ConfirmForm();
         $messages = [];
-        $ready = [
+        $readyToStart = [
             CampaignEntity::STATUS_CREATED,
             CampaignEntity::STATUS_TESTED,
             CampaignEntity::STATUS_FINISHED,
+        ];
+        $readyToRestart = [
+            CampaignEntity::STATUS_PAUSED,
         ];
         $tested = [
             CampaignEntity::STATUS_TESTED,
@@ -103,12 +106,18 @@ class CampaignController extends AbstractActionController
             $form->setData($request->getPost());
 
             if ($form->isValid()) {
-                if (in_array($campaign->getStatus(), $ready)) {
+                if (in_array($campaign->getStatus(), $readyToStart)) {
                     $campaign->setStatus(CampaignEntity::STATUS_QUEUED);
                     $em->persist($campaign);
                     $em->flush();
 
                     $task->getDaemon()->runTask('queued_campaign', $campaign->getId());
+                } else if (in_array($campaign->getStatus(), $readyToRestart)) {
+                    $campaign->setStatus(CampaignEntity::STATUS_STARTED);
+                    $em->persist($campaign);
+                    $em->flush();
+
+                    $task->getDaemon()->runTask('send_email');
                 }
 
                 $script = "$('#modal-form').modal('hide'); reloadTable()";
@@ -124,7 +133,7 @@ class CampaignController extends AbstractActionController
             'form'      => $form,
             'messages'  => $messages,
             'noGroups'  => count($campaign->getGroups()) == 0,
-            'ready'     => in_array($campaign->getStatus(), $ready),
+            'ready'     => in_array($campaign->getStatus(), array_merge($readyToStart, $readyToRestart)),
             'tested'    => in_array($campaign->getStatus(), $tested),
         ]);
         $model->setTerminal(true);
@@ -214,10 +223,12 @@ class CampaignController extends AbstractActionController
                 $script = "$('#modal-form').modal('hide'); reloadTable()";
             }
 
-            $groups = [];
-            foreach ($campaign->getGroups() as $group)
-                $groups[] = $group->getId();
-            $form->get('groups')->setValue($groups);
+            if ($form->get('groups')->getAttribute('disabled') == 'disabled') {
+                $groups = [];
+                foreach ($campaign->getGroups() as $group)
+                    $groups[] = $group->getId();
+                $form->get('groups')->setValue($groups);
+            }
         } else {
             $date = "";
             if (($dt = $campaign->getWhenDeadline()) !== null) {

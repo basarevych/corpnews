@@ -26,6 +26,7 @@ class QueuedCampaign extends ZfTask
      */
     public function run(&$exitRequested)
     {
+        $daemon = $this->getDaemon();
         $data = $this->getData();
         $sl = $this->getServiceLocator();
         $em = $sl->get('Doctrine\ORM\EntityManager');
@@ -143,6 +144,8 @@ class QueuedCampaign extends ZfTask
                     'source_id' => $campaign->getId()
                 ]
             );
+
+            $daemon->runTask('send_email');
         }
     }
 }
