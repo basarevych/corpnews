@@ -6,6 +6,7 @@ use Zend\Test\PHPUnit\Controller\AbstractControllerTestCase;
 use Application\Entity\Campaign as CampaignEntity;
 use Application\Entity\Template as TemplateEntity;
 use Application\Entity\Letter as LetterEntity;
+use Application\Entity\Client as ClientEntity;
 use Application\TaskDaemon\SendEmail as SendEmailTask;
 
 class SendEmailConnectionMock
@@ -75,6 +76,12 @@ class SendEmailTest extends AbstractControllerTestCase
         $this->letter->setHeaders('headers');
         $this->letter->setBody('body');
 
+        $this->client = new ClientEntity();
+        $this->client->setEmail('foo@bar');
+
+        $this->letter->setClient($this->client);
+        $this->client->addLetter($this->letter);
+
         $this->repoSetting = $this->getMockBuilder('Application\Entity\SettingRepository')
                                   ->disableOriginalConstructor()
                                   ->setMethods([ 'findOneByName', 'getValue' ])
@@ -142,15 +149,62 @@ class SendEmailTest extends AbstractControllerTestCase
 
     public function testSendingFinishes()
     {
+        $first = true;
         $this->repoLetter->expects($this->any())
                          ->method('findPending')
-                         ->will($this->returnValue([ ]));
+                         ->will($this->returnCallback(function () use (&$first) {
+                            if ($first) {
+                                $first = false;
+                                return [ $this->letter ];
+                            }
+                            return [];
+                         }));
+
+        $letterSent = null;
+        $this->mail->expects($this->any())
+                   ->method('sendLetter')
+                   ->will($this->returnCallback(function ($letter) use (&$letterSent) {
+                        $letterSent = $letter;
+                        return true;
+                   }));
 
         $task = new SendEmailTask();
         $task->setServiceLocator($this->sl);
         $task->run($exit);
 
-        $this->assertEquals(CampaignEntity::STATUS_FINISHED, $this->campaign->getStatus());
+        $this->assertEquals($this->letter, $letterSent, "The letter was not sent");
+        $this->assertEquals(CampaignEntity::STATUS_FINISHED, $this->campaign->getStatus(), "Campaign was not finishe");
+    }
+
+    public function testSendChecksClientBounced()
+    {
+        $this->client->setWhenBounced(new \DateTime());
+
+        $first = true;
+        $this->repoLetter->expects($this->any())
+                         ->method('findPending')
+                         ->will($this->returnCallback(function () use (&$first) {
+                            if ($first) {
+                                $first = false;
+                                return [ $this->letter ];
+                            }
+                            return [];
+                         }));
+
+        $letterSent = null;
+        $this->mail->expects($this->any())
+                   ->method('sendLetter')
+                   ->will($this->returnCallback(function ($letter) use (&$letterSent) {
+                        $letterSent = $letter;
+                        return true;
+                   }));
+
+        $task = new SendEmailTask();
+        $task->setServiceLocator($this->sl);
+        $task->run($exit);
+
+        $this->assertEquals(null, $letterSent, "The letter should not be sent");
+        $this->assertEquals(CampaignEntity::STATUS_FINISHED, $this->campaign->getStatus(), "Campaign was not finishe");
     }
 
     protected function setProp($object, $property, $value)

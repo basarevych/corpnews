@@ -71,16 +71,16 @@ class SendEmail extends ZfTask
             if (count($campaign->getTemplates()) == 0) {
                 $campaign->setStatus(CampaignEntity::STATUS_PAUSED);
                 $em->persist($campaign);
-                $em->flush();
 
                 $logger->log(
                     SyslogDocument::LEVEL_CRITICAL,
-                    'ERROR_CAMPAIGN_NO_TEMPLATES',
+                    'ERROR_CAMPAIGN_PAUSED',
                     [
                         'source_name' => get_class($campaign),
                         'source_id' => $campaign->getId()
                     ]
                 );
+
                 continue;
             }
 
@@ -99,7 +99,8 @@ class SendEmail extends ZfTask
                         if ($exitRequested)
                             break 4;
 
-                        if (!$mail->sendLetter($letter)) {
+                        if ($letter->getClient()->getWhenBounced()) {
+                        } if (!$mail->sendLetter($letter)) {
                             $campaign->setStatus(CampaignEntity::STATUS_PAUSED);
                             $em->persist($campaign);
                             $em->flush();
@@ -113,7 +114,7 @@ class SendEmail extends ZfTask
                                 ]
                             );
 
-                            return;
+                            break 3;
                         }
 
                         sleep($mailInterval);
@@ -135,7 +136,7 @@ class SendEmail extends ZfTask
                         ]
                     );
 
-                    return;
+                    break;
                 }
             }
         }

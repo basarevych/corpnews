@@ -80,7 +80,6 @@ return [
     'INFO_CAMPAIGN_DONE' => 'Campaign has finished successfuly',
     'ERROR_CREATE_FROM_TEMPLATE' => 'Could not create letter from template',
     'ERROR_SEND_LETTER' => 'Could not send letter: %exception%',
-    'ERROR_CAMPAIGN_NO_TEMPLATES' => 'Campaign has no templates',
     'ERROR_CAMPAIGN_PAUSED' => 'Campaign has been paused due to errors',
 
     // Csrf validator
