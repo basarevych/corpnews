@@ -15,6 +15,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Application\Entity\Group;
 use Application\Entity\Template;
 use Application\Entity\Secret;
+use Application\Entity\Tag;
 
 /**
  * Campaign entity
@@ -138,6 +139,16 @@ class Campaign
     protected $secrets;
 
     /**
+     * Tag entities
+     *
+     * @var ArrayCollection
+     *
+     * @ORM\ManyToMany(targetEntity="Tag", inversedBy="campaigns")
+     * @ORM\JoinTable(name="campaign_tags")
+     */
+    protected $tags;
+
+    /**
      * Constructor
      */
     public function __construct()
@@ -146,6 +157,7 @@ class Campaign
         $this->groups = new ArrayCollection();
         $this->templates = new ArrayCollection();
         $this->secrets = new ArrayCollection();
+        $this->tags = new ArrayCollection();
     }
 
     /**
@@ -425,6 +437,42 @@ class Campaign
     public function getSecrets()
     {
         return $this->secrets;
+    }
+
+    /**
+     * Add tag
+     *
+     * @param Tag $tag
+     * @return Campaign
+     */
+    public function addTag(Tag $tag)
+    {
+        $this->tags[] = $tag;
+
+        return $this;
+    }
+
+    /**
+     * Remove tag
+     *
+     * @param Tag $tag
+     * @return Client
+     */
+    public function removeTag(Tag $tag)
+    {
+        $this->tags->removeElement($tag);
+
+        return this;
+    }
+
+    /**
+     * Get tags
+     *
+     * @return ArrayCollection
+     */
+    public function getTags()
+    {
+        return $this->tags;
     }
 
     /**

@@ -11,6 +11,7 @@ namespace Application\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
+use Application\Entity\Campaign;
 
 /**
  * Campaign tag entity
@@ -53,20 +54,20 @@ class Tag
     protected $descr;
 
     /**
-     * Client entity
+     * Campaign entities
      *
      * @var ArrayCollection
      *
-     * @ORM\ManyToMany(targetEntity="Client", mappedBy="ignored_tags")
+     * @ORM\ManyToMany(targetEntity="Campaign", mappedBy="tags")
      */
-    protected $clients;
+    protected $campaigns;
 
     /**
      * Constructor
      */
     public function __construct()
     {
-        $this->clients = new ArrayCollection();
+        $this->campaigns = new ArrayCollection();
     }
 
     /**
@@ -142,36 +143,38 @@ class Tag
     }
 
     /**
-     * Add client
+     * Add campaign
      *
-     * @param Client $client
-     *
+     * @param Campaign $campaign
      * @return Tag
      */
-    public function addClient(Client $client)
+    public function addCampaign(Campaign $campaign)
     {
-        $this->clients[] = $client;
+        $this->campaigns[] = $campaign;
 
         return $this;
     }
 
     /**
-     * Remove client
+     * Remove campaign
      *
-     * @param Client $client
+     * @param Campaign $campaign
+     * @return Tag
      */
-    public function removeClient(Client $client)
+    public function removeCampaign(Campaign $campaign)
     {
-        $this->clients->removeElement($client);
+        $this->campaigns->removeElement($campaign);
+
+        return $this;
     }
 
     /**
-     * Get clients
+     * Get campaigns
      *
      * @return ArrayCollection
      */
-    public function getClients()
+    public function getCampaigns()
     {
-        return $this->clients;
+        return $this->campaigns;
     }
 }

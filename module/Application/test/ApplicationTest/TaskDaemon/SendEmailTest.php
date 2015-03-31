@@ -7,6 +7,8 @@ use Application\Entity\Campaign as CampaignEntity;
 use Application\Entity\Template as TemplateEntity;
 use Application\Entity\Letter as LetterEntity;
 use Application\Entity\Client as ClientEntity;
+use Application\Entity\Tag as TagEntity;
+use DataForm\Document\Subscription as SubscriptionDocument;
 use Application\TaskDaemon\SendEmail as SendEmailTask;
 
 class SendEmailConnectionMock
@@ -100,6 +102,28 @@ class SendEmailTest extends AbstractControllerTestCase
                     [ 'Application\Entity\Setting', $this->repoSetting ],
                 ]));
 
+        $this->dm = $this->getMockBuilder('Doctrine\ODM\MongoDB\DocumentManager')
+                         ->disableOriginalConstructor()
+                         ->setMethods([ 'getRepository' ])
+                         ->getMock();
+
+        $this->repoSubscription = $this->getMockBuilder('DataForm\Document\ProfileRepository')
+                                       ->disableOriginalConstructor()
+                                       ->setMethods([ 'find' ])
+                                       ->getMock();
+
+        $this->doc = new SubscriptionDocument();
+
+        $this->repoSubscription->expects($this->any())
+                               ->method('find')
+                               ->will($this->returnValue($this->doc));
+
+        $this->dm->expects($this->any())
+                 ->method('getRepository')
+                 ->will($this->returnValueMap([
+                    [ 'DataForm\Document\Subscription', $this->repoSubscription ],
+                ]));
+
         $this->logger = $this->getMockBuilder('Application\Service\Logger')
                              ->disableOriginalConstructor()
                              ->setMethods([ 'log' ])
@@ -110,11 +134,22 @@ class SendEmailTest extends AbstractControllerTestCase
                            ->setMethods([ 'sendLetter' ])
                            ->getMock();
 
+        $this->dfm = $this->getMockBuilder('Application\Service\DataFormManager')
+                          ->disableOriginalConstructor()
+                          ->setMethods([ 'getDocumentClass' ])
+                          ->getMock();
+
+        $this->dfm->expects($this->any())
+                  ->method('getDocumentClass')
+                  ->will($this->returnValue('DataForm\Document\Subscription'));
+
         $this->sl = $this->getApplicationServiceLocator();
         $this->sl->setAllowOverride(true);
         $this->sl->setService('Doctrine\ORM\EntityManager', $this->em);
+        $this->sl->setService('doctrine.documentmanager.odm_default', $this->dm);
         $this->sl->setService('Logger', $this->logger);
         $this->sl->setService('Mail', $this->mail);
+        $this->sl->setService('DataFormManager', $this->dfm);
     }
 
     public function testDeadline()
@@ -182,6 +217,86 @@ class SendEmailTest extends AbstractControllerTestCase
     public function testSendChecksClientBounced()
     {
         $this->client->setBounced(true);
+
+        $first = true;
+        $this->repoLetter->expects($this->any())
+                         ->method('findPending')
+                         ->will($this->returnCallback(function () use (&$first) {
+                            if ($first) {
+                                $first = false;
+                                return [ $this->letter ];
+                            }
+                            return [];
+                         }));
+
+        $letterSent = null;
+        $this->mail->expects($this->any())
+                   ->method('sendLetter')
+                   ->will($this->returnCallback(function ($letter) use (&$letterSent) {
+                        $letter->setStatus(LetterEntity::STATUS_SENT);
+                        $letter->setWhenProcessed(new \DateTime());
+                        $letterSent = $letter;
+                        return true;
+                   }));
+
+        $task = new SendEmailTask();
+        $task->setServiceLocator($this->sl);
+        $task->run($exit);
+
+        $this->assertEquals(null, $letterSent, "Letter should not get send");
+        $this->assertEquals(LetterEntity::STATUS_SKIPPED, $this->letter->getStatus(), "Letter was not marked skipped");
+        $this->assertEquals(CampaignEntity::STATUS_FINISHED, $this->campaign->getStatus(), "Campaign was not finished");
+    }
+
+    public function testSendChecksClientUnsubscribed()
+    {
+        $this->doc->setUnsubscribed(true);
+
+        $first = true;
+        $this->repoLetter->expects($this->any())
+                         ->method('findPending')
+                         ->will($this->returnCallback(function () use (&$first) {
+                            if ($first) {
+                                $first = false;
+                                return [ $this->letter ];
+                            }
+                            return [];
+                         }));
+
+        $letterSent = null;
+        $this->mail->expects($this->any())
+                   ->method('sendLetter')
+                   ->will($this->returnCallback(function ($letter) use (&$letterSent) {
+                        $letter->setStatus(LetterEntity::STATUS_SENT);
+                        $letter->setWhenProcessed(new \DateTime());
+                        $letterSent = $letter;
+                        return true;
+                   }));
+
+        $task = new SendEmailTask();
+        $task->setServiceLocator($this->sl);
+        $task->run($exit);
+
+        $this->assertEquals(null, $letterSent, "Letter should not get send");
+        $this->assertEquals(LetterEntity::STATUS_SKIPPED, $this->letter->getStatus(), "Letter was not marked skipped");
+        $this->assertEquals(CampaignEntity::STATUS_FINISHED, $this->campaign->getStatus(), "Campaign was not finished");
+    }
+
+    public function testSendChecksClientIgnoredTags()
+    {
+        $tag1 = new TagEntity();
+        $this->setProp($tag1, 'id', 123);
+
+        $this->campaign->addTag($tag1);
+        $tag1->addCampaign($this->campaign);
+
+        $tag2 = new TagEntity();
+        $this->setProp($tag2, 'id', 456);
+
+        $this->campaign->addTag($tag2);
+        $tag2->addCampaign($this->campaign);
+
+        $this->doc->setIgnoredTags([ $tag1->getId(), $tag2->getId() ]);
 
         $first = true;
         $this->repoLetter->expects($this->any())
