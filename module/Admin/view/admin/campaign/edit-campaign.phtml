@@ -14,8 +14,9 @@ $id = $form->get('id');
 $name = $form->get('name');
 $whenDeadline = $form->get('when_deadline');
 $groups = $form->get('groups');
+$tags = $form->has('tags') ? $form->get('tags') : null;
 
-$editGroups = $groups->getAttribute('disabled') != 'disabled';
+$fullEdit = $groups->getAttribute('disabled') != 'disabled';
 
 ?>
 
@@ -74,7 +75,7 @@ $editGroups = $groups->getAttribute('disabled') != 'disabled';
                        name="<?= $whenDeadline->getName() ?>"
                        value="<?= $this->escapeHtml($whenDeadline->getValue()) ?>"
                        data-on-blur="validateFormField($('form [name=<?= $whenDeadline->getName() ?>]'))"
-                       data-on-enter="$('#modal-form [type=checkbox]:first').focus()">
+                       data-on-enter="$('#modal-form [name=<?= $groups->getName() ?>]').focus()">
                 <span class="input-group-addon">
                     <span class="glyphicon glyphicon-calendar"></span>
                 </span>
@@ -101,7 +102,7 @@ $editGroups = $groups->getAttribute('disabled') != 'disabled';
     <div class="form-group <?= $valid ? '' : 'has-error' ?>">
         <label class="col-sm-4 control-label" for="<?= $groups->getName() ?>">
             <?= $this->escapeHtml($this->translate($groups->getLabel())) ?>:
-            <?php if ($editGroups): ?>
+            <?php if ($fullEdit): ?>
                 <span class="required-marker text-danger">
                     <?= $this->translate('REQUIRED FIELD') ?>
                 </span>
@@ -115,8 +116,12 @@ $editGroups = $groups->getAttribute('disabled') != 'disabled';
                                name="<?= $groups->getName() ?>[]"
                                value="<?= $this->escapeHtml($value) ?>"
                                <?= in_array($value, $groups->getValue()) ? 'checked="checked"' : '' ?>
-                               <?= $editGroups ? '' : 'disabled="disabled"' ?>
+                               <?= $fullEdit ? '' : 'disabled="disabled"' ?>
+                            <?php if ($tags): ?>
+                               data-on-enter="$('#modal-form [name=<?= $tags->getName() ?>]').focus()">
+                            <?php else: ?>
                                data-on-enter="$('#submit-button').focus().click()">
+                            <?php endif ?>
                         <?= $this->translate($label) ?>
                     </label>
                 </div>
@@ -132,6 +137,39 @@ $editGroups = $groups->getAttribute('disabled') != 'disabled';
             </div>
         </div>
     </div>
+
+    <?php if ($tags): ?>
+        <?php $valid = count($tags->getMessages()) == 0 ?>
+        <div class="form-group <?= $valid ? '' : 'has-error' ?>">
+            <label class="col-sm-4 control-label" for="<?= $tags->getName() ?>">
+                <?= $this->escapeHtml($this->translate($tags->getLabel())) ?>:
+            </label>
+            <div class="col-sm-8">
+                <?php foreach ($tags->getValueOptions() as $value => $label): ?>
+                    <div class="checkbox">
+                        <label>
+                            <input type="checkbox"
+                                   name="<?= $tags->getName() ?>[]"
+                                   value="<?= $this->escapeHtml($value) ?>"
+                                   <?= in_array($value, $tags->getValue()) ? 'checked="checked"' : '' ?>
+                                   <?= $fullEdit ? '' : 'disabled="disabled"' ?>
+                                   data-on-enter="$('#submit-button').focus().click()">
+                            <?= $this->translate($label) ?>
+                        </label>
+                    </div>
+                <?php endforeach ?>
+                <div class="help-block">
+                    <?php if (!$valid): ?>
+                        <ul class="list-unstyled icon-list error-list">
+                        <?php foreach ($tags->getMessages() as $msg): ?>
+                            <li><?= $this->escapeHtml($msg) ?></li>
+                        <?php endforeach ?>
+                        </ul>
+                    <?php endif ?>
+                </div>
+            </div>
+        </div>
+    <?php endif ?>
 
     <div class="form-group">
         <label class="col-sm-4 control-label">

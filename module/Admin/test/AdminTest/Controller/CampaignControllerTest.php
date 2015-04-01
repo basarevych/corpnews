@@ -91,15 +91,30 @@ class CampaignControllerTest extends AbstractHttpControllerTestCase
 
         $this->repoTags = $this->getMockBuilder('Application\Entity\TagRepository')
                                ->disableOriginalConstructor()
-                               ->setMethods([ 'findBy' ])
+                               ->setMethods([ 'find', 'findBy' ])
                                ->getMock();
 
         $this->tag = new TagEntity();
         $this->tag->setName('tag');
 
+        $this->campaign->addTag($this->tag);
+        $this->tag->addCampaign($this->campaign);
+
+        $reflection = new \ReflectionClass(get_class($this->tag));
+        $property = $reflection->getProperty('id');
+        $property->setAccessible(true);
+        $property->setValue($this->tag, 123);
+
+        $this->repoTags->expects($this->any())
+                       ->method('find')
+                       ->will($this->returnCallback(function ($id) {
+                            if ($id == 123)
+                                return $this->tag;
+                       }));
+
         $this->repoTags->expects($this->any())
                        ->method('findBy')
-                       ->will($this->returnValue($this->tag));
+                       ->will($this->returnValue([ $this->tag ]));
 
         $this->repoGroups = $this->getMockBuilder('Application\Entity\GroupRepository')
                                  ->disableOriginalConstructor()
@@ -247,6 +262,7 @@ class CampaignControllerTest extends AbstractHttpControllerTestCase
         $this->infrastructure = new ORMInfrastructure([
             'Application\Entity\Campaign',
             'Application\Entity\Group',
+            'Application\Entity\Tag',
         ]);
         $this->repository = $this->infrastructure->getRepository(
             'Application\Entity\Campaign'
@@ -338,14 +354,17 @@ class CampaignControllerTest extends AbstractHttpControllerTestCase
             'name' => ' name ',
             'when_deadline' => $dt->format($format),
             'groups' => [ 9000 ],
+            'tags' => [ 123 ],
         ];
         $this->dispatch('/admin/campaign/edit-campaign', HttpRequest::METHOD_POST, $postParams);
         $this->assertResponseStatusCode(200);
 
         $groups = array_values($this->campaign->getGroups()->toArray());
+        $tags = array_values($this->campaign->getTags()->toArray());
         $this->assertEquals('name', $this->campaign->getName(), "Name is wrong");
         $this->assertEquals($dt, $this->campaign->getWhenDeadline(), "Deadline is wrong");
         $this->assertEquals(9000, $groups[0]->getId(), "Group ID is wrong");
+        $this->assertEquals(123, $tags[0]->getId(), "Tag ID is wrong");
     }
 
     public function testTestCampaignActionCanBeAccessed()

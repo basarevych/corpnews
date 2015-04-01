@@ -59,9 +59,14 @@ class EditCampaignTest extends AbstractControllerTestCase
         $this->tag = new TagEntity();
         $this->tag->setName('tag');
 
+        $reflection = new \ReflectionClass(get_class($this->tag));
+        $property = $reflection->getProperty('id');
+        $property->setAccessible(true);
+        $property->setValue($this->tag, 123);
+
         $this->repoTags->expects($this->any())
                        ->method('findBy')
-                       ->will($this->returnValue($this->tag));
+                       ->will($this->returnValue([ $this->tag ]));
 
         $this->em->expects($this->any())
                  ->method('getRepository')
@@ -105,6 +110,7 @@ class EditCampaignTest extends AbstractControllerTestCase
             'name' => ' example ',
             'when_deadline' => " " . $dt->format($format),
             'groups' => [ 9000 ],
+            'tags' => [ 123 ],
         ];
 
         $form->setData($input);
@@ -115,6 +121,7 @@ class EditCampaignTest extends AbstractControllerTestCase
         $this->assertEquals(42, $output['id'], "Incorrect ID");
         $this->assertEquals('example', $output['name'], "Name should be trimmed");
         $this->assertEquals($dt->format($format), $output['when_deadline'], "Deadline should be trimmed and converted");
-        $this->assertEquals([ 9000 ], $output['groups'], "Name should be trimmed");
+        $this->assertEquals([ 9000 ], $output['groups'], "Wrong groups");
+        $this->assertEquals([ 123 ], $output['tags'], "Wrong tags");
     }
 }

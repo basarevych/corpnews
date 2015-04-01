@@ -215,6 +215,20 @@ class CampaignController extends AbstractActionController
                         $group->addCampaign($campaign);
                         $em->persist($group);
                     }
+
+                    foreach ($campaign->getTags() as $tag) {
+                        $campaign->removeTag($tag);
+                        $tag->removeCampaign($campaign);
+                    }
+                    foreach ($data['tags'] as $tagId) {
+                        $tag = $em->getRepository('Application\Entity\Tag')
+                                   ->find($tagId);
+                        if (!$tag)
+                            continue;
+                        $campaign->addTag($tag);
+                        $tag->addCampaign($campaign);
+                        $em->persist($tag);
+                    }
                 }
 
                 $em->persist($campaign);
@@ -228,6 +242,11 @@ class CampaignController extends AbstractActionController
                 foreach ($campaign->getGroups() as $group)
                     $groups[] = $group->getId();
                 $form->get('groups')->setValue($groups);
+
+                $tags = [];
+                foreach ($campaign->getTags() as $tag)
+                    $tags[] = $tag->getId();
+                $form->get('tags')->setValue($tags);
             }
         } else {
             $date = "";
@@ -240,11 +259,16 @@ class CampaignController extends AbstractActionController
             foreach ($campaign->getGroups() as $group)
                 $groups[] = $group->getId();
 
+            $tags = [];
+            foreach ($campaign->getTags() as $tag)
+                $tags[] = $tag->getId();
+
             $form->setData([
                 'id'            => $id,
                 'name'          => $campaign->getName(),
                 'when_deadline' => $date,
                 'groups'        => $groups,
+                'tags'          => $tags,
             ]);
         }
 
@@ -510,6 +534,14 @@ class CampaignController extends AbstractActionController
                 'sortable'  => true,
                 'visible'   => false,
             ],
+            'tags' => [
+                'title'     => $translate('Tags'),
+                'sql_id'    => 't.name',
+                'type'      => Table::TYPE_STRING,
+                'filters'   => [ Table::FILTER_LIKE, Table::FILTER_NULL ],
+                'sortable'  => true,
+                'visible'   => false,
+            ],
             'status' => [
                 'title'     => $translate('Status'),
                 'sql_id'    => 'c.status',
@@ -554,6 +586,7 @@ class CampaignController extends AbstractActionController
         $qb->select('c, g')
            ->from('Application\Entity\Campaign', 'c')
            ->leftJoin('c.groups', 'g')
+           ->leftJoin('c.tags', 't')
            ->andWhere('c.status IN (:status_filter)')
            ->setParameter('status_filter', $filter);
 
@@ -569,6 +602,10 @@ class CampaignController extends AbstractActionController
             $groups = [];
             foreach ($row->getGroups() as $group)
                 $groups[] = $escapeHtml($group->getName());
+
+            $tags = [];
+            foreach ($row->getTags() as $tag)
+                $tags[] = $escapeHtml($tag->getName());
 
             $whenDeadline = $row->getWhenDeadline();
             $whenCreated = $row->getWhenCreated();
@@ -605,6 +642,7 @@ class CampaignController extends AbstractActionController
                 'when_deadline' => $whenDeadline? $whenDeadline->getTimestamp() : null,
                 'when_finished' => $whenFinished ? $whenFinished->getTimestamp() : null,
                 'groups'        => join(', ', $groups),
+                'tags'          => join(', ', $tags),
                 'status'        => $translate('STATUS_' . strtoupper($row->getStatus())),
                 'percent'       => $percent,
             ];

@@ -47,7 +47,7 @@ class EditCampaign extends Form
      *
      * @var boolean
      */
-    protected $enableGroups = true;
+    protected $fullEdit = true;
 
     /**
      * Constructor
@@ -75,7 +75,7 @@ class EditCampaign extends Form
             CampaignEntity::STATUS_FINISHED,
         ];
 
-        $this->enableGroups = in_array($campaign->getStatus(), $newGroup);
+        $this->fullEdit = in_array($campaign->getStatus(), $newGroup);
 
         $csrf = new Element\Csrf('security');
         $this->add($csrf);
@@ -105,7 +105,7 @@ class EditCampaign extends Form
         $groups->setLabel('Groups');
         $groups->setValueOptions($options);
         $groups->setValue([]);
-        if (!$this->enableGroups)
+        if (!$this->fullEdit)
             $groups->setAttribute('disabled', 'disabled');
         $this->add($groups);
 
@@ -120,6 +120,8 @@ class EditCampaign extends Form
             $tags->setLabel('Tags');
             $tags->setValueOptions($options);
             $tags->setValue([]);
+            if (!$this->fullEdit)
+                $tags->setAttribute('disabled', 'disabled');
             $this->add($tags);
         }
     }
@@ -167,7 +169,7 @@ class EditCampaign extends Form
         $filter->add($whenDeadline);
 
         $groups = new Input('groups');
-        $groups->setRequired($this->enableGroups)
+        $groups->setRequired($this->fullEdit)
                ->setBreakOnFailure(false);
         $filter->add($groups);
 

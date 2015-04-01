@@ -462,7 +462,7 @@ class Campaign
     {
         $this->tags->removeElement($tag);
 
-        return this;
+        return $this;
     }
 
     /**
