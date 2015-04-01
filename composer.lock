@@ -4,7 +4,7 @@
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "4e3e68a70e46c2033f13296b18ef0458",
+    "hash": "5cc26473521d215829fdaf15e7cde4aa",
     "packages": [
         {
             "name": "basarevych/dynamic-table",
@@ -533,16 +533,16 @@
         },
         {
             "name": "doctrine/doctrine-mongo-odm-module",
-            "version": "0.8.1",
+            "version": "0.8.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/doctrine/DoctrineMongoODMModule.git",
-                "reference": "704c2c4bf6c9c5780a7a675eed9409fd12583846"
+                "reference": "5f4b434ccbbf6ad55edddc98d9543f1bb6766397"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/doctrine/DoctrineMongoODMModule/zipball/704c2c4bf6c9c5780a7a675eed9409fd12583846",
-                "reference": "704c2c4bf6c9c5780a7a675eed9409fd12583846",
+                "url": "https://api.github.com/repos/doctrine/DoctrineMongoODMModule/zipball/5f4b434ccbbf6ad55edddc98d9543f1bb6766397",
+                "reference": "5f4b434ccbbf6ad55edddc98d9543f1bb6766397",
                 "shasum": ""
             },
             "require": {
@@ -552,6 +552,9 @@
                 "zendframework/zend-mvc": "2.*",
                 "zendframework/zend-servicemanager": "2.*",
                 "zendframework/zend-stdlib": "2.*"
+            },
+            "require-dev": {
+                "zendframework/zendframework": "2.*"
             },
             "type": "library",
             "extra": {
@@ -576,12 +579,6 @@
                     "homepage": "http://www.spiffyjr.me/"
                 },
                 {
-                    "name": "Marco Pivetta",
-                    "email": "ocramius@gmail.com",
-                    "homepage": "http://ocramius.github.com/",
-                    "role": "Developer"
-                },
-                {
                     "name": "Evan Coury",
                     "email": "me@evancoury.com",
                     "homepage": "http://blog.evan.pro/"
@@ -594,6 +591,11 @@
                     "name": "Tim Roediger",
                     "email": "superdweebie@gmail.com",
                     "homepage": "http://superdweebie.com"
+                },
+                {
+                    "name": "Marco Pivetta",
+                    "email": "ocramius@gmail.com",
+                    "homepage": "http://marco-pivetta.com/"
                 }
             ],
             "description": "Zend Framework 2 Module that provides Doctrine MongoDB ODM functionality",
@@ -605,7 +607,7 @@
                 "odm",
                 "zf2"
             ],
-            "time": "2014-04-17 03:22:52"
+            "time": "2015-03-31 07:31:48"
         },
         {
             "name": "doctrine/doctrine-orm-module",
@@ -1003,16 +1005,16 @@
         },
         {
             "name": "doctrine/orm",
-            "version": "v2.5.0-RC1",
+            "version": "v2.5.0-RC2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/doctrine/doctrine2.git",
-                "reference": "df902c9c6a684e16a97107be0118e7325b859cea"
+                "reference": "afd0f28c5fba572956d3c50d11f8498798fed32e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/doctrine/doctrine2/zipball/df902c9c6a684e16a97107be0118e7325b859cea",
-                "reference": "df902c9c6a684e16a97107be0118e7325b859cea",
+                "url": "https://api.github.com/repos/doctrine/doctrine2/zipball/afd0f28c5fba572956d3c50d11f8498798fed32e",
+                "reference": "afd0f28c5fba572956d3c50d11f8498798fed32e",
                 "shasum": ""
             },
             "require": {
@@ -1076,7 +1078,7 @@
                 "database",
                 "orm"
             ],
-            "time": "2015-03-25 23:14:52"
+            "time": "2015-03-31 21:12:50"
         },
         {
             "name": "ezyang/htmlpurifier",
@@ -1182,16 +1184,16 @@
         },
         {
             "name": "zendframework/zendframework",
-            "version": "2.3.7",
+            "version": "2.4.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/zendframework/zf2.git",
-                "reference": "a1aae5fdd27a422beb32c56ddf5a197654a0f94a"
+                "reference": "628b809fcadcd326f2074a9815e5b1fce57077ef"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zendframework/zf2/zipball/a1aae5fdd27a422beb32c56ddf5a197654a0f94a",
-                "reference": "a1aae5fdd27a422beb32c56ddf5a197654a0f94a",
+                "url": "https://api.github.com/repos/zendframework/zf2/zipball/628b809fcadcd326f2074a9815e5b1fce57077ef",
+                "reference": "628b809fcadcd326f2074a9815e5b1fce57077ef",
                 "shasum": ""
             },
             "require": {
@@ -1252,14 +1254,13 @@
                 "zendframework/zend-xmlrpc": "self.version"
             },
             "require-dev": {
-                "doctrine/annotations": ">=1.0",
-                "fabpot/php-cs-fixer": "1.*",
-                "ircmaxell/random-lib": "dev-master",
-                "ircmaxell/security-lib": "dev-master",
-                "mikey179/vfsstream": "1.2.*",
-                "phpunit/phpunit": "3.7.*",
-                "satooshi/php-coveralls": "dev-master",
-                "sebastianbergmann/phpcov": "1.1.0"
+                "doctrine/annotations": "~1.0",
+                "fabpot/php-cs-fixer": "~1.0",
+                "ircmaxell/random-lib": "~1.1",
+                "mikey179/vfsstream": "~1.2",
+                "phpunit/phpcov": "~2.0",
+                "phpunit/phpunit": "~4.0",
+                "satooshi/php-coveralls": "dev-master"
             },
             "suggest": {
                 "doctrine/annotations": "Doctrine Annotations >=1.0 for annotation features",
@@ -1282,8 +1283,8 @@
                 }
             },
             "autoload": {
-                "psr-0": {
-                    "Zend\\": "library/"
+                "psr-4": {
+                    "Zend\\": "library/Zend/"
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
@@ -1296,7 +1297,7 @@
                 "framework",
                 "zf2"
             ],
-            "time": "2015-03-12 16:55:53"
+            "time": "2015-03-31 15:39:14"
         },
         {
             "name": "zendframework/zendxml",
