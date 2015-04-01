@@ -114,7 +114,7 @@ class SendEmail extends ZfTask
                                     if ($doc) {
                                         if ($doc->getUnsubscribed() === true) {
                                             $skip = true;
-                                        } else if (is_array($doc->getIgnoredTags())) {
+                                        } else if (count($campaign->getTags()) > 0 && is_array($doc->getIgnoredTags())) {
                                             $someNotIgnored = false;
                                             foreach ($campaign->getTags() as $tag) {
                                                 if (!in_array($tag->getId(), $doc->getIgnoredTags())) {

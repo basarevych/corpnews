@@ -9,6 +9,7 @@ use Zend\Mail\Message;
 use Zend\Test\PHPUnit\Controller\AbstractHttpControllerTestCase;
 use Webfactory\Doctrine\ORMTestInfrastructure\ORMInfrastructure;
 use Application\Entity\Campaign as CampaignEntity;
+use Application\Entity\Tag as TagEntity;
 use Application\Entity\Group as GroupEntity;
 use Application\Entity\Client as ClientEntity;
 use Application\Entity\Template as TemplateEntity;
@@ -88,6 +89,18 @@ class CampaignControllerTest extends AbstractHttpControllerTestCase
                                     return $this->campaign;
                             }));
 
+        $this->repoTags = $this->getMockBuilder('Application\Entity\TagRepository')
+                               ->disableOriginalConstructor()
+                               ->setMethods([ 'findBy' ])
+                               ->getMock();
+
+        $this->tag = new TagEntity();
+        $this->tag->setName('tag');
+
+        $this->repoTags->expects($this->any())
+                       ->method('findBy')
+                       ->will($this->returnValue($this->tag));
+
         $this->repoGroups = $this->getMockBuilder('Application\Entity\GroupRepository')
                                  ->disableOriginalConstructor()
                                  ->setMethods([ 'find', 'findBy' ])
@@ -154,6 +167,7 @@ class CampaignControllerTest extends AbstractHttpControllerTestCase
                  ->method('getRepository')
                  ->will($this->returnValueMap([
                     [ 'Application\Entity\Campaign', $this->repoCampaigns ],
+                    [ 'Application\Entity\Tag', $this->repoTags ],
                     [ 'Application\Entity\Group', $this->repoGroups ],
                     [ 'Application\Entity\Client', $this->repoClients ],
                     [ 'Application\Entity\Template', $this->repoTemplates ],
@@ -209,7 +223,7 @@ class CampaignControllerTest extends AbstractHttpControllerTestCase
 
     public function testCampaignTableActionCanBeAccessed()
     {
-        $this->dispatch('/admin/campaign/campaign-table');
+        $this->dispatch('/admin/campaign/campaign-table', HttpRequest::METHOD_GET, [ 'query' => 'describe' ]);
 
         $this->assertModuleName('admin');
         $this->assertControllerName('admin\controller\campaign');
@@ -259,7 +273,7 @@ class CampaignControllerTest extends AbstractHttpControllerTestCase
 
     public function testLaunchCampaignActionCanBeAccessed()
     {
-        $this->dispatch('/admin/campaign/launch-campaign');
+        $this->dispatch('/admin/campaign/launch-campaign', HttpRequest::METHOD_GET, [ 'id' => 42 ]);
 
         $this->assertModuleName('admin');
         $this->assertControllerName('admin\controller\campaign');
@@ -296,7 +310,7 @@ class CampaignControllerTest extends AbstractHttpControllerTestCase
 
     public function testEditCampaignActionCanBeAccessed()
     {
-        $this->dispatch('/admin/campaign/edit-campaign');
+        $this->dispatch('/admin/campaign/edit-campaign', HttpRequest::METHOD_GET, [ 'id' => 42 ]);
 
         $this->assertModuleName('admin');
         $this->assertControllerName('admin\controller\campaign');
@@ -336,7 +350,7 @@ class CampaignControllerTest extends AbstractHttpControllerTestCase
 
     public function testTestCampaignActionCanBeAccessed()
     {
-        $this->dispatch('/admin/campaign/test-campaign');
+        $this->dispatch('/admin/campaign/test-campaign', HttpRequest::METHOD_GET, [ 'id' => 42 ]);
 
         $this->assertModuleName('admin');
         $this->assertControllerName('admin\controller\campaign');
@@ -406,7 +420,7 @@ class CampaignControllerTest extends AbstractHttpControllerTestCase
 
     public function testDeleteCampaignActionCanBeAccessed()
     {
-        $this->dispatch('/admin/campaign/delete-campaign');
+        $this->dispatch('/admin/campaign/delete-campaign', HttpRequest::METHOD_GET, [ 'id' => 42 ]);
 
         $this->assertModuleName('admin');
         $this->assertControllerName('admin\controller\campaign');

@@ -120,7 +120,7 @@ class ClientControllerTest extends AbstractHttpControllerTestCase
 
     public function testClientTableActionCanBeAccessed()
     {
-        $this->dispatch('/admin/client/client-table');
+        $this->dispatch('/admin/client/client-table', HttpRequest::METHOD_GET, [ 'query' => 'describe' ]);
 
         $this->assertModuleName('admin');
         $this->assertControllerName('admin\controller\client');

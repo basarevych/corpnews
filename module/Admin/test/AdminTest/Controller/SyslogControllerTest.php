@@ -106,7 +106,7 @@ class SyslogControllerTest extends AbstractHttpControllerTestCase
 
     public function testSyslogTableActionCanBeAccessed()
     {
-        $this->dispatch('/admin/syslog/syslog-table');
+        $this->dispatch('/admin/syslog/syslog-table', HttpRequest::METHOD_GET, [ 'query' => 'describe' ]);
 
         $this->assertModuleName('admin');
         $this->assertControllerName('admin\controller\syslog');

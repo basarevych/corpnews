@@ -76,7 +76,7 @@ class OutgoingControllerTest extends AbstractHttpControllerTestCase
 
     public function testOutgoingTableActionCanBeAccessed()
     {
-        $this->dispatch('/admin/outgoing/outgoing-table');
+        $this->dispatch('/admin/outgoing/outgoing-table', HttpRequest::METHOD_GET, [ 'query' => 'describe' ]);
 
         $this->assertModuleName('admin');
         $this->assertControllerName('admin\controller\outgoing');

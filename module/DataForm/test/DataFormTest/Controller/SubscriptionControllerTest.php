@@ -173,20 +173,15 @@ class SubscriptionControllerTest extends AbstractHttpControllerTestCase
 
     public function testIndexActionCanBeAccessed()
     {
-        $this->dispatch('/data-form/subscription');
+        $this->setUpAdminAccess();
+
+        $this->dispatch('/data-form/subscription', HttpRequest::METHOD_GET, [ 'email' => 'test@example.com' ]);
+        $this->assertResponseStatusCode(200);
 
         $this->assertModuleName('dataform');
         $this->assertControllerName('dataform\controller\subscription');
         $this->assertControllerClass('SubscriptionController');
         $this->assertMatchedRouteName('data-form');
-    }
-
-    public function testIndexActionAdminAccess()
-    {
-        $this->setUpAdminAccess();
-
-        $this->dispatch('/data-form/subscription', HttpRequest::METHOD_GET, [ 'email' => 'test@example.com' ]);
-        $this->assertResponseStatusCode(200);
     }
 
     public function testIndexActionValidates()

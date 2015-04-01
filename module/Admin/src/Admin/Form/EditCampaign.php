@@ -108,6 +108,20 @@ class EditCampaign extends Form
         if (!$this->enableGroups)
             $groups->setAttribute('disabled', 'disabled');
         $this->add($groups);
+
+        $entities = $this->em->getRepository('Application\Entity\Tag')
+                             ->findBy([], [ 'name' => 'ASC' ]);
+        $options = [];
+        foreach ($entities as $entity)
+            $options[$entity->getId()] = $entity->getName();
+
+        if (count($options) > 0) {
+            $tags = new Element\MultiCheckbox('tags');
+            $tags->setLabel('Tags');
+            $tags->setValueOptions($options);
+            $tags->setValue([]);
+            $this->add($tags);
+        }
     }
 
     /**
@@ -156,6 +170,13 @@ class EditCampaign extends Form
         $groups->setRequired($this->enableGroups)
                ->setBreakOnFailure(false);
         $filter->add($groups);
+
+        if ($this->has('tags')) {
+            $tags = new Input('tags');
+            $tags->setRequired(false)
+                 ->setBreakOnFailure(false);
+            $filter->add($tags);
+        }
 
         $this->inputFilter = $filter;
         return $filter;

@@ -42,6 +42,15 @@ class SettingControllerTest extends AbstractHttpControllerTestCase
 
     public function testMailboxFormActionCanBeAccessed()
     {
+        $setting = new SettingEntity();
+        $setting->setName('MailboxAutodelete');
+        $setting->setType(SettingEntity::TYPE_INTEGER);
+        $setting->setValueInteger(1);
+
+        $this->repoSetting->expects($this->any())
+                          ->method('findOneByName')
+                          ->will($this->returnValue($setting));
+
         $this->dispatch('/admin/setting/mailbox-form');
 
         $this->assertModuleName('admin');
@@ -83,7 +92,16 @@ class SettingControllerTest extends AbstractHttpControllerTestCase
 
     public function testEmailSenderFormActionCanBeAccessed()
     {
-        $this->dispatch('/admin/setting/email-sender-form');
+        $setting = new SettingEntity();
+        $setting->setName('MailInterval');
+        $setting->setType(SettingEntity::TYPE_INTEGER);
+        $setting->setValueInteger(1);
+
+        $this->repoSetting->expects($this->any())
+                          ->method('findOneByName')
+                          ->will($this->returnValue($setting));
+
+         $this->dispatch('/admin/setting/email-sender-form');
 
         $this->assertModuleName('admin');
         $this->assertControllerName('admin\controller\setting');

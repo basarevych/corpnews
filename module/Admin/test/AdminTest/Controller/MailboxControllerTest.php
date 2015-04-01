@@ -130,7 +130,7 @@ class MailboxControllerTest extends AbstractHttpControllerTestCase
 
     public function testLetterTableActionCanBeAccessed()
     {
-        $this->dispatch('/admin/mailbox/letter-table');
+        $this->dispatch('/admin/mailbox/letter-table', HttpRequest::METHOD_GET, [ 'query' => 'describe' ]);
 
         $this->assertModuleName('admin');
         $this->assertControllerName('admin\controller\mailbox');
@@ -165,7 +165,11 @@ class MailboxControllerTest extends AbstractHttpControllerTestCase
 
     public function testCreateCampaignActionCanBeAccessed()
     {
-        $this->dispatch('/admin/mailbox/create-campaign');
+        $getParams = [
+            'box' => 'box',
+            'uid' => 42
+        ];
+        $this->dispatch('/admin/mailbox/create-campaign', HttpRequest::METHOD_GET, $getParams);
 
         $this->assertModuleName('admin');
         $this->assertControllerName('admin\controller\mailbox');
@@ -285,7 +289,11 @@ class MailboxControllerTest extends AbstractHttpControllerTestCase
 
     public function testDeleteLetterActionCanBeAccessed()
     {
-        $this->dispatch('/admin/mailbox/delete-letter');
+        $getParams = [
+            'box' => 'box',
+            'uid' => 42
+        ];
+        $this->dispatch('/admin/mailbox/delete-letter', HttpRequest::METHOD_GET, $getParams);
 
         $this->assertModuleName('admin');
         $this->assertControllerName('admin\controller\mailbox');
@@ -331,7 +339,11 @@ class MailboxControllerTest extends AbstractHttpControllerTestCase
 
     public function testReanalyzeLetterActionCanBeAccessed()
     {
-        $this->dispatch('/admin/mailbox/reanalyze-letter');
+        $getParams = [
+            'box' => 'box',
+            'uid' => 42
+        ];
+        $this->dispatch('/admin/mailbox/reanalyze-letter', HttpRequest::METHOD_GET, $getParams);
 
         $this->assertModuleName('admin');
         $this->assertControllerName('admin\controller\mailbox');

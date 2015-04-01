@@ -158,20 +158,15 @@ class ProfileControllerTest extends AbstractHttpControllerTestCase
 
     public function testIndexActionCanBeAccessed()
     {
-        $this->dispatch('/data-form/profile');
+        $this->setUpAdminAccess();
+
+        $this->dispatch('/data-form/profile', HttpRequest::METHOD_GET, [ 'email' => 'test@example.com' ]);
+        $this->assertResponseStatusCode(200);
 
         $this->assertModuleName('dataform');
         $this->assertControllerName('dataform\controller\profile');
         $this->assertControllerClass('ProfileController');
         $this->assertMatchedRouteName('data-form');
-    }
-
-    public function testIndexActionAdminAccess()
-    {
-        $this->setUpAdminAccess();
-
-        $this->dispatch('/data-form/profile', HttpRequest::METHOD_GET, [ 'email' => 'test@example.com' ]);
-        $this->assertResponseStatusCode(200);
     }
 
     public function testIndexActionClientAccess()

@@ -101,7 +101,11 @@ class LetterControllerTest extends AbstractHttpControllerTestCase
 
     public function testShowLetterActionCanBeAccessed()
     {
-        $this->dispatch('/admin/letter/show-letter');
+        $params = [
+            'box' => 'box',
+            'uid' => 42
+        ];
+        $this->dispatch('/admin/letter/show-letter', HttpRequest::METHOD_GET, $params);
 
         $this->assertModuleName('admin');
         $this->assertControllerName('admin\controller\letter');
@@ -151,7 +155,12 @@ class LetterControllerTest extends AbstractHttpControllerTestCase
 
     public function testAttachmentActionCanBeAccessed()
     {
-        $this->dispatch('/admin/letter/attachment');
+        $params = [
+            'box' => 'box',
+            'uid' => 42,
+            'cid' => 'cid'
+        ];
+        $this->dispatch('/admin/letter/attachment', HttpRequest::METHOD_GET, $params);
 
         $this->assertModuleName('admin');
         $this->assertControllerName('admin\controller\letter');

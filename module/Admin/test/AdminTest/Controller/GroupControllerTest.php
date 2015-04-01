@@ -38,6 +38,19 @@ class GroupControllerTest extends AbstractHttpControllerTestCase
                                  ->setMethods([ 'find', 'removeAll' ])
                                  ->getMock();
 
+        $entity = new GroupEntity();
+        $reflection = new \ReflectionClass(get_class($entity));
+        $property = $reflection->getProperty('id');
+        $property->setAccessible(true);
+        $property->setValue($entity, 42);
+
+        $this->repoGroups->expects($this->any())
+                         ->method('find')
+                         ->will($this->returnCallback(function ($id) use (&$entity) {
+                                if ($id == 42)
+                                    return $entity;
+                         }));
+
         $this->em->expects($this->any())
                  ->method('getRepository')
                  ->will($this->returnValueMap([
@@ -74,7 +87,7 @@ class GroupControllerTest extends AbstractHttpControllerTestCase
 
     public function testGroupTableActionCanBeAccessed()
     {
-        $this->dispatch('/admin/group/group-table');
+        $this->dispatch('/admin/group/group-table', HttpRequest::METHOD_GET, [ 'query' => 'describe' ]);
 
         $this->assertModuleName('admin');
         $this->assertControllerName('admin\controller\group');
@@ -164,19 +177,6 @@ class GroupControllerTest extends AbstractHttpControllerTestCase
 
     public function testEditGroupActionUpdatesGroup()
     {
-        $entity = new GroupEntity();
-        $reflection = new \ReflectionClass(get_class($entity));
-        $property = $reflection->getProperty('id');
-        $property->setAccessible(true);
-        $property->setValue($entity, 42);
-
-        $this->repoGroups->expects($this->any())
-                         ->method('find')
-                         ->will($this->returnCallback(function ($id) use (&$entity) {
-                                if ($id == 42)
-                                    return $entity;
-                         }));
-
         $persisted = null;
         $this->em->expects($this->any())
                  ->method('persist')
@@ -209,7 +209,7 @@ class GroupControllerTest extends AbstractHttpControllerTestCase
 
     public function testDeleteGroupActionCanBeAccessed()
     {
-        $this->dispatch('/admin/group/delete-group');
+        $this->dispatch('/admin/group/delete-group', HttpRequest::METHOD_GET, [ 'id' => 42 ]);
 
         $this->assertModuleName('admin');
         $this->assertControllerName('admin\controller\group');
@@ -250,19 +250,6 @@ class GroupControllerTest extends AbstractHttpControllerTestCase
 
     public function testDeleteGroupActionRemovesGroup()
     {
-        $entity = new GroupEntity();
-        $reflection = new \ReflectionClass(get_class($entity));
-        $property = $reflection->getProperty('id');
-        $property->setAccessible(true);
-        $property->setValue($entity, 42);
-
-        $this->repoGroups->expects($this->any())
-                         ->method('find')
-                         ->will($this->returnCallback(function ($id) use (&$entity) {
-                                if ($id == 42)
-                                    return $entity;
-                         }));
-
         $removed = null;
         $this->em->expects($this->any())
                  ->method('remove')
@@ -289,6 +276,6 @@ class GroupControllerTest extends AbstractHttpControllerTestCase
         $this->dispatch('/admin/group/delete-group', HttpRequest::METHOD_POST, $postParams);
         $this->assertResponseStatusCode(200);
 
-        $this->assertEquals($entity, $removed, "Wrong entity was removed");
+        $this->assertEquals(42, $removed->getId(), "Wrong entity was removed");
     }
 }

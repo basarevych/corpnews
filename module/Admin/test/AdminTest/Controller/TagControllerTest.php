@@ -38,6 +38,19 @@ class TagControllerTest extends AbstractHttpControllerTestCase
                                  ->setMethods([ 'find', 'removeAll' ])
                                  ->getMock();
 
+        $entity = new TagEntity();
+        $reflection = new \ReflectionClass(get_class($entity));
+        $property = $reflection->getProperty('id');
+        $property->setAccessible(true);
+        $property->setValue($entity, 42);
+
+        $this->repoTags->expects($this->any())
+                         ->method('find')
+                         ->will($this->returnCallback(function ($id) use (&$entity) {
+                                if ($id == 42)
+                                    return $entity;
+                         }));
+
         $this->em->expects($this->any())
                  ->method('getRepository')
                  ->will($this->returnValueMap([
@@ -74,7 +87,7 @@ class TagControllerTest extends AbstractHttpControllerTestCase
 
     public function testTagTableActionCanBeAccessed()
     {
-        $this->dispatch('/admin/tag/tag-table');
+        $this->dispatch('/admin/tag/tag-table', HttpRequest::METHOD_GET, [ 'query' => 'describe' ]);
 
         $this->assertModuleName('admin');
         $this->assertControllerName('admin\controller\tag');
@@ -166,19 +179,6 @@ class TagControllerTest extends AbstractHttpControllerTestCase
 
     public function testEditTagActionUpdatesTag()
     {
-        $entity = new TagEntity();
-        $reflection = new \ReflectionClass(get_class($entity));
-        $property = $reflection->getProperty('id');
-        $property->setAccessible(true);
-        $property->setValue($entity, 42);
-
-        $this->repoTags->expects($this->any())
-                         ->method('find')
-                         ->will($this->returnCallback(function ($id) use (&$entity) {
-                                if ($id == 42)
-                                    return $entity;
-                         }));
-
         $persisted = null;
         $this->em->expects($this->any())
                  ->method('persist')
@@ -213,7 +213,7 @@ class TagControllerTest extends AbstractHttpControllerTestCase
 
     public function testDeleteTagActionCanBeAccessed()
     {
-        $this->dispatch('/admin/tag/delete-tag');
+        $this->dispatch('/admin/tag/delete-tag', HttpRequest::METHOD_GET, [ 'id' => 42 ]);
 
         $this->assertModuleName('admin');
         $this->assertControllerName('admin\controller\tag');
@@ -254,19 +254,6 @@ class TagControllerTest extends AbstractHttpControllerTestCase
 
     public function testDeleteTagActionRemovesTag()
     {
-        $entity = new TagEntity();
-        $reflection = new \ReflectionClass(get_class($entity));
-        $property = $reflection->getProperty('id');
-        $property->setAccessible(true);
-        $property->setValue($entity, 42);
-
-        $this->repoTags->expects($this->any())
-                         ->method('find')
-                         ->will($this->returnCallback(function ($id) use (&$entity) {
-                                if ($id == 42)
-                                    return $entity;
-                         }));
-
         $removed = null;
         $this->em->expects($this->any())
                  ->method('remove')
@@ -293,6 +280,6 @@ class TagControllerTest extends AbstractHttpControllerTestCase
         $this->dispatch('/admin/tag/delete-tag', HttpRequest::METHOD_POST, $postParams);
         $this->assertResponseStatusCode(200);
 
-        $this->assertEquals($entity, $removed, "Wrong entity was removed");
+        $this->assertEquals(42, $removed->getId(), "Wrong entity was removed");
     }
 }

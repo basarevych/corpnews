@@ -43,6 +43,18 @@ class ConsoleControllerTest extends AbstractConsoleControllerTestCase
                                  ->setMethods([ 'find', 'findAll' ])
                                  ->getMock();
 
+        $client = new ClientEntity();
+        $client->setEmail('foo');
+
+        $reflection = new \ReflectionClass(get_class($client));
+        $property = $reflection->getProperty('id');
+        $property->setAccessible(true);
+        $property->setValue($client, 42);
+
+        $this->repoClient->expects($this->any())
+                         ->method('findAll')
+                         ->will($this->returnValue([ $client ]));
+
         $this->repoGroup = $this->getMockBuilder('Application\Client\GroupRepository')
                                 ->disableOriginalConstructor()
                                 ->setMethods([ 'findOneByName' ])
@@ -66,10 +78,24 @@ class ConsoleControllerTest extends AbstractConsoleControllerTestCase
                                   ->setMethods([ 'find', 'findAll' ])
                                   ->getMock();
 
+        $docProfile = new ProfileDocument();
+        $docProfile->setId(9000);
+
+        $this->repoProfile->expects($this->any())
+                          ->method('findAll')
+                          ->will($this->returnValue([ $docProfile ]));
+
         $this->repoSubscription = $this->getMockBuilder('DataForm\Document\SubscriptionRepository')
                                       ->disableOriginalConstructor()
                                       ->setMethods([ 'find', 'findAll' ])
                                       ->getMock();
+
+        $docSubscription = new SubscriptionDocument();
+        $docSubscription->setId(9000);
+
+        $this->repoSubscription->expects($this->any())
+                              ->method('findAll')
+                              ->will($this->returnValue([ $docSubscription ]));
 
         $this->dm->expects($this->any())
                  ->method('getRepository')
@@ -165,7 +191,9 @@ class ConsoleControllerTest extends AbstractConsoleControllerTestCase
 
     public function testCheckDbActionCanBeAccessed()
     {
+        ob_start();
         $this->dispatch('check-db');
+        ob_end_clean();
 
         $this->assertModuleName('application');
         $this->assertControllerName('application\controller\console');
@@ -175,31 +203,6 @@ class ConsoleControllerTest extends AbstractConsoleControllerTestCase
 
     public function testCheckDbActionCreatesDeletesDocuments()
     {
-        $client = new ClientEntity();
-
-        $reflection = new \ReflectionClass(get_class($client));
-        $property = $reflection->getProperty('id');
-        $property->setAccessible(true);
-        $property->setValue($client, 42);
-
-        $this->repoClient->expects($this->any())
-                         ->method('findAll')
-                         ->will($this->returnValue([ $client ]));
-
-        $docProfile = new ProfileDocument();
-        $docProfile->setId(9000);
-
-        $this->repoProfile->expects($this->any())
-                          ->method('findAll')
-                          ->will($this->returnValue([ $docProfile ]));
-
-        $docSubscription = new SubscriptionDocument();
-        $docSubscription->setId(9000);
-
-        $this->repoSubscription->expects($this->any())
-                              ->method('findAll')
-                              ->will($this->returnValue([ $docSubscription ]));
-
         $createdDocs = [];
         $this->dm->expects($this->any())
                  ->method('persist')
@@ -219,13 +222,13 @@ class ConsoleControllerTest extends AbstractConsoleControllerTestCase
         ob_end_clean();
         $this->assertResponseStatusCode(0);
 
-        $this->assertEquals(2, count($createdDocs), "One document should have been created");
+        $this->assertEquals(2, count($createdDocs), "Two documents should have been created");
         $this->assertEquals(true, $createdDocs[0] instanceof ProfileDocument, "Profile is not created");
         $this->assertEquals(42, $createdDocs[0]->getId(), "Incorrect created doc id");
         $this->assertEquals(true, $createdDocs[1] instanceof SubscriptionDocument, "Subscription is not created");
         $this->assertEquals(42, $createdDocs[1]->getId(), "Incorrect created doc id");
 
-        $this->assertEquals(2, count($removedDocs), "One document should have been created");
+        $this->assertEquals(2, count($removedDocs), "Two documents should have been removed");
         $this->assertEquals(true, $removedDocs[0] instanceof ProfileDocument, "Profile is not removed");
         $this->assertEquals(9000, $removedDocs[0]->getId(), "Incorrect removed doc id");
         $this->assertEquals(true, $removedDocs[1] instanceof SubscriptionDocument, "Subscription is not removed");
@@ -234,18 +237,6 @@ class ConsoleControllerTest extends AbstractConsoleControllerTestCase
 
     public function testCheckDbActionCorrectsEmail()
     {
-        $client = new ClientEntity();
-        $client->setEmail('foo');
-
-        $reflection = new \ReflectionClass(get_class($client));
-        $property = $reflection->getProperty('id');
-        $property->setAccessible(true);
-        $property->setValue($client, 42);
-
-        $this->repoClient->expects($this->any())
-                         ->method('findAll')
-                         ->will($this->returnValue([ $client ]));
-
         $docProfile = new ProfileDocument();
         $docProfile->setId(42);
         $docProfile->setClientEmail('bar');

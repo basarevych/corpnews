@@ -50,16 +50,58 @@ class DocumentControllerTest extends AbstractHttpControllerTestCase
 
         $this->dm = $this->getMockBuilder('Doctrine\ODM\MongoDB\DocumentManager')
                          ->disableOriginalConstructor()
-                         ->setMethods([ 'getRepository' ])
+                         ->setMethods([ 'createQueryBuilder', 'getDocumentCollection', 'getClassMetadata', 'getRepository' ])
                          ->getMock();
+
+        $this->dm->expects($this->any())
+                 ->method('getClassMetadata')
+                 ->will($this->returnCallback(function ($name) {
+                    return new \Doctrine\ODM\MongoDB\Mapping\ClassMetadata($name);
+                 }));
 
         $this->repo = $this->getMockBuilder('DataForm\Document\ProfileRepository')
                            ->disableOriginalConstructor()
+                           ->setMethods([ 'removeAll' ])
                            ->getMock();
 
         $this->dm->expects($this->any())
                  ->method('getRepository')
                  ->will($this->returnValue($this->repo));
+
+        $this->qb = $this->getMockBuilder('Doctrine\ODM\MongoDB\Query\Builder')
+                         ->setConstructorArgs([ $this->dm, 'DataForm\Document\Profile' ])
+                         ->setMethods([ 'expr', 'getQuery', 'sort' ])
+                         ->getMock();
+
+        $this->dm->expects($this->any())
+                 ->method('createQueryBuilder')
+                 ->will($this->returnValue($this->qb));
+
+        $this->expr = $this->getMockBuilder('Doctrine\ODM\MongoDB\Query\Expr')
+                           ->setConstructorArgs([ $this->dm ])
+                           ->setMethods([ 'getQuery', 'equals', 'range', 'gte', 'lte', 'exists' ])
+                           ->getMock();
+
+        $this->qb->expects($this->any())
+                 ->method('expr')
+                 ->will($this->returnValue($this->expr));
+
+        $this->cursor = $this->getMockBuilder('Doctrine\ODM\MongoDB\Cursor')
+                             ->disableOriginalConstructor()
+                             ->setMethods([ 'valid', 'count', 'current', 'getMongoCursor', 'skip', 'limit' ])
+                             ->getMock();
+
+        $this->mongoCursor = $this->getMockBuilder('MongoCursor')
+                                  ->disableOriginalConstructor()
+                                  ->getMock();
+
+        $this->cursor->expects($this->any())
+                     ->method('getMongoCursor')
+                     ->will($this->returnValue($this->mongoCursor));
+
+        $this->qb->expects($this->any())
+                 ->method('getQuery')
+                 ->will($this->returnValue(new DocumentControllerQueryMock($this->cursor)));
 
         $sl->setAllowOverride(true);
         $sl->setService('Config', $config);
@@ -86,7 +128,11 @@ class DocumentControllerTest extends AbstractHttpControllerTestCase
 
     public function testDocumentTableActionCanBeAccessed()
     {
-        $this->dispatch('/admin/document/document-table');
+        $this->dispatch(
+            '/admin/document/document-table',
+            HttpRequest::METHOD_GET,
+            [ 'query' => 'describe', 'name' => 'profile' ]
+        );
 
         $this->assertModuleName('admin');
         $this->assertControllerName('admin\controller\document');

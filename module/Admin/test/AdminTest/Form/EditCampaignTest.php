@@ -5,6 +5,7 @@ namespace AdminTest\Form;
 use Zend\Test\PHPUnit\Controller\AbstractControllerTestCase;
 use Admin\Form\EditCampaign as EditCampaignForm;
 use Application\Entity\Campaign as CampaignEntity;
+use Application\Entity\Tag as TagEntity;
 use Application\Entity\Group as GroupEntity;
 
 class EditCampaignTest extends AbstractControllerTestCase
@@ -50,11 +51,24 @@ class EditCampaignTest extends AbstractControllerTestCase
                             ->method('find')
                             ->will($this->returnValue($this->campaign));
 
+        $this->repoTags = $this->getMockBuilder('Application\Entity\TagRepository')
+                               ->disableOriginalConstructor()
+                               ->setMethods([ 'findBy' ])
+                               ->getMock();
+
+        $this->tag = new TagEntity();
+        $this->tag->setName('tag');
+
+        $this->repoTags->expects($this->any())
+                       ->method('findBy')
+                       ->will($this->returnValue($this->tag));
+
         $this->em->expects($this->any())
                  ->method('getRepository')
                  ->will($this->returnValueMap([
                     [ 'Application\Entity\Group', $this->repoGroups ],
                     [ 'Application\Entity\Campaign', $this->repoCampaigns ],
+                    [ 'Application\Entity\Tag', $this->repoTags ],
                  ]));
 
         $this->sl = $this->getApplicationServiceLocator();
