@@ -27,6 +27,9 @@ body.form {
     width: 450px;
     max-width: 450px;
 }
+.login-popover .popover-title {
+    font-size: 120%;
+}
 .login-popover .popover-content {
     padding-bottom: 0;
 }
