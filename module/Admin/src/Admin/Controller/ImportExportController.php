@@ -81,7 +81,7 @@ class ImportExportController extends AbstractActionController
         $result .= join(',', $row) . "\n";
 
         $clients = $em->getRepository('Application\Entity\Client')
-                      ->findBy([], [ 'email' => 'asc' ]);
+                      ->findByGroupName(explode(',', $groups));
         foreach ($clients as $client) {
             $row = [];
             foreach (explode(',', $fields) as $field) {
