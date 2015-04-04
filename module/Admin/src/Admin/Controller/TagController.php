@@ -29,6 +29,8 @@ class TagController extends AbstractActionController
 {
     /**
      * Index action
+     *
+     * @return ViewModel
      */
     public function indexAction()
     {
@@ -37,6 +39,8 @@ class TagController extends AbstractActionController
 
     /**
      * Table data retrieving action
+     *
+     * @return JsonModel
      */
     public function tagTableAction()
     {
@@ -61,6 +65,8 @@ class TagController extends AbstractActionController
 
     /**
      * Create/edit tag entity form action
+     *
+     * @return ViewModel
      */
     public function editTagAction()
     {
@@ -142,6 +148,8 @@ class TagController extends AbstractActionController
 
     /**
      * Delete tag form action
+     *
+     * @return ViewModel
      */
     public function deleteTagAction()
     {

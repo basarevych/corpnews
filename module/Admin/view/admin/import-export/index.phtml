@@ -1,0 +1,181 @@
+<?php
+
+    $this->layout()->activePage = 'import-export';
+
+?>
+<div class="container">
+    <div class="row">
+        <div class="col-sm-12">
+            <h1><span id="page-title"><?= $this->translate('Import/Export') ?></span></h1>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-sm-3">
+            <div id="presets-panel" class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title"><?= $this->translate('Presets') ?></h3>
+                </div>
+                <div class="list-group">
+                    <a href="javascript:void(0)" class="list-group-item"
+                       data-name="simple" onclick="loadPreset($(this))">
+                        <?= $this->translate('IMPORT_EXPORT_SIMPLE') ?>
+                    </a>
+                    <a href="javascript:void(0)" class="list-group-item"
+                       data-name="full-name" onclick="loadPreset($(this))">
+                        <?= $this->translate('IMPORT_EXPORT_FULL_NAME') ?>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-sm-3">
+            <div id="available-panel" class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title"><?= $this->translate('Available fields') ?></h3>
+                </div>
+                <div class="panel-body button-panel">
+                    <div class="checkbox" data-var="email">
+                        <label>
+                            <input type="checkbox" onclick="toggleField($(this))">
+                            <span class="text">email</span>
+                        </label>
+                    </div>
+                    <?php foreach ($this->forms as $formName => $formProps): ?>
+                        <?php foreach ($formProps['fields'] as $var): ?>
+                            <div class="checkbox" data-var="<?= $formName ?>-<?= $var ?>">
+                                <label>
+                                    <input type="checkbox" onclick="toggleField($(this))">
+                                    <span class="text"><?= $formName ?> / <?= $var ?></span>
+                                </label>
+                            </div>
+                        <?php endforeach ?>
+                    <?php endforeach ?>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-sm-3">
+            <div id="selected-panel" class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title"><?= $this->translate('Reorder columns') ?></h3>
+                </div>
+                <div class="panel-body button-panel">
+                </div>
+            </div>
+        </div>
+
+        <div class="col-sm-3">
+            <div id="groups-panel" class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title"><?= $this->translate('Client groups') ?></h3>
+                </div>
+                <div class="panel-body button-panel">
+                    <?php foreach ($this->groups as $group): ?>
+                        <div class="checkbox">
+                            <label>
+                                <input type="checkbox" checked="checked" data-group="<?= $group->getName() ?>">
+                                <span class="text"><?= $group->getName() ?></span>
+                            </label>
+                        </div>
+                    <?php endforeach ?>
+                </div>
+            </div>
+            <div id="actions-panel" class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title"><?= $this->translate('Actions') ?></h3>
+                </div>
+                <div class="panel-body button-panel">
+                    <button type="button" class="btn btn-default" onclick="uploadFile()">
+                        <?= $this->translate('Import') ?>
+                    </button>
+                    <hr>
+                    <button type="button" class="btn btn-default" onclick="downloadFile()">
+                        <?= $this->translate('Export') ?>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="templates" style="display: none">
+    <div class="drag-n-drop" data-var="form-field">
+        <span class="glyphicon glyphicon-menu-hamburger"></span>
+        <span class="text"></span>
+    </div>
+<div>
+
+<script>
+    function clearFields() {
+        $('#selected-panel .panel-body').empty();
+        $('#available-panel input').prop('checked', false);
+    }
+
+    function addField(name) {
+        var existing = $('#selected-panel div[data-var="' + name + '"]');
+        if (existing.length)
+            return;
+
+        var div = $('#templates .drag-n-drop').clone();
+        var title = name.split('-');
+
+        div.attr('data-var', name)
+           .find('.text').text(title.length == 1 ? title[0] : title[0] + ' / ' + title[1]);
+        div.appendTo($('#selected-panel .panel-body'));
+
+        var available = $('#available-panel div[data-var="' + name + '"]');
+        available.find('input').prop('checked', true);
+    }
+
+    function removeField(name) {
+        $('#selected-panel div[data-var="' + name + '"]').remove();
+    }
+
+    function toggleField(el) {
+        var div = el.closest('.checkbox');
+        if (el.prop('checked'))
+            addField(div.attr('data-var'));
+        else
+            removeField(div.attr('data-var'));
+
+        $('#presets-panel a').removeClass('active');
+    }
+
+    function loadPreset(el) {
+        clearFields();
+        switch (el.attr('data-name')) {
+            case 'simple':
+                addField('email', 'email');
+                break;
+            case 'full-name':
+                addField('email', 'email');
+                addField('profile-first_name');
+                addField('profile-middle_name');
+                addField('profile-last_name');
+                break;
+        }
+        $('#presets-panel a').removeClass('active');
+        el.addClass('active');
+    }
+
+    function downloadFile()
+    {
+        var groups = [];
+        $('#groups-panel input:checked').each(function (index, element) {
+            groups.push($(element).attr('data-group'));
+        });
+
+        var fields = [];
+        $('#selected-panel .drag-n-drop').each(function (index, element) {
+            fields.push($(element).attr('data-var'));
+        });
+
+        window.location = '<?= $this->basePath('/admin/import-export/download') ?>'
+            + '?groups=' + encodeURIComponent(groups.join(','))
+            + '&fields=' + encodeURIComponent(fields.join(','));
+    }
+
+    $('#selected-panel .panel-body').sortable();
+    $('#selected-panel .panel-body').disableSelection();
+</script>

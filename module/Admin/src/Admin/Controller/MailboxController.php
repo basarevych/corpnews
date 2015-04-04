@@ -30,6 +30,8 @@ class MailboxController extends AbstractActionController
 {
     /**
      * Index action
+     *
+     * @return ViewModel
      */
     public function indexAction()
     {
@@ -59,6 +61,8 @@ class MailboxController extends AbstractActionController
 
     /**
      * Table data retrieving action
+     *
+     * @return JsonModel
      */
     public function letterTableAction()
     {
@@ -85,6 +89,8 @@ class MailboxController extends AbstractActionController
 
     /**
      * Create campaign form action
+     *
+     * @return ViewModel
      */
     public function createCampaignAction()
     {
@@ -196,6 +202,8 @@ class MailboxController extends AbstractActionController
 
     /**
      * Delete letter form action
+     *
+     * @return ViewModel
      */
     public function deleteLetterAction()
     {
@@ -254,6 +262,8 @@ class MailboxController extends AbstractActionController
 
     /**
      * Reanalyze letter form action
+     *
+     * @return ViewModel
      */
     public function reanalyzeLetterAction()
     {

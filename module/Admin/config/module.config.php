@@ -16,6 +16,7 @@ return [
             'Admin\Controller\Setting' => 'Admin\Controller\SettingController',
             'Admin\Controller\Syslog' => 'Admin\Controller\SyslogController',
             'Admin\Controller\Tag' => 'Admin\Controller\TagController',
+            'Admin\Controller\ImportExport' => 'Admin\Controller\ImportExportController',
         ],
     ],
 

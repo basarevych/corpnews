@@ -1,21 +1,22 @@
 {
-    "name": "zf2-skeleton",
-    "description": "ZF2 Skeleton",
-    "license": "MIT",
-    "authors": [
-        {
-            "name": "Ross Basarevych",
-            "email": "basarevych@gmail.com"
-        }
-    ],
-    "version": "0.0.1",
-    "devDependencies": {
-        "jquery": "~2.1.3",
-        "jquery-form": "~3.46.0",
-        "jquery.cookie": "~1.4.1",
-        "moment": "~2.9.0",
-        "bootstrap": "~3.3.2",
-        "bootstrap-tour": "~0.10.1",
-        "eonasdan-bootstrap-datetimepicker": "~4.0.0"
+  "name": "zf2-skeleton",
+  "description": "ZF2 Skeleton",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Ross Basarevych",
+      "email": "basarevych@gmail.com"
     }
+  ],
+  "version": "0.0.1",
+  "devDependencies": {
+    "jquery": "~2.1.3",
+    "jquery-ui": "~1.11.4",
+    "jquery-form": "~3.46.0",
+    "jquery.cookie": "~1.4.1",
+    "moment": "~2.9.0",
+    "bootstrap": "~3.3.2",
+    "bootstrap-tour": "~0.10.1",
+    "eonasdan-bootstrap-datetimepicker": "~4.0.0"
+  }
 }

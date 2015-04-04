@@ -29,6 +29,8 @@ class ClientController extends AbstractActionController
 {
     /**
      * Index action
+     *
+     * @return ViewModel
      */
     public function indexAction()
     {
@@ -37,6 +39,8 @@ class ClientController extends AbstractActionController
 
     /**
      * Table data retrieving action
+     *
+     * @return JsonModel
      */
     public function clientTableAction()
     {
@@ -61,6 +65,8 @@ class ClientController extends AbstractActionController
 
     /**
      * Create/edit client entity form action
+     *
+     * @return ViewModel
      */
     public function editClientAction()
     {
@@ -172,6 +178,8 @@ class ClientController extends AbstractActionController
 
     /**
      * Delete client form action
+     *
+     * @return ViewModel
      */
     public function deleteClientAction()
     {

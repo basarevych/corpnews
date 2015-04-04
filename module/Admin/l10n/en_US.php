@@ -11,7 +11,9 @@ return [
     'Clients' => 'Clients',
     'Campaign tags' => 'Campaign tags',
     'Mail campaigns' => 'Mail campaigns',
+    'Data' => 'Data',
     'Data forms' => 'Data forms',
+    'Import/Export' => 'Import/Export',
     'System log' => 'System log',
     'Settings' => 'Settings',
     'Email sender' => 'Email sender',
@@ -222,6 +224,16 @@ return [
     'Level' => 'Level',
     'Clear log' => 'Clear log',
     'CONFIRM_CLEAR_SYSLOG' => 'Delete all entries of system log?',
+
+    // ImportExportController
+    'Presets' => 'Presets',
+    'IMPORT_EXPORT_SIMPLE' => 'Simple',
+    'IMPORT_EXPORT_FULL_NAME' => 'Full name',
+    'Available fields' => 'Available fields',
+    'Reorder columns' => 'Reorder columns',
+    'Actions' => 'Actions',
+    'Import' => 'Import',
+    'Export' => 'Export',
 
     // Tours
     'Parser' => 'Parser',

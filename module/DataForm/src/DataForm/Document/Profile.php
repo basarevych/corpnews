@@ -75,7 +75,7 @@ class Profile extends AbstractDataFormDocument
      * @ODM\String
      */
     protected $position;
-    
+
     /**
      * Converts this object to array
      *
@@ -89,7 +89,7 @@ class Profile extends AbstractDataFormDocument
             'id'                => $this->getId(),
             'client_email'      => $this->getClientEmail(),
             'when_updated'      => $whenUpdated ? $whenUpdated->getTimestamp() : null,
-            'first_name'        => $this->getFisrtName(),
+            'first_name'        => $this->getFirstName(),
             'middle_name'       => $this->getMiddleName(),
             'last_name'         => $this->getLastName(),
             'gender'            => $this->getGender(),

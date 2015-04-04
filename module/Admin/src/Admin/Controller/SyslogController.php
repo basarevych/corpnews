@@ -28,6 +28,8 @@ class SyslogController extends AbstractActionController
 {
     /**
      * Index action
+     *
+     * @return ViewModel
      */
     public function indexAction()
     {
@@ -38,6 +40,8 @@ class SyslogController extends AbstractActionController
 
     /**
      * Table data retrieving action
+     *
+     * @return JsonModel
      */
     public function syslogTableAction()
     {
@@ -62,6 +66,8 @@ class SyslogController extends AbstractActionController
 
     /**
      * Clear syslog form action
+     *
+     * @return ViewModel
      */
     public function clearSyslogAction()
     {
@@ -96,6 +102,7 @@ class SyslogController extends AbstractActionController
         $model->setTerminal(true);
         return $model;
     }
+
     /**
      * This action is called when requested action is not found
      */

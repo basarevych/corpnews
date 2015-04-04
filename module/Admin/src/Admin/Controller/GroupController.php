@@ -29,6 +29,8 @@ class GroupController extends AbstractActionController
 {
     /**
      * Index action
+     *
+     * @return ViewModel
      */
     public function indexAction()
     {
@@ -37,6 +39,8 @@ class GroupController extends AbstractActionController
 
     /**
      * Table data retrieving action
+     *
+     * @return JsonModel
      */
     public function groupTableAction()
     {
@@ -61,6 +65,8 @@ class GroupController extends AbstractActionController
 
     /**
      * Create/edit group entity form action
+     *
+     * @return ViewModel
      */
     public function editGroupAction()
     {
@@ -144,6 +150,8 @@ class GroupController extends AbstractActionController
 
     /**
      * Delete group form action
+     *
+     * @return ViewModel
      */
     public function deleteGroupAction()
     {

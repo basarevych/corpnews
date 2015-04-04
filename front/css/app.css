@@ -178,9 +178,17 @@ div.letter-frame {
 .button-panel hr {
     margin: 3px 0;
 }
-.button-panel .checkbox, .button-panel .radio {
+.button-panel .checkbox, .button-panel .radio, .button-panel .drag-n-drop {
     width: 100%;
     text-align: left;
+    margin: 0 0 3px 0;
+}
+.button-panel .drag-n-drop {
+    padding: 2px 4px;
+    background: #eeeeee;
+    border: 1px solid #cccccc;
+    border-radius: 3px;
+    cursor: move;
 }
 
 .parser-function {

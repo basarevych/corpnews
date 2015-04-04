@@ -24,6 +24,8 @@ class DocumentController extends AbstractActionController
 {
     /**
      * Index action
+     *
+     * @return ViewModel
      */
     public function indexAction()
     {
@@ -51,6 +53,8 @@ class DocumentController extends AbstractActionController
 
     /**
      * Table data retrieving action
+     *
+     * @return JsonModel
      */
     public function documentTableAction()
     {

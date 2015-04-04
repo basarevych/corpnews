@@ -33,6 +33,8 @@ class CampaignController extends AbstractActionController
 {
     /**
      * Index action
+     *
+     * @return ViewModel
      */
     public function indexAction()
     {
@@ -43,6 +45,8 @@ class CampaignController extends AbstractActionController
 
     /**
      * Table data retrieving action
+     *
+     * @return JsonModel
      */
     public function campaignTableAction()
     {
@@ -67,6 +71,8 @@ class CampaignController extends AbstractActionController
 
     /**
      * Launch campaign form action
+     *
+     * @return ViewModel
      */
     public function launchCampaignAction()
     {
@@ -142,6 +148,8 @@ class CampaignController extends AbstractActionController
 
     /**
      * Edit campaign action
+     *
+     * @return ViewModel
      */
     public function editCampaignAction()
     {
@@ -288,6 +296,8 @@ class CampaignController extends AbstractActionController
 
     /**
      * Test campaign action
+     *
+     * @return ViewModel
      */
     public function testCampaignAction()
     {
@@ -405,6 +415,8 @@ class CampaignController extends AbstractActionController
 
     /**
      * Delete campaign form action
+     *
+     * @return ViewModel
      */
     public function deleteCampaignAction()
     {

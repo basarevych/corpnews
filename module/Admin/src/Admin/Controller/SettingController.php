@@ -27,6 +27,8 @@ class SettingController extends AbstractActionController
 {
     /**
      * Mailbox form action
+     *
+     * @return ViewModel
      */
     public function mailboxFormAction()
     {
@@ -92,6 +94,8 @@ class SettingController extends AbstractActionController
 
     /**
      * Sender form action
+     *
+     * @return ViewModel
      */
     public function emailSenderFormAction()
     {

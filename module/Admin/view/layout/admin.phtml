@@ -142,10 +142,23 @@
                             </ul>
                         </li>
 
-                        <li <?= $activePage == 'document' ? 'class="active"' : '' ?>>
-                            <a href="<?= $this->basePath('/admin/document') ?>">
-                                <?= $this->translate('Data forms') ?>
+                        <li class="dropdown <?= in_array($activePage, [ 'document', 'import-export' ]) ? 'active' : '' ?>">
+                            <a href="javascript:void(0)" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+                                <?= $this->translate('Data') ?>
+                                <span class="caret"></span>
                             </a>
+                            <ul class="dropdown-menu" role="menu">
+                                <li>
+                                    <a href="<?= $this->basePath('/admin/document') ?>">
+                                        <?= $this->translate('Data forms') ?>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="<?= $this->basePath('/admin/import-export') ?>">
+                                        <?= $this->translate('Import/Export') ?>
+                                    </a>
+                                </li>
+                            </ul>
                         </li>
 
                         <li <?= $activePage == 'syslog' ? 'class="active"' : '' ?>>

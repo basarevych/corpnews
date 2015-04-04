@@ -49,6 +49,13 @@ abstract class AbstractDataFormDocument
     private $when_updated;
 
     /**
+     * Converts this object to array
+     *
+     * @return array
+     */
+    abstract public function toArray();
+ 
+    /**
      * Set id
      *
      * @param mixed $id

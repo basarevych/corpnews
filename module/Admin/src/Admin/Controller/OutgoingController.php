@@ -27,6 +27,8 @@ class OutgoingController extends AbstractActionController
 {
     /**
      * Index action
+     *
+     * @return ViewModel
      */
     public function indexAction()
     {
@@ -37,6 +39,8 @@ class OutgoingController extends AbstractActionController
 
     /**
      * Table data retrieving action
+     *
+     * @return JsonModel
      */
     public function outgoingTableAction()
     {

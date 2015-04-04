@@ -54,16 +54,16 @@
         },
         {
             "name": "basarevych/task-daemon",
-            "version": "v0.2.0",
+            "version": "v0.2.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/basarevych/task-daemon.git",
-                "reference": "300d6fa93c5f901943e17e87738592d4929360ae"
+                "reference": "177e31edbb43ecd5218dfb8f58098d39a3b705ef"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/basarevych/task-daemon/zipball/300d6fa93c5f901943e17e87738592d4929360ae",
-                "reference": "300d6fa93c5f901943e17e87738592d4929360ae",
+                "url": "https://api.github.com/repos/basarevych/task-daemon/zipball/177e31edbb43ecd5218dfb8f58098d39a3b705ef",
+                "reference": "177e31edbb43ecd5218dfb8f58098d39a3b705ef",
                 "shasum": ""
             },
             "require": {
@@ -95,7 +95,7 @@
                 "daemon",
                 "php"
             ],
-            "time": "2015-04-03 11:06:00"
+            "time": "2015-04-04 00:35:29"
         },
         {
             "name": "doctrine/annotations",
@@ -1703,16 +1703,16 @@
         },
         {
             "name": "phpunit/phpunit",
-            "version": "4.6.0",
+            "version": "4.6.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit.git",
-                "reference": "3797497862a4dedcd77c1615106c574ecdb3fad7"
+                "reference": "08b2aacdd8433abbba468f995d6d64b76a7a62ec"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/3797497862a4dedcd77c1615106c574ecdb3fad7",
-                "reference": "3797497862a4dedcd77c1615106c574ecdb3fad7",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/08b2aacdd8433abbba468f995d6d64b76a7a62ec",
+                "reference": "08b2aacdd8433abbba468f995d6d64b76a7a62ec",
                 "shasum": ""
             },
             "require": {
@@ -1774,7 +1774,7 @@
                 "testing",
                 "xunit"
             ],
-            "time": "2015-04-03 08:59:48"
+            "time": "2015-04-03 13:46:59"
         },
         {
             "name": "phpunit/phpunit-mock-objects",

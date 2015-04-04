@@ -11,7 +11,9 @@ return [
     'Clients' => 'Клиенты',
     'Campaign tags' => 'Теги кампаний',
     'Mail campaigns' => 'Почтовые кампании',
+    'Data' => 'Данные',
     'Data forms' => 'Формы данных',
+    'Import/Export' => 'Импорт/Экспорт',
     'System log' => 'Системный журнал',
     'Settings' => 'Настройки',
     'Email sender' => 'Отправка почты',
@@ -222,6 +224,16 @@ return [
     'Level' => 'Уровень',
     'Clear log' => 'Очистить журнал',
     'CONFIRM_CLEAR_SYSLOG' => 'Удалить все записи системного журнала?',
+
+    // ImportExportController
+    'Presets' => 'Пресеты',
+    'IMPORT_EXPORT_SIMPLE' => 'Простой',
+    'IMPORT_EXPORT_FULL_NAME' => 'Полное имя',
+    'Available fields' => 'Доступные поля',
+    'Reorder columns' => 'Измените порядок колонок',
+    'Actions' => 'Действия',
+    'Import' => 'Импорт',
+    'Export' => 'Экспорт',
 
     // Tours
     'Parser' => 'Парсер',

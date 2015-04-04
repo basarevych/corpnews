@@ -69,6 +69,10 @@ module.exports = function(grunt) {
                      * Add your JS dependencies here, order is respected
                      */
                     'bower_components/jquery/dist/jquery.js',
+                    'bower_components/jquery-ui/ui/core.js',
+                    'bower_components/jquery-ui/ui/widget.js',
+                    'bower_components/jquery-ui/ui/mouse.js',
+                    'bower_components/jquery-ui/ui/sortable.js',
                     'bower_components/jquery-form/jquery.form.js',
                     'bower_components/jquery.cookie/jquery.cookie.js',
                     'bower_components/moment/min/moment-with-locales.js',
