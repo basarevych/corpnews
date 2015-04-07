@@ -110,14 +110,14 @@ class Profile extends AbstractDataFormDocument
         $keys = array_keys($data);
 
         if (in_array('id', $keys))
-            $this->setId($data['id']);
+            $this->setId(empty($data['id']) ? null : $data['id']);
 
         if (in_array('client_email', $keys))
-            $this->setClientEmail($data['client_email']);
+            $this->setClientEmail(empty($data['client_email']) ? null : $data['client_email']);
 
         if (in_array('when_updated', $keys)) {
             $whenUpdated = null;
-            if (strlen($data['when_updated']) > 0) {
+            if (!empty($data['when_updated'])) {
                 $dtFormat = 'Y-m-d H:i:s P';
                 $whenUpdated = \DateTime::createFromFormat($dtFormat, $data['when_updated']);
             }
@@ -125,22 +125,22 @@ class Profile extends AbstractDataFormDocument
         }
 
         if (in_array('first_name', $keys))
-            $this->setFirstName($data['first_name']);
+            $this->setFirstName(empty($data['first_name']) ? null : $data['first_name']);
 
         if (in_array('middle_name', $keys))
-            $this->setMiddleName($data['middle_name']);
+            $this->setMiddleName(empty($data['middle_name']) ? null : $data['middle_name']);
 
         if (in_array('last_name', $keys))
-            $this->setLastName($data['last_name']);
+            $this->setLastName(empty($data['last_name']) ? null : $data['last_name']);
 
         if (in_array('gender', $keys))
-            $this->setGender($data['gender']);
+            $this->setGender(empty($data['gender']) ? null : $data['gender']);
 
         if (in_array('company', $keys))
-            $this->setCompany($data['company']);
+            $this->setCompany(empty($data['company']) ? null : $data['company']);
 
         if (in_array('position', $keys))
-            $this->setPosition($data['position']);
+            $this->setPosition(empty($data['position']) ? null : $data['position']);
     }
  
     /**

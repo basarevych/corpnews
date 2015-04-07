@@ -71,14 +71,14 @@ class Subscription extends AbstractDataFormDocument
         $keys = array_keys($data);
 
         if (in_array('id', $keys))
-            $this->setId($data['id']);
+            $this->setId(empty($data['id']) ? null : $data['id']);
 
         if (in_array('client_email', $keys))
-            $this->setClientEmail($data['client_email']);
+            $this->setClientEmail(empty($data['client_email']) ? null : $data['client_email']);
 
         if (in_array('when_updated', $keys)) {
             $whenUpdated = null;
-            if (strlen($data['when_updated']) > 0) {
+            if (!empty($data['when_updated'])) {
                 $dtFormat = 'Y-m-d H:i:s P';
                 $whenUpdated = \DateTime::createFromFormat($dtFormat, $data['when_updated']);
             }
@@ -86,12 +86,15 @@ class Subscription extends AbstractDataFormDocument
         }
 
         if (in_array('unsubscribed', $keys))
-            $this->setUnsubscribed($data['unsubscribed']);
+            $this->setUnsubscribed(empty($data['unsubscribed']) ? null : $data['unsubscribed']);
 
         if (in_array('ignored_tags', $keys)) {
-            $tags = [];
-            foreach (explode(',', $data['ignored_tags']) as $tag)
-                $tags[] = (int)trim($tag);
+            $tags = null;
+            if (!empty($data['ignored_tags'])) {
+                $tags = [];
+                foreach (explode(',', $data['ignored_tags']) as $tag)
+                    $tags[] = (int)trim($tag);
+            }
             $this->setIgnoredTags($tags);
         }
     }
