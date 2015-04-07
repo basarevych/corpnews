@@ -227,13 +227,21 @@ return [
 
     // ImportExportController
     'Presets' => 'Пресеты',
-    'IMPORT_EXPORT_SIMPLE' => 'Простой',
+    'IMPORT_EXPORT_MINIMUM' => 'Минимум',
     'IMPORT_EXPORT_FULL_NAME' => 'Полное имя',
+    'IMPORT_EXPORT_MAXIMUM' => 'Максимум',
     'Available fields' => 'Доступные поля',
     'Reorder columns' => 'Измените порядок колонок',
     'Actions' => 'Действия',
     'Import' => 'Импорт',
     'Export' => 'Экспорт',
+    'Import data' => 'Импорт данных',
+    'IMPORT_NO_EMAIL' => 'Для импорта поле электронной почты обязательно',
+    'Encoding' => 'Кодировка',
+    'Import preview' => 'Предварительный просмотр импорта',
+    'Accept results' => 'Принять результаты',
+    'Cancel import' => 'Отменить импорт',
+    'No groups' => 'Без групп',
 
     // Tours
     'Parser' => 'Парсер',

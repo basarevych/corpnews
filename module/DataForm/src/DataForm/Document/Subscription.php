@@ -48,14 +48,52 @@ class Subscription extends AbstractDataFormDocument
     public function toArray()
     {
         $whenUpdated = $this->getWhenUpdated();
+        $dtFormat = 'Y-m-d H:i:s P';
+        $ignored = $this->getIgnoredTags();
 
         return array(
             'id'                => $this->getId(),
             'client_email'      => $this->getClientEmail(),
-            'when_updated'      => $whenUpdated ? $whenUpdated->getTimestamp() : null,
+            'when_updated'      => $whenUpdated ? $whenUpdated->format($dtFormat) : null,
             'unsubscribed'      => $this->getUnsubscribed(),
-            'ignored_tags'      => $this->getIgnoredTags(),
+            'ignored_tags'      => $ignored ? join(', ', $ignored) : null,
         );
+    }
+
+    /**
+     * Sets properties from array
+     *
+     * @param array $data
+     * @return AbstractDataFormDocument
+     */
+    public function fromArray($data)
+    {
+        $keys = array_keys($data);
+
+        if (in_array('id', $keys))
+            $this->setId($data['id']);
+
+        if (in_array('client_email', $keys))
+            $this->setClientEmail($data['client_email']);
+
+        if (in_array('when_updated', $keys)) {
+            $whenUpdated = null;
+            if (strlen($data['when_updated']) > 0) {
+                $dtFormat = 'Y-m-d H:i:s P';
+                $whenUpdated = \DateTime::createFromFormat($dtFormat, $data['when_updated']);
+            }
+            $this->setWhenUpdated($whenUpdated);
+        }
+
+        if (in_array('unsubscribed', $keys))
+            $this->setUnsubscribed($data['unsubscribed']);
+
+        if (in_array('ignored_tags', $keys)) {
+            $tags = [];
+            foreach (explode(',', $data['ignored_tags']) as $tag)
+                $tags[] = (int)trim($tag);
+            $this->setIgnoredTags($tags);
+        }
     }
 
     /**

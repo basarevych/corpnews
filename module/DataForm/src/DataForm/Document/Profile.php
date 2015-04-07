@@ -84,11 +84,12 @@ class Profile extends AbstractDataFormDocument
     public function toArray()
     {
         $whenUpdated = $this->getWhenUpdated();
+        $dtFormat = 'Y-m-d H:i:s P';
 
         return array(
             'id'                => $this->getId(),
             'client_email'      => $this->getClientEmail(),
-            'when_updated'      => $whenUpdated ? $whenUpdated->getTimestamp() : null,
+            'when_updated'      => $whenUpdated ? $whenUpdated->format($dtFormat) : null,
             'first_name'        => $this->getFirstName(),
             'middle_name'       => $this->getMiddleName(),
             'last_name'         => $this->getLastName(),
@@ -98,6 +99,50 @@ class Profile extends AbstractDataFormDocument
         );
     }
 
+    /**
+     * Sets properties from array
+     *
+     * @param array $data
+     * @return AbstractDataFormDocument
+     */
+    public function fromArray($data)
+    {
+        $keys = array_keys($data);
+
+        if (in_array('id', $keys))
+            $this->setId($data['id']);
+
+        if (in_array('client_email', $keys))
+            $this->setClientEmail($data['client_email']);
+
+        if (in_array('when_updated', $keys)) {
+            $whenUpdated = null;
+            if (strlen($data['when_updated']) > 0) {
+                $dtFormat = 'Y-m-d H:i:s P';
+                $whenUpdated = \DateTime::createFromFormat($dtFormat, $data['when_updated']);
+            }
+            $this->setWhenUpdated($whenUpdated);
+        }
+
+        if (in_array('first_name', $keys))
+            $this->setFirstName($data['first_name']);
+
+        if (in_array('middle_name', $keys))
+            $this->setMiddleName($data['middle_name']);
+
+        if (in_array('last_name', $keys))
+            $this->setLastName($data['last_name']);
+
+        if (in_array('gender', $keys))
+            $this->setGender($data['gender']);
+
+        if (in_array('company', $keys))
+            $this->setCompany($data['company']);
+
+        if (in_array('position', $keys))
+            $this->setPosition($data['position']);
+    }
+ 
     /**
      * Set first_name
      *

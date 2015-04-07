@@ -3,6 +3,7 @@
     $this->layout()->activePage = 'import-export';
 
 ?>
+
 <div class="container">
     <div class="row">
         <div class="col-sm-12">
@@ -18,12 +19,16 @@
                 </div>
                 <div class="list-group">
                     <a href="javascript:void(0)" class="list-group-item"
-                       data-name="simple" onclick="loadPreset($(this))">
-                        <?= $this->translate('IMPORT_EXPORT_SIMPLE') ?>
+                       data-name="minimum" onclick="loadPreset($(this))">
+                        <?= $this->translate('IMPORT_EXPORT_MINIMUM') ?>
                     </a>
                     <a href="javascript:void(0)" class="list-group-item"
                        data-name="full-name" onclick="loadPreset($(this))">
                         <?= $this->translate('IMPORT_EXPORT_FULL_NAME') ?>
+                    </a>
+                    <a href="javascript:void(0)" class="list-group-item"
+                       data-name="maximum" onclick="loadPreset($(this))">
+                        <?= $this->translate('IMPORT_EXPORT_MAXIMUM') ?>
                     </a>
                 </div>
             </div>
@@ -104,7 +109,7 @@
         <span class="glyphicon glyphicon-menu-hamburger"></span>
         <span class="text"></span>
     </div>
-<div>
+</div>
 
 <script>
     function clearFields() {
@@ -145,7 +150,7 @@
     function loadPreset(el) {
         clearFields();
         switch (el.attr('data-name')) {
-            case 'simple':
+            case 'minimum':
                 addField('email', 'email');
                 break;
             case 'full-name':
@@ -153,6 +158,19 @@
                 addField('profile-first_name');
                 addField('profile-middle_name');
                 addField('profile-last_name');
+                break;
+            case 'maximum':
+                addField('email', 'email');
+                addField('profile-when_updated');
+                addField('profile-first_name');
+                addField('profile-middle_name');
+                addField('profile-last_name');
+                addField('profile-gender');
+                addField('profile-company');
+                addField('profile-position');
+                addField('subscription-when_updated');
+                addField('subscription-unsubscribed');
+                addField('subscription-ignored_tags');
                 break;
         }
         $('#presets-panel a').removeClass('active');
@@ -174,6 +192,33 @@
         window.location = '<?= $this->basePath('/admin/import-export/download') ?>'
             + '?groups=' + encodeURIComponent(groups.join(','))
             + '&fields=' + encodeURIComponent(fields.join(','));
+    }
+
+    function uploadFile()
+    {
+        var groups = [];
+        $('#groups-panel input:checked').each(function (index, element) {
+            groups.push($(element).attr('data-group'));
+        });
+
+        var fields = [];
+        $('#selected-panel .drag-n-drop').each(function (index, element) {
+            fields.push($(element).attr('data-var'));
+        });
+
+        $.ajax({
+            url: '<?= $this->basePath('/admin/import-export/upload') ?>',
+            data: {
+                groups: groups.join(','),
+                fields: fields.join(','),
+            },
+            success: function (html) {
+                var modal = $('#modal-form');
+                modal.find('.modal-title').text('<?= $this->translate('Import data') ?>');
+                modal.find('button[type=submit]').text('<?= $this->translate('Preview') ?>');
+                modal.find('.modal-body').html(html);
+            }
+        });
     }
 
     $('#selected-panel .panel-body').sortable();

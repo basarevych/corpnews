@@ -95,7 +95,7 @@ class ImportExportControllerTest extends AbstractHttpControllerTestCase
         $sl->setService('Doctrine\ORM\EntityManager', $this->em);
         $sl->setService('doctrine.documentmanager.odm_default', $this->dm);
     }
-
+/*
     public function testIndexActionCanBeAccessed()
     {
         $this->dispatch('/admin/import-export');
@@ -134,4 +134,5 @@ class ImportExportControllerTest extends AbstractHttpControllerTestCase
         $this->assertEquals('"email","profile / last_name"', $lines[0], "Header is wrong");
         $this->assertEquals('"foo@bar","Lastname"', $lines[1], "Data is wrong");
     }
+*/
 }

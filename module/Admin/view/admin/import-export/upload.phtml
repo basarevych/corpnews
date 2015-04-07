@@ -1,0 +1,117 @@
+<?php
+
+if ($this->script) {    // Run script and return (no form is displayed)
+    echo "<script>" . PHP_EOL;
+    echo $this->script . PHP_EOL;
+    echo "</script>" . PHP_EOL;
+    return;
+}
+
+$form = $this->form;
+$security = $form->get('security');
+$groups = $form->get('groups');
+$fields = $form->get('fields');
+$encoding = $form->get('encoding');
+$file = $form->get('file');
+
+?>
+
+<?php if (!$this->hasEmail): ?>
+    <p><?= $this->translate('IMPORT_NO_EMAIL') ?></p>
+<?php else: ?>
+    <form class="form-horizontal" name="<?= $form->getName() ?>" onsubmit="return false"
+          method="<?= $form->getAttribute('method') ?>"
+          enctype="multipart/form-data"
+          action="<?= $this->basePath('/admin/import-export/upload') ?>">
+
+        <input type="hidden"
+               name="<?= $security->getName() ?>"
+               value="<?= $security->getValue() ?>">
+
+        <input type="hidden"
+               name="<?= $groups->getName() ?>"
+               value="<?= $groups->getValue() ?>">
+
+        <input type="hidden"
+               name="<?= $fields->getName() ?>"
+               value="<?= $fields->getValue() ?>">
+
+        <?php foreach (array_merge($this->messages, $security->getMessages()) as $msg): ?>
+            <div class="alert alert-danger">
+                <center><?= $this->escapeHtml($this->translate($msg)) ?></center>
+            </div>
+        <?php endforeach ?>
+
+        <?php $valid = count($encoding->getMessages()) == 0 ?>
+        <div class="form-group <?= $valid ? '' : 'has-error' ?>">
+            <label class="col-sm-4 control-label" for="<?= $encoding->getName() ?>">
+                <?= $this->escapeHtml($this->translate($encoding->getLabel())) ?>:
+                <span class="required-marker text-danger">
+                    <?= $this->translate('REQUIRED FIELD') ?>
+                </span>
+            </label>
+            <div class="col-sm-8">
+                <select class="form-control"
+                       name="<?= $encoding->getName() ?>"
+                       data-on-blur="validateFormField($('#modal-form [name=<?= $encoding->getName() ?>]'))"
+                       data-on-enter="$('#modal-form [name=<?= $file->getName() ?>]').focus()">
+                    <?php foreach ($encoding->getValueOptions() as $name => $label): ?>
+                        <option value="<?= $name ?>"><?= $label ?></option>
+                    <?php endforeach ?>
+                </select>
+                <div class="help-block">
+                    <?php if (!$valid): ?>
+                        <ul class="list-unstyled icon-list error-list">
+                        <?php foreach ($encoding->getMessages() as $msg): ?>
+                            <li><?= $this->escapeHtml($msg) ?></li>
+                        <?php endforeach ?>
+                        </ul>
+                    <?php endif ?>
+                </div>
+            </div>
+        </div>
+
+        <?php $valid = count($file->getMessages()) == 0 ?>
+        <div class="form-group <?= $valid ? '' : 'has-error' ?>">
+            <label class="col-sm-4 control-label" for="<?= $file->getName() ?>">
+                <?= $this->escapeHtml($this->translate($file->getLabel())) ?>:
+                <span class="required-marker text-danger">
+                    <?= $this->translate('REQUIRED FIELD') ?>
+                </span>
+            </label>
+            <div class="col-sm-8">
+                <input type="file" class="form-control"
+                       name="<?= $file->getName() ?>"
+                       data-on-blur="validateFormField($('#modal-form [name=<?= $file->getName() ?>]'))"
+                       data-on-enter="$('#modal-form button[type=submit]').focus().click()">
+                <div class="help-block">
+                    <?php if (!$valid): ?>
+                        <ul class="list-unstyled icon-list error-list">
+                        <?php foreach ($file->getMessages() as $msg): ?>
+                            <li><?= $this->escapeHtml($msg) ?></li>
+                        <?php endforeach ?>
+                        </ul>
+                    <?php endif ?>
+                </div>
+            </div>
+        </div>
+    </form>
+<?php endif ?>
+
+<script>
+    var modal = $('#modal-form');
+
+    <?php if (!$this->hasEmail): ?>
+        modal.find('button[type="submit"]').hide();
+        modal.on('hide.bs.modal', function() {
+            modal.find('button[type="submit"]').show();
+        });
+    <?php endif ?>
+
+    initModalForm(modal);                   // See /js/app.js 
+
+    if (!modal.is(':visible'))
+        modal.modal('show');
+
+    setFormFocus(modal.find('form'));       // See /js/app.js
+</script>

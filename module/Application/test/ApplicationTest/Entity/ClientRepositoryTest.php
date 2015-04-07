@@ -155,6 +155,27 @@ class ClientRepositoryTest extends AbstractControllerTestCase
         $this->assertEquals($a->getId(), $result[0]->getId(), "Wrong entity found");
     }
 
+    public function testFindByGroupIds()
+    {
+        $group = new GroupEntity();
+        $group->setName('the group');
+
+        $a = new ClientEntity();
+        $a->setEmail('foobar');
+
+        $a->addGroup($group);
+        $group->addClient($a);
+
+        $b = new ClientEntity();
+        $b->setEmail('wrong');
+
+        $this->infrastructure->import([ $group, $a, $b ]);
+
+        $result = $this->repo->findByGroupIds([ 1 ]);
+        $this->assertEquals(1, count($result), "Only one item should be found");
+        $this->assertEquals($a->getId(), $result[0]->getId(), "Wrong entity found");
+    }
+
     public function testFindWithoutLetters()
     {
         $this->setUpLetters();

@@ -27,7 +27,7 @@ class ClientRepository extends EntityRepository
     /**
      * Find all clients by their group name
      *
-     * @param string|array $name
+     * @param string $name
      * @return array
      */
     public function findByGroupName($name)
@@ -38,15 +38,30 @@ class ClientRepository extends EntityRepository
         $qb->select('c')
            ->from('Application\Entity\Client', 'c')
            ->join('c.groups', 'g')
+           ->where('g.name = :name')
+           ->setParameter('name', $name)
            ->orderBy('c.email', 'asc');
 
-        if (is_array($name)) {
-            $qb->where('g.name IN (:names)')
-               ->setParameter('names', $name);
-        } else {
-            $qb->where('g.name = :name')
-               ->setParameter('name', $name);
-        };
+        return $qb->getQuery()->getResult();
+    }
+
+    /**
+     * Find all clients by their group IDs
+     *
+     * @param array $ids
+     * @return array
+     */
+    public function findByGroupIds($ids)
+    {
+        $em = $this->getEntityManager();
+
+        $qb = $em->createQueryBuilder();
+        $qb->select('c')
+           ->from('Application\Entity\Client', 'c')
+           ->join('c.groups', 'g')
+           ->where('g.id IN (:ids)')
+           ->setParameter('ids', $ids)
+           ->orderBy('c.email', 'asc');
 
         return $qb->getQuery()->getResult();
     }

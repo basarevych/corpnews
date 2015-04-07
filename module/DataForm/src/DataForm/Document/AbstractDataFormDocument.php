@@ -54,6 +54,14 @@ abstract class AbstractDataFormDocument
      * @return array
      */
     abstract public function toArray();
+
+    /**
+     * Sets properties from array
+     *
+     * @param array $data
+     * @return AbstractDataFormDocument
+     */
+    abstract public function fromArray($data);
  
     /**
      * Set id

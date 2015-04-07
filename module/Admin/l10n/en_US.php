@@ -227,13 +227,21 @@ return [
 
     // ImportExportController
     'Presets' => 'Presets',
-    'IMPORT_EXPORT_SIMPLE' => 'Simple',
+    'IMPORT_EXPORT_MINIMUM' => 'Minimum',
     'IMPORT_EXPORT_FULL_NAME' => 'Full name',
+    'IMPORT_EXPORT_MAXIMUM' => 'Maximum',
     'Available fields' => 'Available fields',
     'Reorder columns' => 'Reorder columns',
     'Actions' => 'Actions',
     'Import' => 'Import',
     'Export' => 'Export',
+    'Import data' => 'Import data',
+    'IMPORT_NO_EMAIL' => 'Import action requires email field to be set',
+    'Encoding' => 'Encoding',
+    'Import preview' => 'Import preview',
+    'Accept results' => 'Accept results',
+    'Cancel import' => 'Cancel import',
+    'No groups' => 'No groups',
 
     // Tours
     'Parser' => 'Parser',

@@ -6,7 +6,7 @@ use Zend\Test\PHPUnit\Controller\AbstractControllerTestCase;
 use Application\Entity\Tag as TagEntity;
 use DataForm\Form\Subscription as SubscriptionForm;
 
-class SubscriptionTest extends AbstractControllerTestCase
+class SubscriptionFormTest extends AbstractControllerTestCase
 {
     public function setUp()
     {

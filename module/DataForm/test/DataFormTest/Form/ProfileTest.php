@@ -5,7 +5,7 @@ namespace DataFormTest\Form;
 use Zend\Test\PHPUnit\Controller\AbstractControllerTestCase;
 use DataForm\Form\Profile as ProfileForm;
 
-class ProfileTest extends AbstractControllerTestCase
+class ProfileFormTest extends AbstractControllerTestCase
 {
     public function setUp()
     {
