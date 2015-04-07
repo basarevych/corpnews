@@ -15,6 +15,7 @@ use Zend\View\Model\JsonModel;
 use DynamicTable\Table;
 use DynamicTable\Adapter\ArrayAdapter;
 use Application\Exception\NotFoundException;
+use Application\Entity\Client as ClientEntity;
 use Admin\Form\Import as ImportForm;
 
 /**
@@ -282,6 +283,9 @@ class ImportExportController extends AbstractActionController
 
         $names = [];
         foreach (explode(',', $cnt->import['groups']) as $id) {
+            if (empty($id))
+                continue;
+
             $group = $em->getRepository('Application\Entity\Group')
                         ->find($id);
             $names[] = $group->getName();
@@ -334,6 +338,42 @@ class ImportExportController extends AbstractActionController
         $cnt = $session->getContainer();
 
         if ($cnt->offsetExists('import')) {
+            $groups = [];
+            foreach (explode(',', $cnt->import['groups']) as $id) {
+                $group = $em->getRepository('Application\Entity\Group')
+                            ->find($id);
+                if ($group)
+                    $groups[] = $group;
+            }
+
+            foreach ($cnt->import['rows'] as $row) {
+                if (!isset($row['email']))
+                    continue;
+
+                $client = $em->getRepository('Application\Entity\Client')
+                             ->findOneByEmail($row['email']);
+                if (!$client) {
+                    $client = new ClientEntity();
+                    $client->setEmail($row['email']);
+                }
+
+                foreach ($groups as $group) {
+                    if (!$client->getGroups()->contains($group))
+                        $client->addGroup($group);
+                    if (!$group->getClients()->contains($client))
+                        $group->addClient($client);
+                }
+
+                $em->persist($client);
+                $em->flush();
+
+                foreach ($row['docs'] as $doc) {
+                    $doc->setId($client->getId());
+                    $doc->setClientEmail($row['email']);
+                    $dm->persist($doc);
+                }
+                $dm->flush();
+            }
         }
 
         return $this->redirect()->toUrl($basePath('/admin/client'));
@@ -414,6 +454,7 @@ class ImportExportController extends AbstractActionController
         $session = $sl->get('Session');
         $cnt = $session->getContainer();
         $escapeHtml = $sl->get('viewhelpermanager')->get('escapeHtml');
+        $translate = $sl->get('viewhelpermanager')->get('translate');
 
         $data = [];
         foreach ($cnt->import['rows'] as $row) {
@@ -437,14 +478,14 @@ class ImportExportController extends AbstractActionController
         $adapter = new ArrayAdapter();
         $adapter->setData($data);
 
-        $mapper = function ($row) use ($escapeHtml) {
+        $mapper = function ($row) use ($escapeHtml, $translate) {
             if (!$row)
                 return null;
 
             $result = [];
             foreach ($row as $key => $value) {
                 if ($value instanceof \DateTime)
-                    $result[$key] = $value->getTimestamp();
+                    $result[$key] = $value->format($translate('GENERIC_DATETIME_FORMAT'));
                 else if (is_array($value))
                     $result[$key] = join(', ', $value);
                 else

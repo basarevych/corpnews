@@ -22,14 +22,6 @@
                     loader_image: '<?= $this->basePath('/img/loader.gif') ?>',
                     strings: dynamicTableStrings,
                     mapper: function (row) {
-                        if (row['profile-when_updated'] != null) {
-                            var m = moment.unix(row['profile-when_updated']).local();
-                            row['profile-when_updated'] = m.format('<?= $this->translate('GENERIC_MOMENT_FORMAT') ?>');
-                        }
-                        if (row['subscription-when_updated'] != null) {
-                            var m = moment.unix(row['subscription-when_updated']).local();
-                            row['subscription-when_updated'] = m.format('<?= $this->translate('GENERIC_MOMENT_FORMAT') ?>');
-                        }
                         return row;
                     },
                 });

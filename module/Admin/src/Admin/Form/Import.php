@@ -112,7 +112,7 @@ class Import extends Form
         $filter->add($csrf);
 
         $groups = new Input('groups');
-        $groups->setRequired(true);
+        $groups->setRequired(false);
         $filter->add($groups);
 
         $fields = new Input('fields');
