@@ -196,10 +196,13 @@ return [
     'AVAILABLE_FORMS_BODY' => 'List of data forms available (to use as an argument to <strong>data_form_link</strong> function):',
 
     // OutgoingController
+    'STATUS_SENT' => 'Sent',
+    'STATUS_SKIPPED' => 'Skipped',
+    'STATUS_FAILED' => 'Failed',
     'Secret key' => 'Secret key',
     'Error' => 'Error',
     'When created' => 'When created',
-    'When sent' => 'When sent',
+    'When processed' => 'When processed',
     'From address' => 'From address',
     'To address' => 'To address',
     'Outgoing filter' => 'Outgoing filter',

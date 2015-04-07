@@ -196,10 +196,13 @@ return [
     'AVAILABLE_FORMS_BODY' => 'Список доступных форм данных (для использования в качестве аргумента функции <strong>data_form_link</strong>):',
 
     // OutgoingController
+    'STATUS_SENT' => 'Отправлено',
+    'STATUS_SKIPPED' => 'Пропущено',
+    'STATUS_FAILED' => 'Ошибка',
     'Secret key' => 'Секретный ключ',
     'Error' => 'Ошибка',
     'When created' => 'Когда создано',
-    'When sent' => 'Когда отправлено',
+    'When processed' => 'Когда обработано',
     'From address' => 'Адрес "От кого"',
     'To address' => 'Адрес "Кому"',
     'Outgoing filter' => 'Фильтр исходящих',
