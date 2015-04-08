@@ -924,7 +924,9 @@ class Letter
             if ($parser)
                 $this->parsedBody .= "\n";
 
-            if (preg_match('/^text\/plain/', $contentType))
+            if (preg_match('/^text\/plain/', $contentType)
+                    || preg_match('/^message\/delivery-status/', $contentType)
+                    || preg_match('/^message\/rfc822/', $contentType))
                 $this->textMessage .= $body;
             else if (preg_match('/^text\/html/', $contentType))
                 $this->htmlMessage .= $body;
