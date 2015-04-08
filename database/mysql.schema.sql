@@ -1,6 +1,7 @@
 DROP TABLE IF EXISTS `secrets`;
 DROP TABLE IF EXISTS `letters`;
 DROP TABLE IF EXISTS `templates`;
+DROP TABLE IF EXISTS `campaign_tags`;
 DROP TABLE IF EXISTS `campaign_groups`;
 DROP TABLE IF EXISTS `campaigns`;
 DROP TABLE IF EXISTS `client_ignored_tags`;
@@ -127,7 +128,8 @@ CREATE TABLE `letters` (
         ON UPDATE CASCADE ON DELETE CASCADE,
     CONSTRAINT `letters_client_fk` FOREIGN KEY (`client_id`)
         REFERENCES `clients` (`id`)
-        ON UPDATE CASCADE ON DELETE CASCADE
+        ON UPDATE CASCADE ON DELETE CASCADE,
+    CONSTRAINT `letters_message_id_unique` UNIQUE (`message_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1;
 
 CREATE TABLE `secrets` (

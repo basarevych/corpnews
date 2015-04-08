@@ -133,6 +133,7 @@ return [
     'From' => 'From',
     'Subject' => 'Subject',
     'Cancel' => 'Cancel',
+    'Execute' => 'Execute',
     '(No subject)' => '(No subject)',
     'Create campaign' => 'Create campaign',
     'CAN_NOT_CREATE_CAMPAIGN' => 'The letter(s) contains structure or syntax errors. Can not create campaign',

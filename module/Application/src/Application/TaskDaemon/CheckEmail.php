@@ -22,6 +22,16 @@ use Application\Model\Mailbox;
 class CheckEmail extends ZfTask
 {
     /**
+     * Bounced letter subjects
+     *
+     * @var array
+     */
+    protected $bouncedSubjects = [
+        'Undelivered Mail Returned to Sender',
+        'Mail delivery failed: returning message to sender',
+    ];
+
+    /**
      * Do the job
      */
     public function run(&$exitRequested)
@@ -139,7 +149,31 @@ class CheckEmail extends ZfTask
                             'source_id' => $uid
                         ]
                     );
-                    $imap->moveLetter($uid, $box->getName(), Mailbox::NAME_INCOMING);
+
+                    $targetBox = Mailbox::NAME_INCOMING;
+                    if (in_array($letter->getSubject(), $this->bouncedSubjects)) {
+                        $analysisSuccess = $imap->loadLetter($letter, $box->getName(), $uid);
+                        if ($analysisSuccess) {
+                            $body = $letter->getTextMessage();
+                            if (preg_match_all('/Message-ID: <([^>]+)>/', $body, $matches, PREG_SET_ORDER)) {
+                                foreach ($matches as $match) {
+                                    $search = $em->getRepository('Application\Entity\Letter')
+                                                 ->findOneBy([ 'message_id' => $match[1]]);
+                                    if ($search) {
+                                        $client = $search->getClient();
+                                        if ($search->getToAddress() == $client->getEmail()) {
+                                            $client->setBounced(true);
+                                            $em->persist($client);
+                                            $em->flush();
+                                            $targetBox = Mailbox::NAME_BOUNCES;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    $imap->moveLetter($uid, $box->getName(), $targetBox);
                 }
             }
         }
