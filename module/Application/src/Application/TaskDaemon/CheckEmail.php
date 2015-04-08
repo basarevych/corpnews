@@ -141,15 +141,6 @@ class CheckEmail extends ZfTask
                         break 2;
 
                     $letter = $imap->getLetter($box->getName(), $uid);
-                    $logger->log(
-                        SyslogDocument::LEVEL_INFO,
-                        'INFO_LETTER_PROCESSED',
-                        [
-                            'source_name' => get_class($letter),
-                            'source_id' => $uid
-                        ]
-                    );
-
                     $targetBox = Mailbox::NAME_INCOMING;
                     $analysisSuccess = $imap->loadLetter($letter, $box->getName(), $uid);
                     if ($analysisSuccess) {
@@ -183,6 +174,38 @@ class CheckEmail extends ZfTask
                     }
 
                     $imap->moveLetter($uid, $box->getName(), $targetBox);
+
+                    switch ($targetBox) {
+                        case Mailbox::NAME_BOUNCES:
+                            $logger->log(
+                                SyslogDocument::LEVEL_INFO,
+                                'INFO_LETTER_BOUNCED',
+                                [
+                                    'source_name' => get_class($letter),
+                                    'source_id' => $uid
+                                ]
+                            );
+                            break;
+                        case Mailbox::NAME_REPLIES:
+                            $logger->log(
+                                SyslogDocument::LEVEL_INFO,
+                                'INFO_LETTER_WAS_REPLIED',
+                                [
+                                    'source_name' => get_class($letter),
+                                    'source_id' => $uid
+                                ]
+                            );
+                            break;
+                        default:
+                            $logger->log(
+                                SyslogDocument::LEVEL_INFO,
+                                'INFO_LETTER_PROCESSED',
+                                [
+                                    'source_name' => get_class($letter),
+                                    'source_id' => $uid
+                                ]
+                            );
+                    }
                 }
             }
         }

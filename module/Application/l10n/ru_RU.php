@@ -73,7 +73,9 @@ return [
     // Logger
     'INFO_MAILBOX_CREATED' => 'Создан почтовый ящик',
     'INFO_LETTER_AUTODELETED' => 'Старое письмо автоудалено',
-    'INFO_LETTER_PROCESSED' => 'Новое письмо получено и обработано',
+    'INFO_LETTER_BOUNCED' => 'Получено письмо о возврате',
+    'INFO_LETTER_WAS_REPLIED' => 'Получен ответ на письмо',
+    'INFO_LETTER_PROCESSED' => 'Получено новое письмо',
     'INFO_CAMPAIGN_BEING_PROCESSED' => 'Кампания обрабатывается',
     'INFO_CAMPAIGN_STARTED' => 'Кампания обработана и запущена',
     'INFO_CAMPAIGN_PASSED_DEADLINE' => 'Крайний срок наступил - кампания завершена',

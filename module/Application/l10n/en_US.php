@@ -73,7 +73,9 @@ return [
     // Logger
     'INFO_MAILBOX_CREATED' => 'Mailbox created',
     'INFO_LETTER_AUTODELETED' => 'Old letter autodeleted',
-    'INFO_LETTER_PROCESSED' => 'New letter received and processed',
+    'INFO_LETTER_BOUNCED' => 'Received bounce letter',
+    'INFO_LETTER_WAS_REPLIED' => 'Received reply letter',
+    'INFO_LETTER_PROCESSED' => 'New letter received',
     'INFO_CAMPAIGN_BEING_PROCESSED' => 'Campaign is being processed',
     'INFO_CAMPAIGN_STARTED' => 'Campaign processed and started',
     'INFO_CAMPAIGN_PASSED_DEADLINE' => 'Deadline has passed - campaign finished',
