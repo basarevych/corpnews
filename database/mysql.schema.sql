@@ -99,7 +99,6 @@ CREATE TABLE `campaign_tags` (
 CREATE TABLE `templates` (
     `id` int unsigned NOT NULL AUTO_INCREMENT,
     `campaign_id` int unsigned NOT NULL,
-    `message_id` varchar(255) NOT NULL,
     `subject` text NULL,
     `headers` mediumtext NULL,
     `body` mediumtext NULL,
@@ -116,6 +115,7 @@ CREATE TABLE `letters` (
     `status` enum('created', 'sent', 'skipped', 'failed') NOT NULL,
     `when_created` datetime NOT NULL DEFAULT 0,
     `when_processed` datetime NULL,
+    `message_id` varchar(255) NOT NULL,
     `from_address` text NOT NULL,
     `to_address` text NOT NULL,
     `subject` text NOT NULL,

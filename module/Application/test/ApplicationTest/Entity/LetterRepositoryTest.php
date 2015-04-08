@@ -31,7 +31,6 @@ class LetterRepositoryTest extends AbstractControllerTestCase
     public function testFindPending()
     {
         $template = new TemplateEntity();
-        $template->setMessageId('mid');
         $template->setSubject('subject');
         $template->setHeaders('headers');
         $template->setBody('body');
@@ -40,6 +39,7 @@ class LetterRepositoryTest extends AbstractControllerTestCase
         $letter1->setStatus(LetterEntity::STATUS_SENT);
         $letter1->setWhenCreated(new \DateTime());
         $letter1->setWhenProcessed(new \DateTime());
+        $letter1->setMessageId('mid1');
         $letter1->setFromAddress('foo');
         $letter1->setToAddress('bar');
         $letter1->setSubject('subject');
@@ -51,6 +51,7 @@ class LetterRepositoryTest extends AbstractControllerTestCase
 
         $letter2 = new LetterEntity();
         $letter2->setWhenCreated(new \DateTime());
+        $letter2->setMessageId('mid2');
         $letter2->setFromAddress('foo');
         $letter2->setToAddress('bar');
         $letter2->setSubject('subject');
@@ -71,6 +72,7 @@ class LetterRepositoryTest extends AbstractControllerTestCase
     {
         $letter = new LetterEntity();
         $letter->setWhenCreated(new \DateTime());
+        $letter->setMessageId('mid');
         $letter->setFromAddress('foo');
         $letter->setToAddress('bar');
         $letter->setSubject('subject');

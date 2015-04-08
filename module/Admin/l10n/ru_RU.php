@@ -122,7 +122,7 @@ return [
     'TOUR_DATA_FORMS_SWITCH' => 'Здесь вы можете переключать текущую форму данных',
 
     // MailboxController
-    'System email address' => 'Системный адрес электронной почты',
+    'System email address' => 'Адрес электронной почты системы',
     'Incoming' => 'Входящие',
     'Replies' => 'Ответы',
     'Bounces' => 'Возвращенные письма',

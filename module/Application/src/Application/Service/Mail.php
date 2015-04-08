@@ -150,8 +150,10 @@ class Mail implements ServiceLocatorAwareInterface
         if (!$parser->parse($template->getSubject(), $subject, false, false))
             $error = true;
 
+        $mid = LetterEntity::generateMessageId();
+
         $model = new LetterModel(null);
-        $model->setMid('<' . $template->getMessageId() . '>');
+        $model->setMid('<' . $mid . '>');
         $model->setSubject($subject);
         $model->setFrom(@$config['corpnews']['server']['address']);
         $model->setTo($toAddressOverride ? $toAddressOverride : $client->getEmail());
@@ -161,6 +163,7 @@ class Mail implements ServiceLocatorAwareInterface
 
         $letter = new LetterEntity();
         $letter->setWhenCreated(new \DateTime());
+        $letter->setMessageId($mid);
         $letter->setFromAddress($model->getFrom());
         $letter->setToAddress($model->getTo());
         $letter->setSubject($model->getSubject());

@@ -77,7 +77,6 @@ class QueuedCampaignTest extends AbstractControllerTestCase
                                    ->getMock();
 
         $template = new TemplateEntity();
-        $template->setMessageId('mid');
         $template->setSubject('subject');
         $template->setHeaders('header: foo');
         $template->setBody('body');

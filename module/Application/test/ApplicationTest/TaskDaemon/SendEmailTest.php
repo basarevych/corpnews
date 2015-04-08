@@ -47,7 +47,6 @@ class SendEmailTest extends AbstractControllerTestCase
                                    ->getMock();
 
         $this->template = new TemplateEntity();
-        $this->template->setMessageId('mid');
         $this->template->setSubject('subject');
         $this->template->setHeaders('header: foo');
         $this->template->setBody('body');
@@ -72,6 +71,7 @@ class SendEmailTest extends AbstractControllerTestCase
 
         $this->letter = new LetterEntity();
         $this->letter->setWhenCreated(new \DateTime());
+        $this->letter->setMessageId('mid');
         $this->letter->setFromAddress('foo');
         $this->letter->setToAddress('bar');
         $this->letter->setSubject('subject');

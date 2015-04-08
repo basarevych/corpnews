@@ -22,7 +22,6 @@ class TemplateRepositoryTest extends AbstractControllerTestCase
         $this->repo = $this->em->getRepository('Application\Entity\Template');
 
         $template = new TemplateEntity();
-        $template->setMessageId('mid');
         $template->setSubject('subject');
         $template->setHeaders('headers');
         $template->setBody('body');

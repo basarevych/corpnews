@@ -65,7 +65,6 @@ class CampaignControllerTest extends AbstractHttpControllerTestCase
                                     ->getMock();
 
         $this->template = new TemplateEntity();
-        $this->template->setMessageId('mid');
         $this->template->setSubject('subject');
         $this->template->setHeaders('headers');
         $this->template->setBody('body');
@@ -393,6 +392,7 @@ class CampaignControllerTest extends AbstractHttpControllerTestCase
                         $body = substr($fixture, $pos, strlen($fixture) - $pos);
 
                         $letter = new LetterEntity();
+                        $letter->setMessageId(LetterEntity::generateMessageId());
                         $letter->setHeaders($headers);
                         $letter->setBody($body);
                         return $letter;

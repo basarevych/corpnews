@@ -41,7 +41,6 @@ class ClientRepositoryTest extends AbstractControllerTestCase
         $this->campaign->setStatus(CampaignEntity::STATUS_STARTED);
 
         $this->template = new TemplateEntity();
-        $this->template->setMessageId('mid');
         $this->template->setSubject('subject');
         $this->template->setHeaders('headers');
         $this->template->setBody('body');
@@ -74,6 +73,7 @@ class ClientRepositoryTest extends AbstractControllerTestCase
         $this->a1 = new LetterEntity();
         $this->a1->setWhenCreated(new \DateTime());
         $this->a1->setFromAddress('foo');
+        $this->a1->setMessageId('mid');
         $this->a1->setToAddress('bar');
         $this->a1->setSubject('subject');
         $this->a1->setHeaders('headers');
@@ -88,6 +88,7 @@ class ClientRepositoryTest extends AbstractControllerTestCase
         $this->a2->setStatus(LetterEntity::STATUS_FAILED);
         $this->a2->setWhenCreated(new \DateTime());
         $this->a2->setWhenProcessed(new \DateTime());
+        $this->a2->setMessageId('mid');
         $this->a2->setFromAddress('foo');
         $this->a2->setToAddress('bar');
         $this->a2->setSubject('subject');
@@ -103,6 +104,7 @@ class ClientRepositoryTest extends AbstractControllerTestCase
         $this->b1->setStatus(LetterEntity::STATUS_FAILED);
         $this->b1->setWhenCreated(new \DateTime());
         $this->b1->setWhenProcessed(new \DateTime());
+        $this->b1->setMessageId('mid');
         $this->b1->setFromAddress('foo');
         $this->b1->setToAddress('bar');
         $this->b1->setSubject('subject');
@@ -116,6 +118,7 @@ class ClientRepositoryTest extends AbstractControllerTestCase
 
         $this->b2 = new LetterEntity();
         $this->b2->setWhenCreated(new \DateTime());
+        $this->b2->setMessageId('mid');
         $this->b2->setFromAddress('foo');
         $this->b2->setToAddress('bar');
         $this->b2->setSubject('subject');

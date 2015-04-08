@@ -27,11 +27,6 @@ use Application\Entity\Letter;
 class Template
 {
     /**
-     * @const MESSAGE_ID_LENGTH
-     */
-    const MESSAGE_ID_LENGTH = 48;
-
-    /**
      * Row ID
      *
      * @var integer
@@ -41,15 +36,6 @@ class Template
      * @ORM\GeneratedValue(strategy="AUTO")
      */
     protected $id;
-
-    /**
-     * Message ID
-     *
-     * @var string
-     * 
-     * @ORM\Column(type="string")
-     */
-    protected $message_id;
 
     /**
      * Subject
@@ -114,7 +100,6 @@ class Template
     {
         return [
             'id'            => $this->getId(),
-            'message_id'    => $this->getMessageId(),
             'subject'       => $this->getSubject(),
             'headers'       => $this->getHeaders(),
             'body'          => $this->getBody(),
@@ -129,29 +114,6 @@ class Template
     public function getId()
     {
         return $this->id;
-    }
-
-    /**
-     * Set message_id
-     *
-     * @param string $messageId
-     * @return Template
-     */
-    public function setMessageId($messageId)
-    {
-        $this->message_id = $messageId;
-
-        return $this;
-    }
-
-    /**
-     * Get message_id
-     *
-     * @return string 
-     */
-    public function getMessageId()
-    {
-        return $this->message_id;
     }
 
     /**
@@ -280,22 +242,5 @@ class Template
     public function getLetters()
     {
         return $this->letters;
-    }
-
-    /**
-     * Generate unique Message-ID
-     *
-     * @return string
-     */
-    public static function generateMessageId()
-    {
-        $randomData = openssl_random_pseudo_bytes(1024);
-        if ($randomData === false)
-            throw new \Exception('Could not generate random string');
-
-        $host = '@corpnews';
-        $token = substr(hash('sha512', $randomData), 0, self::MESSAGE_ID_LENGTH - strlen($host));
-
-        return $token . $host;
     }
 }

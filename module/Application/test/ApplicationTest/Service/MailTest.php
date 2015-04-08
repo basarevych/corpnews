@@ -98,7 +98,6 @@ class MailTest extends AbstractControllerTestCase
         $body = substr($fixture, $pos, strlen($fixture) - $pos);
 
         $template = new TemplateEntity();
-        $template->setMessageId('mid');
         $template->setSubject('subject');
         $template->setHeaders($headers);
         $template->setBody($body);

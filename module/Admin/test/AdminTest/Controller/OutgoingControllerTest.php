@@ -117,7 +117,6 @@ class OutgoingControllerTest extends AbstractHttpControllerTestCase
 
         $t = new TemplateEntity();
         $t->setCampaign($c);
-        $t->setMessageId('mid');
         $t->setSubject('subject');
         $t->setHeaders('headers');
         $t->setBody('body');
@@ -125,6 +124,7 @@ class OutgoingControllerTest extends AbstractHttpControllerTestCase
         $a = new LetterEntity();
         $a->setTemplate($t);
         $a->setWhenCreated(new \DateTime());
+        $a->setMessageId('mid');
         $a->setFromAddress('from');
         $a->setToAddress('to');
         $a->setSubject('subject');

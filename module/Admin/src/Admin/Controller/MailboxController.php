@@ -163,7 +163,6 @@ class MailboxController extends AbstractActionController
 
                     foreach ($letters as $letter) {
                         $template = new TemplateEntity();
-                        $template->setMessageId(TemplateEntity::generateMessageId());
                         $template->setSubject($letter->getSubject());
                         $template->setHeaders($letter->getRawHeaders());
                         $template->setBody($letter->getRawBody());

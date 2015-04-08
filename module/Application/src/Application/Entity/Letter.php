@@ -37,6 +37,11 @@ class Letter
     const STATUS_FAILED = 'failed';
 
     /**
+     * @const MESSAGE_ID_LENGTH
+     */
+    const MESSAGE_ID_LENGTH = 48;
+
+    /**
      * Row ID
      *
      * @var integer
@@ -73,6 +78,15 @@ class Letter
      * @ORM\Column(type="utcdatetime", nullable=true)
      */
     protected $when_processed;
+
+    /**
+     * Message ID
+     *
+     * @var string
+     * 
+     * @ORM\Column(type="string")
+     */
+    protected $message_id;
 
     /**
      * From address
@@ -163,6 +177,7 @@ class Letter
             'status'            => $this->getStatus(),
             'when_created'      => $whenCreated ? $whenCreated->getTimestamp() : null,
             'when_processed'    => $whenProcessed ? $whenProcessed->getTimestamp() : null,
+            'message_id'        => $this->getMessageId(),
             'from_address'      => $this->getFromAddress(),
             'to_address'        => $this->getToAddresss(),
             'subject'           => $this->getSubject(),
@@ -248,6 +263,29 @@ class Letter
     public function getWhenProcessed()
     {
         return $this->when_processed;
+    }
+
+    /**
+     * Set message_id
+     *
+     * @param string $messageId
+     * @return Letter
+     */
+    public function setMessageId($messageId)
+    {
+        $this->message_id = $messageId;
+
+        return $this;
+    }
+
+    /**
+     * Get message_id
+     *
+     * @return string 
+     */
+    public function getMessageId()
+    {
+        return $this->message_id;
     }
 
     /**
@@ -424,5 +462,22 @@ class Letter
             self::STATUS_SKIPPED,
             self::STATUS_FAILED,
         ];
+    }
+
+    /**
+     * Generate unique Message-ID
+     *
+     * @return string
+     */
+    public static function generateMessageId()
+    {
+        $randomData = openssl_random_pseudo_bytes(1024);
+        if ($randomData === false)
+            throw new \Exception('Could not generate random string');
+
+        $host = '@corpnews';
+        $token = substr(hash('sha512', $randomData), 0, self::MESSAGE_ID_LENGTH - strlen($host));
+
+        return $token . $host;
     }
 }
