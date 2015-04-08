@@ -151,14 +151,14 @@ class CheckEmail extends ZfTask
                     );
 
                     $targetBox = Mailbox::NAME_INCOMING;
-                    if (in_array($letter->getSubject(), $this->bouncedSubjects)) {
-                        $analysisSuccess = $imap->loadLetter($letter, $box->getName(), $uid);
-                        if ($analysisSuccess) {
+                    $analysisSuccess = $imap->loadLetter($letter, $box->getName(), $uid);
+                    if ($analysisSuccess) {
+                        if (in_array($letter->getSubject(), $this->bouncedSubjects)) {
                             $body = $letter->getTextMessage();
                             if (preg_match_all('/Message-ID: <([^>]+)>/', $body, $matches, PREG_SET_ORDER)) {
                                 foreach ($matches as $match) {
                                     $search = $em->getRepository('Application\Entity\Letter')
-                                                 ->findOneBy([ 'message_id' => $match[1]]);
+                                                 ->findOneBy([ 'message_id' => $match[1] ]);
                                     if ($search) {
                                         $client = $search->getClient();
                                         if ($search->getToAddress() == $client->getEmail()) {
@@ -169,6 +169,15 @@ class CheckEmail extends ZfTask
                                         }
                                     }
                                 }
+                            }
+                        } else {
+                            $header = $letter->getHeader('In-Reply-To');
+                            if (count($header) > 0) {
+                                $mid = substr($header[0], 1, strlen($header[0]) - 2);
+                                $search = $em->getRepository('Application\Entity\Letter')
+                                             ->findOneBy([ 'message_id' => $mid ]);
+                                if ($search)
+                                    $targetBox = Mailbox::NAME_REPLIES;
                             }
                         }
                     }

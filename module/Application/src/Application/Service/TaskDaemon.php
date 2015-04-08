@@ -81,7 +81,7 @@ class TaskDaemon implements ServiceLocatorAwareInterface
                 'namespace' => $config['gearman']['namespace'],
                 'num_workers' => 10,
                 'pid_file'  => '/var/tmp/corpnews-daemon.pid',
-                'debug' => true,
+                'debug' => false,
                 'gearman' => [
                     'host' => $config['gearman']['host'],
                     'port' => $config['gearman']['port'],

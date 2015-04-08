@@ -373,7 +373,8 @@ class CampaignController extends AbstractActionController
                     if ($result === false) {
                         $result = $translate('Letter has been sent');
 
-                        $campaign->setStatus(CampaignEntity::STATUS_TESTED);
+                        if ($campaign->getStatus() == CampaignEntity::STATUS_CREATED)
+                            $campaign->setStatus(CampaignEntity::STATUS_TESTED);
                         $em->persist($campaign);
                         $em->flush();
                     }
