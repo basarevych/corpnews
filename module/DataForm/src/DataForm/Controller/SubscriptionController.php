@@ -14,6 +14,7 @@ use Zend\View\Model\ViewModel;
 use Zend\View\Model\JsonModel;
 use Application\Exception\NotFoundException;
 use Application\Exception\AccessDeniedException;
+use Application\Entity\Campaign as CampaignEntity;
 use DataForm\Form\Subscription as SubscriptionForm;
 
 /**
@@ -57,6 +58,8 @@ class SubscriptionController extends AbstractActionController
                 throw new NotFoundException("[" . self::DATA_FORM_NAME . "] Secret '$key' not found");
             if ($secret->getDataForm() != self::DATA_FORM_NAME)
                 throw new NotFoundException("[" . self::DATA_FORM_NAME . "] Secret '$key' is for " . $secret->getDataForm());
+            if ($secret->getCampaign()->getStatus() == CampaignEntity::STATUS_ARCHIVED)
+                throw new NotFoundException("Campaign is archived");
             $client = $secret->getClient();
             if (!$client)
                 throw new NotFoundException("[" . self::DATA_FORM_NAME . "] Secret '$key' has no client");

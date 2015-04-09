@@ -15,7 +15,7 @@ $id = $form->get('id');
 
 <?php if ($this->noGroups): ?>
     <p><?= $this->translate('CAMPAIGN_NO_GROUPS') ?></p>
-<?php elseif (!$this->ready): ?>
+<?php elseif (!$this->readyToStart && !$this->readyToContinue): ?>
     <p><?= $this->translate('CAMPAIGN_ALREADY_LAUNCHED') ?></p>
 <?php else: ?>
     <form class="form-horizontal" name="<?= $form->getName() ?>" onsubmit="return false"
@@ -39,14 +39,19 @@ $id = $form->get('id');
         <?php if (!$this->tested): ?>
             <p><strong><?= $this->translate('ALERT_CAMPAIGN_NOT_TESTED') ?></strong></p>
         <?php endif ?>
-        <p><?= $this->translate('CONFIRM_START_CAMPAIGN') ?></p>
+
+        <?php if ($this->readyToContinue): ?>
+            <p><?= $this->translate('CONFIRM_CONTINUE_CAMPAIGN') ?></p>
+        <?php else: ?>
+            <p><?= $this->translate('CONFIRM_START_CAMPAIGN') ?></p>
+        <?php endif ?>
     </form>
 <?php endif ?>
 
 <script>
     var modal = $('#modal-form');
 
-    <?php if ($this->noGroups || !$this->ready): ?>
+    <?php if ($this->noGroups || (!$this->readyToStart && !$this->readyToContinue)): ?>
         modal.find('button[type="submit"]').hide();
         modal.on('hide.bs.modal', function() {
             modal.find('button[type="submit"]').show();

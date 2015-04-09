@@ -100,12 +100,13 @@ class CampaignController extends AbstractActionController
             CampaignEntity::STATUS_FINISHED,
             CampaignEntity::STATUS_ARCHIVED,
         ];
-        $readyToRestart = [
+        $readyToContinue = [
             CampaignEntity::STATUS_PAUSED,
         ];
         $tested = [
             CampaignEntity::STATUS_TESTED,
             CampaignEntity::STATUS_FINISHED,
+            CampaignEntity::STATUS_ARCHIVED,
         ];
 
         $request = $this->getRequest();
@@ -119,7 +120,7 @@ class CampaignController extends AbstractActionController
                     $em->flush();
 
                     $task->getDaemon()->runTask('queued_campaign', $campaign->getId());
-                } else if (in_array($campaign->getStatus(), $readyToRestart)) {
+                } else if (in_array($campaign->getStatus(), $readyToContinue)) {
                     $campaign->setStatus(CampaignEntity::STATUS_STARTED);
                     $em->persist($campaign);
                     $em->flush();
@@ -136,12 +137,13 @@ class CampaignController extends AbstractActionController
         }
 
         $model = new ViewModel([
-            'script'    => $script,
-            'form'      => $form,
-            'messages'  => $messages,
-            'noGroups'  => count($campaign->getGroups()) == 0,
-            'ready'     => in_array($campaign->getStatus(), array_merge($readyToStart, $readyToRestart)),
-            'tested'    => in_array($campaign->getStatus(), $tested),
+            'script'            => $script,
+            'form'              => $form,
+            'messages'          => $messages,
+            'noGroups'          => count($campaign->getGroups()) == 0,
+            'readyToStart'      => in_array($campaign->getStatus(), $readyToStart),
+            'readyToContinue'   => in_array($campaign->getStatus(), $readyToContinue),
+            'tested'            => in_array($campaign->getStatus(), $tested),
         ]);
         $model->setTerminal(true);
         return $model;
@@ -410,6 +412,122 @@ class CampaignController extends AbstractActionController
             'noTesters' => $noTesters,
             'dataForms' => $dataForms,
             'result'    => $result,
+        ]);
+        $model->setTerminal(true);
+        return $model;
+    }
+
+    /**
+     * Pause campaign form action
+     *
+     * @return ViewModel
+     */
+    public function pauseCampaignAction()
+    {
+        $id = $this->params()->fromQuery('id');
+        if (!$id)
+            $id = $this->params()->fromPost('id');
+        if (!$id)
+            throw new \Exception('No "id" parameter');
+
+        $sl = $this->getServiceLocator();
+        $em = $sl->get('Doctrine\ORM\EntityManager');
+        $repo = $em->getRepository('Application\Entity\Campaign');
+
+        $script = null;
+        $form = new ConfirmForm();
+        $messages = [];
+
+        $request = $this->getRequest();
+        if ($request->isPost()) {
+            $form->setData($request->getPost());
+
+            if ($form->isValid()) {
+                if ($id == '_all') {
+                    $repo->removeAll();
+                } else {
+                    foreach (explode(',', $id) as $item) {
+                        $entity = $repo->find($item);
+                        if (!$entity)
+                            continue;
+                        if (!in_array($entity->getStatus(), [ CampaignEntity::STATUS_STARTED ]))
+                            continue;
+
+                        $entity->setStatus(CampaignEntity::STATUS_PAUSED);
+                        $em->persist($entity);
+                        $em->flush();
+                    }
+                }
+
+                $script = "$('#modal-form').modal('hide'); reloadTable()";
+            }
+        } else {
+            $form->setData([
+                'id' => $id
+            ]);
+        }
+
+        $model = new ViewModel([
+            'script'    => $script,
+            'form'      => $form,
+            'messages'  => $messages,
+        ]);
+        $model->setTerminal(true);
+        return $model;
+    }
+
+    /**
+     * Archive campaign form action
+     *
+     * @return ViewModel
+     */
+    public function archiveCampaignAction()
+    {
+        $id = $this->params()->fromQuery('id');
+        if (!$id)
+            $id = $this->params()->fromPost('id');
+        if (!$id)
+            throw new \Exception('No "id" parameter');
+
+        $sl = $this->getServiceLocator();
+        $em = $sl->get('Doctrine\ORM\EntityManager');
+        $repo = $em->getRepository('Application\Entity\Campaign');
+
+        $script = null;
+        $form = new ConfirmForm();
+        $messages = [];
+
+        $request = $this->getRequest();
+        if ($request->isPost()) {
+            $form->setData($request->getPost());
+
+            if ($form->isValid()) {
+                if ($id == '_all') {
+                    $repo->removeAll();
+                } else {
+                    foreach (explode(',', $id) as $item) {
+                        $entity = $repo->find($item);
+                        if (!$entity)
+                            continue;
+
+                        $entity->setStatus(CampaignEntity::STATUS_ARCHIVED);
+                        $em->persist($entity);
+                        $em->flush();
+                    }
+                }
+
+                $script = "$('#modal-form').modal('hide'); reloadTable()";
+            }
+        } else {
+            $form->setData([
+                'id' => $id
+            ]);
+        }
+
+        $model = new ViewModel([
+            'script'    => $script,
+            'form'      => $form,
+            'messages'  => $messages,
         ]);
         $model->setTerminal(true);
         return $model;

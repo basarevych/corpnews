@@ -63,7 +63,7 @@ CREATE TABLE `client_groups` (
 CREATE TABLE `campaigns` (
     `id` int unsigned NOT NULL AUTO_INCREMENT,
     `name` varchar(255) NOT NULL,
-    `status` enum('created', 'tested', 'queued', 'started', 'paused', 'finished') NOT NULL,
+    `status` enum('created', 'tested', 'queued', 'started', 'paused', 'finished', 'archived') NOT NULL,
     `when_deadline` datetime NULL,
     `when_created` datetime NULL,
     `when_started` datetime NULL,

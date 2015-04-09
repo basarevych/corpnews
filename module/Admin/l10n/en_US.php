@@ -88,7 +88,11 @@ return [
     'Edit campaign' => 'Edit campaign',
     'Launch campaign' => 'Launch campaign',
     'Test campaign' => 'Test campaign',
+    'Pause campaign' => 'Pause campaign',
+    'Archive campaign' => 'Archive campaign',
     'Delete campaign' => 'Delete campaign',
+    'Pause' => 'Pause',
+    'Archive' => 'Archive',
     'When deadline' => 'When deadline',
     'When created' => 'When created',
     'When started' => 'When started',
@@ -115,9 +119,13 @@ return [
         . 'Please add clients to "Testers" group',
     'CAMPAIGN_NO_GROUPS' => 'This campaign has no user groups associated',
     'CAMPAIGN_TEST_FORMS' => 'Edit selected user\'s data forms:',
-    'CONFIRM_START_CAMPAIGN' => 'Launch selected campaign?',
+    'CONFIRM_START_CAMPAIGN' => 'Launch selected campaign and start sending mail?',
+    'CONFIRM_CONTINUE_CAMPAIGN' => 'Continue sending mail for selected campaign?',
     'ALERT_CAMPAIGN_NOT_TESTED' => 'Campaign has not been tested!',
     'CAMPAIGN_ALREADY_LAUNCHED' => 'Campaign already launched',
+    'CONFIRM_PAUSE_CAMPAIGN' => 'Pause selected campaign(s)?',
+    'CONFIRM_ARCHIVE_CAMPAIGN' => 'Archive selected campaign(s)?'
+        . '<br><br>Data form links received by clients will stop working.',
     'CONFIRM_DELETE_CAMPAIGN' => 'Delete selected campaign(s)?',
 
     // TagController
