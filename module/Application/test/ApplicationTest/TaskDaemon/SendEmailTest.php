@@ -166,7 +166,7 @@ class SendEmailTest extends AbstractControllerTestCase
         $task->setServiceLocator($this->sl);
         $task->run($exit);
 
-        $this->assertEquals(CampaignEntity::STATUS_FINISHED, $this->campaign->getStatus());
+        $this->assertEquals(CampaignEntity::STATUS_ARCHIVED, $this->campaign->getStatus());
     }
 
     public function testSendingFails()

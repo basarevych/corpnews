@@ -82,6 +82,7 @@ return [
     'STATUS_STARTED' => 'Sending mail',
     'STATUS_PAUSED' => 'On pause',
     'STATUS_FINISHED' => 'Finished',
+    'STATUS_ARCHIVED' => 'Archived',
     'Apply filter' => 'Apply filter',
     'Templates' => 'Templates',
     'Edit campaign' => 'Edit campaign',

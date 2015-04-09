@@ -55,7 +55,7 @@ class SendEmail extends ZfTask
             $now = new \DateTime();
 
             if ($deadline && $now > $deadline) {
-                $campaign->setStatus(CampaignEntity::STATUS_FINISHED);
+                $campaign->setStatus(CampaignEntity::STATUS_ARCHIVED);
                 $campaign->setWhenFinished(new \DateTime());
                 $em->persist($campaign);
                 $em->flush();

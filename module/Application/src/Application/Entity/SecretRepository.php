@@ -37,8 +37,10 @@ class SecretRepository extends EntityRepository
         $qb->select('COUNT(s)')
            ->from('Application\Entity\Secret', 's')
            ->join('s.campaign', 'c')
+           ->andWhere('s.data_form = :data_form')
            ->andWhere('s.when_opened IS NOT NULL')
            ->andWhere('c.id = :campaign_id')
+           ->setParameter('data_form', $formName)
            ->setParameter('campaign_id', $campaign->getId());
 
         return $qb->getQuery()->getSingleScalarResult();
@@ -59,8 +61,10 @@ class SecretRepository extends EntityRepository
         $qb->select('COUNT(s)')
            ->from('Application\Entity\Secret', 's')
            ->join('s.campaign', 'c')
+           ->andWhere('s.data_form = :data_form')
            ->andWhere('s.when_saved IS NOT NULL')
            ->andWhere('c.id = :campaign_id')
+           ->setParameter('data_form', $formName)
            ->setParameter('campaign_id', $campaign->getId());
 
         return $qb->getQuery()->getSingleScalarResult();

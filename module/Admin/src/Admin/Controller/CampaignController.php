@@ -98,6 +98,7 @@ class CampaignController extends AbstractActionController
             CampaignEntity::STATUS_CREATED,
             CampaignEntity::STATUS_TESTED,
             CampaignEntity::STATUS_FINISHED,
+            CampaignEntity::STATUS_ARCHIVED,
         ];
         $readyToRestart = [
             CampaignEntity::STATUS_PAUSED,
@@ -683,6 +684,7 @@ class CampaignController extends AbstractActionController
                 CampaignEntity::STATUS_STARTED,
                 CampaignEntity::STATUS_PAUSED,
                 CampaignEntity::STATUS_FINISHED,
+                CampaignEntity::STATUS_ARCHIVED,
             ];
             if (in_array($row->getStatus(), $percents)) {
                 $all = 0;

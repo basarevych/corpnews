@@ -83,6 +83,7 @@ return [
     'STATUS_STARTED' => 'Рассылка почты',
     'STATUS_PAUSED' => 'Поставлено на паузу',
     'STATUS_FINISHED' => 'Завершено',
+    'STATUS_ARCHIVED' => 'В архиве',
     'Apply filter' => 'Применить фильтр',
     'Templates' => 'Шаблоны',
     'Edit campaign' => 'Редактировать кампанию',

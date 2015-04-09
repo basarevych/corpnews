@@ -73,6 +73,7 @@ class EditCampaign extends Form
             CampaignEntity::STATUS_CREATED,
             CampaignEntity::STATUS_TESTED,
             CampaignEntity::STATUS_FINISHED,
+            CampaignEntity::STATUS_ARCHIVED,
         ];
 
         $this->fullEdit = in_array($campaign->getStatus(), $newGroup);

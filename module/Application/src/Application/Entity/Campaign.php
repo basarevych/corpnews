@@ -37,6 +37,7 @@ class Campaign
      * @const STATUS_STARTED
      * @const STATUS_PAUSED
      * @const STATUS_FINISHED
+     * @const STATUS_ARCHIVED
      */
     const STATUS_CREATED = 'created';
     const STATUS_TESTED = 'tested';
@@ -44,6 +45,7 @@ class Campaign
     const STATUS_STARTED = 'started';
     const STATUS_PAUSED = 'paused';
     const STATUS_FINISHED = 'finished';
+    const STATUS_ARCHIVED = 'archived';
 
     /**
      * Row ID
@@ -489,6 +491,7 @@ class Campaign
             self::STATUS_STARTED,
             self::STATUS_PAUSED,
             self::STATUS_FINISHED,
+            self::STATUS_ARCHIVED,
         ];
     }
 }
