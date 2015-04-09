@@ -7,50 +7,8 @@
 <div class="container extra-top-margin">
     <div class="row">
         <div class="col-sm-6">
-            <ol class="breadcrumb">
-                <li><?= $this->translate('Mail') ?></li>
-                <li><?= $this->translate('Message parser') ?></li>
-            </ol>
-            <p class="breadcrumb-help-block"><?= $this->translate('MESSAGE_PARSER_HELP') ?></p>
-
-            <hr>
-            <ol class="breadcrumb">
-                <li><?= $this->translate('Mail') ?></li>
-                <li><?= $this->translate('Mailbox') ?></li>
-            </ol>
-            <p class="breadcrumb-help-block"><?= $this->translate('MAILBOX_HELP') ?></p>
-            <hr>
-            <ol class="breadcrumb">
-                <li><?= $this->translate('Mail') ?></li>
-                <li><?= $this->translate('Outgoing messages') ?></li>
-            </ol>
-            <p class="breadcrumb-help-block"><?= $this->translate('OUTGOING_HELP') ?></p>
-
-            <hr>
-            <ol class="breadcrumb">
-                <li><?= $this->translate('Campaign') ?></li>
-                <li><?= $this->translate('Client groups') ?></li>
-            </ol>
-            <p class="breadcrumb-help-block"><?= $this->translate('GROUPS_HELP') ?></p>
-
-            <hr>
-            <ol class="breadcrumb">
-                <li><?= $this->translate('Campaign') ?></li>
-                <li><?= $this->translate('Clients') ?></li>
-            </ol>
-            <p class="breadcrumb-help-block"><?= $this->translate('CLIENTS_HELP') ?></p>
-
-            <hr>
-            <ol class="breadcrumb">
-                <li><?= $this->translate('Campaign') ?></li>
-                <li><?= $this->translate('Mail campaigns') ?></li>
-            </ol>
-            <p class="breadcrumb-help-block"><?= $this->translate('CAMPAIGNS_HELP') ?></p>
-
-            <ol class="breadcrumb">
-                <li><?= $this->translate('Data forms') ?></li>
-            </ol>
-            <p class="breadcrumb-help-block"><?= $this->translate('DATA_FORMS_HELP') ?></p>
+            <h3 class="page-title"><?= $this->translate('Introduction') ?></h3>
+            <p><?= $this->translate('CORPNEWS_INTRO') ?></p>
         </div>
 
         <div class="col-sm-6">
@@ -64,7 +22,7 @@
                             <?php foreach ($this->statuses as $status => $count): ?>
                                 <tr>
                                     <td><?= $this->translate('STATUS_' . strtoupper($status)) ?></td>
-                                    <td><span class="badge"><?= $count ?></span></td>
+                                    <td><?= $count ?></td>
                                 </tr>
                             <?php endforeach ?>
                         </tbody>
@@ -103,18 +61,6 @@
                     </table>
                 </div>
             </div>
-
-            <ol class="breadcrumb">
-                <li><?= $this->translate('System log') ?></li>
-            </ol>
-            <p class="breadcrumb-help-block"><?= $this->translate('SYSTEM_LOG_HELP') ?></p>
-
-            <hr>
-            <ol class="breadcrumb">
-                <li><?= $this->translate('Settings') ?></li>
-                <li><?= $this->translate('Mailbox') ?></li>
-            </ol>
-            <p class="breadcrumb-help-block"><?= $this->translate('SETTINGS_MAILBOX_HELP') ?></p>
         </div>
     </div>
 </div>

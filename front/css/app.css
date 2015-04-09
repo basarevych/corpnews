@@ -104,19 +104,19 @@ body.form {
 }
 
 .help-tour {
-    background: #ffffee;
+    background: #ffffdd;
 }
 .help-tour.top > .arrow:after {
-    border-top-color: #ffffee;
+    border-top-color: #ffffdd;
 }
 .help-tour.right > .arrow:after {
-    border-right-color: #ffffee;
+    border-right-color: #ffffdd;
 }
 .help-tour.bottom > .arrow:after {
-    border-bottom-color: #ffffee;
+    border-bottom-color: #ffffdd;
 }
 .help-tour.left > .arrow:after {
-    border-left-color: #ffffee;
+    border-left-color: #ffffdd;
 }
 .help-tour .popover-title {
     background: #ffffbb;

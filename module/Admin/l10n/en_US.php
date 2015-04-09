@@ -19,16 +19,24 @@ return [
     'Email sender' => 'Email sender',
 
     // IndexController
-    'MESSAGE_PARSER_HELP' => 'This page lists all the parser functions with their descriptions.'
-        . ' Please, read this page before writing mail campaign templates',
-    'MAILBOX_HELP' => 'This is an interface to the IMAP mailbox used by CorpNews',
-    'OUTGOING_HELP' => 'A table with the outgoing email messages. Contains both sent messages and messages that are only scheduled to be sent',
-    'GROUPS_HELP' => 'When you start a mail campaign you set which client groups will receive the letter. This page defines such groups.',
-    'CLIENTS_HELP' => 'Mail campaign target is the client. This pages allows you to manage clients and to combine clients into groups.',
-    'CAMPAIGNS_HELP' => 'Mail campaign management page. Allows you to edit/start/stop/view statistics of mail campaigns.',
-    'DATA_FORMS_HELP' => 'Client data is stored in data forms. This page provides access to the clients data.',
-    'SYSTEM_LOG_HELP' => 'Important events are written to the system log.',
-    'SETTINGS_MAILBOX_HELP' => 'Set time after which old mail will be automatically deleted to keep mailbox size small',
+    'Introduction' => 'Introduction',
+    'CORPNEWS_INTRO' => 'The main entity of CorpNews is <strong>mail campaign</strong>.'
+        . ' Each campaign has one or more email letter <strong>template</strong>,'
+        . ' which will be sent to the <strong>client</strong> during the campaign.'
+        . '</p></p>'
+        . 'You can combine your clients into <strong>groups</strong> and select which groups will receive the letter.'
+        . '</p></p>'
+        . 'Note that there is no Email editor in CorpNews.'
+        . ' Instead you use your favourite email client to create the template and then send it to the system mailbox'
+        . ' where you can select it and create the campaign.'
+        . '</p><p>'
+        . 'The letter can include special statements to make the template dynamic.'
+        . ' For example, you can write in the template "Hello, {{ first_name }}!" and this text will be replaced with'
+        . ' "Hello, John!" (if the client name is John).'
+        . '</p></p>'
+        . 'Another feature of CorpNews is data forms.'
+        . ' For example, <strong>Profile</strong> data form allows the client to edit their own profile'
+        . ' and <strong>Subscription</strong> data form in order to cancel subscription to your news letter.',
     'Important log messages' => 'Important log messages',
     'No messages' => 'No messages',
 
