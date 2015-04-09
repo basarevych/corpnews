@@ -133,7 +133,10 @@ class SendEmail extends ZfTask
                             $letter->setStatus(LetterEntity::STATUS_SKIPPED);
                             $em->persist($letter);
                             $em->flush();
-                        } else if (!$mail->sendLetter($letter)) {
+                            continue;
+                        }
+
+                        if (!$mail->sendLetter($letter)) {
                             $campaign->setStatus(CampaignEntity::STATUS_PAUSED);
                             $em->persist($campaign);
                             $em->flush();
@@ -151,6 +154,11 @@ class SendEmail extends ZfTask
                         }
 
                         sleep($mailInterval);
+
+                        $test = $em->getRepository('Application\Entity\Campaign')
+                                   ->find($campaign->getId());
+                        if (!$test || $test->getStatus() != CampaignEntity::STATUS_STARTED)
+                            break 3;
                     }
                 }
 

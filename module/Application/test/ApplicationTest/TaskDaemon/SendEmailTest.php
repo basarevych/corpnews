@@ -43,7 +43,7 @@ class SendEmailTest extends AbstractControllerTestCase
 
         $this->repoCampaign = $this->getMockBuilder('Application\Entity\CampaignRepository')
                                    ->disableOriginalConstructor()
-                                   ->setMethods([ 'findByStatus' ])
+                                   ->setMethods([ 'find', 'findByStatus' ])
                                    ->getMock();
 
         $this->template = new TemplateEntity();
@@ -59,6 +59,10 @@ class SendEmailTest extends AbstractControllerTestCase
 
         $this->campaign->addTemplate($this->template);
         $this->template->setCampaign($this->campaign);
+
+        $this->repoCampaign->expects($this->any())
+                           ->method('find')
+                           ->will($this->returnValue($this->campaign));
 
         $this->repoCampaign->expects($this->any())
                            ->method('findByStatus')
