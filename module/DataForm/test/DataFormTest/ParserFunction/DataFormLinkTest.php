@@ -83,7 +83,7 @@ class DataFormLinkTest extends AbstractHttpControllerTestCase
         $var->setClient($client);
 
         ob_start();
-        $var->execute([ 'profile', 'link text' ]);
+        $var->execute(true, [ 'profile', 'link text' ]);
         $output = ob_get_contents();
         ob_end_clean();
 

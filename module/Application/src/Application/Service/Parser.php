@@ -366,7 +366,7 @@ class Parser implements ServiceLocatorAwareInterface
                         $obj->setTemplate($this->getTemplate());
                         $obj->setClient($this->getClient());
 
-                        $obj->execute($params);
+                        $obj->execute($htmlOutput, $params);
                     } catch (\Exception $e) {
                         $success = false;
                     }

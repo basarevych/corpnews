@@ -117,9 +117,10 @@ class DataFormLink implements ServiceLocatorAwareInterface,
     /**
      * Execute the function
      *
+     * @param boolean $isHtml
      * @param array $params
      */
-    public function execute(array $params)
+    public function execute($isHtml, array $params)
     {
         $sl = $this->getServiceLocator();
         $em = $sl->get('Doctrine\ORM\EntityManager');
@@ -171,8 +172,12 @@ class DataFormLink implements ServiceLocatorAwareInterface,
             . '?key=' . $secret->getSecretKey();
         $url = preg_replace('/([^:])\/{2,}/', '$1/', $url);
 
-        echo '<a href="' . $url . '">';
-        echo $linkText;
-        echo '</a>';
+        if ($isHtml) {
+            echo '<a href="' . $url . '">';
+            echo $linkText;
+            echo '</a>';
+        } else {
+            echo $url . ' (' . $linkText . ')';
+        }
     }
 }

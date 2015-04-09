@@ -117,9 +117,10 @@ class MiddleName implements ServiceLocatorAwareInterface,
     /**
      * Execute the function
      *
+     * @paran boolean $isHtml
      * @param array $params
      */
-    public function execute(array $params)
+    public function execute($isHtml, array $params)
     {
         $sl = $this->getServiceLocator();
         $dm = $sl->get('doctrine.documentmanager.odm_default');

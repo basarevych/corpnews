@@ -60,7 +60,7 @@ class FirstNameTest extends AbstractHttpControllerTestCase
         $var->setClient(new ClientEntity());
 
         ob_start();
-        $var->execute([ 'foobar' ]);
+        $var->execute(true, [ 'foobar' ]);
         $output = ob_get_contents();
         ob_end_clean();
 
@@ -69,7 +69,7 @@ class FirstNameTest extends AbstractHttpControllerTestCase
         $this->doc->setFirstName('first');
 
         ob_start();
-        $var->execute([]);
+        $var->execute(true, []);
         $output = ob_get_contents();
         ob_end_clean();
 

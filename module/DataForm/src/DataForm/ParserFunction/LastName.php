@@ -117,9 +117,10 @@ class LastName implements ServiceLocatorAwareInterface,
     /**
      * Execute the function
      *
+     * @param boolean $isHtml
      * @param array $params
      */
-    public function execute(array $params)
+    public function execute($isHtml, array $params)
     {
         $sl = $this->getServiceLocator();
         $dm = $sl->get('doctrine.documentmanager.odm_default');

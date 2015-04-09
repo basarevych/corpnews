@@ -53,7 +53,8 @@ interface ParserFunctionInterface
     /**
      * Execute the function
      *
+     * @param boolean $isHtml       Or plain text otherwise
      * @param array $params
      */
-    public function execute(array $params);
+    public function execute($isHtml, array $params);
 }
