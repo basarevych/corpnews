@@ -101,6 +101,13 @@ return [
     'Letter has been sent' => 'Letter has been sent',
     'Variable substitution failed' => 'Variable substitution failed',
     'Campaign test failed' => 'Campaign test failed',
+    'Campaign statistics' => 'Campaign statistics',
+    'Parameter' => 'Parameter',
+    'Value' => 'Value',
+    'Total number of clients' => 'Total number of clients',
+    'Number of clients received letter' => 'Number of clients received letter',
+    'Form opened' => 'Form opened',
+    'Form saved' => 'Form saved',
     'Start campaign' => 'Start campaign',
     'CAMPAIGN_NO_TESTERS' => 'No testers found.'
         . '<br><br>'

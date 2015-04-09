@@ -12,6 +12,7 @@ namespace Application\Entity;
 use Exception;
 use Doctrine\ORM\EntityRepository;
 use Application\Entity\Secret as SecretEntity;
+use Application\Entity\Campaign as CampaignEntity;
 
 /**
  * Repository for Secret entity
@@ -21,6 +22,50 @@ use Application\Entity\Secret as SecretEntity;
  */
 class SecretRepository extends EntityRepository
 {
+    /**
+     * Count opened data forms
+     *
+     * @param CampaignEntity $campaign
+     * @param string $formName
+     * @return integer
+     */
+    public function countOpened(CampaignEntity $campaign, $formName)
+    {
+        $em = $this->getEntityManager();
+
+        $qb = $em->createQueryBuilder();
+        $qb->select('COUNT(s)')
+           ->from('Application\Entity\Secret', 's')
+           ->join('s.campaign', 'c')
+           ->andWhere('s.when_opened IS NOT NULL')
+           ->andWhere('c.id = :campaign_id')
+           ->setParameter('campaign_id', $campaign->getId());
+
+        return $qb->getQuery()->getSingleScalarResult();
+    }
+
+    /**
+     * Count saved data forms
+     *
+     * @param CampaignEntity $campaign
+     * @param string $formName
+     * @return integer
+     */
+    public function countSaved(CampaignEntity $campaign, $formName)
+    {
+        $em = $this->getEntityManager();
+
+        $qb = $em->createQueryBuilder();
+        $qb->select('COUNT(s)')
+           ->from('Application\Entity\Secret', 's')
+           ->join('s.campaign', 'c')
+           ->andWhere('s.when_saved IS NOT NULL')
+           ->andWhere('c.id = :campaign_id')
+           ->setParameter('campaign_id', $campaign->getId());
+
+        return $qb->getQuery()->getSingleScalarResult();
+    }
+
     /**
      * Remove all the table content
      */

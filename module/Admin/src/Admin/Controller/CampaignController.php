@@ -471,6 +471,59 @@ class CampaignController extends AbstractActionController
     }
 
     /**
+     * Campaign statistics form action
+     *
+     * @return ViewModel
+     */
+    public function statisticsAction()
+    {
+        $id = $this->params()->fromQuery('id');
+        if (!$id)
+            throw new \Exception('No "id" parameter');
+
+        $sl = $this->getServiceLocator();
+        $em = $sl->get('Doctrine\ORM\EntityManager');
+        $dfm = $sl->get('DataFormManager');
+
+        $campaign = $em->getRepository('Application\Entity\Campaign')
+                       ->find($id);
+        if (!$campaign)
+            throw new NotFoundException('Campaign not found');
+
+        $total = 0;
+        $pending = 0;
+        foreach ($campaign->getTemplates() as $template) {
+            $total += $em->getRepository('Application\Entity\Client')
+                         ->countWithExistingLetters($template);
+            $pending += $em->getRepository('Application\Entity\Client')
+                           ->countWithPendingLetters($template);
+        }
+
+        $forms = [];
+        foreach ($dfm->getNames() as $formName) {
+            $opened = $em->getRepository('Application\Entity\Secret')
+                         ->countOpened($campaign, $formName);
+            $saved = $em->getRepository('Application\Entity\Secret')
+                        ->countSaved($campaign, $formName);
+
+            $forms[] = [
+                'title'     => $dfm->getTitle($formName),
+                'opened'    => $opened,
+                'saved'     => $saved,
+            ];
+        }
+
+        $model = new ViewModel([
+            'total'         => $total,
+            'doneValue'     => $total - $pending,
+            'donePercent'   => $total ? round(100 * ($total - $pending) / $total, 2) : 100,
+            'forms'         => $forms,
+        ]);
+        $model->setTerminal(true);
+        return $model;
+    }
+
+    /**
      * This action is called when requested action is not found
      */
     public function notFoundAction()
@@ -596,7 +649,7 @@ class CampaignController extends AbstractActionController
         }
 
         $qb = $em->createQueryBuilder();
-        $qb->select('c, g')
+        $qb->select('c, g, t')
            ->from('Application\Entity\Campaign', 'c')
            ->leftJoin('c.groups', 'g')
            ->leftJoin('c.tags', 't')

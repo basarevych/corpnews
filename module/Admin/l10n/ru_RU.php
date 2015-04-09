@@ -102,6 +102,13 @@ return [
     'Letter has been sent' => 'Письмо было отправлено',
     'Variable substitution failed' => 'Замена переменных не удалась',
     'Campaign test failed' => 'Тестирование камании завершилось неудачно',
+    'Campaign statistics' => 'Статистика кампании',
+    'Parameter' => 'Параметр',
+    'Value' => 'Значение',
+    'Total number of clients' => 'Общее число клиентов',
+    'Number of clients received letter' => 'Число клиентов, получивших письмо',
+    'Form opened' => 'Форма открыта',
+    'Form saved' => 'Форма сохранена',
     'Start campaign' => 'Начать кампанию',
     'CAMPAIGN_NO_TESTERS' => 'Тестеровщики не найдены.'
         . '<br><br>'

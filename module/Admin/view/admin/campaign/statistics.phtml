@@ -1,0 +1,50 @@
+<table class="table table-condensed table-hover table-striped">
+    <thead>
+        <tr>
+            <th>&nbsp;</th>
+            <th><?= $this->translate('Parameter') ?></th>
+            <th><?= $this->translate('Value') ?></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr class="warning">
+            <td colspan="3"><em><?= $this->translate('Campaign') ?></em></td>
+        </tr>
+        <tr>
+            <td>&nbsp;</td>
+            <td><?= $this->translate('Total number of clients') ?></td>
+            <td><?= $this->total ?></td>
+        </tr>
+        <tr>
+            <td>&nbsp;</td>
+            <td><?= $this->translate('Number of clients received letter') ?></td>
+            <td><?= $this->doneValue ?> (<?= $this->donePercent ?>%)</td>
+        </tr>
+        <?php foreach ($this->forms as $form): ?>
+            <tr class="info">
+                <td colspan="3"><em><?= $this->escapeHtml($this->translate($form['title'])) ?></em></td>
+            </tr>
+            <tr>
+                <td>&nbsp;</td>
+                <td><?= $this->translate('Form opened') ?></td>
+                <td><?= $form['opened'] ?></td>
+            </tr>
+            <tr>
+                <td>&nbsp;</td>
+                <td><?= $this->translate('Form saved') ?></td>
+                <td><?= $form['saved'] ?></td>
+            </tr>
+        <?php endforeach ?>
+    </tbody>
+</table>
+
+<script>
+    var modal = $('#modal-form');
+
+    initModalForm(modal);                   // See /js/app.js 
+
+    if (!modal.is(':visible'))
+        modal.modal('show');
+
+    setFormFocus(modal.find('form'));       // See /js/app.js
+</script>

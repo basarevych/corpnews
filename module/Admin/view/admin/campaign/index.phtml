@@ -219,6 +219,24 @@
         });
     }
 
+    function statCampaign(id) {
+        $.ajax({
+            url: '<?= $this->basePath('/admin/campaign/statistics') ?>',
+            data: {
+                id: id
+            },
+            success: function (html) {
+                var modal = $('#modal-form');
+                modal.find('.modal-title').text('<?= $this->translate('Campaign statistics') ?>');
+                modal.find('.modal-body').html(html);
+                modal.find('button[type="submit"]').hide();
+                modal.on('hide.bs.modal', function() {
+                    modal.find('button[type="submit"]').show();
+                });
+            }
+        });
+    }
+
     var tour = new Tour({
         name: 'campaigns',
         template: '<?= $this->translate('TOUR_TEMPLATE') ?>',
