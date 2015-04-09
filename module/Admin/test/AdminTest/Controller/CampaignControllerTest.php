@@ -40,7 +40,6 @@ class CampaignControllerDaemonMock
     }
 }
 
-
 class CampaignControllerTest extends AbstractHttpControllerTestCase
 {
     public function setUp()
@@ -144,7 +143,7 @@ class CampaignControllerTest extends AbstractHttpControllerTestCase
 
         $this->repoClients = $this->getMockBuilder('Application\Entity\GroupRepository')
                                   ->disableOriginalConstructor()
-                                  ->setMethods([ 'findByGroupName', 'findOneByEmail' ])
+                                  ->setMethods([ 'findByGroupName', 'findOneByEmail', 'countWithExistingLetters', 'countWithPendingLetters' ])
                                   ->getMock();
 
         $this->client = new ClientEntity();
@@ -177,6 +176,11 @@ class CampaignControllerTest extends AbstractHttpControllerTestCase
                                     return $this->template;
                             }));
 
+        $this->repoSecrets = $this->getMockBuilder('Application\Entity\SecretRepository')
+                                  ->disableOriginalConstructor()
+                                  ->setMethods([ 'countOpened', 'countSaved' ])
+                                  ->getMock();
+
         $this->em->expects($this->any())
                  ->method('getRepository')
                  ->will($this->returnValueMap([
@@ -185,6 +189,7 @@ class CampaignControllerTest extends AbstractHttpControllerTestCase
                     [ 'Application\Entity\Group', $this->repoGroups ],
                     [ 'Application\Entity\Client', $this->repoClients ],
                     [ 'Application\Entity\Template', $this->repoTemplates ],
+                    [ 'Application\Entity\Secret', $this->repoSecrets ],
                  ]));
 
         $this->qb = $this->getMockBuilder('Doctrine\ORM\QueryBuilder')
@@ -507,5 +512,15 @@ class CampaignControllerTest extends AbstractHttpControllerTestCase
         $this->assertResponseStatusCode(200);
 
         $this->assertEquals($this->campaign, $removed, "Wrong entity was removed");
+    }
+
+    public function testStatisticsActionCanBeAccessed()
+    {
+        $this->dispatch('/admin/campaign/statistics', HttpRequest::METHOD_GET, [ 'id' => 42 ]);
+
+        $this->assertModuleName('admin');
+        $this->assertControllerName('admin\controller\campaign');
+        $this->assertControllerClass('CampaignController');
+        $this->assertMatchedRouteName('admin');
     }
 }
