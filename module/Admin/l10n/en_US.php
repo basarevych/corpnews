@@ -128,7 +128,7 @@ return [
     'CONFIRM_DELETE_TAG' => 'Delete selected tag(s)?',
 
     // DocumentController
-    'Available data forms' => 'Available data forms',
+    'Selected data form' => 'Selected data form',
     'When updated' => 'When updated',
     'First name' => 'First name',
     'Middle name' => 'Middle name',

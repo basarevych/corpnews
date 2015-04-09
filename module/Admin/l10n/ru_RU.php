@@ -129,7 +129,7 @@ return [
     'CONFIRM_DELETE_TAG' => 'Удалить выбранный тег (теги)?',
 
     // DocumentController
-    'Available data forms' => 'Доступные формы данных',
+    'Selected data form' => 'Выбранная форма данных',
     'When updated' => 'Когда обновлено',
     'First name' => 'Имя',
     'Middle name' => 'Отчество',
