@@ -114,6 +114,8 @@ return [
     'Form opened' => 'Form opened',
     'Form saved' => 'Form saved',
     'Start campaign' => 'Start campaign',
+    'CAMPAIGN_DEADLINE_HELP' => 'Campaign will be auto-archived after this date'
+        . ' and all the links sent to the client will stop working',
     'CAMPAIGN_NO_TESTERS' => 'No testers found.'
         . '<br><br>'
         . 'Please add clients to "Testers" group',

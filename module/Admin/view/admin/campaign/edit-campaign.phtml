@@ -81,6 +81,7 @@ $fullEdit = $groups->getAttribute('disabled') != 'disabled';
                 </span>
             </div>
             <div class="help-block">
+                <p><?= $this->translate('CAMPAIGN_DEADLINE_HELP') ?></p>
                 <?php if (!$valid): ?>
                     <ul class="list-unstyled icon-list error-list">
                     <?php foreach ($whenDeadline->getMessages() as $msg): ?>
