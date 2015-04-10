@@ -130,7 +130,14 @@ class LetterControllerTest extends AbstractHttpControllerTestCase
         $this->assertEquals('foo', $data['html'], "HTML item is wrong");
         $this->assertEquals('<p>bar</p>', $data['text'], "Text item is wrong");
         $this->assertEquals('<div class="pre">log</div>', $data['log'], "Log item is wrong");
-        $this->assertEquals('<div class="pre">headers' . "\n\n" . 'body</div>', $data['source'], "Source item is wrong");
+        $this->assertEquals(
+            '<a class="btn btn-default" href="/admin/letter/download?box=box&uid=42">Download</a><hr>'
+                . '<div class="pre">headers'
+                . "\n\n"
+                . 'body</div>',
+            $data['source'],
+            "Source item is wrong"
+        );
 
         $subPage = $data['attachments'];
         $this->assertQueryContentRegexAtLeastOnce(
@@ -180,5 +187,18 @@ class LetterControllerTest extends AbstractHttpControllerTestCase
 
         $response = $this->getResponse()->getContent();
         $this->assertEquals($this->attBody, $response);
+    }
+
+    public function testDownloadActionWorks()
+    {
+        $params = [
+            'box' => 'box',
+            'uid' => 42,
+        ];
+        $this->dispatch('/admin/letter/download', HttpRequest::METHOD_GET, $params);
+        $this->assertResponseStatusCode(200);
+
+        $response = $this->getResponse()->getContent();
+        $this->assertEquals("headers\n\nbody", $response);
     }
 }

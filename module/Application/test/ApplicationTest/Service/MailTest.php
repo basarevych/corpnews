@@ -125,7 +125,7 @@ class MailTest extends AbstractControllerTestCase
         $this->assertNotEquals(false, $msg, "Message not created");
         $this->assertEquals(3, count($parsedStrings), "Three string should be parsed");
         $this->assertEquals('subject', $parsedStrings[0], "Subject has not been parsed");
-        $this->assertNotEquals(false, strpos($parsedStrings[1], 'Hello {{ first_name }}'), "Incorrect string was parsed");
-        $this->assertNotEquals(false, strpos($parsedStrings[2], 'Hello {{ first_name }}'), "Incorrect string was parsed");
+        $this->assertNotEquals(false, strpos($parsedStrings[1], 'Hello, {{ first_name | Dear friend }}'), "Incorrect string was parsed");
+        $this->assertNotEquals(false, strpos($parsedStrings[2], 'Hello, {{ first_name | Dear friend }}'), "Incorrect string was parsed");
     }
 }

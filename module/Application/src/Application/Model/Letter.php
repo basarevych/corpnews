@@ -944,7 +944,9 @@ class Letter
                         $this->error = true;
                         return false;
                     }
-                    if (!preg_match('/filename\s*=\s*"([^"]+)"/', $disposition, $matches)) {
+                    //if (!preg_match('/filename\s*=\s*"([^"]+)"/', $disposition, $matches)) {
+                    $name = $this->lookupKey('filename', $disposition);
+                    if (!$name) {
                         $this->log .= "Could not get filename: " . $disposition;
                         $this->error = true;
                         return false;
@@ -965,7 +967,7 @@ class Letter
 
                     $this->attachments[] = array(
                         'cid'   => $cid,
-                        'name'  => $matches[1],
+                        'name'  => $name,
                         'type'  => $attType ? $attType : 'application/octet-stream',
                         'data'  => $body
                     );
