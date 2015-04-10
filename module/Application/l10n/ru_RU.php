@@ -78,7 +78,7 @@ return [
     'INFO_LETTER_PROCESSED' => 'Получено новое письмо',
     'INFO_CAMPAIGN_BEING_PROCESSED' => 'Кампания обрабатывается',
     'INFO_CAMPAIGN_STARTED' => 'Кампания обработана и запущена',
-    'INFO_CAMPAIGN_PASSED_DEADLINE' => 'Крайний срок наступил - кампания завершена',
+    'INFO_CAMPAIGN_PASSED_DEADLINE' => 'Крайний срок наступил - кампания архивирована',
     'INFO_CAMPAIGN_DONE' => 'Кампания успешно завершена',
     'ERROR_CREATE_FROM_TEMPLATE' => 'Не удалось создать письмо по шаблону',
     'ERROR_SEND_LETTER' => 'Не удалось отправить письмо: %exception%',

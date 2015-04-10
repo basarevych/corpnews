@@ -181,6 +181,7 @@ return [
     'Attachments' => 'Приложения',
     'Analysis log' => 'Журнал анализа',
     'Source' => 'Источник',
+    'Download' => 'Скачать',
     'Preview' => 'Предпросмотр',
     'Name' => 'Имя',
     'Type' => 'Тип',

@@ -223,6 +223,62 @@ class LetterController extends AbstractActionController
     }
 
     /**
+     * Download letter source
+     *
+     * @return Response
+     */
+    public function downloadAction()
+    {
+        $box = $this->params()->fromQuery('box');
+        $uid = $this->params()->fromQuery('uid');
+        $template = $this->params()->fromQuery('template');
+        $letter = $this->params()->fromQuery('letter');
+
+        if ((!$box || !$uid) && !$template && !$letter)
+            throw new \Exception('No "box/uid", "template" or "letter" parameter');
+
+        $sl = $this->getServiceLocator();
+        $imap = $sl->get('ImapClient');
+        $em = $sl->get('Doctrine\ORM\EntityManager');
+
+        if ($box && $uid) {
+            $model = $imap->getLetter($box, $uid);
+            if (!$model)
+                throw new NotFoundException('Letter not found');
+
+            $success = $imap->loadLetter($model, $box, $uid);
+        } else if ($template) {
+            $template = $em->getRepository('Application\Entity\Template')
+                           ->find($template);
+            if (!$template)
+                throw new NotFoundException('Template not found');
+
+            $model = new LetterModel(null);
+            $success = $model->load($template->getHeaders(), $template->getBody());
+        } else if ($letter) {
+            $letter = $em->getRepository('Application\Entity\Letter')
+                         ->find($letter);
+            if (!$letter)
+                throw new NotFoundException('Letter not found');
+
+            $model = new LetterModel(null);
+            $success = $model->load($letter->getHeaders(), $letter->getBody());
+        }
+
+        if (!$success)
+            throw new NotFoundException('Letter not found');
+
+        $response = $this->getResponse();
+        $response->getHeaders()->addHeaders([
+            'Content-Type' => 'text/plain',
+            'Content-Transfer-Encoding' => 'binary',
+            'Content-Disposition' => 'attachment; filename="letter.txt"',
+        ]);
+        $response->setContent($model->getSource());
+        return $response;
+    }
+
+    /**
      * This action is called when requested action is not found
      */
     public function notFoundAction()
@@ -358,10 +414,27 @@ class LetterController extends AbstractActionController
      */
     protected function prepareSource($letter)
     {
+        $box = $this->params()->fromQuery('box');
+        $uid = $this->params()->fromQuery('uid');
+        $templateId = $this->params()->fromQuery('template');
+        $letterId = $this->params()->fromQuery('letter');
+
         $sl = $this->getServiceLocator();
         $escapeHtml = $sl->get('viewhelpermanager')->get('escapeHtml');
+        $basePath = $sl->get('viewhelpermanager')->get('basePath');
+        $translate = $sl->get('viewhelpermanager')->get('translate');
 
-        $result = '<div class="pre">' . $escapeHtml($letter->getSource()) . '</div>';
+        if (isset($box))
+            $query = 'box=' . urlencode($box) . '&uid=' . urlencode($letter->getUid());
+        else if (isset($templateId))
+            $query = 'template=' . urlencode($templateId);
+        else if (isset($letterId))
+            $query = 'letter=' . urlencode($letterId);
+
+        $result = '<a class="btn btn-default" href="' . $basePath('/admin/letter/download?' . $query) . '">';
+        $result .= $translate('Download');
+        $result .= '</a><hr>';
+        $result .= '<div class="pre">' . $escapeHtml($letter->getSource()) . '</div>';
 
         return $result;
     }

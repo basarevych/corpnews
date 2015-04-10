@@ -78,7 +78,7 @@ return [
     'INFO_LETTER_PROCESSED' => 'New letter received',
     'INFO_CAMPAIGN_BEING_PROCESSED' => 'Campaign is being processed',
     'INFO_CAMPAIGN_STARTED' => 'Campaign processed and started',
-    'INFO_CAMPAIGN_PASSED_DEADLINE' => 'Deadline has passed - campaign finished',
+    'INFO_CAMPAIGN_PASSED_DEADLINE' => 'Deadline has passed - campaign archived',
     'INFO_CAMPAIGN_DONE' => 'Campaign has finished successfuly',
     'ERROR_CREATE_FROM_TEMPLATE' => 'Could not create letter from template',
     'ERROR_SEND_LETTER' => 'Could not send letter: %exception%',

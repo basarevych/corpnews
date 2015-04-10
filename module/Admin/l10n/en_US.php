@@ -180,6 +180,7 @@ return [
     'Attachments' => 'Attachments',
     'Analysis log' => 'Analysis log',
     'Source' => 'Source',
+    'Download' => 'Download',
     'Preview' => 'Preview',
     'Name' => 'Name',
     'Type' => 'Type',
