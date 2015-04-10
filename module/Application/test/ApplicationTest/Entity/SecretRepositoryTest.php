@@ -28,6 +28,45 @@ class SecretRepositoryTest extends AbstractControllerTestCase
         $sl->setService('Doctrine\ORM\EntityManager', $this->em);
     }
 
+    public function testGetCampaignForms()
+    {
+        $campaign = new CampaignEntity();
+        $campaign->setName('foobar');
+        $campaign->setStatus(CampaignEntity::STATUS_CREATED);
+
+        $a = new SecretEntity();
+        $a->setWhenOpened(new \DateTime());
+        $a->setSecretKey('foo');
+        $a->setDataForm('bar');
+
+        $a->setCampaign($campaign);
+        $campaign->addSecret($a);
+
+        $b = new SecretEntity();
+        $b->setWhenOpened(new \DateTime());
+        $b->setWhenSaved(new \DateTime());
+        $b->setSecretKey('foo');
+        $b->setDataForm('bar');
+
+        $b->setCampaign($campaign);
+        $campaign->addSecret($b);
+
+        $c = new SecretEntity();
+        $c->setWhenSaved(new \DateTime());
+        $c->setSecretKey('foo');
+        $c->setDataForm('baz');
+
+        $c->setCampaign($campaign);
+        $campaign->addSecret($c);
+
+        $this->infrastructure->import([ $campaign, $a, $b, $c ]);
+
+        $result = $this->repo->getCampaignForms($campaign);
+        $this->assertEquals(2, count($result), "Two rows should have been returned");
+        $this->assertEquals('bar', $result[0], "First data form name is wrong");
+        $this->assertEquals('baz', $result[1], "Second data form name is wrong");
+    }
+
     public function testCountOpened()
     {
         $campaign = new CampaignEntity();

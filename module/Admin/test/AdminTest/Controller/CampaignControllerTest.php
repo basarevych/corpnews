@@ -178,8 +178,12 @@ class CampaignControllerTest extends AbstractHttpControllerTestCase
 
         $this->repoSecrets = $this->getMockBuilder('Application\Entity\SecretRepository')
                                   ->disableOriginalConstructor()
-                                  ->setMethods([ 'countOpened', 'countSaved' ])
+                                  ->setMethods([ 'getCampaignForms', 'countOpened', 'countSaved' ])
                                   ->getMock();
+
+        $this->repoSecrets->expects($this->any())
+                          ->method('getCampaignForms')
+                          ->will($this->returnValue([ 'profile' ]));
 
         $this->em->expects($this->any())
                  ->method('getRepository')

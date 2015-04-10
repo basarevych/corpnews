@@ -619,7 +619,9 @@ class CampaignController extends AbstractActionController
         }
 
         $forms = [];
-        foreach ($dfm->getNames() as $formName) {
+        $formNames = $em->getRepository('Application\Entity\Secret')
+                        ->getCampaignForms($campaign);
+        foreach ($formNames as $formName) {
             $opened = $em->getRepository('Application\Entity\Secret')
                          ->countOpened($campaign, $formName);
             $saved = $em->getRepository('Application\Entity\Secret')

@@ -23,6 +23,32 @@ use Application\Entity\Campaign as CampaignEntity;
 class SecretRepository extends EntityRepository
 {
     /**
+     * Distinct data form names
+     *
+     * @param CampaignEntity $campaign
+     * @return array
+     */
+    public function getCampaignForms(CampaignEntity $campaign)
+    {
+        $em = $this->getEntityManager();
+
+        $qb = $em->createQueryBuilder();
+        $qb->select('DISTINCT s.data_form')
+           ->from('Application\Entity\Secret', 's')
+           ->join('s.campaign', 'c')
+           ->andWhere('c.id = :campaign_id')
+           ->setParameter('campaign_id', $campaign->getId());
+
+        $rows = $qb->getQuery()->getResult();
+
+        $result = [];
+        foreach ($rows as $row)
+            $result[] = $row['data_form'];
+
+        return $result;
+    }
+
+    /**
      * Count opened data forms
      *
      * @param CampaignEntity $campaign
