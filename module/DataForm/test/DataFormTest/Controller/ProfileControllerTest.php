@@ -8,7 +8,9 @@ use Zend\Json\Json;
 use Zend\Dom\Query;
 use DataForm\Document\Profile as ProfileDocument;
 use Application\Entity\Client as ClientEntity;
+use Application\Entity\Tag as TagEntity;
 use Application\Entity\Secret as SecretEntity;
+use Application\Entity\Campaign as CampaignEntity;
 
 class ProfileControllerTest extends AbstractHttpControllerTestCase
 {
@@ -74,6 +76,12 @@ class ProfileControllerTest extends AbstractHttpControllerTestCase
 
         $this->secret = new SecretEntity();
         $this->secret->setDataForm('profile');
+
+        $this->campaign = new CampaignEntity();
+        $this->campaign->setName('foo');
+
+        $this->secret->setCampaign($this->campaign);
+        $this->campaign->addSecret($this->secret);
 
         $this->secretEntityRepo->expects($this->any())
                                ->method('findOneBy')
