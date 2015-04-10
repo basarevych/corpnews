@@ -152,6 +152,17 @@ class ImapClient implements ServiceLocatorAwareInterface
         return $check->Nmsgs;
     }
 
+    public function getUnseenLetterCount($boxName)
+    {
+        $box = mb_convert_encoding($boxName, "UTF7-IMAP", "UTF-8");
+
+        $resource = $this->connect($this->getConnString() . $box);
+        $check = @imap_status($resource, $this->getConnString() . $box, SA_UNSEEN);
+        $this->disconnect($resource);
+
+        return $check->unseen;
+    }
+
     /**
      * Get all the Letters
      *
@@ -212,7 +223,7 @@ class ImapClient implements ServiceLocatorAwareInterface
         $resource = $this->connect($this->getConnString() . $box);
 
         $rawHeaders = @imap_fetchheader($resource, $uid, FT_UID);
-        $rawBody = @imap_body($resource, $uid, FT_UID);
+        $rawBody = @imap_body($resource, $uid, FT_UID | FT_PEEK);
 
         return $letter->load($rawHeaders, $rawBody);
     }
@@ -253,6 +264,28 @@ class ImapClient implements ServiceLocatorAwareInterface
 
         $resource = $this->connect($this->getConnString() . $box);
         @imap_delete($resource, $uid, FT_UID);
+        $this->disconnect($resource);
+
+        return $this;
+    }
+
+    public function isLetterSeen($boxName, $uid)
+    {
+        $box = mb_convert_encoding($boxName, "UTF7-IMAP", "UTF-8");
+
+        $resource = $this->connect($this->getConnString() . $box);
+        $overview = @imap_fetch_overview($resource, $uid, FT_UID);
+        $this->disconnect($resource);
+
+        return $overview && count($overview) && $overview[0]->seen;
+    }
+
+    public function markLetterSeen($boxName, $uid)
+    {
+        $box = mb_convert_encoding($boxName, "UTF7-IMAP", "UTF-8");
+
+        $resource = $this->connect($this->getConnString() . $box);
+        @imap_setflag_full($resource, $uid, "\\Seen", ST_UID);
         $this->disconnect($resource);
 
         return $this;

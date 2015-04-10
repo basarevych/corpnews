@@ -56,6 +56,7 @@ class LetterController extends AbstractActionController
 
             $params = [ 'box' => $box ];
             $analysisSuccess = $imap->loadLetter($model, $box, $uid);
+            $imap->markLetterSeen($box, $uid);
         } else if ($template) {
             $template = $em->getRepository('Application\Entity\Template')
                            ->find($template);

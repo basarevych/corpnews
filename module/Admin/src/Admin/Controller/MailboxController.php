@@ -67,6 +67,8 @@ class MailboxController extends AbstractActionController
     public function letterTableAction()
     {
         $boxName = $this->params()->fromQuery('box');
+        if (!$boxName)
+            throw new \Exception('No "box" parameter');
 
         $table = $this->createTable();
         $this->connectTableData($boxName, $table);
@@ -85,6 +87,25 @@ class MailboxController extends AbstractActionController
 
         $data['success'] = true;
         return new JsonModel($data);
+    }
+
+    /**
+     * Table data retrieving action
+     *
+     * @return JsonModel
+     */
+    public function countNewAction()
+    {
+        $boxName = $this->params()->fromQuery('box');
+        if (!$boxName)
+            throw new \Exception('No "box" parameter');
+
+        $sl = $this->getServiceLocator();
+        $imap = $sl->get('ImapClient');
+
+        return new JsonModel([
+            'num' => $imap->getUnseenLetterCount($boxName),
+        ]);
     }
 
     /**
@@ -389,6 +410,7 @@ class MailboxController extends AbstractActionController
                 $date = $date->getTimestamp();
 
             return [
+                'seen'      => $imap->isLetterSeen($boxName, $uid),
                 'uid'       => $uid,
                 'date'      => $date,
                 'from'      => $escapeHtml($letter->getFrom()),

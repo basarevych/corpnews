@@ -42,8 +42,9 @@
                     <?php foreach ($this->mailboxes as $box): ?>
                         <li role="presentation" class="<?= $first ? 'active' : '' ?>">
                             <a id="<?= strtolower($box['id']) ?>-tab" href="#tab-<?= $box['id'] ?>" aria-controls="<?= $box['id'] ?>" role="tab" data-toggle="tab">
-                                    <?= $this->translate($box['name']) ?>
+                                <?= $this->translate($box['name']) ?>
                                 &nbsp;
+                                <span id="badge-<?= $box['id'] ?>" class="badge"></span>
                             </a>
                             <script>
                                 $('a[href=#tab-<?= $box['id'] ?>]').on('show.bs.tab', function () {
@@ -76,10 +77,16 @@
                                         var box = "<?= str_replace("'", '\\\'', $this->escapeHtml($box['name'])) ?>";
                                         row['subject'] = '<a href="javascript:void(0)" onclick="openLetter({ box: \'' + box + '\', uid: ' + row['uid'] + ' })">' + row['subject'] + '</a>';
 
-
                                         if (row['date'] != null) {
                                             var m = moment.unix(row['date']).local();
                                             row['date'] = m.format('<?= $this->translate('GENERIC_MOMENT_FORMAT') ?>');
+                                        }
+
+                                        if (!row['seen']) {
+                                            row['uid'] = '<strong>' + row['uid'] + '</strong>';
+                                            row['date'] = '<strong>' + row['date'] + '</strong>';
+                                            row['from'] = '<strong>' + row['from'] + '</strong>';
+                                            row['subject'] = '<strong>' + row['subject'] + '</strong>';
                                         }
 
                                         return row;
@@ -90,6 +97,16 @@
                                 });
                                 $('#table-<?= $box['id'] ?>').on('dt.deselected', function () {
                                     updateActions('<?= $box['id'] ?>');
+                                });
+
+                                $.ajax({
+                                    url: '<?= $this->basePath('/admin/mailbox/count-new') ?>',
+                                    data: {
+                                        box: '<?= $box['id'] ?>',
+                                    },
+                                    success: function (data) {
+                                        $('#badge-<?= $box['id'] ?>').text(data.num ? data.num : '');
+                                    }
                                 });
                             </script>
                         </div>
@@ -123,6 +140,16 @@
         <?php foreach ($this->mailboxes as $box): ?>
             var table = $('#table-<?= $box['id'] ?>').data('dynamicTable');
             table.refresh();
+
+            $.ajax({
+                url: '<?= $this->basePath('/admin/mailbox/count-new') ?>',
+                data: {
+                    box: '<?= $box['id'] ?>',
+                },
+                success: function (data) {
+                    $('#badge-<?= $box['id'] ?>').text(data.num ? data.num : '');
+                }
+            });
         <?php endforeach ?>
     }
 

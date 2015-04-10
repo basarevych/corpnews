@@ -384,6 +384,10 @@
                     }
                 );
             }
+            $('#letter-modal').on('hide.bs.modal', function() {
+                if (typeof reloadTables != 'undefined')
+                    reloadTables();
+            });
         </script>
 
     </body>

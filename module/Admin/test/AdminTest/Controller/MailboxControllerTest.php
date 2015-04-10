@@ -27,7 +27,7 @@ class MailboxControllerTest extends AbstractHttpControllerTestCase
         $cnt->is_admin = true;
 
         $this->imap = $this->getMockBuilder('Application\Service\ImapClient')
-                           ->setMethods([ 'search', 'getLetter', 'loadLetter', 'deleteLetter', 'moveLetter' ])
+                           ->setMethods([ 'search', 'getLetter', 'loadLetter', 'deleteLetter', 'moveLetter', 'isLetterSeen' ])
                            ->getMock();
 
         $this->imap->expects($this->any())
@@ -130,7 +130,7 @@ class MailboxControllerTest extends AbstractHttpControllerTestCase
 
     public function testLetterTableActionCanBeAccessed()
     {
-        $this->dispatch('/admin/mailbox/letter-table', HttpRequest::METHOD_GET, [ 'query' => 'describe' ]);
+        $this->dispatch('/admin/mailbox/letter-table', HttpRequest::METHOD_GET, [ 'box' => 'box', 'query' => 'describe' ]);
 
         $this->assertModuleName('admin');
         $this->assertControllerName('admin\controller\mailbox');
@@ -140,7 +140,7 @@ class MailboxControllerTest extends AbstractHttpControllerTestCase
 
     public function testLetterTableActionSendsDescription()
     {  
-        $this->dispatch('/admin/mailbox/letter-table', HttpRequest::METHOD_GET, [ 'query' => 'describe' ]);
+        $this->dispatch('/admin/mailbox/letter-table', HttpRequest::METHOD_GET, [ 'box' => 'box', 'query' => 'describe' ]);
         $this->assertResponseStatusCode(200);
 
         $response = $this->getResponse()->getContent();
@@ -151,7 +151,7 @@ class MailboxControllerTest extends AbstractHttpControllerTestCase
 
     public function testLetterTableActionSendsData()
     {
-        $this->dispatch('/admin/mailbox/letter-table', HttpRequest::METHOD_GET, [ 'query' => 'data' ]);
+        $this->dispatch('/admin/mailbox/letter-table', HttpRequest::METHOD_GET, [ 'box' => 'box', 'query' => 'data' ]);
         $this->assertResponseStatusCode(200);
 
         $response = $this->getResponse()->getContent();

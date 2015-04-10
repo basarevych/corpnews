@@ -27,7 +27,7 @@ class LetterControllerTest extends AbstractHttpControllerTestCase
         $cnt->is_admin = true;
 
         $this->imap = $this->getMockBuilder('Application\Service\ImapClient')
-                           ->setMethods([ 'search', 'getLetter', 'loadLetter', 'deleteLetter', 'moveLetter' ])
+                           ->setMethods([ 'search', 'getLetter', 'loadLetter', 'deleteLetter', 'moveLetter', 'isLetterSeen', 'markLetterSeen' ])
                            ->getMock();
 
         $this->imap->expects($this->any())
