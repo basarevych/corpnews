@@ -90,7 +90,7 @@ class MailboxController extends AbstractActionController
     }
 
     /**
-     * Table data retrieving action
+     * Count unseen email action
      *
      * @return JsonModel
      */

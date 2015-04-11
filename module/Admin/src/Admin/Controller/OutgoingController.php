@@ -199,7 +199,7 @@ class OutgoingController extends AbstractActionController
 
             return [
                 'id'                => $row->getId(),
-                'status'            => $translate('STATUS_' . $row->getStatus()),
+                'status'            => $translate('STATUS_' . strtoupper($row->getStatus())),
                 'when_created'      => $dateCreated,
                 'when_processed'    => $dateProcessed,
                 'campaign'          => $row->getTemplate()->getCampaign()->getName(),

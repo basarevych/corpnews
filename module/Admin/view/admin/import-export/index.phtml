@@ -17,7 +17,7 @@
                 <div class="panel-heading">
                     <h3 class="panel-title"><?= $this->translate('Presets') ?></h3>
                 </div>
-                <div class="list-group">
+                <div id="presets" class="list-group">
                     <a href="javascript:void(0)" class="list-group-item"
                        data-name="minimum" onclick="loadPreset($(this))">
                         <?= $this->translate('IMPORT_EXPORT_MINIMUM') ?>
@@ -223,4 +223,24 @@
 
     $('#selected-panel .panel-body').sortable();
     $('#selected-panel .panel-body').disableSelection();
+
+    var tour = new Tour({
+        name: 'import-export',
+        template: '<?= $this->translate('TOUR_TEMPLATE') ?>',
+        steps: [
+            {
+                element: "#presets",
+                placement: "right",
+                title: "<?= str_replace('"', "'", $this->translate('Import/Export')) ?>",
+                content: "<?= str_replace('"', "'", $this->translate('TOUR_IMPORT_EXPORT_INTRO')) ?>"
+            },
+        ]
+    });
+
+    $(document).ready(function () {
+        tour.init().start();
+        $('#tour-button')
+            .on('click', function () { tour.restart(); })
+            .parent().show();
+    });
 </script>

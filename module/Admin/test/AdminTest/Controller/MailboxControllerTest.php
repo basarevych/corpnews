@@ -27,7 +27,7 @@ class MailboxControllerTest extends AbstractHttpControllerTestCase
         $cnt->is_admin = true;
 
         $this->imap = $this->getMockBuilder('Application\Service\ImapClient')
-                           ->setMethods([ 'search', 'getLetter', 'loadLetter', 'deleteLetter', 'moveLetter', 'isLetterSeen' ])
+                           ->setMethods([ 'search', 'getLetter', 'loadLetter', 'deleteLetter', 'moveLetter', 'isLetterSeen', 'getUnseenLetterCount' ])
                            ->getMock();
 
         $this->imap->expects($this->any())
@@ -161,6 +161,17 @@ class MailboxControllerTest extends AbstractHttpControllerTestCase
         $this->assertEquals(1, $data['rows'][0]['uid'], "Invalid UID");
         $this->assertEquals(2, $data['rows'][1]['uid'], "Invalid UID");
         $this->assertEquals(3, $data['rows'][2]['uid'], "Invalid UID");
+    }
+
+    public function testCountNewActionCanBeAccessed()
+    {
+        $this->dispatch('/admin/mailbox/count-new', HttpRequest::METHOD_GET, [ 'box' => 'box' ]);
+        $this->assertResponseStatusCode(200);
+
+        $this->assertModuleName('admin');
+        $this->assertControllerName('admin\controller\mailbox');
+        $this->assertControllerClass('MailboxController');
+        $this->assertMatchedRouteName('admin');
     }
 
     public function testCreateCampaignActionCanBeAccessed()

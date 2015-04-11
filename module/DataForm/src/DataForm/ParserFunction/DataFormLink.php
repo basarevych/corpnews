@@ -177,7 +177,7 @@ class DataFormLink implements ServiceLocatorAwareInterface,
             echo $linkText;
             echo '</a>';
         } else {
-            echo $url . ' (' . $linkText . ')';
+            echo $url;
         }
     }
 }

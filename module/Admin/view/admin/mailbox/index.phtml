@@ -36,7 +36,12 @@
 
         <div class="col-sm-9">
             <div role="tabpanel">
-                <p><?= $this->translate('System email address') ?>: <strong><?= $this->ourEmail ?></strong></p>
+                <p>
+                    <?= $this->translate('System email address') ?>:
+                    <span id="system-address">
+                        <strong><?= $this->ourEmail ?></strong>
+                    </span>
+                </p>
                 <ul class="nav nav-tabs" role="tablist">
                     <?php $first = true; ?>
                     <?php foreach ($this->mailboxes as $box): ?>
@@ -221,22 +226,10 @@
         template: '<?= $this->translate('TOUR_TEMPLATE') ?>',
         steps: [
             {
-                element: "#incoming-tab",
+                element: "#system-address",
                 placement: "bottom",
                 title: "<?= str_replace('"', "'", $this->translate('Mailbox')) ?>",
-                content: "<?= str_replace('"', "'", $this->translate('TOUR_MAILBOX_INCOMING')) ?>"
-            },
-            {
-                element: "#replies-tab",
-                placement: "bottom",
-                title: "<?= str_replace('"', "'", $this->translate('Mailbox')) ?>",
-                content: "<?= str_replace('"', "'", $this->translate('TOUR_MAILBOX_REPLIES')) ?>"
-            },
-            {
-                element: "#bounces-tab",
-                placement: "bottom",
-                title: "<?= str_replace('"', "'", $this->translate('Mailbox')) ?>",
-                content: "<?= str_replace('"', "'", $this->translate('TOUR_MAILBOX_BOUNCES')) ?>"
+                content: "<?= str_replace('"', "'", $this->translate('TOUR_MAILBOX_INTRO')) ?>"
             },
             {
                 element: "#template-button",

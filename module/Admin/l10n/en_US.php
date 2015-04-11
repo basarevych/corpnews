@@ -280,17 +280,14 @@ return [
 
     // Tours
     'Parser' => 'Parser',
-    'TOUR_PARSER_INTRO' => '<p>Email templates can include dynamic statements which will be replaced with the appropriate text</p>',
-    'TOUR_PARSER_MAIL' => '<p>Start working with CorpNews by sending newsletter template as an email to the application mailbox</p>',
-    'TOUR_MAILBOX_INCOMING' => '<p><strong>Incoming</strong> is the folder new mail will go to.</p>',
-    'TOUR_MAILBOX_REPLIES' => '<p><strong>Replies</strong> contains client replies to the campaign letters</p>',
-    'TOUR_MAILBOX_BOUNCES' => '<p><strong>Bounces</strong> is the delivery failure notifications folder</p>',
+    'TOUR_PARSER_INTRO' => '<p>You can use these expressions in your email template</p>',
+    'TOUR_MAILBOX_INTRO' => '<p>Start working with CorpNews by sending newsletter template as an email to the application mailbox</p>',
     'TOUR_MAILBOX_TEMPLATE' => '<p>When template is received select it in the table and click this button in order to create new mail campaign</p>',
     'Outgoing' => 'Outgoing',
     'TOUR_OUTGOING_INTRO' => '<p>All email sent by the system is in this table.</p>'
-        . '<p>Some letters here are only planned to be sent (for new mail campaigns)</p>',
-    'TOUR_GROUPS_INTRO' => '<p>Email campaign sends letters to a number of client groups.</p>'
-        . '<p>You can define these groups here</p>',
+        . '<p>Some letters listed here are only planned to be sent (for new mail campaigns)</p>',
+    'TOUR_GROUPS_INTRO' => '<p>You can combine your clients into groups</p>'
+        . '<p>One client can be listed in any number of groups</p>',
     'TOUR_CLIENTS_EDIT_CLIENT' => '<p>Click any client\'s email to edit the client'
         . '<p><p>Or click a form in "Filled forms" to open the form of the client in admin mode</p>',
     'Tags' => 'Tags',
@@ -300,4 +297,5 @@ return [
     'Campaigns' => 'Campaigns',
     'TOUR_CAMPAIGNS_INTRO' => '<p>You can control your email campaigns here.</p>'
         . '<p>Please, do not forget to test your campaigns before launching the mass mailing</p>',
+    'TOUR_IMPORT_EXPORT_INTRO' => '<p>This page allows you to create export and parse import files for client\'s data forms<p>',
 ];
