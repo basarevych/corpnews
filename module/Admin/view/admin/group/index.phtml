@@ -22,6 +22,10 @@
                             <?= $this->translate('Create group') ?>
                         </button>
                         <hr>
+                        <button id="delete-button" class="btn btn-default disabled" disabled="disabled" onclick="emptyGroup()">
+                            <?= $this->translate('Empty group') ?>
+                        </button>
+                        <hr>
                         <button id="delete-button" class="btn btn-default disabled" disabled="disabled" onclick="deleteGroup()">
                             <?= $this->translate('Delete group') ?>
                         </button>
@@ -98,6 +102,26 @@
                 var modal = $('#modal-form');
                 modal.find('.modal-title').text('<?= $this->translate('Edit group') ?>');
                 modal.find('button[type=submit]').text('<?= $this->translate('Save changes') ?>');
+                modal.find('.modal-body').html(html);
+            }
+        });
+    }
+
+    function emptyGroup() {
+        var table = $('#table-groups').data('dynamicTable');
+        var selected = table.getSelected();
+        if (selected.length == 0)
+            return;
+
+        $.ajax({
+            url: '<?= $this->basePath('/admin/group/empty-group') ?>',
+            data: {
+                id: selected == 'all' ? '_all' : selected.join(',')
+            },
+            success: function (html) {
+                var modal = $('#modal-form');
+                modal.find('.modal-title').text('<?= $this->translate('Empty group') ?>');
+                modal.find('button[type=submit]').text('<?= $this->translate('Empty') ?>');
                 modal.find('.modal-body').html(html);
             }
         });

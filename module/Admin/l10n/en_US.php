@@ -54,8 +54,11 @@ return [
     // GroupController
     'Create group' => 'Create group',
     'Edit group' => 'Edit group',
+    'Empty group' => 'Empty group',
     'Delete group' => 'Create group',
     'Number of clients' => 'Number of clients',
+    'Empty' => 'Empty',
+    'CONFIRM_EMPTY_GROUP' => 'Remove all clients from selected group(s)?',
     'CONFIRM_DELETE_GROUP' => 'Delete selected group(s)?',
     'CANNOT_DELETE_SYSTEM_GROUPS' => 'NOTE: System groups can not be deleted',
 

@@ -8,6 +8,7 @@ use Zend\Json\Json;
 use Zend\Test\PHPUnit\Controller\AbstractHttpControllerTestCase;
 use Webfactory\Doctrine\ORMTestInfrastructure\ORMInfrastructure;
 use Application\Entity\Group as GroupEntity;
+use Application\Entity\Client as ClientEntity;
 
 class GroupControllerQueryMock {
     public function getSingleScalarResult() {
@@ -35,20 +36,43 @@ class GroupControllerTest extends AbstractHttpControllerTestCase
 
         $this->repoGroups = $this->getMockBuilder('Application\Entity\GroupRepository')
                                  ->disableOriginalConstructor()
-                                 ->setMethods([ 'find', 'removeAll' ])
+                                 ->setMethods([ 'find', 'findAll', 'removeAll' ])
                                  ->getMock();
 
-        $entity = new GroupEntity();
-        $reflection = new \ReflectionClass(get_class($entity));
+        $this->group1 = new GroupEntity();
+        $this->group1->setName('Group 1');
+        $reflection = new \ReflectionClass(get_class($this->group1));
         $property = $reflection->getProperty('id');
         $property->setAccessible(true);
-        $property->setValue($entity, 42);
+        $property->setValue($this->group1, 42);
+
+        $this->group2 = new GroupEntity();
+        $this->group2->setName('Group 2');
+        $property->setValue($this->group2, 9000);
+
+        $this->client = new ClientEntity();
+        $this->client->setEmail('foo@bar');
+
+        $this->group1->addClient($this->client);
+        $this->client->addGroup($this->group1);
+
+        $this->group2->addClient($this->client);
+        $this->client->addGroup($this->group2);
 
         $this->repoGroups->expects($this->any())
                          ->method('find')
-                         ->will($this->returnCallback(function ($id) use (&$entity) {
+                         ->will($this->returnCallback(function ($id) {
                                 if ($id == 42)
-                                    return $entity;
+                                    return $this->group1;
+                                if ($id == 9000)
+                                    return $this->group2;
+                                return null;
+                         }));
+
+        $this->repoGroups->expects($this->any())
+                         ->method('findAll')
+                         ->will($this->returnCallback(function () {
+                                return [ $this->group1, $this->group2 ];
                          }));
 
         $this->em->expects($this->any())
@@ -205,6 +229,66 @@ class GroupControllerTest extends AbstractHttpControllerTestCase
         $this->assertResponseStatusCode(200);
 
         $this->assertEquals('test', $persisted->getName(), "Name is incorrect");
+    }
+
+    public function testEmptyGroupActionCanBeAccessed()
+    {
+        $this->dispatch('/admin/group/empty-group', HttpRequest::METHOD_GET, [ 'id' => 42 ]);
+
+        $this->assertModuleName('admin');
+        $this->assertControllerName('admin\controller\group');
+        $this->assertControllerClass('GroupController');
+        $this->assertMatchedRouteName('admin');
+    }
+
+    public function testEmptyGroupActionClearsAll()
+    {
+        $getParams = [
+            'id' => '_all',
+        ];
+        $this->dispatch('/admin/group/empty-group', HttpRequest::METHOD_GET, $getParams);
+        $this->assertResponseStatusCode(200);
+
+        $response = $this->getResponse();
+        $dom = new Query($response->getContent());
+        $result = $dom->execute('input[name="security"]');
+        $security = count($result) ? $result[0]->getAttribute('value') : null;
+
+        $postParams = [
+            'security' => $security,
+            'id' => '_all',
+        ];
+
+        $this->dispatch('/admin/group/empty-group', HttpRequest::METHOD_POST, $postParams);
+        $this->assertResponseStatusCode(200);
+
+        $this->assertEquals(0, count($this->group1->getClients()), "Group 1 was not cleared");
+        $this->assertEquals(0, count($this->group2->getClients()), "Group 2 was not cleared");
+    }
+
+    public function testEmptyGroupActionClearsGroup()
+    {
+        $getParams = [
+            'id' => 42,
+        ];
+        $this->dispatch('/admin/group/empty-group', HttpRequest::METHOD_GET, $getParams);
+        $this->assertResponseStatusCode(200);
+
+        $response = $this->getResponse();
+        $dom = new Query($response->getContent());
+        $result = $dom->execute('input[name="security"]');
+        $security = count($result) ? $result[0]->getAttribute('value') : null;
+
+        $postParams = [
+            'security' => $security,
+            'id' => 42,
+        ];
+
+        $this->dispatch('/admin/group/empty-group', HttpRequest::METHOD_POST, $postParams);
+        $this->assertResponseStatusCode(200);
+
+        $this->assertEquals(0, count($this->group1->getClients()), "Group 1 was not cleared");
+        $this->assertGreaterThan(0, count($this->group2->getClients()), "Group 2 should not be cleared");
     }
 
     public function testDeleteGroupActionCanBeAccessed()
