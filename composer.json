@@ -4,7 +4,6 @@
     "license": "MIT",
     "keywords": [
         "zf",
-        "doctrine",
         "mail"
     ],
     "homepage": "https://github.com/basarevych/corpnews",

@@ -149,6 +149,70 @@ class GroupController extends AbstractActionController
     }
 
     /**
+     * Empty group form action
+     *
+     * @return ViewModel
+     */
+    public function emptyGroupAction()
+    {
+        $id = $this->params()->fromQuery('id');
+        if (!$id)
+            $id = $this->params()->fromPost('id');
+        if (!$id)
+            throw new \Exception('No "id" parameter');
+
+        $sl = $this->getServiceLocator();
+        $em = $sl->get('Doctrine\ORM\EntityManager');
+        $repo = $em->getRepository('Application\Entity\Group');
+
+        $script = null;
+        $form = new ConfirmForm();
+        $messages = [];
+
+        $request = $this->getRequest();
+        if ($request->isPost()) {
+            $form->setData($request->getPost());
+
+            if ($form->isValid()) {
+                $groups = [];
+                if ($id == '_all') {
+                    $groups = $repo->findAll();
+                } else {
+                    foreach (explode(',', $id) as $item) {
+                        $group = $repo->find($item);
+                        if (!$group)
+                            continue;
+                        $groups[] = $group;
+                    }
+                }
+
+                foreach ($groups as $group) {
+                    $clients = $group->getClients();
+                    foreach ($clients as $client) {
+                        $group->removeClient($client);
+                        $client->removeGroup($group);
+                    }
+                }
+                $em->flush();
+
+                $script = "$('#modal-form').modal('hide'); reloadTable()";
+            }
+        } else {
+            $form->setData([
+                'id' => $id
+            ]);
+        }
+
+        $model = new ViewModel([
+            'script'            => $script,
+            'form'              => $form,
+            'messages'          => $messages,
+        ]);
+        $model->setTerminal(true);
+        return $model;
+    }
+
+    /**
      * Delete group form action
      *
      * @return ViewModel

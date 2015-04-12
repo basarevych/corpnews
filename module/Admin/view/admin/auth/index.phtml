@@ -32,8 +32,8 @@
 
                     <?php $valid = count($login->getMessages()) == 0 ?>
                     <div class="form-group <?= $valid ?: 'has-error' ?>">
-                            <label class="col-sm-4 control-label"
-                                   for="<?= $login->getName() ?>">
+                        <label class="col-sm-4 control-label"
+                               for="<?= $login->getName() ?>">
                             <?= $this->escapeHtml($this->translate($login->getLabel())) ?>:
                         </label>
                         <div class="col-sm-8">
