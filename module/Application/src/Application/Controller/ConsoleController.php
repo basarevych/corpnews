@@ -215,5 +215,22 @@ class ConsoleController extends AbstractConsoleController
      */
     public function resetDemoAction()
     {
+        $sl = $this->getServiceLocator();
+        $imap = $sl->get('ImapClient');
+        $task = $sl->get('TaskDaemon');
+        $config = $sl->get('Config');
+
+        foreach ($imap->getMailboxes() as $box) {
+            foreach ($imap->getLetters($box->getName()) as $letter) {
+                $imap->deleteLetter($box->getName(), $letter->getUid());
+            }
+        }
+
+        $letter = file_get_contents(__DIR__ . '/../../../../Application/test/ApplicationTest/LetterFixture.txt');
+        $sendmail = popen('sendmail ' . $config['corpnews']['server']['address'], 'w');
+        fwrite($sendmail, $letter);
+        pclose($sendmail);
+
+        $task->getDaemon()->runTask('check_email');
     }
 } 

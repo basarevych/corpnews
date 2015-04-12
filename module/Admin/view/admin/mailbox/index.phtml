@@ -103,6 +103,17 @@
                                 $('#table-<?= $box['id'] ?>').on('dt.deselected', function () {
                                     updateActions('<?= $box['id'] ?>');
                                 });
+                                $('#table-<?= $box['id'] ?>').on('dt.loaded', function () {
+                                    $.ajax({
+                                        url: '<?= $this->basePath('/admin/mailbox/count-new') ?>',
+                                        data: {
+                                            box: '<?= $box['id'] ?>',
+                                        },
+                                        success: function (data) {
+                                            $('#badge-<?= $box['id'] ?>').text(data.num ? data.num : '');
+                                        }
+                                    });
+                                });
 
                                 $.ajax({
                                     url: '<?= $this->basePath('/admin/mailbox/count-new') ?>',
@@ -145,16 +156,6 @@
         <?php foreach ($this->mailboxes as $box): ?>
             var table = $('#table-<?= $box['id'] ?>').data('dynamicTable');
             table.refresh();
-
-            $.ajax({
-                url: '<?= $this->basePath('/admin/mailbox/count-new') ?>',
-                data: {
-                    box: '<?= $box['id'] ?>',
-                },
-                success: function (data) {
-                    $('#badge-<?= $box['id'] ?>').text(data.num ? data.num : '');
-                }
-            });
         <?php endforeach ?>
     }
 
