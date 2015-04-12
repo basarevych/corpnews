@@ -298,4 +298,8 @@ return [
     'TOUR_CAMPAIGNS_INTRO' => '<p>You can control your email campaigns here.</p>'
         . '<p>Please, do not forget to test your campaigns before launching the mass mailing</p>',
     'TOUR_IMPORT_EXPORT_INTRO' => '<p>This page allows you to create export and parse import files for client\'s data forms<p>',
+
+    // Demo
+    'DEMO_LOGIN' => '<p>This is demo page for CorpNews. Login is "admin", password is "passwd"</p>'
+        . '<p>Note that this installation is reset every day at 13:00 GMT, expect errors at that time</p>',
 ];

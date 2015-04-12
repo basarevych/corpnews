@@ -124,6 +124,8 @@ class Module
             [ PHP_EOL, 'Check the database' ],
             [ '--repair',  'Repair the database' ],
 
+            'reset-demo' => '',
+            [ PHP_EOL, 'Reset the database and everything' ],
         ];
     }
 

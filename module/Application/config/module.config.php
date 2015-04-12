@@ -83,6 +83,15 @@ return [
                         ]
                     ]
                 ],
+                'reset-demo' => [
+                    'options' => [
+                        'route'    => 'reset-demo',
+                        'defaults' => [
+                            'controller' => 'Application\Controller\Console',
+                            'action'     => 'reset-demo'
+                        ]
+                    ]
+                ],
             ],
         ],
     ],

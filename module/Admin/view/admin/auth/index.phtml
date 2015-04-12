@@ -21,6 +21,15 @@
             <div class="popover-content">
                 <form role="form" class="form-horizontal"
                       method="<?= $form->getAttribute('method') ?>">
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label">
+                            <?= $this->translate('APP_TITLE') ?>
+                        </label>
+                        <div class="col-sm-8 form-control-static">
+                            <?= $this->translate('DEMO_LOGIN') ?>
+                        </div>
+                    </div>
+
                     <input type="hidden"
                            name="<?= $security->getName() ?>"
                            value="<?= $security->getValue() ?>">

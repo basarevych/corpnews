@@ -209,4 +209,11 @@ class ConsoleController extends AbstractConsoleController
             }
         }
     }
+
+    /**
+     * Reset demo-version action
+     */
+    public function resetDemoAction()
+    {
+    }
 } 
