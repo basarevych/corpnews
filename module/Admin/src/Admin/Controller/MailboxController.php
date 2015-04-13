@@ -227,6 +227,11 @@ class MailboxController extends AbstractActionController
      */
     public function deleteLetterAction()
     {
+        $translate = $this->getServiceLocator()->get('viewhelpermanager')->get('translate');
+        $model = new ViewModel([ 'script' => "bsAlert('" . $translate('DEMO_FUNCTION_DISABLED') . "')" ]);
+        $model->setTerminal(true);
+        return $model;
+
         $box = $this->params()->fromQuery('box');
         if (!$box)
             $box = $this->params()->fromPost('box');

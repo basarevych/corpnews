@@ -249,32 +249,6 @@
             </div>
         </div>
 
-        <script>
-            function settingsForm(page) {
-                var title = null, submit = null;
-                switch (page) {
-                    case 'mailbox':
-                        title = '<?= $this->translate('Mailbox settings') ?>';
-                        submit = '<?= $this->translate('Save') ?>';
-                        break;
-                    case 'email-sender':
-                        title = '<?= $this->translate('Email sender settings') ?>';
-                        submit = '<?= $this->translate('Save') ?>';
-                        break;
-                }
-
-                $.ajax({
-                    url: '<?= $this->basePath('/admin/setting/') ?>' + page + '-form',
-                    success: function (html) {
-                        var modal = $('#modal-form');
-                        modal.find('.modal-title').text(title);
-                        modal.find('button[type=submit]').text(submit);
-                        modal.find('.modal-body').html(html);
-                    }
-                });
-            }
-        </script>
-
         <div id="letter-modal" class="modal">
             <div class="modal-dialog modal-lg">
                 <div class="modal-content">
@@ -354,6 +328,41 @@
         </div>
 
         <script>
+            function settingsForm(page) {
+                var title = null, submit = null;
+                switch (page) {
+                    case 'mailbox':
+                        title = '<?= $this->translate('Mailbox settings') ?>';
+                        submit = '<?= $this->translate('Save') ?>';
+                        break;
+                    case 'email-sender':
+                        title = '<?= $this->translate('Email sender settings') ?>';
+                        submit = '<?= $this->translate('Save') ?>';
+                        break;
+                }
+
+                $.ajax({
+                    url: '<?= $this->basePath('/admin/setting/') ?>' + page + '-form',
+                    success: function (html) {
+                        var modal = $('#modal-form');
+                        modal.find('.modal-title').text(title);
+                        modal.find('button[type=submit]').text(submit);
+                        modal.find('.modal-body').html(html);
+                    }
+                });
+            }
+
+            function bsAlert(msg, title) {
+                var modal = $('#modal-form');
+                modal.find('.modal-title').text(title);
+                modal.find('.modal-body').html(msg);
+                modal.find('button[type="submit"]').hide();
+                modal.one('hide.bs.modal', function() {
+                    modal.find('button[type="submit"]').show();
+                });
+                modal.modal('show');
+            }
+
             function openLetter(data) {
                 $('#letter-modal .modal-title').text('<?= $this->translate('Loading...') ?>');
                 $('#letter-modal .letter-frame').hide();
@@ -389,6 +398,5 @@
                     reloadTables();
             });
         </script>
-
     </body>
 </html>
