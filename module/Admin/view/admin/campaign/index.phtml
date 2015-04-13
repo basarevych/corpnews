@@ -159,7 +159,7 @@
         }
     }
 
-    function reloadTable() {
+    function reloadTables() {
         var table = $('#table-campaigns').data('dynamicTable');
         table.refresh();
     }
@@ -290,7 +290,7 @@
                 modal.find('.modal-title').text('<?= $this->translate('Campaign statistics') ?>');
                 modal.find('.modal-body').html(html);
                 modal.find('button[type="submit"]').hide();
-                modal.on('hide.bs.modal', function() {
+                modal.one('hide.bs.modal', function() {
                     modal.find('button[type="submit"]').show();
                 });
             }

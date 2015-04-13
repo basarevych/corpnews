@@ -17,7 +17,10 @@ $file = $form->get('file');
 ?>
 
 <?php if (!$this->hasEmail): ?>
-    <p><?= $this->translate('IMPORT_NO_EMAIL') ?></p>
+    <script>
+        bsAlert('<?= $this->translate('IMPORT_NO_EMAIL') ?>');
+    </script>
+    <?php return ?>
 <?php else: ?>
     <form class="form-horizontal" name="<?= $form->getName() ?>" onsubmit="return false"
           method="<?= $form->getAttribute('method') ?>"
@@ -100,13 +103,6 @@ $file = $form->get('file');
 
 <script>
     var modal = $('#modal-form');
-
-    <?php if (!$this->hasEmail): ?>
-        modal.find('button[type="submit"]').hide();
-        modal.on('hide.bs.modal', function() {
-            modal.find('button[type="submit"]').show();
-        });
-    <?php endif ?>
 
     initModalForm(modal);                   // See /js/app.js 
 

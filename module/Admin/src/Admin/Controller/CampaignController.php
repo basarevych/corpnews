@@ -128,7 +128,7 @@ class CampaignController extends AbstractActionController
                     $task->getDaemon()->runTask('send_email');
                 }
 
-                $script = "$('#modal-form').modal('hide'); reloadTable()";
+                $script = "$('#modal-form').modal('hide'); reloadTables()";
             }
         } else {
             $form->setData([
@@ -245,7 +245,7 @@ class CampaignController extends AbstractActionController
                 $em->persist($campaign);
                 $em->flush();
 
-                $script = "$('#modal-form').modal('hide'); reloadTable()";
+                $script = "$('#modal-form').modal('hide'); reloadTables()";
             }
 
             if ($form->get('groups')->getAttribute('disabled') == 'disabled') {
@@ -459,7 +459,7 @@ class CampaignController extends AbstractActionController
                     }
                 }
 
-                $script = "$('#modal-form').modal('hide'); reloadTable()";
+                $script = "$('#modal-form').modal('hide'); reloadTables()";
             }
         } else {
             $form->setData([
@@ -516,7 +516,7 @@ class CampaignController extends AbstractActionController
                     }
                 }
 
-                $script = "$('#modal-form').modal('hide'); reloadTable()";
+                $script = "$('#modal-form').modal('hide'); reloadTables()";
             }
         } else {
             $form->setData([
@@ -572,7 +572,7 @@ class CampaignController extends AbstractActionController
                     }
                 }
 
-                $script = "$('#modal-form').modal('hide'); reloadTable()";
+                $script = "$('#modal-form').modal('hide'); reloadTables()";
             }
         } else {
             $form->setData([

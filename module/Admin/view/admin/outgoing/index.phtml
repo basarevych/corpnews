@@ -72,6 +72,11 @@
         });
     }
 
+    function reloadTables() {
+        var table = $('#table-outgoing').data('dynamicTable');
+        table.refresh();
+    }
+
     var tour = new Tour({
         name: 'outgoing',
         template: '<?= $this->translate('TOUR_TEMPLATE') ?>',

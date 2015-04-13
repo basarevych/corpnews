@@ -17,9 +17,15 @@ $sendTo = $form->get('send_to');
 ?>
 
 <?php if ($this->noTesters): ?>
-    <p><?= $this->translate('CAMPAIGN_NO_TESTERS') ?></p>
+    <script>
+        bsAlert('<?= $this->translate('CAMPAIGN_NO_TESTERS') ?>');
+    </script>
+    <?php return ?>
 <?php elseif ($this->result): ?>
-    <p><?= $result ?></p>
+    <script>
+        bsAlert('<p><?= $result ?></p>');
+    </script>
+    <?php return ?>
 <?php else: ?>
     <form class="form-horizontal" name="<?= $form->getName() ?>" onsubmit="return false"
           method="<?= $form->getAttribute('method') ?>"
@@ -114,14 +120,6 @@ $sendTo = $form->get('send_to');
 
 <script>
     var modal = $('#modal-form');
-
-    <?php if ($this->noTesters || $this->result): ?>
-        modal.find('button[type="submit"]').hide();
-        modal.on('hide.bs.modal', function() {
-            modal.find('button[type="submit"]').show();
-            reloadTable();
-        });
-    <?php endif ?>
 
     function updateTesters() {
         var email = $('#modal-form input[name="tester"]:checked').val();

@@ -130,7 +130,7 @@ class GroupController extends AbstractActionController
                     $em->flush();
                 }
 
-                $script = "$('#modal-form').modal('hide'); reloadTable()";
+                $script = "$('#modal-form').modal('hide'); reloadTables()";
             }
         } else if ($entity) {       // Load initial form values
             $form->setData([
@@ -195,7 +195,7 @@ class GroupController extends AbstractActionController
                 }
                 $em->flush();
 
-                $script = "$('#modal-form').modal('hide'); reloadTable()";
+                $script = "$('#modal-form').modal('hide'); reloadTables()";
             }
         } else {
             $form->setData([
@@ -262,7 +262,7 @@ class GroupController extends AbstractActionController
                     }
                 }
 
-                $script = "$('#modal-form').modal('hide'); reloadTable()";
+                $script = "$('#modal-form').modal('hide'); reloadTables()";
             }
         } else {
             $form->setData([
