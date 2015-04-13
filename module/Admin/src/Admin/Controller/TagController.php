@@ -153,6 +153,11 @@ class TagController extends AbstractActionController
      */
     public function deleteTagAction()
     {
+        $translate = $this->getServiceLocator()->get('viewhelpermanager')->get('translate');
+        $model = new ViewModel([ 'script' => "bsAlert('" . $translate('DEMO_FUNCTION_DISABLED') . "')" ]);
+        $model->setTerminal(true);
+        return $model;
+
         $id = $this->params()->fromQuery('id');
         if (!$id)
             $id = $this->params()->fromPost('id');
