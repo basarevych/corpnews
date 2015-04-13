@@ -123,7 +123,7 @@ return [
         . '<br><br>'
         . 'Please add clients to "Testers" group',
     'CAMPAIGN_NO_GROUPS' => 'This campaign has no user groups associated',
-    'CAMPAIGN_TEST_FORMS' => 'Edit selected user\'s data forms:',
+    'CAMPAIGN_TEST_FORMS' => 'Edit selected user\'s data forms',
     'CONFIRM_START_CAMPAIGN' => 'Launch selected campaign and start sending mail?',
     'CONFIRM_CONTINUE_CAMPAIGN' => 'Continue sending mail for selected campaign?',
     'ALERT_CAMPAIGN_NOT_TESTED' => 'Campaign has not been tested!',
