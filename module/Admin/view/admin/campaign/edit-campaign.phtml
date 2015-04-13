@@ -123,7 +123,7 @@ $fullEdit = $groups->getAttribute('disabled') != 'disabled';
                             <?php else: ?>
                                data-on-enter="$('#submit-button').focus().click()">
                             <?php endif ?>
-                        <?= $this->translate($label) ?>
+                        <?= $this->escapeHtml($label) ?>
                     </label>
                 </div>
             <?php endforeach ?>
@@ -155,7 +155,7 @@ $fullEdit = $groups->getAttribute('disabled') != 'disabled';
                                    <?= in_array($value, $tags->getValue()) ? 'checked="checked"' : '' ?>
                                    <?= $fullEdit ? '' : 'disabled="disabled"' ?>
                                    data-on-enter="$('#submit-button').focus().click()">
-                            <?= $this->translate($label) ?>
+                            <?= $this->escapeHtml($label) ?>
                         </label>
                     </div>
                 <?php endforeach ?>
