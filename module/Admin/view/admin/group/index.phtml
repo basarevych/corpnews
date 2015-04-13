@@ -22,7 +22,7 @@
                             <?= $this->translate('Create group') ?>
                         </button>
                         <hr>
-                        <button id="delete-button" class="btn btn-default disabled" disabled="disabled" onclick="emptyGroup()">
+                        <button id="empty-button" class="btn btn-default disabled" disabled="disabled" onclick="emptyGroup()">
                             <?= $this->translate('Empty group') ?>
                         </button>
                         <hr>
@@ -65,10 +65,16 @@
         var selected = table.getSelected();
 
         if (selected == 'all' || selected.length) {
+            $('#empty-button')
+                .removeAttr('disabled')
+                .removeClass('disabled');
             $('#delete-button')
                 .removeAttr('disabled')
                 .removeClass('disabled');
         } else {
+            $('#empty-button')
+                .attr('disabled', 'disabled')
+                .addClass('disabled');
             $('#delete-button')
                 .attr('disabled', 'disabled')
                 .addClass('disabled');
