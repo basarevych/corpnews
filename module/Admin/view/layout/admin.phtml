@@ -354,11 +354,14 @@
 
             function bsAlert(msg, title) {
                 var modal = $('#modal-form');
-                modal.find('.modal-title').text(title);
+                if (typeof title != 'undefined')
+                    modal.find('.modal-title').text(title);
                 modal.find('.modal-body').html(msg);
                 modal.find('button[type="submit"]').hide();
                 modal.one('hide.bs.modal', function() {
                     modal.find('button[type="submit"]').show();
+                    if (typeof reloadTables != 'undefined')
+                        reloadTables();
                 });
                 modal.modal('show');
             }
@@ -393,6 +396,7 @@
                     }
                 );
             }
+
             $('#letter-modal').on('hide.bs.modal', function() {
                 if (typeof reloadTables != 'undefined')
                     reloadTables();

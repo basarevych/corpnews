@@ -152,7 +152,7 @@ class ClientController extends AbstractActionController
                     throw $e;
                 }
 
-                $script = "$('#modal-form').modal('hide'); reloadTable()";
+                $script = "$('#modal-form').modal('hide'); reloadTables()";
             }
         } else if ($entity) {       // Load initial form values
             $groups = [];
@@ -218,7 +218,7 @@ class ClientController extends AbstractActionController
                     }
                 }
 
-                $script = "$('#modal-form').modal('hide'); reloadTable()";
+                $script = "$('#modal-form').modal('hide'); reloadTables()";
             }
         } else {
             $form->setData([

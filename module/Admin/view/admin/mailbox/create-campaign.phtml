@@ -14,30 +14,37 @@ $uid = $form->get('uid');
 
 ?>
 
-<form class="form-horizontal" name="<?= $form->getName() ?>" onsubmit="return false"
-      method="<?= $form->getAttribute('method') ?>"
-      action="<?= $this->basePath('/admin/mailbox/create-campaign') ?>">
+<?php if ($this->parseError): ?>
+    <script>
+        bsAlert('<?= $this->translate('CAN_NOT_CREATE_CAMPAIGN') ?>');
+    </script>
+    <?php return ?>
+<?php else: ?>
+    <form class="form-horizontal" name="<?= $form->getName() ?>" onsubmit="return false"
+          method="<?= $form->getAttribute('method') ?>"
+          action="<?= $this->basePath('/admin/mailbox/create-campaign') ?>">
 
-    <input type="hidden"
-           name="<?= $security->getName() ?>"
-           value="<?= $security->getValue() ?>">
+        <input type="hidden"
+               name="<?= $security->getName() ?>"
+               value="<?= $security->getValue() ?>">
 
-    <input type="hidden"
-           name="<?= $box->getName() ?>"
-           value="<?= $box->getValue() ?>">
+        <input type="hidden"
+               name="<?= $box->getName() ?>"
+               value="<?= $box->getValue() ?>">
 
-    <input type="hidden"
-           name="<?= $uid->getName() ?>"
-           value="<?= $uid->getValue() ?>">
+        <input type="hidden"
+               name="<?= $uid->getName() ?>"
+               value="<?= $uid->getValue() ?>">
 
-    <?php foreach (array_merge($this->messages, $security->getMessages()) as $msg): ?>
-        <div class="alert alert-danger">
-            <center><?= $this->escapeHtml($this->translate($msg)) ?></center>
-        </div>
-    <?php endforeach ?>
+        <?php foreach (array_merge($this->messages, $security->getMessages()) as $msg): ?>
+            <div class="alert alert-danger">
+                <center><?= $this->escapeHtml($this->translate($msg)) ?></center>
+            </div>
+        <?php endforeach ?>
 
-    <p><?= $this->translate($this->parseError ? 'CAN_NOT_CREATE_CAMPAIGN' : 'CONFIRM_CREATE_CAMPAIGN') ?></p>
-</form>
+        <p><?= $this->translate('CONFIRM_CREATE_CAMPAIGN') ?></p>
+    </form>
+<?php endif ?>
 
 <script>
     var modal = $('#modal-form');
@@ -48,12 +55,4 @@ $uid = $form->get('uid');
         modal.modal('show');
 
     setFormFocus(modal.find('form'));       // See /js/app.js
-
-    <?php if ($this->parseError): ?>
-        modal.find('button[type="submit"]').hide();
-        modal.on('hide.bs.modal', function() {
-            modal.find('button[type="submit"]').show();
-            reloadTables();
-        });
-    <?php endif ?>
 </script>

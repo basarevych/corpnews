@@ -86,7 +86,7 @@ class SyslogController extends AbstractActionController
             if ($form->isValid()) {
                 $repo->removeAll();
 
-                $script = "$('#modal-form').modal('hide'); reloadTable()";
+                $script = "$('#modal-form').modal('hide'); reloadTables()";
             }
         } else {
             $form->setData([
