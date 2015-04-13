@@ -23,7 +23,10 @@ $sendTo = $form->get('send_to');
     <?php return ?>
 <?php elseif ($this->result): ?>
     <script>
-        bsAlert('<p><?= $result ?></p>');
+        bsAlert(
+            '<p><?= $result ?></p>'
+            + '<p><?= $this->translate('DEMO_MOCK_SENDING') ?></p>'
+        );
     </script>
     <?php return ?>
 <?php else: ?>

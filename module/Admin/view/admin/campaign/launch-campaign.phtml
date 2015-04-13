@@ -42,6 +42,8 @@ $id = $form->get('id');
             </div>
         <?php endforeach ?>
 
+        <p><?= $this->translate('DEMO_MOCK_SENDING') ?></p>
+
         <?php if (!$this->tested): ?>
             <p><strong><?= $this->translate('ALERT_CAMPAIGN_NOT_TESTED') ?></strong></p>
         <?php endif ?>
