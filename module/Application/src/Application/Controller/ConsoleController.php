@@ -232,5 +232,17 @@ class ConsoleController extends AbstractConsoleController
         pclose($sendmail);
 
         $task->getDaemon()->runTask('check_email');
+
+        chdir(__DIR__ . '/../../../../../database');
+
+        system('mysql -u' . $config['doctrine']['connection']['orm_default']['params']['user']
+            . ' -p' . $config['doctrine']['connection']['orm_default']['params']['password']
+            . ' ' . $config['doctrine']['connection']['orm_default']['params']['dbname']
+            . ' < dump/demo.sql');
+
+        system('mongorestore --username ' . $config['doctrine']['connection']['odm_default']['user']
+            . ' --password ' . $config['doctrine']['connection']['odm_default']['password']
+            . ' --db ' . $config['doctrine']['connection']['odm_default']['dbname']
+            . ' --drop dump/corpnews');
     }
 } 
