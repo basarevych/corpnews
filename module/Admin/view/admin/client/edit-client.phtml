@@ -107,7 +107,7 @@ $groups = $form->get('groups');
                                value="<?= $this->escapeHtml($value) ?>"
                                <?= in_array($value, $groups->getValue()) ? 'checked="checked"' : '' ?>
                                data-on-enter="$('#modal-form button[type=submit]').focus().click()">
-                        <?= $this->translate($label) ?>
+                        <?= $this->escapeHtml($label) ?>
                     </label>
                 </div>
             <?php endforeach ?>
