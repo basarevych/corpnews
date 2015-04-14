@@ -73,12 +73,12 @@ read -p "  IMAP server account password? []: " imap_password
 run_command perl -pi -e "s/(\s*'password'\s*=>\s*')(imap_password)('.*)/\${1}$imap_password\${3}/" "corpnews.local.php"
 
 echo
-read -p "* CorpNews 'From' address? []: " mail_from
+read -p "* CorpNews email 'From' address? " mail_from
 
 mail_from=`echo "$mail_from" | sed 's/@/\\\\@/'`
 run_command perl -pi -e "s/(\s*'address'\s*=>\s*')(address)('.*)/\${1}$mail_from\${3}/" "corpnews.local.php"
 
-read -p "  CorpNews base URL? []: " base_url
+read -p "  CorpNews base URL? (something like http://example.com/corpnews/): " base_url
 
 run_command perl -pi -e "s#(\s*'base_url'\s*=>\s*')(base_url)('.*)#\${1}$base_url\${3}#" "corpnews.local.php"
 
