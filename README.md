@@ -4,7 +4,7 @@ WORK IN PROGRESS
 CorpNews
 ========
 
-Demo: http://demo.daemon-notes.com/corpnews
+Demo: http://demo.daemon-notes.com/corpnews/admin
 
 
 Requirements
