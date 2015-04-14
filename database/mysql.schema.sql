@@ -4,7 +4,6 @@ DROP TABLE IF EXISTS `templates`;
 DROP TABLE IF EXISTS `campaign_tags`;
 DROP TABLE IF EXISTS `campaign_groups`;
 DROP TABLE IF EXISTS `campaigns`;
-DROP TABLE IF EXISTS `client_ignored_tags`;
 DROP TABLE IF EXISTS `client_groups`;
 DROP TABLE IF EXISTS `clients`;
 DROP TABLE IF EXISTS `tags`;
@@ -35,8 +34,8 @@ CREATE TABLE `tags` (
     `id` int unsigned NOT NULL AUTO_INCREMENT,
     `name` varchar(255) NOT NULL,
     `descr` text NULL,
-    CONSTRAINT `groups_pk` PRIMARY KEY (`id`),
-    CONSTRAINT `groups_name_unique` UNIQUE (`name`)
+    CONSTRAINT `tags_pk` PRIMARY KEY (`id`),
+    CONSTRAINT `tags_name_unique` UNIQUE (`name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1;
 
 CREATE TABLE `clients` (
