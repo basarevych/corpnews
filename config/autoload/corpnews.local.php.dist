@@ -9,8 +9,8 @@ return [
 
         'imap' => [
             'server'    => '127.0.0.1',
-            'port'      => 993,
-            'ssl'       => true,
+            'port'      => 143,
+            'ssl'       => false,
             'account'   => 'imap_username',
             'password'  => 'imap_password',
         ],
