@@ -4,7 +4,7 @@
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "95af82c85ab034a3c5a2fedd6a0fbc8f",
+    "hash": "015e423f07c61c2bee28ca78a38e31e0",
     "packages": [
         {
             "name": "basarevych/dynamic-table",
@@ -2317,7 +2317,10 @@
         "php": ">=5.4.8",
         "ext-openssl": "*",
         "ext-pdo": "*",
-        "ext-mongo": "*"
+        "ext-mongo": "*",
+        "ext-gearman": "*",
+        "ext-imap": "*",
+        "ext-mbstring": "*"
     },
     "platform-dev": []
 }
