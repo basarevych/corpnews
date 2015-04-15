@@ -13,6 +13,21 @@
 
     <div class="row">
         <div class="col-sm-3">
+            <div id="groups-panel" class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title"><?= $this->translate('Client groups') ?></h3>
+                </div>
+                <div class="panel-body button-panel">
+                    <?php foreach ($this->groups as $group): ?>
+                        <div class="checkbox">
+                            <label>
+                                <input type="checkbox" checked="checked" data-group="<?= $group->getId() ?>">
+                                <span class="text"><?= $group->getName() ?></span>
+                            </label>
+                        </div>
+                    <?php endforeach ?>
+                </div>
+            </div>
             <div id="presets-panel" class="panel panel-default">
                 <div class="panel-heading">
                     <h3 class="panel-title"><?= $this->translate('Presets') ?></h3>
@@ -71,19 +86,44 @@
         </div>
 
         <div class="col-sm-3">
-            <div id="groups-panel" class="panel panel-default">
+            <div id="format-panel" class="panel panel-default">
                 <div class="panel-heading">
-                    <h3 class="panel-title"><?= $this->translate('Client groups') ?></h3>
+                    <h3 class="panel-title"><?= $this->translate('File format') ?></h3>
                 </div>
                 <div class="panel-body button-panel">
-                    <?php foreach ($this->groups as $group): ?>
-                        <div class="checkbox">
-                            <label>
-                                <input type="checkbox" checked="checked" data-group="<?= $group->getId() ?>">
-                                <span class="text"><?= $group->getName() ?></span>
-                            </label>
-                        </div>
-                    <?php endforeach ?>
+                    <div class="group-title"><?= $this->translate('Field separator') ?>:</div>
+                    <div class="radio">
+                        <label>
+                            <input type="radio" name="separator" value="comma" checked="checked">
+                            <span class="text"><?= $this->translate('Comma') ?></span>
+                        </label>
+                    </div>
+                    <div class="radio">
+                        <label>
+                            <input type="radio" name="separator" value="semicolon">
+                            <span class="text"><?= $this->translate('Semicolon') ?></span>
+                        </label>
+                    </div>
+                    <div class="radio">
+                        <label>
+                            <input type="radio" name="separator" value="tab">
+                            <span class="text"><?= $this->translate('Tab') ?></span>
+                        </label>
+                    </div>
+                    <br>
+                    <div class="group-title"><?= $this->translate('Line endings') ?>:</div>
+                    <div class="radio">
+                        <label>
+                            <input type="radio" name="ending" value="windows" checked="checked">
+                            <span class="text"><?= $this->translate('Windows') ?></span>
+                        </label>
+                    </div>
+                    <div class="radio">
+                        <label>
+                            <input type="radio" name="ending" value="unix">
+                            <span class="text"><?= $this->translate('Unix') ?></span>
+                        </label>
+                    </div>
                 </div>
             </div>
             <div id="actions-panel" class="panel panel-default">
@@ -191,7 +231,9 @@
 
         window.location = '<?= $this->basePath('/admin/import-export/download') ?>'
             + '?groups=' + encodeURIComponent(groups.join(','))
-            + '&fields=' + encodeURIComponent(fields.join(','));
+            + '&fields=' + encodeURIComponent(fields.join(','))
+            + '&separator=' + $('#format-panel [name="separator"]:checked').val()
+            + '&ending=' + $('#format-panel [name="ending"]:checked').val();
     }
 
     function uploadFile()
@@ -211,6 +253,8 @@
             data: {
                 groups: groups.join(','),
                 fields: fields.join(','),
+                separator: $('#format-panel [name="separator"]:checked').val(),
+                ending: $('#format-panel [name="ending"]:checked').val(),
             },
             success: function (html) {
                 var modal = $('#modal-form');

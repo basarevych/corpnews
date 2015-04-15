@@ -51,6 +51,12 @@ class Import extends Form
         $fields = new Element\Hidden('fields');
         $this->add($fields);
 
+        $separator = new Element\Hidden('separator');
+        $this->add($separator);
+
+        $ending = new Element\Hidden('ending');
+        $this->add($ending);
+
         $encoding = new Element\Select('encoding');
         $encoding->setLabel('Encoding');
         $encoding->setValueOptions([
@@ -118,6 +124,14 @@ class Import extends Form
         $fields = new Input('fields');
         $fields->setRequired(true);
         $filter->add($fields);
+
+        $separator = new Input('separator');
+        $separator->setRequired(true);
+        $filter->add($separator);
+
+        $ending = new Input('ending');
+        $ending->setRequired(true);
+        $filter->add($ending);
 
         $encoding = new Input('encoding');
         $encoding->setRequired(true);

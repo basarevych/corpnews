@@ -11,6 +11,8 @@ $form = $this->form;
 $security = $form->get('security');
 $groups = $form->get('groups');
 $fields = $form->get('fields');
+$separator = $form->get('separator');
+$ending = $form->get('ending');
 $encoding = $form->get('encoding');
 $file = $form->get('file');
 
@@ -38,6 +40,14 @@ $file = $form->get('file');
         <input type="hidden"
                name="<?= $fields->getName() ?>"
                value="<?= $fields->getValue() ?>">
+
+        <input type="hidden"
+               name="<?= $separator->getName() ?>"
+               value="<?= $separator->getValue() ?>">
+
+        <input type="hidden"
+               name="<?= $ending->getName() ?>"
+               value="<?= $ending->getValue() ?>">
 
         <?php foreach (array_merge($this->messages, $security->getMessages()) as $msg): ?>
             <div class="alert alert-danger">

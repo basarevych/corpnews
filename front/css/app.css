@@ -178,6 +178,10 @@ div.letter-frame {
 .button-panel hr {
     margin: 3px 0;
 }
+.button-panel .group-title {
+    width: 100%;
+    text-align: left;
+}
 .button-panel .checkbox, .button-panel .radio, .button-panel .drag-n-drop {
     width: 100%;
     text-align: left;

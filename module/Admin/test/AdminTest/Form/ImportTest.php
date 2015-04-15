@@ -27,6 +27,8 @@ class ImportTest extends AbstractControllerTestCase
         $this->assertEquals(false, $valid, "Form should not be reported as valid");
         $this->assertGreaterThan(0, count($form->get('security')->getMessages()), "Security should have errors");
         $this->assertGreaterThan(0, count($form->get('fields')->getMessages()), "Fields should have errors");
+        $this->assertGreaterThan(0, count($form->get('separator')->getMessages()), "Separator should have errors");
+        $this->assertGreaterThan(0, count($form->get('ending')->getMessages()), "Ending should have errors");
         $this->assertGreaterThan(0, count($form->get('encoding')->getMessages()), "Encoding should have errors");
         $this->assertGreaterThan(0, count($form->get('file')->getMessages()), "File should have errors");
     }
@@ -39,6 +41,8 @@ class ImportTest extends AbstractControllerTestCase
             'security' => $form->get('security')->getValue(),
             'groups' => '1,2',
             'fields' => 'foo,bar',
+            'separator' => 'comma',
+            'ending' => 'windows',
             'encoding' => 'utf-8',
         ];
 
@@ -48,6 +52,8 @@ class ImportTest extends AbstractControllerTestCase
 
         $this->assertEquals(0, count($form->get('security')->getMessages()), "Security should have no errors");
         $this->assertEquals(0, count($form->get('fields')->getMessages()), "Fields should have no errors");
+        $this->assertEquals(0, count($form->get('separator')->getMessages()), "Separator should have no errors");
+        $this->assertEquals(0, count($form->get('ending')->getMessages()), "Ending should have no errors");
         $this->assertEquals(0, count($form->get('encoding')->getMessages()), "Encoding should have no errors");
     }
 }

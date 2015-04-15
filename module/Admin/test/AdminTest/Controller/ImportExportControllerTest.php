@@ -140,7 +140,9 @@ class ImportExportControllerTest extends AbstractHttpControllerTestCase
     {
         $params = [
             'groups'    => 9000,
-            'fields'    => 'email,profile-last_name'
+            'fields'    => 'email,profile-last_name',
+            'separator' => 'comma',
+            'ending'    => 'unix',
         ];
         $this->dispatch('/admin/import-export/download', HttpRequest::METHOD_GET, $params);
         $this->assertResponseStatusCode(200);

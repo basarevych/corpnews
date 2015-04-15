@@ -75,6 +75,21 @@ class ImportExportController extends AbstractActionController
 
         $groups = $this->params()->fromQuery('groups');
         $fields = $this->params()->fromQuery('fields');
+        $separatorParam = $this->params()->fromQuery('separator');
+        $endingParam = $this->params()->fromQuery('ending');
+
+        switch ($separatorParam) {
+            default:
+            case 'comma':       $separator = ','; break;
+            case 'semicolon':   $separator = ';'; break;
+            case 'tab':         $separator = "\t"; break;
+        }
+
+        switch ($endingParam) {
+            default:
+            case 'windows': $ending = "\r\n"; break;
+            case 'unix':    $ending = "\n"; break;
+        }
 
         $result = '';
         $row = [];
@@ -82,7 +97,7 @@ class ImportExportController extends AbstractActionController
             $field = str_replace('-', ' / ', $field);
             $row[] = '"' . $field . '"';
         }
-        $result .= join(',', $row) . "\r\n";
+        $result .= join($separator, $row) . $ending;
 
         $clients = $em->getRepository('Application\Entity\Client')
                       ->findByGroupIds(explode(',', $groups));
@@ -109,7 +124,7 @@ class ImportExportController extends AbstractActionController
                 $value = str_replace('"', '""', $value);
                 $row[$field] = '"' . $value . '"';
             }
-            $result .= join(',', $row) . "\r\n";
+            $result .= join($separator, $row) . $ending;
         }
 
         $response = $this->getResponse();
@@ -142,6 +157,25 @@ class ImportExportController extends AbstractActionController
         $fields = $this->params()->fromQuery('fields');
         if (!$fields)
             $fields = $this->params()->fromPost('fields');
+        $separatorParam = $this->params()->fromQuery('separator');
+        if (!$separatorParam)
+            $separatorParam = $this->params()->fromPost('separator');
+        $endingParam = $this->params()->fromQuery('ending');
+        if (!$endingParam)
+            $endingParam = $this->params()->fromPost('ending');
+
+        switch ($separatorParam) {
+            default:
+            case 'comma':       $separator = ','; break;
+            case 'semicolon':   $separator = ';'; break;
+            case 'tab':         $separator = "\t"; break;
+        }
+
+        switch ($endingParam) {
+            default:
+            case 'windows': $ending = "\r\n"; break;
+            case 'unix':    $ending = "\n"; break;
+        }
 
         $script = null;
         $form = new ImportForm();
@@ -193,13 +227,13 @@ class ImportExportController extends AbstractActionController
 
                     $rows = [];
                     $first = true;
-                    foreach (explode("\n", $file) as $line) {
+                    foreach (explode($ending, $file) as $line) {
                         if ($first || trim($line) == "") {
                             $first = false;
                             continue;
                         }
 
-                        $csv = str_getcsv($line, ",", '"', '"');
+                        $csv = str_getcsv(trim($line), $separator, '"', '"');
 
                         $row = [];
                         for ($i = 0; $i < count($usedFields); $i++)
@@ -253,6 +287,8 @@ class ImportExportController extends AbstractActionController
             $form->setData([
                 'groups'    => $groups,
                 'fields'    => $fields,
+                'separator' => $separatorParam,
+                'ending'    => $endingParam,
             ]);
         }
 
