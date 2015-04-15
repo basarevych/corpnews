@@ -82,7 +82,7 @@ class ImportExportController extends AbstractActionController
             $field = str_replace('-', ' / ', $field);
             $row[] = '"' . $field . '"';
         }
-        $result .= join(',', $row) . "\n";
+        $result .= join(',', $row) . "\r\n";
 
         $clients = $em->getRepository('Application\Entity\Client')
                       ->findByGroupIds(explode(',', $groups));
@@ -101,14 +101,15 @@ class ImportExportController extends AbstractActionController
 
                 $doc = $dm->getRepository($class)
                           ->find($client->getId());
-                if (!$doc)
-                    continue;
+                if ($doc)
+                    $value = @$doc->toArray()[$parts[1]];
+                else
+                    $value = "";
 
-                $value = @$doc->toArray()[$parts[1]];
                 $value = str_replace('"', '""', $value);
                 $row[$field] = '"' . $value . '"';
             }
-            $result .= join(',', $row) . "\n";
+            $result .= join(',', $row) . "\r\n";
         }
 
         $response = $this->getResponse();
