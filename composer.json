@@ -21,7 +21,8 @@
         "doctrine/doctrine-mongo-odm-module": "0.8.*",
         "ezyang/htmlpurifier": "4.6.*",
         "basarevych/dynamic-table": "dev-master",
-        "basarevych/task-daemon": "0.2.*"
+        "basarevych/task-daemon": "0.2.*",
+        "symfony/console": "<2.7.0"
     },
     "require-dev": {
         "phpunit/phpunit": "@stable",
