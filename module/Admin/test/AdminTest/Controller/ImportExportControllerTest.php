@@ -136,15 +136,27 @@ class ImportExportControllerTest extends AbstractHttpControllerTestCase
         $this->assertMatchedRouteName('admin');
     }
 
-    public function testDownloadActionGeneratesFile()
+    public function testGenerateCsvActionCanBeAccessed()
+    {
+        $this->dispatch('/admin/import-export/generate-csv');
+        $this->assertResponseStatusCode(200);
+
+        $this->assertModuleName('admin');
+        $this->assertControllerName('admin\controller\importexport');
+        $this->assertControllerClass('ImportExportController');
+        $this->assertMatchedRouteName('admin');
+    }
+
+    public function testGenerateCsvActionGeneratesFile()
     {
         $params = [
-            'groups'    => 9000,
             'fields'    => 'email,profile-last_name',
             'separator' => 'comma',
             'ending'    => 'unix',
+            'encoding'  => 'utf-8',
+            'groups'    => 9000,
         ];
-        $this->dispatch('/admin/import-export/download', HttpRequest::METHOD_GET, $params);
+        $this->dispatch('/admin/import-export/generate-csv', HttpRequest::METHOD_GET, $params);
         $this->assertResponseStatusCode(200);
 
         $file = $this->getResponse()->getContent();
@@ -164,39 +176,6 @@ class ImportExportControllerTest extends AbstractHttpControllerTestCase
         $this->assertControllerName('admin\controller\importexport');
         $this->assertControllerClass('ImportExportController');
         $this->assertMatchedRouteName('admin');
-    }
-
-    public function testPreviewTableActionCanBeAccessed()
-    {
-        $this->dispatch('/admin/import-export/preview-table', HttpRequest::METHOD_GET, [ 'query' => 'describe' ]);
-
-        $this->assertModuleName('admin');
-        $this->assertControllerName('admin\controller\importexport');
-        $this->assertControllerClass('ImportExportController');
-        $this->assertMatchedRouteName('admin');
-    }
-
-    public function testPreviewTableActionSendsDescription()
-    {  
-        $this->dispatch('/admin/import-export/preview-table', HttpRequest::METHOD_GET, [ 'query' => 'describe' ]);
-        $this->assertResponseStatusCode(200);
-
-        $response = $this->getResponse()->getContent();
-        $data = Json::decode($response, Json::TYPE_ARRAY);
-
-        $this->assertEquals(true, isset($data['columns']) && count($data['columns']), "No columns described");
-    }
-
-    public function testPreviewTableActionSendsData()
-    {
-        $this->dispatch('/admin/import-export/preview-table', HttpRequest::METHOD_GET, [ 'query' => 'data' ]);
-        $this->assertResponseStatusCode(200);
-
-        $response = $this->getResponse()->getContent();
-        $data = Json::decode($response, Json::TYPE_ARRAY);
-
-        $this->assertEquals(true, isset($data['rows']) && count($data['rows']) == 1, "Invalid data returned");
-        $this->assertEquals('foo@bar', $data['rows'][0]['email'], "Invalid email");
     }
 
     public function testAcceptImportActionCanBeAccessed()
@@ -261,5 +240,38 @@ class ImportExportControllerTest extends AbstractHttpControllerTestCase
         $cnt = $session->getContainer();
 
         $this->assertEquals(false, $cnt->offsetExists('import'), "Import should be cleared");
+    }
+
+    public function testPreviewTableActionCanBeAccessed()
+    {
+        $this->dispatch('/admin/import-export/preview-table', HttpRequest::METHOD_GET, [ 'query' => 'describe' ]);
+
+        $this->assertModuleName('admin');
+        $this->assertControllerName('admin\controller\importexport');
+        $this->assertControllerClass('ImportExportController');
+        $this->assertMatchedRouteName('admin');
+    }
+
+    public function testPreviewTableActionSendsDescription()
+    {  
+        $this->dispatch('/admin/import-export/preview-table', HttpRequest::METHOD_GET, [ 'query' => 'describe' ]);
+        $this->assertResponseStatusCode(200);
+
+        $response = $this->getResponse()->getContent();
+        $data = Json::decode($response, Json::TYPE_ARRAY);
+
+        $this->assertEquals(true, isset($data['columns']) && count($data['columns']), "No columns described");
+    }
+
+    public function testPreviewTableActionSendsData()
+    {
+        $this->dispatch('/admin/import-export/preview-table', HttpRequest::METHOD_GET, [ 'query' => 'data' ]);
+        $this->assertResponseStatusCode(200);
+
+        $response = $this->getResponse()->getContent();
+        $data = Json::decode($response, Json::TYPE_ARRAY);
+
+        $this->assertEquals(true, isset($data['rows']) && count($data['rows']) == 1, "Invalid data returned");
+        $this->assertEquals('foo@bar', $data['rows'][0]['email'], "Invalid email");
     }
 }
