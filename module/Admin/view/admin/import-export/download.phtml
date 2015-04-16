@@ -14,7 +14,6 @@ $separator = $form->get('separator');
 $ending = $form->get('ending');
 $encoding = $form->get('encoding');
 $groups = $form->get('groups');
-$file = $form->get('file');
 
 ?>
 
@@ -23,16 +22,10 @@ $file = $form->get('file');
         bsAlert('<?= $this->translate('IMPORT_EXPORT_NO_FIELDS') ?>');
     </script>
     <?php return ?>
-<?php elseif (!$this->hasEmail): ?>
-    <script>
-        bsAlert('<?= $this->translate('IMPORT_NO_EMAIL') ?>');
-    </script>
-    <?php return ?>
 <?php else: ?>
     <form class="form-horizontal" name="<?= $form->getName() ?>" onsubmit="return false"
           method="<?= $form->getAttribute('method') ?>"
-          enctype="multipart/form-data"
-          action="<?= $this->basePath('/admin/import-export/upload') ?>">
+          action="<?= $this->basePath('/admin/import-export/download') ?>">
 
         <input type="hidden"
                name="<?= $security->getName() ?>"
@@ -64,6 +57,9 @@ $file = $form->get('file');
         <div class="form-group <?= $valid ? '' : 'has-error' ?>">
             <label class="col-sm-4 control-label" for="<?= $groups->getName() ?>">
                 <?= $this->escapeHtml($this->translate($groups->getLabel())) ?>:
+                <span class="required-marker text-danger">
+                    <?= $this->translate('REQUIRED FIELD') ?>
+                </span>
             </label>
             <div class="col-sm-8">
                 <?php foreach ($groups->getValueOptions() as $value => $label): ?>
@@ -82,31 +78,6 @@ $file = $form->get('file');
                     <?php if (!$valid): ?>
                         <ul class="list-unstyled icon-list error-list">
                         <?php foreach ($groups->getMessages() as $msg): ?>
-                            <li><?= $this->escapeHtml($msg) ?></li>
-                        <?php endforeach ?>
-                        </ul>
-                    <?php endif ?>
-                </div>
-            </div>
-        </div>
-
-        <?php $valid = count($file->getMessages()) == 0 ?>
-        <div class="form-group <?= $valid ? '' : 'has-error' ?>">
-            <label class="col-sm-4 control-label" for="<?= $file->getName() ?>">
-                <?= $this->escapeHtml($this->translate($file->getLabel())) ?>:
-                <span class="required-marker text-danger">
-                    <?= $this->translate('REQUIRED FIELD') ?>
-                </span>
-            </label>
-            <div class="col-sm-8">
-                <input type="file" class="form-control"
-                       name="<?= $file->getName() ?>"
-                       data-on-blur="validateFormField($('#modal-form [name=<?= $file->getName() ?>]'))"
-                       data-on-enter="$('#modal-form button[type=submit]').focus().click()">
-                <div class="help-block">
-                    <?php if (!$valid): ?>
-                        <ul class="list-unstyled icon-list error-list">
-                        <?php foreach ($file->getMessages() as $msg): ?>
                             <li><?= $this->escapeHtml($msg) ?></li>
                         <?php endforeach ?>
                         </ul>

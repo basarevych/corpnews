@@ -266,6 +266,14 @@ return [
 
     // ImportExportController
     'Presets' => 'Пресеты',
+    'File format' => 'Формат файла',
+    'Field separator' => 'Разделитель полей',
+    'Comma' => 'Запятая',
+    'Semicolon' => 'Точка с запятой',
+    'Tab' => 'Табуляция',
+    'Line endings' => 'Окончания строк',
+    'Windows' => 'Windows',
+    'Unix' => 'Unix',
     'IMPORT_EXPORT_MINIMUM' => 'Минимум',
     'IMPORT_EXPORT_FULL_NAME' => 'Полное имя',
     'IMPORT_EXPORT_MAXIMUM' => 'Максимум',
@@ -275,12 +283,15 @@ return [
     'Import' => 'Импорт',
     'Export' => 'Экспорт',
     'Import data' => 'Импорт данных',
-    'IMPORT_NO_EMAIL' => 'Для импорта поле электронной почты обязательно',
+    'IMPORT_EXPORT_NO_FIELDS' => 'Не выбрано ни одного поля',
+    'IMPORT_EXPORT_NO_EMAIL' => 'Для импорта поле электронной почты обязательно',
     'Encoding' => 'Кодировка',
     'Import preview' => 'Предварительный просмотр импорта',
     'Accept results' => 'Принять результаты',
     'Cancel import' => 'Отменить импорт',
-    'No groups' => 'Без групп',
+    '(No group)' => '(Без группы)',
+    'Export data' => 'Экспортировать данные',
+    'Data will be imported into the following groups' => 'Данные будут импортированы в следующие группы',
 
     // Tours
     'Parser' => 'Парсер',
