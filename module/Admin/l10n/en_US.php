@@ -265,6 +265,14 @@ return [
 
     // ImportExportController
     'Presets' => 'Presets',
+    'File format' => 'File format',
+    'Field separator' => 'Field separator',
+    'Comma' => 'Comma',
+    'Semicolon' => 'Semicolon',
+    'Tab' => 'Tab',
+    'Line endings' => 'Line endings',
+    'Windows' => 'Windows',
+    'Unix' => 'Unix',
     'IMPORT_EXPORT_MINIMUM' => 'Minimum',
     'IMPORT_EXPORT_FULL_NAME' => 'Full name',
     'IMPORT_EXPORT_MAXIMUM' => 'Maximum',
@@ -274,12 +282,15 @@ return [
     'Import' => 'Import',
     'Export' => 'Export',
     'Import data' => 'Import data',
-    'IMPORT_NO_EMAIL' => 'Import action requires email field to be set',
+    'IMPORT_EXPORT_NO_FIELDS' => 'No fields selected',
+    'IMPORT_EXPORT_NO_EMAIL' => 'Import action requires email field to be set',
     'Encoding' => 'Encoding',
     'Import preview' => 'Import preview',
     'Accept results' => 'Accept results',
     'Cancel import' => 'Cancel import',
-    'No groups' => 'No groups',
+    '(No groups)' => '(No groups)',
+    'Export data' => 'Export data',
+    'Data will be imported into the following groups' => 'Data will be imported into the following groups',
 
     // Tours
     'Parser' => 'Parser',

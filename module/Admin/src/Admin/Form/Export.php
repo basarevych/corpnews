@@ -19,12 +19,12 @@ use Zend\ServiceManager\ServiceLocatorInterface;
 use Doctrine\ORM\EntityManager;
 
 /**
- * Upload form
+ * Download form
  *
  * @category    Admin
  * @package     Form
  */
-class Import extends Form
+class Export extends Form
 {
     /**
      * The input filter
@@ -72,7 +72,7 @@ class Import extends Form
 
         $entities = $this->em->getRepository('Application\Entity\Group')
                              ->findBy([], [ 'name' => 'ASC' ]);
-        $options = [];
+        $options = [ 0 => $translate('(No group)') ];
         foreach ($entities as $entity)
             $options[$entity->getId()] = $entity->getName();
 
@@ -81,10 +81,6 @@ class Import extends Form
         $groups->setValueOptions($options);
         $groups->setValue(array_keys($options));
         $this->add($groups);
-
-        $file = new Element\File('file');
-        $file->setLabel('File');
-        $this->add($file);
     }
 
     /**
@@ -120,14 +116,9 @@ class Import extends Form
         $filter->add($encoding);
 
         $groups = new Input('groups');
-        $groups->setRequired(false);
+        $groups->setRequired(true)
+               ->setBreakOnFailure(false);
         $filter->add($groups);
-
-        $file = new Input('file');
-        $file->setRequired(true)
-             ->getValidatorChain()
-             ->attach(new Validator\File\UploadFile());
-        $filter->add($file);
 
         $this->inputFilter = $filter;
         return $filter;
