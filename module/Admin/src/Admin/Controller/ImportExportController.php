@@ -516,7 +516,7 @@ class ImportExportController extends AbstractActionController
 
         if ($cnt->offsetExists('import')) {
             $groups = [];
-            foreach (explode(',', $cnt->import['groups']) as $id) {
+            foreach ($cnt->import['groups'] as $id) {
                 $group = $em->getRepository('Application\Entity\Group')
                             ->find($id);
                 if ($group)

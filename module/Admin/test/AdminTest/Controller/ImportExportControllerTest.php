@@ -215,6 +215,10 @@ class ImportExportControllerTest extends AbstractHttpControllerTestCase
         $this->assertEquals(1, count($persistedEntities), "One entity should have been persisted");
         $this->assertEquals('foo@bar', $persistedEntities[0]->getEmail(), "Email is wrong");
 
+        $groups = $persistedEntities[0]->getGroups()->toArray();
+        $this->assertEquals(1, count($groups), "Client should be in one group");
+        $this->assertEquals(9000, $groups[0]->getId(), "Client in the wrong group");
+
         $this->assertEquals(1, count($persistedDocuments), "One document should have been persisted");
         $this->assertEquals(42, $persistedDocuments[0]->getId(), "ID is wrong");
         $this->assertEquals('foo@bar', $persistedDocuments[0]->getClientEmail(), "Email is wrong");
