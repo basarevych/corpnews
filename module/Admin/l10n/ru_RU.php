@@ -267,6 +267,8 @@ return [
     // ImportExportController
     'Presets' => 'Пресеты',
     'File format' => 'Формат файла',
+    'Excel format' => 'Формат Excel',
+    'CSV format' => 'Формат CSV',
     'Field separator' => 'Разделитель полей',
     'Comma' => 'Запятая',
     'Semicolon' => 'Точка с запятой',

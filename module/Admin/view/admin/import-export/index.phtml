@@ -76,46 +76,61 @@
                     <h3 class="panel-title"><?= $this->translate('File format') ?></h3>
                 </div>
                 <div class="panel-body button-panel">
-                    <div class="group-title"><?= $this->translate('Field separator') ?>:</div>
                     <div class="radio">
                         <label>
-                            <input type="radio" name="separator" value="comma" checked="checked">
-                            <span class="text"><?= $this->translate('Comma') ?></span>
+                            <input type="radio" name="format" value="excel">
+                            <?= $this->translate('Excel format') ?>
                         </label>
                     </div>
                     <div class="radio">
                         <label>
-                            <input type="radio" name="separator" value="semicolon">
-                            <span class="text"><?= $this->translate('Semicolon') ?></span>
+                            <input type="radio" name="format" value="csv" checked="checked">
+                            <?= $this->translate('CSV format') ?>
+                            <div id="csv-options">
+                                <br>
+                                <div class="group-title"><?= $this->translate('Field separator') ?>:</div>
+                                <div class="radio">
+                                    <label>
+                                        <input type="radio" name="separator" value="comma" checked="checked">
+                                        <?= $this->translate('Comma') ?>
+                                    </label>
+                                </div>
+                                <div class="radio">
+                                    <label>
+                                        <input type="radio" name="separator" value="semicolon">
+                                        <?= $this->translate('Semicolon') ?>
+                                    </label>
+                                </div>
+                                <div class="radio">
+                                    <label>
+                                        <input type="radio" name="separator" value="tab">
+                                        <?= $this->translate('Tab') ?>
+                                    </label>
+                                </div>
+                                <br>
+                                <div class="group-title"><?= $this->translate('Line endings') ?>:</div>
+                                <div class="radio">
+                                    <label>
+                                        <input type="radio" name="ending" value="windows" checked="checked">
+                                        <?= $this->translate('Windows') ?>
+                                    </label>
+                                </div>
+                                <div class="radio">
+                                    <label>
+                                        <input type="radio" name="ending" value="unix">
+                                        <?= $this->translate('Unix') ?>
+                                    </label>
+                                </div>
+                                <br>
+                                <div class="group-title"><?= $this->translate('Encoding') ?>:</div>
+                                <select name="encoding" class="form-control">
+                                    <?php foreach ($this->encodings as $key => $value): ?>
+                                        <option value="<?= $key ?>"><?= $this->escapeHtml($value) ?></option>
+                                    <?php endforeach ?>
+                                </select>
+                            </div>
                         </label>
                     </div>
-                    <div class="radio">
-                        <label>
-                            <input type="radio" name="separator" value="tab">
-                            <span class="text"><?= $this->translate('Tab') ?></span>
-                        </label>
-                    </div>
-                    <br>
-                    <div class="group-title"><?= $this->translate('Line endings') ?>:</div>
-                    <div class="radio">
-                        <label>
-                            <input type="radio" name="ending" value="windows" checked="checked">
-                            <span class="text"><?= $this->translate('Windows') ?></span>
-                        </label>
-                    </div>
-                    <div class="radio">
-                        <label>
-                            <input type="radio" name="ending" value="unix">
-                            <span class="text"><?= $this->translate('Unix') ?></span>
-                        </label>
-                    </div>
-                    <br>
-                    <div class="group-title"><?= $this->translate('Encoding') ?>:</div>
-                    <select name="encoding" class="form-control">
-                        <?php foreach ($this->encodings as $key => $value): ?>
-                            <option value="<?= $key ?>"><?= $this->escapeHtml($value) ?></option>
-                        <?php endforeach ?>
-                    </select>
                     <br>
                     <button type="button" class="btn btn-default" onclick="uploadFile()">
                         <?= $this->translate('Import') ?>
@@ -214,6 +229,7 @@
             url: '<?= $this->basePath('/admin/import-export/download') ?>',
             data: {
                 fields: fields.join(','),
+                format: $('#format-panel [name="format"]:checked').val(),
                 separator: $('#format-panel [name="separator"]:checked').val(),
                 ending: $('#format-panel [name="ending"]:checked').val(),
                 encoding: $('#format-panel [name="encoding"]').val(),
@@ -238,6 +254,7 @@
             url: '<?= $this->basePath('/admin/import-export/upload') ?>',
             data: {
                 fields: fields.join(','),
+                format: $('#format-panel [name="format"]:checked').val(),
                 separator: $('#format-panel [name="separator"]:checked').val(),
                 ending: $('#format-panel [name="ending"]:checked').val(),
                 encoding: $('#format-panel [name="encoding"]').val(),
@@ -253,6 +270,13 @@
 
     $('#selected-panel .panel-body').sortable();
     $('#selected-panel .panel-body').disableSelection();
+    $('#format-panel input[name="format"]').on('change', function () {
+        var value = $(this).val();
+        if (value == 'csv')
+            $('#csv-options').show();
+        else
+            $('#csv-options').hide();
+    });
 
     var tour = new Tour({
         name: 'import-export',

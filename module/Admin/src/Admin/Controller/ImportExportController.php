@@ -14,6 +14,11 @@ use Zend\View\Model\ViewModel;
 use Zend\View\Model\JsonModel;
 use DynamicTable\Table;
 use DynamicTable\Adapter\ArrayAdapter;
+use PHPExcel;
+use PHPExcel_Cell;
+use PHPExcel_Writer_Excel2007;
+use PHPExcel_IOFactory;
+use PHPExcel_Shared_Date;
 use Application\Exception\NotFoundException;
 use Application\Entity\Client as ClientEntity;
 use Admin\Form\Export as ExportForm;
@@ -102,16 +107,14 @@ class ImportExportController extends AbstractActionController
     public function downloadAction()
     {
         $sl = $this->getServiceLocator();
-        $em = $sl->get('Doctrine\ORM\EntityManager');
-        $dm = $sl->get('doctrine.documentmanager.odm_default');
-        $dfm = $sl->get('DataFormManager');
-        $session = $sl->get('Session');
-        $translate = $sl->get('viewhelpermanager')->get('translate');
         $basePath = $sl->get('viewhelpermanager')->get('basePath');
 
         $fields = $this->params()->fromQuery('fields');
         if (!$fields)
             $fields = $this->params()->fromPost('fields');
+        $format = $this->params()->fromQuery('format');
+        if (!$format)
+            $format = $this->params()->fromPost('format');
         $separatorParam = $this->params()->fromQuery('separator');
         if (!$separatorParam)
             $separatorParam = $this->params()->fromPost('separator');
@@ -165,7 +168,7 @@ class ImportExportController extends AbstractActionController
             if ($form->isValid()) {
                 $data = $form->getData();
 
-                $url = $basePath('/admin/import-export/generateCsv')
+                $url = $basePath('/admin/import-export/generate-' . $data['format'])
                     . '?fields=' . urlencode($data['fields'])
                     . '&separator=' . urlencode($data['separator'])
                     . '&ending=' . urlencode($data['ending'])
@@ -177,6 +180,7 @@ class ImportExportController extends AbstractActionController
         } else {
             $form->setData([
                 'fields'    => $fields,
+                'format'    => $format,
                 'separator' => $separatorParam,
                 'ending'    => $endingParam,
                 'encoding'  => $encoding,
@@ -242,14 +246,18 @@ class ImportExportController extends AbstractActionController
                 }
 
                 $parts = explode('-', $field);
+                if (count($parts) != 2)
+                    continue;
+
                 $class = $dfm->getDocumentClass($parts[0]);
-                if (!$class)
+                $prop = $parts[1];
+                if (!$class || !$prop)
                     continue;
 
                 $doc = $dm->getRepository($class)
                           ->find($client->getId());
                 if ($doc)
-                    $value = @$doc->toArray()[$parts[1]];
+                    $value = @$doc->toArray()[$prop];
                 else
                     $value = "";
 
@@ -272,6 +280,101 @@ class ImportExportController extends AbstractActionController
     }
 
     /**
+     * Generate Excel file to download
+     *
+     * @return mixed
+     */
+    protected function generateExcelAction()
+    {
+        $sl = $this->getServiceLocator();
+        $em = $sl->get('Doctrine\ORM\EntityManager');
+        $dm = $sl->get('doctrine.documentmanager.odm_default');
+        $dfm = $sl->get('DataFormManager');
+
+        $fields = $this->params()->fromQuery('fields');
+        $groups = $this->params()->fromQuery('groups');
+
+        $spreadsheet = new PHPExcel();
+        $spreadsheet->setActiveSheetIndex(0);
+        $worksheet = $spreadsheet->getActiveSheet();
+
+        $column = 0;
+        foreach (explode(',', $fields) as $field) {
+            $field = str_replace('-', ' / ', $field);
+            $row[] = '"' . $field . '"';
+            $worksheet->SetCellValueByColumnAndRow($column, 1, $field);
+            $worksheet->getColumnDimension(PHPExcel_Cell::stringFromColumnIndex($column++))->setWidth(30);
+        }
+
+        $row = 2;
+        $clients = $em->getRepository('Application\Entity\Client')
+                      ->findByGroupIds(explode(',', $groups));
+        foreach ($clients as $client) {
+            $column = 0;
+            foreach (explode(',', $fields) as $field) {
+                if ($field == 'email') {
+                    $worksheet->SetCellValueByColumnAndRow($column++, $row, $client->getEmail());
+                    continue;
+                }
+
+                $parts = explode('-', $field);
+                if (count($parts) != 2)
+                    continue;
+
+                $class = $dfm->getDocumentClass($parts[0]);
+                $prop = $parts[1];
+                if (!$class || !$prop)
+                    continue;
+
+                $method = 'get' . \Application\Tool\Text::toCamelCase($prop);
+                $doc = $dm->getRepository($class)
+                          ->find($client->getId());
+                if ($doc)
+                    $value = $doc->$method();
+                else
+                    $value = "";
+
+                if ($value instanceof \DateTime) {
+                    $worksheet->SetCellValueByColumnAndRow(
+                        $column,
+                        $row,
+                        PHPExcel_Shared_Date::FormattedPHPToExcel(
+                            $value->format('Y'),
+                            $value->format('n'),
+                            $value->format('j'),
+                            $value->format('G'),
+                            $value->format('i'),
+                            $value->format('s')
+                        )
+                    );
+                    $worksheet->getStyleByColumnAndRow($column++, $row)->getNumberFormat()->setFormatCode('yyyy-mm-dd hh:mm:ss');
+                } else {
+                    $worksheet->SetCellValueByColumnAndRow($column++, $row, $value);
+                }
+            }
+            $row++;
+        }
+
+        $writer = new PHPExcel_Writer_Excel2007($spreadsheet);
+        $writer->setIncludeCharts(true);
+        $tmpFilename = tempnam('/tmp', 'corpnews-xlsx');
+        $writer->save($tmpFilename);
+        $file = file_get_contents($tmpFilename);
+        unlink($tmpFilename);
+
+        $response = $this->getResponse();
+
+        $response->getHeaders()->addHeaders(array(
+            'Content-Type' => 'application/vnd.ms-excel',
+            'Content-Transfer-Encoding' => 'binary',
+            'Content-disposition' => 'attachment; filename="export.xlsx"'
+        ));
+        $response->setContent($file);
+
+        return $response;
+    }
+
+    /**
      * Upload file form action
      *
      * @return ViewModel
@@ -289,6 +392,9 @@ class ImportExportController extends AbstractActionController
         $fields = $this->params()->fromQuery('fields');
         if (!$fields)
             $fields = $this->params()->fromPost('fields');
+        $format = $this->params()->fromQuery('format');
+        if (!$format)
+            $format = $this->params()->fromPost('format');
         $separatorParam = $this->params()->fromQuery('separator');
         if (!$separatorParam)
             $separatorParam = $this->params()->fromPost('separator');
@@ -301,19 +407,6 @@ class ImportExportController extends AbstractActionController
         $groups = $this->params()->fromQuery('groups');
         if (!$groups)
             $groups = $this->params()->fromPost('groups');
-
-        switch ($separatorParam) {
-            default:
-            case 'comma':       $separator = ','; break;
-            case 'semicolon':   $separator = ';'; break;
-            case 'tab':         $separator = "\t"; break;
-        }
-
-        switch ($endingParam) {
-            default:
-            case 'windows': $ending = "\r\n"; break;
-            case 'unix':    $ending = "\n"; break;
-        }
 
         $script = null;
         $form = new ImportForm($sl);
@@ -343,78 +436,22 @@ class ImportExportController extends AbstractActionController
 
         $request = $this->getRequest();
         if ($request->isPost()) {
-            $post = array_merge_recursive(
+            $upload = array_merge_recursive(
                 $request->getPost()->toArray(),
                 $request->getFiles()->toArray()
             );
-            $form->setData($post);
+            $form->setData($upload);
 
             if ($form->isValid()) {
                 $data = $form->getData();
 
                 if (@is_array($data['file'])) {
+                    if ($format == 'csv')
+                        $this->importCsv($data);
+                    else if ($format == 'excel')
+                        $this->importExcel($data);
+
                     $filename = $data['file']['tmp_name'];
-                    $file = file_get_contents($filename);
-
-                    if ($data['encoding'] != 'utf-8')
-                        $file = iconv($data['encoding'], 'utf-8', $file);
-
-                    $cnt = $session->getContainer();
-
-                    $usedFields = explode(',', $fields);
-
-                    $rows = [];
-                    $first = true;
-                    foreach (explode($ending, $file) as $line) {
-                        if ($first || trim($line) == "") {
-                            $first = false;
-                            continue;
-                        }
-
-                        $csv = str_getcsv(trim($line), $separator, '"', '"');
-
-                        $row = [];
-                        for ($i = 0; $i < count($usedFields); $i++)
-                            $row[$usedFields[$i]] = @$csv[$i];
-
-                        $input = [];
-                        foreach ($row as $field => $value) {
-                            $parts = explode('-', $field);
-                            if (count($parts) != 2)
-                                continue;
-
-                            $docName = $parts[0];
-                            $propName = $parts[1];
-
-                            if (!isset($input[$docName]))
-                                $input[$docName] = [];
-
-                            $input[$docName][$propName] = $value;
-                        }
-
-                        $docs = [];
-                        foreach ($input as $docName => $props) {
-                            $class = $dfm->getDocumentClass($docName);
-                            if (!$class)
-                                continue;
-
-                            $doc = new $class();
-                            $doc->fromArray($props);
-                            $docs[$docName] = $doc;
-                        }
-
-                        $rows[] = [
-                            'email'     => $row['email'],
-                            'docs'      => $docs,
-                        ];
-                    }
-
-                    $cnt->import = [
-                        'groups'    => $groups,
-                        'fields'    => $fields,
-                        'rows'      => $rows,
-                    ];
-
                     unlink($filename);
                 }
 
@@ -424,6 +461,7 @@ class ImportExportController extends AbstractActionController
         } else {
             $form->setData([
                 'fields'    => $fields,
+                'format'    => $format,
                 'separator' => $separatorParam,
                 'ending'    => $endingParam,
                 'encoding'  => $encoding,
@@ -580,6 +618,178 @@ class ImportExportController extends AbstractActionController
     public function notFoundAction()
     {
         throw new NotFoundException('Action is not found');
+    }
+
+    /**
+     * Import CSV
+     *
+     * @param array $data
+     */
+    protected function importCsv($data)
+    {
+        $sl = $this->getServiceLocator();
+        $dfm = $sl->get('DataFormManager');
+        $session = $sl->get('Session');
+        $cnt = $session->getContainer();
+
+        switch ($data['separator']) {
+            default:
+            case 'comma':       $separator = ','; break;
+            case 'semicolon':   $separator = ';'; break;
+            case 'tab':         $separator = "\t"; break;
+        }
+
+        switch ($data['ending']) {
+            default:
+            case 'windows': $ending = "\r\n"; break;
+            case 'unix':    $ending = "\n"; break;
+        }
+
+        $filename = $data['file']['tmp_name'];
+        $file = file_get_contents($filename);
+
+        if ($data['encoding'] != 'utf-8')
+            $file = iconv($data['encoding'], 'utf-8', $file);
+
+        $usedFields = explode(',', $data['fields']);
+
+        $rows = [];
+        $first = true;
+        foreach (explode($ending, $file) as $line) {
+            if ($first || trim($line) == "") {
+                $first = false;
+                continue;
+            }
+
+            $csv = str_getcsv(trim($line), $separator, '"', '"');
+
+            $row = [];
+            for ($i = 0; $i < count($usedFields); $i++)
+                $row[$usedFields[$i]] = @$csv[$i];
+
+            if (strlen(@$row['email']) == 0)
+                continue;
+
+            $input = [];
+            foreach ($row as $field => $value) {
+                $parts = explode('-', $field);
+                if (count($parts) != 2)
+                    continue;
+
+                $docName = $parts[0];
+                $propName = $parts[1];
+
+                if (!isset($input[$docName]))
+                    $input[$docName] = [];
+
+                $input[$docName][$propName] = $value;
+            }
+
+            $docs = [];
+            foreach ($input as $docName => $props) {
+                $class = $dfm->getDocumentClass($docName);
+                if (!$class)
+                    continue;
+
+                $doc = new $class();
+                $doc->fromArray($props);
+                $docs[$docName] = $doc;
+            }
+
+            $rows[] = [
+                'email'     => $row['email'],
+                'docs'      => $docs,
+            ];
+        }
+
+        $cnt->import = [
+            'groups'    => $data['groups'],
+            'fields'    => $data['fields'],
+            'rows'      => $rows,
+        ];
+    }
+
+    /**
+     * Import Excel
+     *
+     * @param array $data
+     */
+    protected function importExcel($data)
+    {
+        $sl = $this->getServiceLocator();
+        $dfm = $sl->get('DataFormManager');
+        $session = $sl->get('Session');
+        $cnt = $session->getContainer();
+
+        $filename = $data['file']['tmp_name'];
+        $usedFields = explode(',', $data['fields']);
+
+        try {
+            $type = PHPExcel_IOFactory::identify($filename);
+            $reader = PHPExcel_IOFactory::createReader($type);
+            $excel = $reader->load($filename);
+        } catch(Exception $e) {
+            throw new Exception('Error loading file: ' . $e->getMessage());
+        }
+
+        $worksheet = $excel->getSheet(0); 
+        $highestRow = $worksheet->getHighestRow(); 
+        $highestColumn = $worksheet->getHighestColumn();
+
+        $rows = [];
+        for ($i = 2; $i <= $highestRow; $i++) {
+            $row = [];
+            for ($j = 0; $j < count($usedFields); $j++) {
+                $coords = chr(ord('A') + $j) . $i;
+                $cell = $worksheet->getCell($coords);
+                $value = $cell->getValue();
+                if (PHPExcel_Shared_Date::isDateTime($cell)) {
+                    $date = PHPExcel_Shared_Date::ExcelToPHPObject($value);
+                    $value = $date->format('Y-m-d H:i:s P');
+                }
+                $row[$usedFields[$j]] = $value;
+            }
+
+            if (strlen(@$row['email']) == 0)
+                continue;
+
+            $input = [];
+            foreach ($row as $field => $value) {
+                $parts = explode('-', $field);
+                if (count($parts) != 2)
+                    continue;
+
+                $docName = $parts[0];
+                $propName = $parts[1];
+
+                if (!isset($input[$docName]))
+                    $input[$docName] = [];
+
+                $input[$docName][$propName] = $value;
+            }
+
+            $docs = [];
+            foreach ($input as $docName => $props) {
+                $class = $dfm->getDocumentClass($docName);
+                if (!$class)
+                    continue;
+
+                $doc = new $class();
+                $doc->fromArray($props);
+                $docs[$docName] = $doc;
+            }
+
+            $rows[] = [
+                'email'     => $row['email'],
+                'docs'      => $docs,
+            ];
+        }
+
+        $cnt->import = [
+            'groups'    => $data['groups'],
+            'fields'    => $data['fields'],
+            'rows'      => $rows,
+        ];
     }
 
     /**
