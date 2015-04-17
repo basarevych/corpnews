@@ -124,9 +124,14 @@ class Import extends Form
         $filter->add($groups);
 
         $file = new Input('file');
-        $file->setRequired(true)
-             ->getValidatorChain()
-             ->attach(new Validator\File\UploadFile());
+        $file->setRequired(true);
+
+        global $__UPLOAD_MOCK;
+        if ($__UPLOAD_MOCK !== true) {
+            $file->getValidatorChain()
+                 ->attach(new Validator\File\UploadFile());
+        }
+
         $filter->add($file);
 
         $this->inputFilter = $filter;

@@ -209,6 +209,87 @@ class ImportExportControllerTest extends AbstractHttpControllerTestCase
         unlink($filename);
     }
 
+    public function testUploadActionCanBeAccessed()
+    {
+        $this->dispatch('/admin/import-export/upload');
+        $this->assertResponseStatusCode(200);
+
+        $this->assertModuleName('admin');
+        $this->assertControllerName('admin\controller\importexport');
+        $this->assertControllerClass('ImportExportController');
+        $this->assertMatchedRouteName('admin');
+    }
+
+    public function testUploadActionWorksForCsv()
+    {
+        $getParams = [
+            'fields'    => 'email,profile-last_name',
+            'format'    => 'csv',
+            'separator' => 'comma',
+            'ending'    => 'unix',
+            'encoding'  => 'utf-8',
+            'groups'    => [ 9000 ],
+        ];
+        $this->dispatch('/admin/import-export/upload', HttpRequest::METHOD_GET, $getParams);
+        $this->assertResponseStatusCode(200);
+
+        $response = $this->getResponse();
+        $dom = new Query($response->getContent());
+        $result = $dom->execute('input[name="security"]');
+        $security = count($result) ? $result[0]->getAttribute('value') : null;
+
+        global $__UPLOAD_MOCK;
+        $__UPLOAD_MOCK = true;
+
+        $mock = '"email","profile / last_name"' . "\n"
+               .'"new@email","new name"' . "\n";
+
+        $params = [
+            'security'  => $security,
+            'fields'    => 'email,profile-last_name',
+            'format'    => 'csv',
+            'separator' => 'comma',
+            'ending'    => 'unix',
+            'encoding'  => 'utf-8',
+            'groups'    => [ 9000 ],
+            'file'      => [
+                'name'      => 'import.csv',
+                'type'      => 'application/vnd.ms-excel',
+                'tmp_name'  => '/tmp/corpnews-test.csv',
+                'error'     => 0,
+                'size'      => strlen($mock),
+            ],
+        ];
+
+        file_put_contents($params['file']['tmp_name'], $mock);
+
+        $this->dispatch('/admin/import-export/upload', HttpRequest::METHOD_POST, $params);
+        $this->assertResponseStatusCode(200);
+
+        if (is_file($params['file']['tmp_name']))
+            unlink($params['file']['tmp_name']);
+
+        $profile = new ProfileDocument();
+        $profile->setLastName('new name');
+
+        $session = $this->sl->get('Session');
+        $cnt = $session->getContainer();
+        $this->assertEquals(
+            $cnt->import,
+            [
+                'groups' => [ 9000 ],
+                'fields' => 'email,profile-last_name',
+                'rows' => [
+                    [
+                        'email' => 'new@email',
+                        'docs' => [ 'profile' => $profile ],
+                    ],
+                ],
+            ],
+            "Import data is wrong"
+        );
+    }
+
     public function testImportPreviewActionCanBeAccessed()
     {
         $this->dispatch('/admin/import-export/import-preview');

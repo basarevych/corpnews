@@ -4,7 +4,7 @@
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "da2ff754a4f4567d405f5fa6a8d0e353",
+    "hash": "dfcfb5125372a8b0bbf5de719deb84cd",
     "packages": [
         {
             "name": "basarevych/dynamic-table",

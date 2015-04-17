@@ -450,11 +450,11 @@ class ImportExportController extends AbstractActionController
 
         $request = $this->getRequest();
         if ($request->isPost()) {
-            $post = array_merge_recursive(
+            $upload = array_merge_recursive(
                 $request->getPost()->toArray(),
                 $request->getFiles()->toArray()
             );
-            $form->setData($post);
+            $form->setData($upload);
 
             if ($form->isValid()) {
                 $data = $form->getData();
