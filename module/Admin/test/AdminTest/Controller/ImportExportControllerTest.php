@@ -8,6 +8,7 @@ use Zend\Json\Json;
 use Zend\Test\PHPUnit\Controller\AbstractHttpControllerTestCase;
 use Webfactory\Doctrine\ORMTestInfrastructure\ORMInfrastructure;
 use PHPExcel_IOFactory;
+use PHPExcel_Shared_Date;
 use Application\Entity\Client as ClientEntity;
 use Application\Entity\Group as GroupEntity;
 use DataForm\Document\Profile as ProfileDocument;
@@ -84,7 +85,11 @@ class ImportExportControllerTest extends AbstractHttpControllerTestCase
                                    ->setMethods([ 'find' ])
                                    ->getMock();
 
+        $this->dtValue = new \DateTime();
+        $this->dtFormat = 'Y-m-d H:i:s P';
+
         $this->profile = new ProfileDocument();
+        $this->profile->setWhenUpdated($this->dtValue);
         $this->profile->setLastName('Lastname');
 
         $this->repoProfiles->expects($this->any())
@@ -151,7 +156,7 @@ class ImportExportControllerTest extends AbstractHttpControllerTestCase
     public function testGenerateCsvActionGeneratesFile()
     {
         $params = [
-            'fields'    => 'email,profile-last_name',
+            'fields'    => 'email,profile-when_updated,profile-last_name',
             'separator' => 'comma',
             'ending'    => 'unix',
             'encoding'  => 'utf-8',
@@ -164,14 +169,14 @@ class ImportExportControllerTest extends AbstractHttpControllerTestCase
         $lines = explode("\n", $file);
 
         $this->assertEquals(3, count($lines), "Two lines should be generated");
-        $this->assertEquals('"email","profile / last_name"', $lines[0], "Header is wrong");
-        $this->assertEquals('"foo@bar","Lastname"', $lines[1], "Data is wrong");
+        $this->assertEquals('"email","profile / when_updated","profile / last_name"', $lines[0], "Header is wrong");
+        $this->assertEquals('"foo@bar","' . $this->dtValue->format($this->dtFormat) . '","Lastname"', $lines[1], "Data is wrong");
     }
 
     public function testGenerateExcelActionGeneratesFile()
     {
         $params = [
-            'fields'    => 'email,profile-last_name',
+            'fields'    => 'email,profile-when_updated,profile-last_name',
             'groups'    => 9000,
         ];
         $this->dispatch('/admin/import-export/generate-excel', HttpRequest::METHOD_GET, $params);
@@ -194,16 +199,21 @@ class ImportExportControllerTest extends AbstractHttpControllerTestCase
         $highestColumn = $worksheet->getHighestColumn();
 
         $this->assertEquals(2, $highestRow, "Two rows should be generated");
-        $this->assertEquals('B', $highestColumn, "Two columns should be generated");
+        $this->assertEquals('C', $highestColumn, "Two columns should be generated");
 
         $emailTitle = $worksheet->getCell('A1')->getValue();
         $this->assertEquals('email', $emailTitle, "Email header is wrong");
-        $lastNameTitle = $worksheet->getCell('B1')->getValue();
+        $whenUpdatedTitle = $worksheet->getCell('B1')->getValue();
+        $this->assertEquals('profile / when_updated', $whenUpdatedTitle, "WhenUpdated header is wrong");
+        $lastNameTitle = $worksheet->getCell('C1')->getValue();
         $this->assertEquals('profile / last_name', $lastNameTitle, "LastName header is wrong");
 
         $emailData = $worksheet->getCell('A2')->getValue();
         $this->assertEquals('foo@bar', $emailData, "Email data is wrong");
-        $lastNameData = $worksheet->getCell('B2')->getValue();
+        $whenUpdatedData = $worksheet->getCell('B2')->getValue();
+        $date = PHPExcel_Shared_Date::ExcelToPHPObject($whenUpdatedData);
+        $this->assertEquals($this->dtValue, $date, "WhenUpdated data is wrong");
+        $lastNameData = $worksheet->getCell('C2')->getValue();
         $this->assertEquals('Lastname', $lastNameData, "LastName data is wrong");
 
         unlink($filename);
@@ -223,7 +233,7 @@ class ImportExportControllerTest extends AbstractHttpControllerTestCase
     public function testUploadActionWorksForCsv()
     {
         $getParams = [
-            'fields'    => 'email,profile-last_name',
+            'fields'    => 'email,profile-when_updated,profile-last_name',
             'format'    => 'csv',
             'separator' => 'comma',
             'ending'    => 'unix',
@@ -241,12 +251,12 @@ class ImportExportControllerTest extends AbstractHttpControllerTestCase
         global $__UPLOAD_MOCK;
         $__UPLOAD_MOCK = true;
 
-        $mock = '"email","profile / last_name"' . "\n"
-               .'"new@email","new name"' . "\n";
+        $mock = '"email","profile / when_updated","profile / last_name"' . "\n"
+               .'"new@email","' . $this->dtValue->format($this->dtFormat) . '","new name"' . "\n";
 
         $params = [
             'security'  => $security,
-            'fields'    => 'email,profile-last_name',
+            'fields'    => 'email,profile-when_updated,profile-last_name',
             'format'    => 'csv',
             'separator' => 'comma',
             'ending'    => 'unix',
@@ -270,6 +280,7 @@ class ImportExportControllerTest extends AbstractHttpControllerTestCase
             unlink($params['file']['tmp_name']);
 
         $profile = new ProfileDocument();
+        $profile->setWhenUpdated($this->dtValue);
         $profile->setLastName('new name');
 
         $session = $this->sl->get('Session');
@@ -278,7 +289,7 @@ class ImportExportControllerTest extends AbstractHttpControllerTestCase
             $cnt->import,
             [
                 'groups' => [ 9000 ],
-                'fields' => 'email,profile-last_name',
+                'fields' => 'email,profile-when_updated,profile-last_name',
                 'rows' => [
                     [
                         'email' => 'new@email',
@@ -345,6 +356,7 @@ class ImportExportControllerTest extends AbstractHttpControllerTestCase
         $this->assertEquals(1, count($persistedDocuments), "One document should have been persisted");
         $this->assertEquals(42, $persistedDocuments[0]->getId(), "ID is wrong");
         $this->assertEquals('foo@bar', $persistedDocuments[0]->getClientEmail(), "Email is wrong");
+        $this->assertEquals($this->dtValue, $persistedDocuments[0]->getWhenUpdated(), "WhenUpdated is wrong");
         $this->assertEquals('Lastname', $persistedDocuments[0]->getLastName(), "Last name is wrong");
     }
 
