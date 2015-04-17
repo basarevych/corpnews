@@ -7,6 +7,9 @@ use Zend\Dom\Query;
 use Zend\Json\Json;
 use Zend\Test\PHPUnit\Controller\AbstractHttpControllerTestCase;
 use Webfactory\Doctrine\ORMTestInfrastructure\ORMInfrastructure;
+use PHPExcel;
+use PHPExcel_Cell;
+use PHPExcel_Writer_Excel2007;
 use PHPExcel_IOFactory;
 use PHPExcel_Shared_Date;
 use Application\Entity\Client as ClientEntity;
@@ -272,6 +275,98 @@ class ImportExportControllerTest extends AbstractHttpControllerTestCase
         ];
 
         file_put_contents($params['file']['tmp_name'], $mock);
+
+        $this->dispatch('/admin/import-export/upload', HttpRequest::METHOD_POST, $params);
+        $this->assertResponseStatusCode(200);
+
+        if (is_file($params['file']['tmp_name']))
+            unlink($params['file']['tmp_name']);
+
+        $profile = new ProfileDocument();
+        $profile->setWhenUpdated($this->dtValue);
+        $profile->setLastName('new name');
+
+        $session = $this->sl->get('Session');
+        $cnt = $session->getContainer();
+        $this->assertEquals(
+            $cnt->import,
+            [
+                'groups' => [ 9000 ],
+                'fields' => 'email,profile-when_updated,profile-last_name',
+                'rows' => [
+                    [
+                        'email' => 'new@email',
+                        'docs' => [ 'profile' => $profile ],
+                    ],
+                ],
+            ],
+            "Import data is wrong"
+        );
+    }
+
+    public function testUploadActionWorksForExcel()
+    {
+        $getParams = [
+            'fields'    => 'email,profile-when_updated,profile-last_name',
+            'format'    => 'excel',
+            'separator' => 'comma',
+            'ending'    => 'unix',
+            'encoding'  => 'utf-8',
+            'groups'    => [ 9000 ],
+        ];
+        $this->dispatch('/admin/import-export/upload', HttpRequest::METHOD_GET, $getParams);
+        $this->assertResponseStatusCode(200);
+
+        $response = $this->getResponse();
+        $dom = new Query($response->getContent());
+        $result = $dom->execute('input[name="security"]');
+        $security = count($result) ? $result[0]->getAttribute('value') : null;
+
+        global $__UPLOAD_MOCK;
+        $__UPLOAD_MOCK = true;
+
+        $params = [
+            'security'  => $security,
+            'fields'    => 'email,profile-when_updated,profile-last_name',
+            'format'    => 'csv',
+            'separator' => 'comma',
+            'ending'    => 'unix',
+            'encoding'  => 'utf-8',
+            'groups'    => [ 9000 ],
+            'file'      => [
+                'name'      => 'import.csv',
+                'type'      => 'application/vnd.ms-excel',
+                'tmp_name'  => '/tmp/corpnews-test.csv',
+                'error'     => 0,
+                'size'      => 123,
+            ],
+        ];
+
+        $spreadsheet = new PHPExcel();
+        $spreadsheet->setActiveSheetIndex(0);
+        $worksheet = $spreadsheet->getActiveSheet();
+
+        $worksheet->SetCellValueByColumnAndRow(0, 2, 'new@email');
+
+        $worksheet->SetCellValueByColumnAndRow(
+            1,
+            2,
+            PHPExcel_Shared_Date::FormattedPHPToExcel(
+                $this->dtValue->format('Y'),
+                $this->dtValue->format('n'),
+                $this->dtValue->format('j'),
+                $this->dtValue->format('G'),
+                $this->dtValue->format('i'),
+                $this->dtValue->format('s')
+            )
+        );
+        $worksheet->getStyleByColumnAndRow(1, 2)->getNumberFormat()->setFormatCode('yyyy-mm-dd hh:mm:ss');
+
+        $worksheet->SetCellValueByColumnAndRow(2, 2, 'new name');
+
+        $writer = new PHPExcel_Writer_Excel2007($spreadsheet);
+        $writer->setIncludeCharts(true);
+        $writer->save($params['file']['tmp_name']);
 
         $this->dispatch('/admin/import-export/upload', HttpRequest::METHOD_POST, $params);
         $this->assertResponseStatusCode(200);

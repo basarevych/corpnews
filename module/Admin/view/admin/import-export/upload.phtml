@@ -10,6 +10,7 @@ if ($this->script) {    // Run script and return (no form is displayed)
 $form = $this->form;
 $security = $form->get('security');
 $fields = $form->get('fields');
+$format = $form->get('format');
 $separator = $form->get('separator');
 $ending = $form->get('ending');
 $encoding = $form->get('encoding');
@@ -41,6 +42,10 @@ $file = $form->get('file');
         <input type="hidden"
                name="<?= $fields->getName() ?>"
                value="<?= $fields->getValue() ?>">
+
+        <input type="hidden"
+               name="<?= $format->getName() ?>"
+               value="<?= $format->getValue() ?>">
 
         <input type="hidden"
                name="<?= $separator->getName() ?>"
