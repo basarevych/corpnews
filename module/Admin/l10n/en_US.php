@@ -266,6 +266,8 @@ return [
     // ImportExportController
     'Presets' => 'Presets',
     'File format' => 'File format',
+    'Excel format' => 'Excel format',
+    'CSV format' => 'CSV format',
     'Field separator' => 'Field separator',
     'Comma' => 'Comma',
     'Semicolon' => 'Semicolon',

@@ -61,6 +61,9 @@ class Export extends Form
         $fields = new Element\Hidden('fields');
         $this->add($fields);
 
+        $format = new Element\Hidden('format');
+        $this->add($format);
+
         $separator = new Element\Hidden('separator');
         $this->add($separator);
 
@@ -102,6 +105,10 @@ class Export extends Form
         $fields = new Input('fields');
         $fields->setRequired(true);
         $filter->add($fields);
+
+        $format = new Input('format');
+        $format->setRequired(true);
+        $filter->add($format);
 
         $separator = new Input('separator');
         $separator->setRequired(true);
