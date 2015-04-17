@@ -7,6 +7,7 @@ use Zend\Dom\Query;
 use Zend\Json\Json;
 use Zend\Test\PHPUnit\Controller\AbstractHttpControllerTestCase;
 use Webfactory\Doctrine\ORMTestInfrastructure\ORMInfrastructure;
+use PHPExcel_IOFactory;
 use Application\Entity\Client as ClientEntity;
 use Application\Entity\Group as GroupEntity;
 use DataForm\Document\Profile as ProfileDocument;
@@ -99,7 +100,7 @@ class ImportExportControllerTest extends AbstractHttpControllerTestCase
         $cnt = $session->getContainer();
         $cnt->is_admin = true;
         $cnt->import = [
-            'groups' => '9000',
+            'groups' => [ 9000 ],
             'fields' => 'email,profile-last_name',
             'rows' => [
                 [
@@ -165,6 +166,47 @@ class ImportExportControllerTest extends AbstractHttpControllerTestCase
         $this->assertEquals(3, count($lines), "Two lines should be generated");
         $this->assertEquals('"email","profile / last_name"', $lines[0], "Header is wrong");
         $this->assertEquals('"foo@bar","Lastname"', $lines[1], "Data is wrong");
+    }
+
+    public function testGenerateExcelActionGeneratesFile()
+    {
+        $params = [
+            'fields'    => 'email,profile-last_name',
+            'groups'    => 9000,
+        ];
+        $this->dispatch('/admin/import-export/generate-excel', HttpRequest::METHOD_GET, $params);
+        $this->assertResponseStatusCode(200);
+
+        $filename = '/tmp/corpnews-test.xlsx';
+        $response = $this->getResponse()->getContent();
+        file_put_contents($filename, $response);
+
+        try {
+            $type = PHPExcel_IOFactory::identify($filename);
+            $reader = PHPExcel_IOFactory::createReader($type);
+            $excel = $reader->load($filename);
+        } catch(Exception $e) {
+            die('Error loading file: ' . $e->getMessage());
+        }
+
+        $worksheet = $excel->getSheet(0); 
+        $highestRow = $worksheet->getHighestRow(); 
+        $highestColumn = $worksheet->getHighestColumn();
+
+        $this->assertEquals(2, $highestRow, "Two rows should be generated");
+        $this->assertEquals('B', $highestColumn, "Two columns should be generated");
+
+        $emailTitle = $worksheet->getCell('A1')->getValue();
+        $this->assertEquals('email', $emailTitle, "Email header is wrong");
+        $lastNameTitle = $worksheet->getCell('B1')->getValue();
+        $this->assertEquals('profile / last_name', $lastNameTitle, "LastName header is wrong");
+
+        $emailData = $worksheet->getCell('A2')->getValue();
+        $this->assertEquals('foo@bar', $emailData, "Email data is wrong");
+        $lastNameData = $worksheet->getCell('B2')->getValue();
+        $this->assertEquals('Lastname', $lastNameData, "LastName data is wrong");
+
+        unlink($filename);
     }
 
     public function testImportPreviewActionCanBeAccessed()
