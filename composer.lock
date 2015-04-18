@@ -4,20 +4,20 @@
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "dfcfb5125372a8b0bbf5de719deb84cd",
+    "hash": "dff091a50a6e3ab236199d9cef5f2933",
     "packages": [
         {
             "name": "basarevych/dynamic-table",
-            "version": "dev-master",
+            "version": "v0.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/basarevych/dynamic-table.git",
-                "reference": "f43af158d4e4e1da5bac761982d54b9bfe1c9de3"
+                "reference": "c53b8241a1c9faa5f43baaa7e0f77d372510fd89"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/basarevych/dynamic-table/zipball/f43af158d4e4e1da5bac761982d54b9bfe1c9de3",
-                "reference": "f43af158d4e4e1da5bac761982d54b9bfe1c9de3",
+                "url": "https://api.github.com/repos/basarevych/dynamic-table/zipball/c53b8241a1c9faa5f43baaa7e0f77d372510fd89",
+                "reference": "c53b8241a1c9faa5f43baaa7e0f77d372510fd89",
                 "shasum": ""
             },
             "require": {
@@ -50,20 +50,20 @@
                 "orm",
                 "php"
             ],
-            "time": "2015-03-14 08:08:31"
+            "time": "2015-04-18 14:38:11"
         },
         {
             "name": "basarevych/task-daemon",
-            "version": "v0.2.2",
+            "version": "v0.2.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/basarevych/task-daemon.git",
-                "reference": "6789b2927a4b0e946e5bba1ca1ae6825f9183c21"
+                "reference": "152bb2c13e7cdb37e6a11e9ab1da30eea2246c85"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/basarevych/task-daemon/zipball/6789b2927a4b0e946e5bba1ca1ae6825f9183c21",
-                "reference": "6789b2927a4b0e946e5bba1ca1ae6825f9183c21",
+                "url": "https://api.github.com/repos/basarevych/task-daemon/zipball/152bb2c13e7cdb37e6a11e9ab1da30eea2246c85",
+                "reference": "152bb2c13e7cdb37e6a11e9ab1da30eea2246c85",
                 "shasum": ""
             },
             "require": {
@@ -95,7 +95,7 @@
                 "daemon",
                 "php"
             ],
-            "time": "2015-04-17 13:34:59"
+            "time": "2015-04-18 10:18:56"
         },
         {
             "name": "doctrine/annotations",
@@ -2360,7 +2360,6 @@
     "aliases": [],
     "minimum-stability": "alpha",
     "stability-flags": {
-        "basarevych/dynamic-table": 20,
         "phpunit/phpunit": 0,
         "webfactory/doctrine-orm-test-infrastructure": 0
     },
