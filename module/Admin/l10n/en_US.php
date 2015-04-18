@@ -319,5 +319,6 @@ return [
     'DEMO_LOGIN' => '<p>This is demo page for CorpNews. Login is "admin", password is "passwd"</p>'
         . '<p>Note that this installation is reset every day at 13:00 GMT, expect errors at that time</p>',
     'DEMO_FUNCTION_DISABLED' => 'CorpNews is in demo mode. This function is disabled.',
-    'DEMO_MOCK_SENDING' => 'This is demo mode so no mail is actually sent. You can check the generated letters in Mail / Outgoing messages',
+    'DEMO_MOCK_SENDING' => '<p><em>This is demo mode so no mail is actually sent. You can check the generated letters in Mail / Outgoing messages.</em></p>'
+        . '<p><em>Press "Test campaign" button if you want to actually recieve the letter.</em></p>',
 ];

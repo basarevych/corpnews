@@ -205,7 +205,7 @@ class Mail implements ServiceLocatorAwareInterface
 
         try {
             $msg = Message::fromString($letter->getHeaders() . "\n\n" . $letter->getBody());
-//            $this->getTransport()->send($msg);
+            $this->getTransport()->send($msg);
         } catch (\Exception $e) {
             $logger = $sl->get('Logger');
             $logger->log(

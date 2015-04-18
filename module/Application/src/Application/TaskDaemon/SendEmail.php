@@ -136,6 +136,7 @@ class SendEmail extends ZfTask
                             continue;
                         }
 
+/*
                         if (!$mail->sendLetter($letter)) {
                             $campaign->setStatus(CampaignEntity::STATUS_PAUSED);
                             $em->persist($campaign);
@@ -152,6 +153,13 @@ class SendEmail extends ZfTask
 
                             break 3;
                         }
+*/
+
+                        // Immitate sending the letter
+                        $letter->setStatus(LetterEntity::STATUS_SENT);
+                        $letter->setWhenProcessed(new \DateTime());
+                        $em->persist($letter);
+                        $em->flush();
 
                         sleep($mailInterval);
 
