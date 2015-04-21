@@ -1,6 +1,6 @@
 {
-  "name": "zf2-skeleton",
-  "description": "ZF2 Skeleton",
+  "name": "corpnews",
+  "description": "CorpNews",
   "license": "MIT",
   "authors": [
     {
@@ -16,7 +16,7 @@
     "jquery.cookie": "~1.4.1",
     "moment": "~2.10.2",
     "bootstrap": "~3.3.4",
-    "bootstrap-tour": "~0.10.1",
+    "bootstrap-tour": "~0.10.2",
     "eonasdan-bootstrap-datetimepicker": "~4.7.14"
   }
 }
