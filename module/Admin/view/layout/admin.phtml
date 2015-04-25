@@ -358,6 +358,7 @@
                 if (typeof title != 'undefined')
                     modal.find('.modal-title').text(title);
                 modal.find('.modal-body').html(msg);
+                modal.find('.modal-footer .spinner').hide();
                 modal.find('button[type="submit"]').hide();
                 modal.one('hide.bs.modal', function() {
                     modal.find('button[type="submit"]').show();
