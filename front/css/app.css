@@ -37,6 +37,11 @@ body.form {
     text-align: center;
 }
 
+.modal-footer .spinner {
+    display: none;
+    float: left;
+}
+
 .required-marker {
     display: block;
     vertical-align: super;
