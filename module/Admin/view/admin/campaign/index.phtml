@@ -178,7 +178,7 @@
             success: function (html) {
                 var modal = $('#modal-form');
                 modal.find('.modal-title').text('<?= $this->translate('Launch campaign') ?>');
-                modal.find('button[type=submit]').text('<?= $this->translate('Launch') ?>');
+                modal.find('button[type=submit]').text('<?= $this->translate('Launch') ?>').show();
                 modal.find('.modal-body').html(html);
             }
         });
@@ -193,7 +193,7 @@
             success: function (html) {
                 var modal = $('#modal-form');
                 modal.find('.modal-title').text('<?= $this->translate('Edit campaign') ?>');
-                modal.find('button[type=submit]').text('<?= $this->translate('Save changes') ?>');
+                modal.find('button[type=submit]').text('<?= $this->translate('Save changes') ?>').show();
                 modal.find('.modal-body').html(html);
             }
         });
@@ -213,7 +213,7 @@
             success: function (html) {
                 var modal = $('#modal-form');
                 modal.find('.modal-title').text('<?= $this->translate('Test campaign') ?>');
-                modal.find('button[type=submit]').text('<?= $this->translate('Send test letter') ?>');
+                modal.find('button[type=submit]').text('<?= $this->translate('Send test letter') ?>').show();
                 modal.find('.modal-body').html(html);
             }
         });
@@ -233,7 +233,7 @@
             success: function (html) {
                 var modal = $('#modal-form');
                 modal.find('.modal-title').text('<?= $this->translate('Pause campaign') ?>');
-                modal.find('button[type=submit]').text('<?= $this->translate('Pause') ?>');
+                modal.find('button[type=submit]').text('<?= $this->translate('Pause') ?>').show();
                 modal.find('.modal-body').html(html);
             }
         });
@@ -253,7 +253,7 @@
             success: function (html) {
                 var modal = $('#modal-form');
                 modal.find('.modal-title').text('<?= $this->translate('Archive campaign') ?>');
-                modal.find('button[type=submit]').text('<?= $this->translate('Archive') ?>');
+                modal.find('button[type=submit]').text('<?= $this->translate('Archive') ?>').show();
                 modal.find('.modal-body').html(html);
             }
         });
@@ -273,7 +273,7 @@
             success: function (html) {
                 var modal = $('#modal-form');
                 modal.find('.modal-title').text('<?= $this->translate('Delete campaign') ?>');
-                modal.find('button[type=submit]').text('<?= $this->translate('Delete') ?>');
+                modal.find('button[type=submit]').text('<?= $this->translate('Delete') ?>').show();
                 modal.find('.modal-body').html(html);
             }
         });
@@ -288,11 +288,8 @@
             success: function (html) {
                 var modal = $('#modal-form');
                 modal.find('.modal-title').text('<?= $this->translate('Campaign statistics') ?>');
-                modal.find('.modal-body').html(html);
                 modal.find('button[type="submit"]').hide();
-                modal.one('hide.bs.modal', function() {
-                    modal.find('button[type="submit"]').show();
-                });
+                modal.find('.modal-body').html(html);
             }
         });
     }
