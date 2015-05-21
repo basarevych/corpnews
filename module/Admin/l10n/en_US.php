@@ -60,7 +60,8 @@ return [
     'Empty' => 'Empty',
     'CONFIRM_EMPTY_GROUP' => 'Remove all clients from selected group(s)?',
     'CONFIRM_DELETE_GROUP' => 'Delete selected group(s)?',
-    'CANNOT_DELETE_SYSTEM_GROUPS' => 'NOTE: System groups can not be deleted',
+    'CANNOT_EDIT_SYSTEM_GROUP' => 'System groups can not be edited',
+    'CANNOT_DELETE_SYSTEM_GROUP' => 'System groups can not be deleted',
 
     // ClientController
     'Filled forms' => 'Filled forms',
@@ -74,7 +75,6 @@ return [
     'Yes' => 'Yes',
     'No' => 'No',
     'Groups' => 'Groups',
-    'CANNOT_EDIT_SYSTEM_GROUP' => 'Can not edit system group',
     'CONFIRM_DELETE_CLIENT' => 'Delete selected client(s)?',
 
     // CampaignController

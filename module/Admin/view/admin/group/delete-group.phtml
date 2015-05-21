@@ -31,12 +31,17 @@ $id = $form->get('id');
         </div>
     <?php endforeach ?>
 
-    <p><?= $this->translate('CONFIRM_DELETE_GROUP') ?></p>
     <?php if ($this->keepSystemGroup): ?>
         <p>
-            <?= $this->translate('CANNOT_DELETE_SYSTEM_GROUPS') ?>:
+            <?= $this->translate('CANNOT_DELETE_SYSTEM_GROUP') ?>:
+            <br>
             <?= join(', ', $this->systemGroups) ?>
         </p>
+        <script>
+            $('#modal-form button[type=submit]').hide();
+        </script>
+    <?php else: ?>
+        <p><?= $this->translate('CONFIRM_DELETE_GROUP') ?></p>
     <?php endif ?>
 </form>
 

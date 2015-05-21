@@ -35,12 +35,11 @@ $id = $form->has('id') ? $form->get('id') : null;
     <?php endforeach ?>
 
     <?php if ($form instanceof \Application\Form\Confirm): ?>
-        <p><?= $this->translate('CANNOT_EDIT_SYSTEM_GROUP') ?></p>
+        <p>
+            <?= $this->translate('CANNOT_EDIT_SYSTEM_GROUP') ?>
+        </p>
         <script>
             $('#modal-form button[type=submit]').hide();
-            $('#modal-form').on('hidden.bs.modal', function () {
-                $('#modal-form button[type=submit]').show();
-            });
         </script>
     <?php else: ?>
         <?php $name = $form->get('name'); ?>

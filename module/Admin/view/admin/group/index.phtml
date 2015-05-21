@@ -92,7 +92,7 @@
             success: function (html) {
                 var modal = $('#modal-form');
                 modal.find('.modal-title').text('<?= $this->translate('Create group') ?>');
-                modal.find('button[type=submit]').text('<?= $this->translate('Create') ?>');
+                modal.find('button[type=submit]').text('<?= $this->translate('Create') ?>').show();
                 modal.find('.modal-body').html(html);
             }
         });
@@ -107,7 +107,7 @@
             success: function (html) {
                 var modal = $('#modal-form');
                 modal.find('.modal-title').text('<?= $this->translate('Edit group') ?>');
-                modal.find('button[type=submit]').text('<?= $this->translate('Save changes') ?>');
+                modal.find('button[type=submit]').text('<?= $this->translate('Save changes') ?>').show();
                 modal.find('.modal-body').html(html);
             }
         });
@@ -127,7 +127,7 @@
             success: function (html) {
                 var modal = $('#modal-form');
                 modal.find('.modal-title').text('<?= $this->translate('Empty group') ?>');
-                modal.find('button[type=submit]').text('<?= $this->translate('Empty') ?>');
+                modal.find('button[type=submit]').text('<?= $this->translate('Empty') ?>').show();
                 modal.find('.modal-body').html(html);
             }
         });
@@ -147,7 +147,7 @@
             success: function (html) {
                 var modal = $('#modal-form');
                 modal.find('.modal-title').text('<?= $this->translate('Delete group') ?>');
-                modal.find('button[type=submit]').text('<?= $this->translate('Delete') ?>');
+                modal.find('button[type=submit]').text('<?= $this->translate('Delete') ?>').show();
                 modal.find('.modal-body').html(html);
             }
         });

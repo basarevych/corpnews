@@ -237,7 +237,7 @@
             success: function (html) {
                 var modal = $('#modal-form');
                 modal.find('.modal-title').text('<?= $this->translate('Export data') ?>');
-                modal.find('button[type=submit]').text('<?= $this->translate('Download') ?>');
+                modal.find('button[type=submit]').text('<?= $this->translate('Download') ?>').show();
                 modal.find('.modal-body').html(html);
             }
         });
@@ -262,7 +262,7 @@
             success: function (html) {
                 var modal = $('#modal-form');
                 modal.find('.modal-title').text('<?= $this->translate('Import data') ?>');
-                modal.find('button[type=submit]').text('<?= $this->translate('Preview') ?>');
+                modal.find('button[type=submit]').text('<?= $this->translate('Preview') ?>').show();
                 modal.find('.modal-body').html(html);
             }
         });

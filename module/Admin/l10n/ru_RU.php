@@ -60,9 +60,9 @@ return [
     'Number of clients' => 'Число клиентов',
     'Empty' => 'Очистить',
     'CONFIRM_EMPTY_GROUP' => 'Исключить всех клиентов из выбранной группы (групп)?',
-    'CANNOT_EDIT_SYSTEM_GROUP' => 'Нельзя редактирвать системную группу',
     'CONFIRM_DELETE_GROUP' => 'Удалить выбранную группу (группы)?',
-    'CANNOT_DELETE_SYSTEM_GROUPS' => 'NOTE: Системные группы не могут быть удалены',
+    'CANNOT_EDIT_SYSTEM_GROUP' => 'Системные группы нельзя редактировать',
+    'CANNOT_DELETE_SYSTEM_GROUP' => 'Системные группы не могут быть удалены',
 
     // ClientController
     'Filled forms' => 'Заполненные формы',
