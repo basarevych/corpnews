@@ -3,8 +3,8 @@
 return [
     // Layouts
     'APP_TITLE' => 'CorpNews',
-    'en_US' => 'English (en_US)',
-    'ru_RU' => 'Русский (ru_RU)',
+    'en' => 'en - English',
+    'ru' => 'ru - Русский',
     'Autodetect' => 'Autodetect',
     'Tutorial' => 'Tutorial',
 
@@ -84,34 +84,15 @@ return [
     'ERROR_SEND_LETTER' => 'Could not send letter: %exception%',
     'ERROR_CAMPAIGN_PAUSED' => 'Campaign has been paused due to errors',
 
-    // Csrf validator
-    'The form submitted did not originate from the expected site' => 'The form submitted did not originate from the expected site',
-
-    // NotEmpty validator
-    'Value is required and can\'t be empty' => 'Value is required and can\'t be empty',
-
-    // EmailAddress validator
-    'The input is not a valid email address. Use the basic format local-part@hostname' => 'The input is not a valid email address. Use the basic format local-part@hostname',
-    '\'%hostname%\' is not a valid hostname for the email address' => '\'%hostname%\' is not a valid hostname for the email address',
-    '\'%hostname%\' does not appear to have any valid MX or A records for the email address' => '\'%hostname%\' does not appear to have any valid MX or A records for the email address',
-    '\'%hostname%\' is not in a routable network segment. The email address should not be resolved from public network' => '\'%hostname%\' is not in a routable network segment. The email address should not be resolved from public network',
-    '\'%localPart%\' can not be matched against dot-atom format' => '\'%localPart%\' can not be matched against dot-atom format',
-    '\'%localPart%\' can not be matched against quoted-string format' => '\'%localPart%\' can not be matched against quoted-string format',
-    '\'%localPart%\' is not a valid local part for the email address' => '\'%localPart%\' is not a valid local part for the email address',
-    'The input exceeds the allowed length' => 'The input exceeds the allowed length',
-
-    // Hostname validator
-    'The input appears to be a DNS hostname but the given punycode notation cannot be decoded' => 'The input appears to be a DNS hostname but the given punycode notation cannot be decoded',
-    'The input appears to be a DNS hostname but contains a dash in an invalid position' => 'The input appears to be a DNS hostname but contains a dash in an invalid position',
-    'The input does not match the expected structure for a DNS hostname' => 'The input does not match the expected structure for a DNS hostname',
-    'The input appears to be a DNS hostname but cannot match against hostname schema for TLD \'%tld%\'' => 'The input appears to be a DNS hostname but cannot match against hostname schema for TLD \'%tld%\'',
-    'The input does not appear to be a valid local network name' => 'The input does not appear to be a valid local network name',
-    'The input does not appear to be a valid URI hostname' => 'The input does not appear to be a valid URI hostname',
-    'The input appears to be an IP address, but IP addresses are not allowed' => 'The input appears to be an IP address, but IP addresses are not allowed',
-    'The input appears to be a local network name but local network names are not allowed' => 'The input appears to be a local network name but local network names are not allowed',
-    'The input appears to be a DNS hostname but cannot extract TLD part' => 'The input appears to be a DNS hostname but cannot extract TLD part',
-    'The input appears to be a DNS hostname but cannot match TLD against known list' => 'The input appears to be a DNS hostname but cannot match TLD against known list',
-
     // EntityNotExists/DocumentNotExists validators
     'Value is already in the database' => 'Value is already in the database',
+
+    // Float validator
+    'Value is not a float number' => 'Value is not a float number',
+
+    // Integer validator
+    'Value is not an integer number' => 'Value is not an integer number',
+
+    // ValuesMatch validator
+    'The two values do not match' => 'The two values do not match',
 ];
