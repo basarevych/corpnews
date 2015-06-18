@@ -162,9 +162,9 @@ class CampaignController extends AbstractActionController
         $translate = $sl->get('viewhelpermanager')->get('translate');
 
         // Handle validate request
-        if ($this->params()->fromQuery('query') == 'validate') {
-            $field = $this->params()->fromQuery('field');
-            $data = $this->params()->fromQuery('form');
+        if ($this->params()->fromPost('query') == 'validate') {
+            $field = $this->params()->fromPost('field');
+            $data = $this->params()->fromPost('form');
 
             $form = new EditCampaignForm($sl, $data['id']);
             $form->setData($data);
@@ -315,9 +315,9 @@ class CampaignController extends AbstractActionController
         $script = "";
 
         // Handle validate request
-        if ($this->params()->fromQuery('query') == 'validate') {
-            $field = $this->params()->fromQuery('field');
-            $data = $this->params()->fromQuery('form');
+        if ($this->params()->fromPost('query') == 'validate') {
+            $field = $this->params()->fromPost('field');
+            $data = $this->params()->fromPost('form');
 
             $form->setData($data);
             $form->isValid();
