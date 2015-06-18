@@ -49,6 +49,7 @@
                             <input class="form-control" type="text"
                                    name="<?= $login->getName() ?>"
                                    value="<?= $this->escapeHtml($login->getValue()) ?>"
+                                   data-on-blur="validateFormField($('[name=<?= $login->getName() ?>]'))"
                                    data-on-enter="$('input[name=<?= $password->getName() ?>]').focus()">
                             <div class="help-block">
                                 <?php if (!$valid): ?>
@@ -71,6 +72,7 @@
                         <div class="col-sm-8">
                             <input class="form-control" type="password"
                                    name="<?= $password->getName() ?>"
+                                   data-on-blur="validateFormField($('[name=<?= $password->getName() ?>]'))"
                                    data-on-enter="$('form').submit()">
                             <div class="help-block">
                                 <?php if (!$valid): ?>

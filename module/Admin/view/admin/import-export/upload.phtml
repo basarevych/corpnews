@@ -104,7 +104,7 @@ $file = $form->get('file');
                 </span>
             </label>
             <div class="col-sm-8">
-                <input type="file" class="form-control"
+                <input type="file" class="form-control-static"
                        name="<?= $file->getName() ?>"
                        data-on-blur="validateFormField($('#modal-form [name=<?= $file->getName() ?>]'))"
                        data-on-enter="$('#modal-form button[type=submit]').focus().click()">

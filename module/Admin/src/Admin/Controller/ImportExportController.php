@@ -143,9 +143,9 @@ class ImportExportController extends AbstractActionController
         $messages = [];
 
         // Handle validate request
-        if ($this->params()->fromQuery('query') == 'validate') {
-            $field = $this->params()->fromQuery('field');
-            $data = $this->params()->fromQuery('form');
+        if ($this->params()->fromPost('query') == 'validate') {
+            $field = $this->params()->fromPost('field');
+            $data = $this->params()->fromPost('form');
 
             $form->setData($data);
             $form->isValid();
@@ -413,9 +413,9 @@ class ImportExportController extends AbstractActionController
         $messages = [];
 
         // Handle validate request
-        if ($this->params()->fromQuery('query') == 'validate') {
-            $field = $this->params()->fromQuery('field');
-            $data = $this->params()->fromQuery('form');
+        if ($this->params()->fromPost('query') == 'validate') {
+            $field = $this->params()->fromPost('field');
+            $data = $this->params()->fromPost('form');
 
             if ($field == 'file')
                 return new JsonModel([ 'valid' => true ]);

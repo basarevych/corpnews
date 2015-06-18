@@ -75,8 +75,8 @@ $descr = $form->get('descr');
                    name="<?= $descr->getName() ?>"
                    data-on-blur="validateFormField($('#modal-form [name=<?= $descr->getName() ?>]'))"
                    ><?= $this->escapeHtml($descr->getValue()) ?></textarea>
+            <p class="help-block"><?= $this->translate('TAG_DESCRIPTION_HELP') ?></p>
             <div class="help-block">
-                <p><?= $this->translate('TAG_DESCRIPTION_HELP') ?></p>
                 <?php if (!$valid): ?>
                     <ul class="list-unstyled icon-list error-list">
                     <?php foreach ($descr->getMessages() as $msg): ?>
