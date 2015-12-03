@@ -40,6 +40,7 @@ return [
     'DT_BUTTON_CLEAR' => 'Очистить',
     'DT_BUTTON_CANCEL' => 'Отмена',
     'DT_TITLE_FILTER_WINDOW' => 'Фильтр',
+    'DT_LABEL_ALL_ENTRIES' => 'Все',
     'DT_LABEL_CURRENT_PAGE' => 'Текущая страница',
     'DT_LABEL_ALL_PAGES' => 'Все страницы',
     'DT_LABEL_PAGE_OF_1' => 'Страница',

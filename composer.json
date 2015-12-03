@@ -19,7 +19,7 @@
         "zendframework/zendframework": "^2.5",
         "doctrine/doctrine-orm-module": "^0.9.0",
         "doctrine/doctrine-mongo-odm-module": "^0.8.2",
-        "basarevych/dynamic-table": "^0.1.0",
+        "basarevych/dynamic-table": "^0.2.6",
         "basarevych/task-daemon": "^0.2.6",
         "ezyang/htmlpurifier": "^4.6",
         "phpoffice/phpexcel": "^1.8"
